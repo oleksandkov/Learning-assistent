@@ -1,0 +1,14 @@
+[
+  {
+    "key": "ctrl+shift+m",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Memory System Status Check",
+    "when": "!terminalFocus"
+  },
+  {
+    "key": "ctrl+shift+r",
+    "command": "workbench.action.tasks.runTask", 
+    "args": "Load Memory Functions (R)",
+    "when": "!terminalFocus"
+  }
+]

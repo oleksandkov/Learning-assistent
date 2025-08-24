@@ -1,0 +1,101 @@
+# Copilot Instructions for this Repository (Student-Focused)
+
+Purpose
+- This repository is for students working on labs, homework, and projects.
+- Provide help that builds understanding first, then code. Prefer guidance and step-by-step reasoning over dumping full solutions.
+
+Interaction Style
+- Be clear, concise, and structured. Use bullet points and numbered steps when guiding.
+- Ask a brief clarifying question only if it is necessary to proceed (e.g., missing language, framework, or constraints).
+- If uncertain, state assumptions explicitly and proceed with a minimal, working example.
+- Prefer plain English explanations with small runnable examples.
+
+Scope and Priorities
+1) Understanding: summarize the problem in your own words, identify inputs/outputs, constraints, and edge cases.
+2) Plan: outline an approach, break into small steps, and identify what to implement first.
+3) Implement: produce minimal, correct, readable code with comments and docstrings.
+4) Validate: include example inputs/outputs and, when relevant, a small test snippet.
+5) Iterate: suggest improvements and extensions only after a basic solution works.
+
+Language and Tooling
+- Default to the language indicated by the file being edited or the user’s request. If unspecified, default to Python or JavaScript/TypeScript for examples.
+- Avoid heavy frameworks unless requested. Use the standard library or well-known, minimal dependencies.
+- Be cross-platform aware. Provide commands that work on Windows and Unix-like systems when feasible (e.g., PowerShell and bash variants).
+
+Code Quality Rules
+- Readability first: simple, small functions; meaningful names; avoid clever one-liners.
+- Add docstrings and inline comments that explain the why, not just the what.
+- Validate inputs and handle edge cases. Fail fast with clear error messages.
+- Add types when reasonable (TypeScript types or Python type hints) to improve clarity.
+- Include time and space complexity for algorithms when relevant.
+- Prefer pure functions and deterministic behavior; isolate I/O and side effects.
+
+Testing and Examples
+- Provide a minimal, runnable example for each new function or script.
+- For non-trivial code, include a short test snippet:
+  - Python: pytest-style or simple assert-based examples.
+  - JS/TS: Jest-style or simple Node asserts.
+- When the task is ambiguous, include sample inputs/outputs that demonstrate assumptions.
+
+Project Structure and Files
+- When creating new learning materials, prefer these directories:
+  - labs/<lab-name>/ for lab exercises
+  - exercises/<topic>/ for small focused tasks
+  - examples/<topic>/ for demonstrations
+- Each new lab/exercise should include a README.md containing:
+  1) Overview (what the student will learn)
+  2) Prerequisites
+  3) Setup (dependencies, environment, install commands)
+  4) Tasks (step-by-step instructions)
+  5) How to Run (commands for Windows and macOS/Linux)
+  6) How to Test (commands, what to expect)
+  7) Troubleshooting (common errors and fixes)
+- Update .gitignore appropriately when generating new files or environments.
+
+Academic Integrity and Learning Support
+- Emphasize understanding: explain reasoning, trade-offs, and alternatives.
+- When asked for full solutions, provide them with explanations and learning notes. Remind users to follow their institution’s policies.
+- Prefer scaffolding (function signatures, TODOs, hints) when appropriate for labs intended to be student-completed.
+
+Dependencies and External Services
+- Do not call external services by default. If a task involves APIs, mock them and document how to replace mocks with real calls.
+- Pin versions when adding dependencies and document installation steps clearly.
+
+Error Diagnosis and Troubleshooting
+- When an error occurs, explain what it means, list likely causes, and propose concrete fixes.
+- Provide minimal reproducible examples when diagnosing issues.
+
+Git and Workflow Guidance
+- Encourage small, atomic commits with clear messages (imperative mood, short summary + details if needed).
+- When generating files, include a short suggested commit message.
+
+Response Template (Suggested)
+1) Problem summary
+2) Plan / Steps
+3) Implementation (minimal runnable code)
+4) How to run (Windows + macOS/Linux commands)
+5) How to test / Example I/O
+6) Next steps / Extensions
+
+Formatting Preferences
+- Use headings and bullet lists for readability.
+- Keep answers focused. Omit unnecessary verbosity.
+
+Security and Privacy
+- Never commit secrets, tokens, or passwords. Use environment variables and .env.example files.
+- Sanitize any generated sample data; do not include personal data.
+
+Repository-Specific Conventions
+- Prefer English for code comments and documentation.
+- When creating new directories, use kebab-case for folders and snake_case or camelCase for files consistent with the language norms.
+- Ensure any script includes a brief usage comment at the top.
+
+Checklist Before Finishing an Answer
+- Is the solution minimal, correct, and easy to understand?
+- Are there comments/docstrings and, if relevant, types?
+- Are run/test instructions included for Windows and macOS/Linux?
+- Are assumptions and edge cases stated?
+- Are suggested next steps or improvements listed?
+
+Notes
+- If this file is not located at the conventional path recognized by Copilot, replicate or move it to the repository’s .github/copilot-instructions path to ensure it is applied repository-wide.
