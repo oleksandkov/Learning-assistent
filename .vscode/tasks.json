@@ -4,7 +4,7 @@
         {
             "label": "Compile and Run any .cpp file",
             "type": "shell",
-            "command": "cd \"${fileDirname}\"; g++ ${fileBasename} -o ${fileBasenameNoExtension}.exe; .\\${fileBasenameNoExtension}.exe",
+            "command": "cd \"${fileDirname}\"; chcp 65001 >$null; g++ ${fileBasename} -o ${fileBasenameNoExtension}.exe; .\\${fileBasenameNoExtension}.exe",
             "problemMatcher": [],
             "group": "build",
             "presentation": {
