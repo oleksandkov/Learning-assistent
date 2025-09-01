@@ -38,3 +38,9 @@ This task will automatically copy, compile, and run the currently open .cpp file
 **Tip:**
 - Always save your file before running the task or compiling.
 - If you get a 'No such file or directory' error, make sure the file is in the correct folder.
+
+
+
+
+
+

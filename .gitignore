@@ -44,3 +44,13 @@
 .vscode/
 !.vscode/launch.json
 !.vscode/tasks.json
+*keybindings*.json
+*settings*.json
+*.vscode/*
+
+# QODO files
+*.qodo
+
+# .exe files
+
+*.exe

@@ -55,3 +55,45 @@ This document lists all tasks defined in your `.vscode/tasks.json` file, explain
 
 **Tip:**
 - You can add more tasks to `.vscode/tasks.json` for other workflows as needed.
+
+---
+
+## 2. Analyze and Explain Code (Shell)
+
+**Label:** `Analyze and Explain Code (Shell)`
+
+**Type:** `shell`
+
+**What it does:**
+- Analyzes the code in the currently open file and appends an explanation (with code stats, commands, variables, and functions) to the end of the file.
+
+**How it works:**
+- Runs a PowerShell script (`scripts/analyze_and_explain.ps1`) with the current file as an argument.
+- The script analyzes the code and appends a summary and placeholders for explanations to the file.
+
+**Task Definition:**
+```json
+{
+    "label": "Analyze and Explain Code (Shell)",
+    "type": "shell",
+    "command": "powershell",
+    "args": [
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", "${workspaceFolder}/scripts/analyze_and_explain.ps1",
+        "${file}"
+    ],
+    "options": {
+        "cwd": "${workspaceFolder}"
+    },
+    "presentation": {
+        "reveal": "always"
+    }
+}
+```
+
+**How to use:**
+1. Open any code file you want to analyze in VS Code.
+2. Press `Ctrl+Shift+B` to open the build tasks menu.
+3. Select `Analyze and Explain Code (Shell)`.
+4. The script will append an explanation to the end of the file.
