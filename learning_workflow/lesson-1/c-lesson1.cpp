@@ -26,5 +26,6 @@ int main() {
     printf("blalblablalbalblablalbalblablabl");
     printf("blalblablalbalblablalbalblablabl");
     std::cout << "Hello, world!" << std::endl;
+    getchar (); 
 }
 //  Розібратися в системає сисленння та в розрядності компухтера, зробити працюючи софт та просттур в VS code 

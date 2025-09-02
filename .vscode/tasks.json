@@ -20,7 +20,7 @@
             "command": "cmd.exe",
             "args": [
                 "/c",
-                "start cmd.exe /k cd /d ${fileDirname} ^&^& g++ ${fileBasename} -o ${fileBasenameNoExtension}.exe ^&^& ${fileBasenameNoExtension}.exe ^& pause"
+                "start cmd.exe /k chcp 65001 ^& cd /d ${fileDirname} ^&^& g++ ${fileBasename} -o ${fileBasenameNoExtension}.exe ^&^& ${fileBasenameNoExtension}.exe ^& pause"
             ],
             "problemMatcher": [],
             "group": "build",
@@ -32,16 +32,9 @@
             }
         },
         {
-            "type": "cppbuild",
+            "type": "shell",
             "label": "C/C++: g++.exe build active file",
-            "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
-            "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
-                "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
-            ],
+            "command": "chcp 65001 >$null; C:\\msys64\\ucrt64\\bin\\g++.exe -fdiagnostics-color=always -g ${file} -o ${fileDirname}\\${fileBasenameNoExtension}.exe",
             "options": {
                 "cwd": "${fileDirname}"
             },
@@ -60,8 +53,10 @@
             "command": "powershell",
             "args": [
                 "-NoProfile",
-                "-ExecutionPolicy", "Bypass",
-                "-File", "${workspaceFolder}/scripts/analyze_and_explain.ps1",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}/scripts/analyze_and_explain.ps1",
                 "${file}"
             ],
             "options": {

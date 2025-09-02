@@ -4,7 +4,7 @@ P = sin(a + b) / (3 * cos^3(a - b) - π)
 */
 #include <stdio.h>
 #include <math.h>
-// Студентське визначення числа Пі
+
 const double PI = 3.1415926535;
 int main() {
     double a, b, P;

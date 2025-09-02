@@ -6,9 +6,14 @@
 
 
 
+
 #include <stdio.h>
+#include <locale.h>
 
 int main() {
+    // Set locale to system default for Unicode (Cyrillic) support
+    setlocale(LC_ALL, "");
+    // If you see unreadable symbols, run 'chcp 65001' in your terminal and use a font with Cyrillic support.
     double a, b, c;
     printf("Введіть три сторони трикутника: ");
     scanf("%lf %lf %lf", &a, &b, &c);

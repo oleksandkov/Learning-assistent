@@ -3,6 +3,7 @@
 */
 #include <stdio.h>
 #include <math.h>
+#include <locale.h>
 int main() {
     double x1, y1, x2, y2, x3, y3, S;
     printf("Введіть координати x1, y1, x2, y2, x3, y3: ");
