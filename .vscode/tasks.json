@@ -67,15 +67,50 @@
             }
         },
         {
-            "label": "Start All MCP Servers",
+            "label": "Start All MCP Servers (parallel)",
+            "dependsOn": [
+                "Start MCP: context7",
+                "Start MCP: sequentialthinking",
+                "Start MCP: memory",
+                "Start MCP: filesystem",
+                "Start MCP: qodo"
+            ],
+            "dependsOrder": "parallel"
+        },
+        {
+            "label": "Start MCP: context7",
             "type": "shell",
-            "command": "npx -y @upstash/context7-mcp@latest & npx -y @modelcontextprotocol/server-sequential-thinking & npx -y @modelcontextprotocol/server-memory & npx -y @modelcontextprotocol/server-filesystem C:/Users/muaro/OneDrive/Документи/GitHub/Learning-assistent & npx -y qodo-mcp-server",
-            "problemMatcher": [],
+            "command": "npx -y @upstash/context7-mcp@latest",
             "isBackground": true,
-            "presentation": {
-                "reveal": "always",
-                "panel": "shared"
-            }
+            "presentation": { "reveal": "always", "panel": "shared" }
+        },
+        {
+            "label": "Start MCP: sequentialthinking",
+            "type": "shell",
+            "command": "npx -y @modelcontextprotocol/server-sequential-thinking",
+            "isBackground": true,
+            "presentation": { "reveal": "always", "panel": "shared" }
+        },
+        {
+            "label": "Start MCP: memory",
+            "type": "shell",
+            "command": "npx -y @modelcontextprotocol/server-memory",
+            "isBackground": true,
+            "presentation": { "reveal": "always", "panel": "shared" }
+        },
+        {
+            "label": "Start MCP: filesystem",
+            "type": "shell",
+            "command": "npx -y @modelcontextprotocol/server-filesystem C:/Users/muaro/OneDrive/Документи/GitHub/Learning-assistent",
+            "isBackground": true,
+            "presentation": { "reveal": "always", "panel": "shared" }
+        },
+        {
+            "label": "Start MCP: qodo",
+            "type": "shell",
+            "command": "npx -y qodo-mcp-server",
+            "isBackground": true,
+            "presentation": { "reveal": "always", "panel": "shared" }
         }
     ]
 }
