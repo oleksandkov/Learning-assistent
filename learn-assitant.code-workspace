@@ -1,0 +1,16 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        // Add workspace-specific settings here
+    },
+    "tasks": {
+        // Tasks are defined in .vscode/tasks.json
+    },
+    "launch": {
+        // Debug configurations are defined in .vscode/launch.json
+    }
+}

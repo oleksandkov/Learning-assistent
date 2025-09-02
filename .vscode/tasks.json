@@ -15,6 +15,23 @@
             }
         },
         {
+            "label": "Compile and Run any .cpp file in Command panel",
+            "type": "process",
+            "command": "cmd.exe",
+            "args": [
+                "/c",
+                "start cmd.exe /k cd /d ${fileDirname} ^&^& g++ ${fileBasename} -o ${fileBasenameNoExtension}.exe ^&^& ${fileBasenameNoExtension}.exe ^& pause"
+            ],
+            "problemMatcher": [],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        },
+        {
             "type": "cppbuild",
             "label": "C/C++: g++.exe build active file",
             "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
@@ -52,6 +69,17 @@
             },
             "presentation": {
                 "reveal": "always"
+            }
+        },
+        {
+            "label": "Start All MCP Servers",
+            "type": "shell",
+            "command": "npx -y @upstash/context7-mcp@latest & npx -y @modelcontextprotocol/server-sequential-thinking & npx -y @modelcontextprotocol/server-memory & npx -y @modelcontextprotocol/server-filesystem C:/Users/muaro/OneDrive/Документи/GitHub/Learning-assistent & npx -y qodo-mcp-server",
+            "problemMatcher": [],
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
             }
         }
     ]
