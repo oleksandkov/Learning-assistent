@@ -69,7 +69,7 @@
         {
             "label": "Start All MCP Servers",
             "type": "shell",
-            "command": "npx -y @upstash/context7-mcp@latest & npx -y @modelcontextprotocol/server-sequential-thinking & npx -y @modelcontextprotocol/server-memory & npx -y @modelcontextprotocol/server-filesystem C:/Users/muaro/OneDrive/Документи/GitHub/Learning-assistent & npx -y qodo-mcp-server",
+            "command": "npx -y @upstash/context7-mcp@latest & npx -y @modelcontextprotocol/server-sequential-thinking & npx -y @modelcontextprotocol/server-memory & npx -y @modelcontextprotocol/server-filesystem C:/Users/muaro/Documents/GitHub/Learning-assistent & npx -y qodo-mcp-server",
             "problemMatcher": [],
             "isBackground": true,
             "presentation": {
@@ -131,7 +131,7 @@
         {
             "label": "Start MCP: filesystem",
             "type": "shell",
-            "command": "npx -y @modelcontextprotocol/server-filesystem C:/Users/muaro/OneDrive/Документи/GitHub/Learning-assistent",
+            "command": "npx -y @modelcontextprotocol/server-filesystem C:/Users/muaro/Documents/GitHub/Learning-assistent",
             "isBackground": true,
             "presentation": { "reveal": "always", "panel": "shared" }
         },
