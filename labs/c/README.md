@@ -125,3 +125,23 @@ This file lists all standard C operators for quick reference. / Цей файл 
 | *      | Pointer to / Вказівник                              | *ptr                |
 | ->     | Structure pointer / Доступ до члена структури       | ptr->member         |
 | .      | Structure member / Доступ до члена структури        | obj.member          |
+
+---
+### Math Library Functions (math.h) / Функції бібліотеки math.h
+
+Include `<math.h>` to use these functions. / Підключіть `<math.h>`, щоб використовувати ці функції.
+
+| Function / Функція   | Description / Опис                                                               | Example / Приклад   |
+|----------------------|----------------------------------------------------------------------------------|---------------------|
+| pow(base, exp)       | Raise base to the power of exp / Піднести base до степеня exp                    | pow(2.0, 3.0) = 8.0 |
+| sqrt(x)              | Square root of x / Квадратний корінь з x                                         | sqrt(9.0) = 3.0     |
+| sin(x)               | Sine of x (in radians) / Синус x (у радіанах)                                    | sin(1.57) ≈ 1.0     |
+| cos(x)               | Cosine of x (in radians) / Косинус x (у радіанах)                                | cos(0.0) = 1.0      |
+| tan(x)               | Tangent of x (in radians) / Тангенс x (у радіанах)                               | tan(0.0) = 0.0      |
+| exp(x)               | Exponential function (e^x) / Експоненційна функція (e^x)                         | exp(1.0) ≈ 2.718    |
+| log(x)               | Natural logarithm (ln) / Натуральний логарифм (ln)                               | log(2.718) ≈ 1.0    |
+| log10(x)             | Base-10 logarithm / Логарифм за основою 10                                       | log10(100.0) = 2.0  |
+| fabs(x)              | Absolute value of x (for float/double) / Абсолютне значення x (для float/double) | fabs(-5.5) = 5.5    |
+| ceil(x)              | Ceiling of x (smallest integer >= x) / Стеля x (найменше ціле >= x)              | ceil(2.3) = 3.0     |
+| floor(x)             | Floor of x (largest integer <= x) / Підлога x (найбільше ціле <= x)              | floor(2.7) = 2.0    |
+| fmod(x, y)           | Floating-point remainder of x/y / Залишок від ділення x/y (для float)            | fmod(5.5, 2.0) = 1.5|
