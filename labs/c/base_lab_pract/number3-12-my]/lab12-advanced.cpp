@@ -53,13 +53,20 @@ int main() {
         }
     }
     sum = newIndex; 
-    cout << "Кількість елементів у масиві A2: " << sum << "\n";
-    cout << "Натисни щоб побачити масив A2: \n";
+    cout << "Натиcни щоб побачити масив A1: \n";
     cin.get();
     cin.ignore();
+    for (int i = 0; i < 75; i++) {
+        cout << A1[i] << " ";
+    }
+    cout << endl;
+    cout << "Натисни щоб побачити масив A2: \n";
+    cin.get();
     for (int i = 0; i < sum; i++) {
         cout << A2[i] << " ";
     }
+    cout << endl;
+    cout << "Кількість елементів у масиві A2: " << sum << "\n";
     cout << endl;
     return 0;
 }

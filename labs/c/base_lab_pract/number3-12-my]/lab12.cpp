@@ -10,10 +10,8 @@ using namespace std;
 int main() {
     float A1[75];
     float min, max;
-    cout << "Введи мінімальну межу: \n";
-    cin >> min;
-    cout << "Введи максимальні межу: \n";
-    cin >> max; 
+    min = 16;
+    max = 53;
     srand(time(NULL));
     if (max <= min) {
         cout << "Try again!\n";
