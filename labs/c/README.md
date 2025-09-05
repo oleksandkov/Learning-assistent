@@ -1,4 +1,4 @@
----
+
 ### Data Types in C / Типи даних у C
 
 | Type / Тип   | Description / Опис                                                   | Example Declaration / Приклад оголошення |
@@ -9,6 +9,46 @@
 | char         | Character / Символ                                                   | char d = 'A';                            |
 | long         | Long integer / Довге ціле число                                      | long e = 123456L;                        |
 | short        | Short integer / Коротке ціле число                                   | short f = 10;                            |
+
+---
+### The string Library and std::string Type in C++ / Бібліотека string і тип std::string у C++
+
+The `<string>` library in C++ provides the `std::string` type for working with text strings in a more convenient and safe way than C-style character arrays. / Бібліотека `<string>` у C++ надає тип `std::string` для зручної та безпечної роботи з текстовими рядками, на відміну від масивів символів у стилі C.
+
+| Type / Тип   | Description / Опис                                                   | Example Declaration / Приклад оголошення |
+|--------------|----------------------------------------------------------------------|------------------------------------------|
+| std::string  | String object (dynamic text) / Об'єкт-рядок (динамічний текст)       | std::string s = "Hello";                |
+
+
+#### Example Usage / Приклад використання
+
+```cpp
+#include <string>
+#include <iostream>
+using namespace std;
+
+int main() {
+	string name = "Alice";
+	cout << "Hello, " << name << endl;
+	cout << "Length: " << name.length() << endl;
+	name += " Smith";
+	cout << name << endl;
+	return 0;
+}
+```
+
+---
+#### Comparison: std::string vs. char array / Порівняння: std::string і масив char
+
+| Feature / Можливість         | std::string                | char array (C-style)         |
+|-----------------------------|----------------------------|------------------------------|
+| Memory management           | Automatic                  | Manual (fixed size)          |
+| Concatenation               | Easy (operator +, +=)      | Manual (strcat, etc.)        |
+| Length                      | .length() method           | Manual (strlen)              |
+| Safety                      | High (bounds checked)      | Low (risk of overflow)       |
+| Usability                   | Modern, flexible           | Low-level, less convenient   |
+
+---
 
 ---
 ### printf() and scanf() Format Specifiers / Форматні специфікатори printf() і scanf()
