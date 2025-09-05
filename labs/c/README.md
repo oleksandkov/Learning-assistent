@@ -1,15 +1,15 @@
 
 ### Data Types in C / Типи даних у C
 
-| Type / Тип   | Description / Опис                                                   | Example Declaration / Приклад оголошення |
-|--------------|----------------------------------------------------------------------|------------------------------------------|
-| int          | Integer (whole number) / Ціле число                                  | int a = 5;                               |
-| float        | Single-precision float / Число з плаваючою комою (одинарна точність) | float b = 3.14f;                         |
-| double       | Double-precision float / Число з плаваючою комою (подвійна точність) | double c = 2.718;                        |
-| char         | Character / Символ                                                   | char d = 'A';                            |
-| long         | Long integer / Довге ціле число                                      | long e = 123456L;                        |
-| short        | Short integer / Коротке ціле число                                   | short f = 10;                            |
-
+| Type / Тип   | Description / Опис                                                   | Bits / Бітів | Example Declaration / Приклад оголошення |
+|--------------|----------------------------------------------------------------------|-----------|------------------------------------------|
+| int          | Integer (whole number) / Ціле число                                  | 32        | int a = 5;                               |
+| float        | Single-precision float / Число з плаваючою комою (одинарна точність) | 32        | float b = 3.14f;                         |
+| double       | Double-precision float / Число з плаваючою комою (подвійна точність) | 64        | double c = 2.718;                        |
+| char         | Character / Символ                                                   | 8         | char d = 'A';                            |
+| long         | Long integer / Довге ціле число                                      | 32/64*    | long e = 123456L;                        |
+| short        | Short integer / Коротке ціле число                                   | 16        | short f = 10;                            |
+| long long    | Long long integer / Дуже довге ціле число                            | 64        | long long g = 12345678901234LL;          |
 ---
 ### The string Library and std::string Type in C++ / Бібліотека string і тип std::string у C++
 
