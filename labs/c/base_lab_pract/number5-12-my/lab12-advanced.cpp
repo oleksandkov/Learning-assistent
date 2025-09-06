@@ -1,0 +1,147 @@
+#include <iostream>
+#include <string>
+#include <assert.h>
+#include <math.h>
+#include <time.h>
+
+#include "clocker.hpp"
+
+using namespace std;
+
+
+int main () {
+    int time_num;
+    cin >> time_num;
+    clocker(time_num);
+    int n, m;
+	int i, j;
+    // Declaring the size of matrix
+    cout << "Type the size of your matrix\n";
+    cout << "Type the number of rows: ";
+    cin >> n;   
+    cout << "Type the number of columns: ";
+    cin >> m;
+    if (n != m){
+        cout << "Your size of matrix is not correct!\n";
+        return 33;
+    }
+    float matrix[n][m];
+	// Declaring the matrix
+    while (true) {
+        string path;
+    cout << "Would you like to generate the matrix automatically?(Yes/No)\n";
+    cin >> path;
+    if (path == "Yes" || path == "yes") {
+        srand(time(NULL));
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                matrix[i][j] = rand() % 100; 
+            }
+        }
+        break;
+    } else if (path == "No" || path == "no") {
+        cout << "Enter the matrix (nxm):\n";
+	for ( i = 0; i < n; ++i) {
+		for (j = 0; j < m; ++j) {
+			cout << "Element [" << i << "][" << j << "]: ";
+			cin >> matrix[i][j];
+		}
+	}
+        break;
+    } else {
+        cout << "Try again, print `Yes` or `No`\n";
+    }
+}
+
+
+	// Checker
+    int check = 0;
+    if( m == 3 && n == 3) {
+        if(matrix[1][0] == matrix[1][2] && matrix[2][0] == matrix[0][2] && matrix[2][1] == matrix[0][1]) {
+            check = 1;
+		}
+    }  else {
+        for (i = 1; i < n; i++){
+            if(matrix[i][0] == matrix[i][m - 1]) { check++; } else {}
+        }
+        for (j = 1; j < m; j++) {
+            if(matrix[n -1][j] == matrix[0][j]) { check++; } else {}
+        }
+        for (int i = 1; i < n - 1; i++) {
+         for (int j = 1; j < m - 1; j++) {
+             if (matrix[i][j] == matrix[j][i]) {
+            check++;
+            } else {}
+          }
+        }
+        if(matrix[n - 1][0] == matrix[0][m-1]) {check ++; } else {}
+    }
+	// Showing the matrix
+	cout << "Press to see the matrix..\n";
+	cin.get();
+    cin.ignore();
+	int count = 0;
+	for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+	}
+	cout << "See the result: \n";
+	if(check == 1 || check == (n - 1) + (m - 1) + (n - 2) * (m - 2) + 1) {
+        cout << "Your matrix is symmetric!\n";
+	} else {
+        // Creating the symmetric matrix
+        float matrix_sym[n][m];
+        for(int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                matrix_sym[i][j] = matrix[i][j];
+            }
+        }
+        string fixer;
+        check = 0;
+        cout << "It seems that your matrix is not symetric, i can fix it (Yes/No)\n";
+        cin >> fixer;
+        cout << endl;
+        
+        if ( fixer == "Yes" || fixer == "yes") {
+            for (i = 1; i < n; i++){
+            if(matrix_sym[i][0] == matrix_sym[i][m - 1]) {  check++; } else {matrix_sym[i][0] = matrix_sym[i][m - 1]; check++;}
+        }
+        for (j = 1; j < m; j++) {
+            if(matrix_sym[n -1][j] == matrix_sym[0][j]) {  check++; } else {matrix_sym[n -1][j] = matrix_sym[0][j] ; check++;}
+        }
+        for (int i = 1; i < n - 1; i++) {
+         for (int j = 1; j < m - 1; j++) {
+             if (matrix_sym[i][j] == matrix_sym[j][i]) {
+                
+            check++;
+            } else {matrix_sym[i][j] = matrix_sym[j][i]; check++; }
+          }
+        }
+        if(matrix_sym[n - 1][0] == matrix_sym[0][m-1]) {check++; } else {matrix_sym[n - 1][0] = matrix_sym[0][m-1]; check++;}
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            cout << matrix_sym[i][j] << " ";
+        }
+        cout << endl;
+	}
+        if( check == (n - 1) + (m - 1) + (n - 2) * (m - 2) + 1) {
+        cout << "Now your matrix  is symmetric, cogratulations!\n";
+	} else {
+        cout << "Your matrix still not symmetric, Sorry, bad code \n";
+	}
+        } else  {
+            cout << "   \\   /" << endl;
+            cout << "    | |" << endl;
+            cout << "  _     _" << endl;
+            cout << " |  o o  |" << endl;
+            cout << " |   -   |" << endl;
+            cout << "  /_____\\ " << endl;
+        }
+	}
+ 
+	// End of the code
+	cin.get();
+	cin.ignore();
+	}
