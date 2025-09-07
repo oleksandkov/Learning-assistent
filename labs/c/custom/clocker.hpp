@@ -157,7 +157,6 @@ void timer(int seconds) {
         }
     };
     #ifdef _WIN64
-    #endif
     for (int t = seconds; t > 0; --t) {
         system("cls");
         print_big_number(t, digits);
@@ -180,5 +179,5 @@ void timer(int seconds) {
     cout << "Timer finished!" << endl;
 }
 
-
+#endif
 #endif
