@@ -6,8 +6,12 @@
 
 using namespace std;
 
+#include "clocker.hpp"
 
 int main () {
+    int timer;
+    cin >> timer;
+    clocker(timer);
     int n, m;
 	int i, j;
     // Declaring the size of matrix
