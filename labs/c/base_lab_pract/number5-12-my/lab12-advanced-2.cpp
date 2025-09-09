@@ -9,10 +9,10 @@ using namespace std;
 #include "clocker.hpp"
 
 int main () {
-    int timer;
-    cin >> timer;
-    clocker(timer);
-    int n, m;
+    // int timer;
+    // cin >> timer;
+    // clocker(timer);
+    int  n, m;
 	int i, j;
     // Declaring the size of matrix
     cout << "Type the size of your matrix\n";
@@ -25,7 +25,7 @@ int main () {
         cout << "You need to create a square matrix.\n";
         return 33;
     }
-    float matrix[n][m];
+    double matrix[n][m];
 	// Declaring the matrix
     while (true) {
         string path;
@@ -92,7 +92,7 @@ int main () {
         cout << "Your matrix is symmetric!\n";
 	} else {
         // Creating the symmetric matrix
-        float matrix_sym[n][m];
+        double  matrix_sym[n][m];
         for(int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 matrix_sym[i][j] = matrix[i][j];

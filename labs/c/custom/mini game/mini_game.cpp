@@ -9,23 +9,14 @@
 
 using namespace std;
  
-void print_centered(const std::string& message) {
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    int columns = 80; // default width
-    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
-        columns = csbi.srWindow.Right - csbi.srWindow.Left + 1;
-    }
-    int padding = (columns - message.length()) / 2;
-    if (padding > 0) std::cout << std::string(padding, ' ');
-    std::cout << message << std::endl;
-}
+
 
 int main() {
     char play_again;
     do {
         int number;
         while (true) {
-            couit << "The number of equlations: ";
+            cout << "The number of equlations: ";
             std::string input;
             cin >> input;
             try {
@@ -52,12 +43,12 @@ int main() {
             operator_in = rand() % 4;
             if (operator_in == 0) {
                 op_char = '+';
-                num_1 = rand() % 20;
-                num_2 = rand() % 20;
+                num_1 = rand() % 100;
+                num_2 = rand() % 100;
             } else if (operator_in == 1) { 
                 op_char = '-';
-                num_1 = rand() % 20;
-                num_2 = rand() % 20;
+                num_1 = rand() % 100;
+                num_2 = rand() % 100;
             } else if (operator_in == 2) {
                 op_char = '*';
                 num_1 = rand() % 20;
