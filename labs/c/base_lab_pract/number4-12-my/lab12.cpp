@@ -12,13 +12,13 @@ int calculate_area(int x1, int y1, int x2, int y2, int x3, int y3) {
 }
 int main() {
     int x1,x2, x3,x4, y1,y2,y3,y4;
-    cout << "Enter the coordinate of first apex: \n";
+    cout << "Enter the coordinate of first apex (x;y): \n";
     cin >> x1 >> y1;
-    cout << "Enter the coordinate of second apex: \n";
+    cout << "Enter the coordinate of second apex(x;y): \n";
     cin >> x2 >> y2;
-    cout << "Enter the coordinate of third apex: \n";
+    cout << "Enter the coordinate of third apex(x;y): \n";
     cin >> x3 >>  y3;
-    cout << "Enter the coordinate of forth apex: \n";
+    cout << "Enter the coordinate of forth apex(x;y): \n";
     cin >> x4 >> y4;
     float s1 = calculate_area(x1,y1,x2,y2,x3,y3);
     float s2 = calculate_area(x3,y3,x4,y4,x1,y1);
