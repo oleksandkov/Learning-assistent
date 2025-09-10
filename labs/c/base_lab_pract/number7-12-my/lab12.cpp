@@ -162,6 +162,8 @@ int main() {
     }
 }
     cout << endl;
-    cin.get();
+    cout << "Press Enter to exit..." << endl;
     cin.ignore();
+    cin.get();
+    return 0;
 }
