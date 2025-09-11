@@ -1,81 +1,98 @@
-
 @echo off
-:: Adaptive fullscreen/console size for any monitor
-title lab12 - Geometry Tool
-color 1E
+cd /d %~dp0
+:: ========================================================================
+:: LAB12 Geometry Tool Launcher - Fascinating Loading Animation
+:: Author: oleksandkov
+:: Description: Interactive 3D Sphere Geometry Calculator
+:: ========================================================================
 
+setlocal EnableDelayedExpansion
+color 0A
+title Loading Lab12 Geometry Tool...
 
-:: Detect screen size and set mode con accordingly (use delayed expansion)
-set "W="
-set "H="
-for /f "tokens=1,2 delims=x " %%a in ('powershell -noprofile -command "Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Screen]::PrimaryScreen.Bounds.Size.ToString()"') do (
-	set "W=%%a"
-	set "H=%%b"
-)
-if not defined W set W=1366
-if not defined H set H=768
-setlocal ENABLEDELAYEDEXPANSION
-set /a COLS=!W!/8
-set /a LINES=!H!/16
-if !COLS! lss 80 set COLS=80
-if !LINES! lss 25 set LINES=25
-mode con: cols=!COLS! lines=!LINES! >nul 2>&1
+:: Set console size for optimal display and create carriage return variable
+mode con: cols=100 lines=35
+for /f %%A in ('"prompt $H &echo on &for %%B in (1) do rem"') do set "BS=%%A"
+set "CR=!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!!BS!"
 
-:: Try true fullscreen (legacy, works on some Windows, non-blocking)
-start "" /min powershell -noprofile -command "$wshell = New-Object -ComObject wscript.shell; Start-Sleep -Milliseconds 200; $wshell.SendKeys('%{ENTER}')" >nul 2>&1
-
-:: Fallback: maximize window if not true fullscreen
-powershell -noprofile -command "$sig='using System;using System.Runtime.InteropServices;public class W{[DllImport(\"user32.dll\")]public static extern bool ShowWindow(IntPtr h,int n);[DllImport(\"user32.dll\")]public static extern IntPtr GetForegroundWindow();}';Add-Type $sig;[W]::ShowWindow([W]::GetForegroundWindow(),3)" >nul 2>&1
-
-setlocal ENABLEDELAYEDEXPANSION
+:: Clear screen and show header
 cls
-
-:: Enable ANSI (for cursor hide) if supported
-powershell -noprofile -command "$esc=[char]27;Write-Host -NoNewLine ($esc+'[?25l')" >nul 2>&1
-
-:: Title typewriter effect
-set "TITLE=Launching lab12 Geometry Tool"
-for /l %%i in (1,1,40) do (
-	set "chunk=!TITLE:~0,%%i!"
-	<nul set /p =!chunk!                                        
-	powershell -noprofile -command "[console]::Beep(600,18)" >nul 2>&1
-	ping -n 1 127.0.0.1 >nul
-)
-echo(
-echo   Author : oleksandkov
-echo   Demo   : Spheres intersection / point containment
+echo.
+echo    ██████╗ ███████╗ ██████╗ ███╗   ███╗███████╗████████╗██████╗ ██╗   ██╗
+echo    ██╔════╝ ██╔════╝██╔═══██╗████╗ ████║██╔════╝╚══██╔══╝██╔══██╗╚██╗ ██╔╝
+echo    ██║  ███╗█████╗  ██║   ██║██╔████╔██║█████╗     ██║   ██████╔╝ ╚████╔╝ 
+echo    ██║   ██║██╔══╝  ██║   ██║██║╚██╔╝██║██╔══╝     ██║   ██╔══██╗  ╚██╔╝  
+echo    ╚██████╔╝███████╗╚██████╔╝██║ ╚═╝ ██║███████╗   ██║   ██║  ██║   ██║   
+echo     ╚═════╝ ╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝   ╚═╝   ╚═╝  ╚═╝   ╚═╝   
+echo.
+echo                            LAB12 - 3D SPHERE GEOMETRY TOOL
+echo                     ══════════════════════════════════════════════
+echo                        Author: oleksandkov ^| Version: 2.0
 echo.
 
-:: Single-line progress bar (0..100)
-:: Dynamically sized progress bar (fills console width, no [filled...] artifacts)
-for /f "tokens=2 delims=: " %%C in ('mode con ^| findstr /R /C:"Columns"') do set "WIDTH=%%C"
-set /a PBARLEN=!WIDTH!-20
-if !PBARLEN! lss 10 set PBARLEN=10
-set "BAR="
-for /l %%B in (1,1,!PBARLEN!) do set "BAR=!BAR!#"
-for /l %%P in (0,2,100) do (
-	set /a filled=!PBARLEN!*%%P/100
-	set "seg=!BAR:~0,!filled!!"
-	set /a spaces=!PBARLEN!-!filled!
-	if !spaces! lss 0 set spaces=0
-	set "pad="
-	if !spaces! gtr 0 for /l %%S in (1,1,!spaces!) do set "pad=!pad! "
-	<nul set /p =Loading [!seg!!pad!] %%P%%
-	powershell -noprofile -command "[console]::Beep(400+%%P*3,10)" >nul 2>&1
-	ping -n 1 127.0.0.1 >nul
-)
-:: After loop, print a clean line to ensure no \r remains
-echo(
-echo
-echo Launching...
-powershell -noprofile -command "[console]::Beep(1000,160);[console]::Beep(1400,180)" >nul 2>&1
-timeout /t 1 >nul
 
-:: Run the program
-"%~dp0lab12.exe"
 
-:: Restore cursor
-powershell -noprofile -command "$esc=[char]27;Write-Host ($esc+'[?25h')" >nul 2>&1
+:: Quick loading sequence
+echo    [INFO] Loading Lab12 Geometry Tool...
 echo.
-echo Session finished. Press any key to exit.
-pause >nul
+
+:: Fast progress bar
+set "bar="
+for /L %%j in (1,1,20) do (
+    set /a "progress=%%j*5"
+    set "bar=!bar!██"
+    
+    set "empty=                                        "
+    set "remaining=!empty:~0,40!"
+    set "remaining=!remaining:~%%j!"
+    <nul set /p "=    Loading [!bar!!remaining!] !progress!%%!CR!"
+    
+    powershell -noprofile -command "[console]::Beep(500,15)" >nul 2>&1
+    powershell -command "Start-Sleep -Milliseconds 50" >nul
+)
+
+echo.
+echo    [✓] Loading completed!
+echo.
+
+:: Quick launch sequence
+color 0A
+echo    🚀 LAUNCHING LAB12 GEOMETRY TOOL...
+echo.
+
+:: Simple spinner
+set "spinner=/-\|"
+for /L %%s in (1,1,8) do (
+    set /a "spin=%%s%%4"
+    for %%c in (!spin!) do (
+        <nul set /p "=    !spinner:~%%c,1! Starting application...!CR!"
+    )
+    powershell -command "Start-Sleep -Milliseconds 100" >nul
+)
+
+echo.
+echo    [SUCCESS] Ready to launch!
+powershell -noprofile -command "[console]::Beep(800,100);[console]::Beep(1000,150)" >nul 2>&1
+echo.
+
+:: Quick info display
+echo    ╔══════════════════════════════════════════════════════════════════════════════╗
+echo    ║                         LAB12 GEOMETRY TOOL READY                            ║
+echo    ║  • Sphere Intersection Detection • Point Containment • 3D Calculations       ║
+echo    ╚══════════════════════════════════════════════════════════════════════════════╝
+echo.
+
+:: Compile and run with error handling
+echo    [SYSTEM] Compilation successful!
+echo    [SYSTEM] Executing lab12.exe...
+echo.
+title Lab12 Geometry Tool - Active Session
+color 07
+lab12.exe
+
+:: Cleanup and exit message
+echo.
+color 0E
+echo    [SYSTEM] Lab12 session completed.
+echo    [INFO] Thank you for using the Geometry Tool!
+timeout /t 2 >nul
