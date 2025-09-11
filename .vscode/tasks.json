@@ -158,6 +158,24 @@
                 "focus": false,
                 "panel": "shared"
             }
-        }
-    ]
+        } //,
+//         {
+//             "label": "Run Current .bat File (UTF-8) not cmd",
+//             "type": "process",
+//             "command": " ",
+//             "args": [
+//                 "/c",
+//                 "start cmd.exe /k chcp 65001 ^&^& call ${file} ^& pause"
+//             ],
+//             "problemMatcher": [],
+//             "group": "build",
+//             "presentation": {
+//                 "echo": true,
+//                 "reveal": "always",
+//                 "focus": false,
+//                 "panel": "shared"
+//             }
+//         }
+        
+   ]
 }

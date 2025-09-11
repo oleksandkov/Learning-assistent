@@ -7,7 +7,7 @@ cd /d %~dp0
 
 :: === USER CONFIGURATION ===
 set "PROGRAM_EXE=your_program.exe"
-set "TITLE=Universal Program Launcher"
+set "TITLE=Program Launcher"
 set "AUTHOR=your_name"
 set "VERSION=1.0"
 :: ==========================
@@ -79,17 +79,16 @@ echo.
 echo    [INFO] Loading !TITLE! ...
 echo.
 
-:: Fast progress bar
+:: Much faster progress bar
 set "bar="
-for /L %%j in (1,1,20) do (
-    set /a "progress=%%j*5"
-    set "bar=!bar!██"
-    set "empty=                                        "
-    set "remaining=!empty:~0,40!"
+for /L %%j in (1,1,5) do (
+    set /a "progress=%%j*20"
+    set "bar=!bar!████"
+    set "empty=    "
+    set "remaining=!empty:~0,20!"
     set "remaining=!remaining:~%%j!"
     <nul set /p "=    Loading [!bar!!remaining!] !progress!%%!CR!"
-    powershell -noprofile -command "[console]::Beep(500,10)" >nul 2>&1
-    powershell -command "Start-Sleep -Milliseconds 30" >nul
+    powershell -command "Start-Sleep -Milliseconds 1" >nul
 )
 echo.
 echo    [✓] Loading completed!
@@ -107,7 +106,7 @@ for /L %%s in (1,1,8) do (
     for %%c in (!spin!) do (
         <nul set /p "=    !spinner:~%%c,1! Starting application...!CR!"
     )
-    powershell -command "Start-Sleep -Milliseconds 80" >nul
+    powershell -command "Start-Sleep -Milliseconds 10" >nul
 )
 echo.
 echo    [SUCCESS] Ready to launch!
@@ -123,5 +122,5 @@ color 07
 echo.
 color 0E
 echo    [SYSTEM] Session completed.
-echo    [INFO] Thank you for using the Universal Launcher!
+echo    [INFO] End of luancher!
 timeout /t 2 >nul

@@ -44,7 +44,7 @@ int main() {
         cout << "A2 is empty, try again!\n";
         return 33;
     }
-    //
+    // Mini unit test to check if A2 do not have emptly values
     int newIndex = 0;
     for (int i = 0; i < 75; i++) {
         if (A2[i] != 0.0f) {
