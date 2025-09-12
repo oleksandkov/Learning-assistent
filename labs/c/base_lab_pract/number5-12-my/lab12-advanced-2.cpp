@@ -8,6 +8,30 @@ using namespace std;
 
 #include "clocker.hpp"
 
+// Test if a square matrix is symmetric (C-style array version, fixed size for columns)
+void test(int n, int m, double* matrix) {
+    // Unit test to check if the matrix is symmetric
+    if (n != m) {
+        cout << "Matrix is not square, cannot be symmetric.\n";
+        return;
+    }
+    bool symmetric = true;
+    for (int i = 0; i < n && symmetric; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (matrix[i * m + j] != matrix[j * m + i]) {
+                symmetric = false;
+                break;
+            }
+        }
+    }
+    if (symmetric) {
+        cout << "You pass the test\n";
+    } else {
+        cout << "Test is not passed \n";
+    }
+}
+
+
 int main () {
     // int timer;
     // cin >> timer;
@@ -29,30 +53,29 @@ int main () {
 	// Declaring the matrix
     while (true) {
         string path;
-    cout << "Would you like to generate the matrix automatically?(Yes/No)\n";
-    cin >> path;
-    if (path == "Yes" || path == "yes") {
-        srand(time(NULL));
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                matrix[i][j] = rand() % 100; 
-                // matrix[i][j] = float()rand() % 100;
+        cout << "Would you like to generate the matrix automatically?(Yes/No)\n";
+        cin >> path;
+        if (path == "Yes" || path == "yes") {
+            srand(time(NULL));
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < m; j++) {
+                    matrix[i][j] = rand() % 100;
+                }
             }
+            break;
+        } else if (path == "No" || path == "no") {
+            cout << "Enter the matrix (nxm):\n";
+            for (i = 0; i < n; ++i) {
+                for (j = 0; j < m; ++j) {
+                    cout << "Element [" << i << "][" << j << "]: ";
+                    cin >> matrix[i][j];
+                }
+            }
+            break;
+        } else {
+            cout << "Try again, print `Yes` or `No`\n";
         }
-        break;
-    } else if (path == "No" || path == "no") {
-        cout << "Enter the matrix (nxm):\n";
-	for ( i = 0; i < n; ++i) {
-		for (j = 0; j < m; ++j) {
-			cout << "Element [" << i << "][" << j << "]: ";
-			cin >> matrix[i][j];
-		}
-	}
-        break;
-    } else {
-        cout << "Try again, print `Yes` or `No`\n";
     }
-}
 
 
 	// Checker
@@ -92,7 +115,7 @@ int main () {
         cout << "Your matrix is symmetric!\n";
 	} else {
         // Creating the symmetric matrix
-        double  matrix_sym[n][m];
+    double  matrix_sym[n][m];
         for(int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 matrix_sym[i][j] = matrix[i][j];
@@ -106,29 +129,31 @@ int main () {
         cin >> fixer;
         cout << endl;
         
-    if (fixer == "Yes" || fixer == "yes") {
-        for (int i = 0; i < n; i++) {
-    for (int j = 0; j < m; j++) {
-        if (i != j) {
-            if (matrix_sym[i][j] == matrix_sym[j][i]) {
-                check++;
-            } else {
-                // Make symmetric by copying one value to the other
-                matrix_sym[j][i] = matrix_sym[i][j];
-                check++;
+        if (fixer == "Yes" || fixer == "yes") {
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < m; j++) {
+                    if (i != j) {
+                        if (matrix_sym[i][j] == matrix_sym[j][i]) {
+                            check++;
+                        } else {
+                            // Make symmetric by copying one value to the other
+                            matrix_sym[j][i] = matrix_sym[i][j];
+                            check++;
+                        }
+                    } else {
+                        null++;
+                    }
+                }
             }
-        } else {
-            null++;
-        }
-    }
-}
-    // Showing the symetric matrix
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            cout << matrix_sym[i][j] << " ";
-        }
-        cout << endl;
-	}
+            // Showing the symetric matrix
+            test(n, m, &matrix_sym[0][0]);
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < m; j++) {
+                    cout << matrix_sym[i][j] << " ";
+                }
+                cout << endl;
+            }
+
         if( check == n * m - null) {
         cout << "Now your matrix  is symmetric, cogratulations!\n";
 	} else {
