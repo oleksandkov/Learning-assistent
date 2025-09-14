@@ -3,36 +3,32 @@
 #include <cmath>
 #include <string>
 #include <cstdlib>
+#include <cstring>
 
 using namespace std;
 
-
-float strToFloat(const char *str) {
-    // Convert C-string to float using strtof
-    char* endptr;
-    float n = std::strtof(str, &endptr);
-    if (endptr == str || *endptr != '\0') {
-        std::cout << "Input is not a valid number!" << std::endl;
-        return 0.0f;
+void strToFloat(char *str, float *n) {
+    char *p;
+    *n = strtof(str, &p);
+    if (strlen(p) > 0) {
+        cout << "Pointer p points to: '" << p << "'" << endl;
+        cout << "Invalid float detected.\n" << endl;
+        cout << -1 << endl;
     }
-    std::cout << "Your n is: " << n << std::endl;
-    return n;
-}
-void test(const char* str, float n) {
-    float val = std::strtof(str, nullptr);
-    if (n == val) {
-        cout << "You pass the test" << endl;
-    } else {
-        cout << "Test is not passed" << endl;
-    }
+   if (strlen(p) == 0) {
+        cout << "Valid float: " << *n << endl;
+   }
 }
 
 int main() {
-    char str[100];
-    cout << "Enter a number: ";
-    cin >> str;
-    float n = strToFloat(str);
-    test(str, n);
-    std::cin.ignore();
-    std::cin.get();
+    // It depends what size of input you expect ( if you expect long input, increase the size)
+    char input[100]; 
+    float value;
+
+    cout << "Enter a float value: ";
+    cin >> input;
+    strToFloat(input, &value);
+
+
+    return 0;
 }
