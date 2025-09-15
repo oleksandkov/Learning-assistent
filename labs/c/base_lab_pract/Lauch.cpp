@@ -1,10 +1,13 @@
 #include <iostream>
 #include <cstdlib>
+#include <string> 
+
 using namespace std;
 
 int main() {
     int choice;
-    while (true) {
+    bool exitProgram = false;
+    while (!exitProgram) {
         cout << "Menu:\n";
         cout << "1. Run lab1\n";
         cout << "2. Run lab2\n";
@@ -17,9 +20,17 @@ int main() {
         cout << "9. Exit\n";
         cout << "Enter your choice: ";
         cin >> choice;
+while (true) {
+    if(choice == 9) {
+        cout << "Your program is ended\n";
+        cout << "To exit press any key\n";
+        cin.ignore();
+        cin.get();
+        exit(0);
+    }
 
-        if (choice == 1) {
-            system("cls");
+    if (choice == 1) {
+        system("cls");
             system("\"number1-12-my\\lab12-koval.exe\"");
             break;
         } else if (choice == 2) {
@@ -28,7 +39,7 @@ int main() {
             break;
         } else if (choice == 3) {
             system("cls");
-            system("\"number3-12-my\\lab12.exe\"");
+            system("\"number3-12-my]\\lab12-advanced.exe\"");
             break;
         } else if (choice == 4) {
             system("cls");
@@ -50,10 +61,29 @@ int main() {
             system("cls");
             system("\"number8-12-my\\lab12.exe\"");
             break;
+        } 
+    }
+   
+    while (true) {
+        cout << "Do you want try again?\n";
+        cout << "Yes/No ";
+        string checker;
+        cin >> checker;
+        if (checker == "Yes" || checker == "yes") {
+            system("cls");
+            break;
+        } else if (checker == "No" || checker == "no") {
+            exitProgram = true;
+            break;
         } else {
-            cout << "Invalid choice. Please try again.\n";
-            continue;
+            system("cls");
+            cout << "Your input is incorrect.\n";
+            cout << "Try again.\n";
         }
     }
+}
+cout << "To exit press any key\n";
+cin.get();
+cin.ignore();
     return 0;
 }
