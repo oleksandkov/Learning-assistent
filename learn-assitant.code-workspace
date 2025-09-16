@@ -5,6 +5,10 @@
         }
     ],
     "settings": {
+        "files.associations": {
+            "*.dbclient-js": "javascript",
+            "iostream": "cpp"
+        }
         // Add workspace-specific settings here
     },
     "tasks": {
