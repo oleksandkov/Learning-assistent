@@ -18,10 +18,16 @@ int main () {
 	}
 	// Checker
 	int check = 0;
-	if(matrix[1][0] == matrix[1][2] && matrix[2][0] == matrix[0][2] && matrix[2][1] == matrix[0][1]) {
-			check = 1;
+	check = 1;
+	for (int i = 0; i < 3; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			if (matrix[i][j] != matrix[j][i]) {
+				check = 0;
+				break;
+			}
 		}
-	// Showing the matrix
+		if (check == 0) break;
+	}
 	cout << "Press to see the matrix..\n";
 	cin.get();
 	int count = 0;
