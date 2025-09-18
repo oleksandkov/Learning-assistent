@@ -21,7 +21,6 @@ void strToFloat(char *str, float *n) {
 }
 
 int main() {
-    // It depends what size of input you expect ( if you expect long input, increase the size)
     char input[100]; 
     float value;
 
@@ -29,6 +28,8 @@ int main() {
     cin >> input;
     strToFloat(input, &value);
 
+    cin.get();
+    cin.ignore();
 
     return 0;
 }

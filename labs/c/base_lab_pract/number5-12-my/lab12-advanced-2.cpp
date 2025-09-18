@@ -6,7 +6,6 @@
 
 using namespace std;
 
-#include "clocker.hpp"
 
 // Test if a square matrix is symmetric (C-style array version, fixed size for columns)
 void test(int n, int m, double* matrix) {
@@ -33,9 +32,6 @@ void test(int n, int m, double* matrix) {
 
 
 int main () {
-    // int timer;
-    // cin >> timer;
-    // clocker(timer);
     int  n, m;
 	int i, j;
     // Declaring the size of matrix
