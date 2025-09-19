@@ -29,34 +29,47 @@ void strToFloat(const vector<string>& str, vector<float>& validNumbers) {
 
 
 int main() {
-    // vector<string> input;
-    // vector<float> value;
-    // cout << "Enter float values separated by space: ";
-    // string temp;
-    // while (cin >> temp) {
-    //     input.push_back(temp);
-    //     if (cin.peek() == '\n' ) break;
-    // }
-    // strToFloat(input, value);
-    // cout << "Tap to see the result\n";
-    // cin.get();
-    // cin.ignore();
-    // for (const auto& element : value) {
-    //     cout << element << "";
-    // }
-    // cin.get();
-    // cin.ignore();
-
     vector<string> input;
-    randomStringVector(&input, 5);
-    for (const auto& str : input) {
-        cout << str << endl;
+    vector<float> value;
+    while(true ) {
+        string checker;
+        cout << "Do you want to generated the elements\n";
+        cout << "Yes/No ";
+        cin >> checker;
+        if (checker == "Yes" || checker == "yes")
+        {
+            cout << "Put the number of elemnts\n";
+            int length;
+            cin >> length;
+            for(int i = 0; i < length; ++i) {
+                randomVecotorElement(&input);
+            }
+            break;
+        } else if ( checker == "No" || checker == "no") 
+        {
+            cout << "Enter float values separated by space: ";
+            string temp;
+            while (cin >> temp) {
+                input.push_back(temp);
+                if (cin.peek() == '\n' ) break;
+            }
+            break;
+        } else {
+            continue;
+        }
     }
-    double number;
-    RandomNumber(&number);
-    cout << "Random number: " << number << endl;
+    strToFloat(input, value);
+    cout << "Tap to see the result\n";
     cin.get();
     cin.ignore();
+    for (const auto& element : value) {
+        cout << element << " ";
+    }
+    cout << endl;
+    cout << "The number of elements is: " << value.size() << "\n";
+    cin.get();
+    cin.ignore();
+
     
 }
 
