@@ -13,9 +13,7 @@ void strToFloat(const vector<string>& str, vector<float>& validNumbers) {
     for (int i = 0; i < str.size(); ++i) {
         const string& s = str[i];
         char* endptr = nullptr;
-        float val = strtof(s.c_str(), &endptr);
-        // float val = strtof(s.c_str(),; nullptr);
-        
+        float val = strtof(s.c_str(), &endptr);        
         if (endptr != s.c_str() && *endptr == '\0') {
             validNumbers.push_back(val);
             cout << "Valid float: " << val << endl;
@@ -63,7 +61,7 @@ int main() {
     cin.get();
     cin.ignore();
     for (const auto& element : value) {
-        cout << element << " ";
+        cout << element << " | ";
     }
     cout << endl;
     cout << "The number of elements is: " << value.size() << "\n";
