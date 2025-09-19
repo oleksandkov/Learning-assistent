@@ -5,10 +5,12 @@
 #include <cstring>
 #include <vector>
 
+#include "functions.hpp"
+
 using namespace std;
  
 void strToFloat(const vector<string>& str, vector<float>& validNumbers) {
-    for (size_t i = 0; i < str.size(); ++i) {
+    for (int i = 0; i < str.size(); ++i) {
         const string& s = str[i];
         char* endptr = nullptr;
         float val = strtof(s.c_str(), &endptr);
@@ -23,24 +25,41 @@ void strToFloat(const vector<string>& str, vector<float>& validNumbers) {
     }
 }
 
+
+
+
 int main() {
+    // vector<string> input;
+    // vector<float> value;
+    // cout << "Enter float values separated by space: ";
+    // string temp;
+    // while (cin >> temp) {
+    //     input.push_back(temp);
+    //     if (cin.peek() == '\n' ) break;
+    // }
+    // strToFloat(input, value);
+    // cout << "Tap to see the result\n";
+    // cin.get();
+    // cin.ignore();
+    // for (const auto& element : value) {
+    //     cout << element << "";
+    // }
+    // cin.get();
+    // cin.ignore();
+
     vector<string> input;
-    vector<float> value;
-    cout << "Enter float values separated by space: ";
-    string temp;
-    // Read until newline
-    while (cin >> temp) {
-        input.push_back(temp);
-        if (cin.peek() == '\n' /* means click on enter*/) break;
+    randomStringVector(&input, 5);
+    for (const auto& str : input) {
+        cout << str << endl;
     }
-    strToFloat(input, value);
-    cout << "Tap to see the result\n";
+    double number;
+    RandomNumber(&number);
+    cout << "Random number: " << number << endl;
     cin.get();
     cin.ignore();
-    for (const auto& element : value) {
-        cout << element << ",";
-    }
-    cin.get();
-    cin.ignore();
+    
 }
+
+
+
 
