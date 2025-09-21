@@ -1,31 +1,35 @@
 
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
+#include <algorithm>
 
 using namespace std;
 
-struct Segment {
+// Визначаємо елемент сегмента польоту
+struct Segment { // good 
     string depTime;
     string arrTime;
     string depAirport;
     string arrAirport;
 };
 
-bool parseLine(const string &line, string &flightNo, Segment &seg) {
-    size_t start = 0, pos;
-
-    pos = line.find(',', start);
+// "Витягуємо" елементи у вектор
+bool parseLine(const string& line, string& flightNo, Segment& seg) { // +-
+    size_t start = 0, pos = line.find(',', start);
     if (pos == string::npos) return false;
     flightNo = line.substr(start, pos - start);
     start = pos + 1;
 
-    pos = line.find(',', start);
-    if (pos == string::npos) return false;
-    seg.depTime = line.substr(start, pos - start);
-    start = pos + 1;
+// "Витягуємо" елементи у вектор
+    pos = line.find(',', start); // шукаємо кому
+    if (pos == string::npos) return false; // якщо коми немає, повертаємо false
+    seg.depTime = line.substr(start, pos - start); // витягуємо підрядок з початку до коми
+    start = pos + 1; // оновлюємо початок на наступний символ після коми
 
     pos = line.find(',', start);
     if (pos == string::npos) return false;
@@ -37,58 +41,49 @@ bool parseLine(const string &line, string &flightNo, Segment &seg) {
     seg.depAirport = line.substr(start, pos - start);
     start = pos + 1;
 
-    // last field to end of line
     seg.arrAirport = line.substr(start);
     if (seg.arrAirport.empty()) return false;
 
     return true;
 }
 
-void insertionSortByDepTime(vector<Segment> &segments) {
-    for (size_t i = 1; i < segments.size(); ++i) {
-        Segment key = segments[i];
-        int j = static_cast<int>(i) - 1;
-        while (j >= 0 && segments[j].depTime > key.depTime) {
-            segments[j + 1] = segments[j];
-            --j;
-        }
-        segments[j + 1] = key;
-    }
-}
-
-vector<string> buildRoute(vector<Segment> &segments) {
+// Будуємо маршрут ( шляхом сортування польотів за часом вильоту, а потім створенням послідовності аеропортів -- 
+// додаємо перший аеропорт відбуття, потім додаємо всі аеропорти прибуття)
+vector<string> buildRoute(vector<Segment>& segments) {
     vector<string> route;
     if (segments.empty()) return route;
 
-    insertionSortByDepTime(segments);
-
+    // Сортуємо сегменти за часом вильоту
+    sort(segments.begin(), segments.end(), [](const Segment& a, const Segment& b) {
+        return a.depTime < b.depTime;
+    });
+// Додаємо до вертора "route" перший аеропорт відбуття, потім додаємо всі аеропорти прибуття
     route.push_back(segments[0].depAirport);
-    for (size_t i = 0; i < segments.size(); ++i) {
-        route.push_back(segments[i].arrAirport);
+    for (const auto& seg : segments) {
+        route.push_back(seg.arrAirport);
     }
     return route;
 }
 
-bool contains(const vector<string> &v, const string &x) {
-    for (size_t i = 0; i < v.size(); ++i) {
-        if (v[i] == x) return true;
-    }
-    return false;
-}
-
 int main() {
-    ifstream file("flight.csv");
-    if (!file.is_open()) {
-        cerr << "Error opening file flight.csv" << endl;
-        return 1;
-    }
+        cout << "Which file to open? \n";
+        cout << "Print your file name:\n";
+        string fileName;
+        cin >> fileName;
+        ifstream file(fileName);
+        if (!file.is_open()) {
+            cerr << "Error opening file " << fileName << endl;
+            cin.get();
+            cin.ignore(10000, '\n');
+            return 33;
+        }
 
     string header;
-    getline(file, header);
+    getline(file, header);  // Пропускаємо заголовок таблиць
 
-    map<string, vector<Segment>> flights;
+    map<string, vector<Segment>> flights; // створюємо словник, де ключ - номер рейсу, а значення - вектор сегментів
     string line;
-    while (getline(file, line)) {
+    while (getline(file, line)) { // читаємо файл рядок за рядком і додаємо до словника
         if (line.empty()) continue;
         string flightNo;
         Segment seg;
@@ -98,41 +93,42 @@ int main() {
     }
     file.close();
 
-    map<string, int> intermediateCount;
+    map<string, int> intermediateCount; // створюємо словник для підрахунку проміжних аеропортів (ключ - назва аеропорту, значення - кількість разів, коли через аеропорт пройшов рейс)
 
-    for (map<string, vector<Segment>>::iterator it = flights.begin(); it != flights.end(); ++it) {
-        vector<Segment> &segs = it->second;
+    for (const auto& pair : flights) {
+        vector<Segment> segs = pair.second;  // Копіюємо, щоб не змінювати оригінал
         vector<string> route = buildRoute(segs);
-        if (route.size() <= 2) continue;
+        if (route.size() <= 2) continue; // Якщо маршрут має 2 або менше транзитних аеропортів, пропускаємо його
 
-        vector<string> uniqueMids;
-        for (size_t i = 1; i + 1 < route.size(); ++i) {
-            if (!contains(uniqueMids, route[i])) {
-                uniqueMids.push_back(route[i]);
-            }
+        set<string> uniqueMids; // Використовуємо set для унікальних проміжних аеропортів 
+        for (int i = 1; i < route.size() - 1; ++i) { // Проміжні аеропорти - це всі, крім першого і останнього
+            uniqueMids.insert(route[i]);
         }
 
-        for (size_t i = 0; i < uniqueMids.size(); ++i) {
-            intermediateCount[uniqueMids[i]] += 1;
+        for (const string& mid : uniqueMids) { // Підраховуємо кожен унікальний проміжний аеропорт
+            // ++intermediateCount[mid];
+            intermediateCount[mid] += 1;
+
         }
     }
 
     if (intermediateCount.empty()) {
         cout << "No intermediate airports found." << endl;
-        return 0;
+        return 33;
     }
 
     string bestAirport;
-    int bestCount = -1;
-    for (map<string, int>::iterator it = intermediateCount.begin(); it != intermediateCount.end(); ++it) {
-        if (it->second > bestCount) {
-            bestCount = it->second;
-            bestAirport = it->first;
+    int bestCount;
+    for (const auto& pair : intermediateCount) {
+        if (pair.second > bestCount) {
+            bestCount = pair.second; 
+            bestAirport = pair.first;
         }
     }
 
     cout << "Проміжний аеропорт з найбільшою кількістю рейсів: "
          << bestAirport << " (" << bestCount << ")" << endl;
-
+    cin.get();
+    cin.ignore(10000, '\n');
     return 0;
 }
