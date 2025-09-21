@@ -66,13 +66,14 @@ vector<string> buildRoute(vector<Segment>& segments) {
 }
 
 int main() {
-        cout << "Which file to open? \n";
-        cout << "Print your file name:\n";
-        string fileName;
-        cin >> fileName;
-        ifstream file(fileName);
+        // cout << "Which file to open? \n";
+        // cout << "Print your file name:\n";
+        // string fileName;
+        // cin >> fileName;
+        // ifstream file("flight.csv");
+        ifstream file(R"(c:\Users\muaro\Documents\GitHub\Learning-assistent\labs\c\base_lab_pract\number8-12-my\flight.csv)");
         if (!file.is_open()) {
-            cerr << "Error opening file " << fileName << endl;
+            cerr << "Error opening file flight.csv" << endl;
             cin.get();
             cin.ignore(10000, '\n');
             return 33;
@@ -118,7 +119,7 @@ int main() {
     }
 
     string bestAirport;
-    int bestCount;
+    int bestCount = 0;
     for (const auto& pair : intermediateCount) {
         if (pair.second > bestCount) {
             bestCount = pair.second; 
