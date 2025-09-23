@@ -1,0 +1,6 @@
+{
+    "key": "ctrl+alt+s",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Compile and Run SFML .cpp file",
+    "when": "!terminalFocus && (editorLangId == 'c' || editorLangId == 'cpp')"
+  }
