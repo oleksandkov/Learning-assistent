@@ -177,10 +177,10 @@
       }
     },
     {
-      // Compile and run SFML .cpp file in integrated terminal
+      // Compile and run SFML project - works from any file in the project
       "label": "Compile and Run SFML .cpp file",
       "type": "shell",
-      "command": "Set-Location -LiteralPath '${fileDirname}'; chcp 65001 >$null; g++ '${fileBasename}' -o '${fileBasenameNoExtension}.exe' -IC:/msys64/ucrt64/include -LC:/msys64/ucrt64/lib -lsfml-graphics -lsfml-window -lsfml-system; .\\${fileBasenameNoExtension}.exe",
+      "command": "Set-Location -LiteralPath 'C:/Users/muaro/Documents/GitHub/Learning-assistent/c++ sfml/tutorial'; chcp 65001 >$null; g++ src/*.cpp -Iinclude -IC:/msys64/ucrt64/include -LC:/msys64/ucrt64/lib -o bin/main.exe -lsfml-graphics -lsfml-window -lsfml-system; if ($?) { & ./bin/main.exe }",
       "problemMatcher": [],
       "group": "build",
       "presentation": {
