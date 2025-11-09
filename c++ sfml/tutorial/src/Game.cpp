@@ -63,8 +63,17 @@ void Game::spawnEnemy()
     - sets a random color
     - adds enemy to hte vector
     */
+    this->enemy.setPosition(
+        static_cast<float>(rand()% static_cast<int>(this->window->getSize().x - this->enemy.getSize().x)),
+        static_cast<float>(rand()% static_cast<int>(this->window->getSize().y - this->enemy.getSize().y))
+    );
+    this->enemy.setFillColor(sf::Color::Green);
+
+    //Spawn enemy
+    this->enemies.push_back(this->enemy);
 
 }
+
 
 void Game::updateEnemies()
 {
