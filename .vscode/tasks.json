@@ -180,7 +180,7 @@
       // Compile and run SFML .cpp file in integrated terminal
       "label": "Compile and Run SFML .cpp file",
       "type": "shell",
-      "command": "cd \"${fileDirname}\"; chcp 65001 >$null; g++ ${fileBasename} -o ${fileBasenameNoExtension}.exe -lsfml-graphics -lsfml-window -lsfml-system; .\\${fileBasenameNoExtension}.exe",
+      "command": "Set-Location -LiteralPath '${fileDirname}'; chcp 65001 >$null; g++ '${fileBasename}' -o '${fileBasenameNoExtension}.exe' -IC:/msys64/ucrt64/include -LC:/msys64/ucrt64/lib -lsfml-graphics -lsfml-window -lsfml-system; .\\${fileBasenameNoExtension}.exe",
       "problemMatcher": [],
       "group": "build",
       "presentation": {
@@ -189,7 +189,7 @@
         "focus": false,
         "panel": "shared"
       }
-    } //,
+    }
     //         {
     //             "label": "Run Current .bat File (UTF-8) not cmd",
     //             "type": "process",
