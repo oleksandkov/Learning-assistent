@@ -8,7 +8,7 @@ void Game::initializeVariables()
     // Game Logic
     this->points = 0;
     this->enemySpawnTimerMax = 1000.f;
-    this->enemySpawnTimer = this->enemySpawnTimerMax;
+    this->enemySpawnTime = this->enemySpawnTimerMax;
     this->maxEnemies = 5;
 }
 
@@ -29,8 +29,6 @@ void Game::initEnemies()
     this->enemy.setFillColor(sf::Color::Cyan);
     this->enemy.setOutlineColor(sf::Color::Green);
     this->enemy.setOutlineThickness(1.f);
-
-
 }
 
 // Consturctions / Destructors
@@ -64,51 +62,63 @@ void Game::spawnEnemy()
     - adds enemy to hte vector
     */
     this->enemy.setPosition(
-        static_cast<float>(rand()% static_cast<int>(this->window->getSize().x - this->enemy.getSize().x)),
-        static_cast<float>(rand()% static_cast<int>(this->window->getSize().y - this->enemy.getSize().y))
+        static_cast<float>(rand() % static_cast<int>(this->window->getSize().x - this->enemy.getSize().x)),
+        0.f
     );
     this->enemy.setFillColor(sf::Color::Green);
 
-    //Spawn enemy
+    // Spawn enemy
     this->enemies.push_back(this->enemy);
-
 }
-
 
 void Game::updateEnemies()
 {
-    //Updateing the timer for enemy spawning
-    if(this->enemies.size() < this->maxEnemies)
+    // Updateing the timer for enemy spawning
+    if (this->enemies.size() < this->maxEnemies)
     {
-    
-        if(this->enemySpawnTimer >= this->enemySpawnTimerMax)
+
+        if (this->enemySpawnTime >= this->enemySpawnTimerMax)
+        {
             this->spawnEnemy();
-            this->enemySpawnTimer = 0.f;
+            this->enemySpawnTime = 0.f;
+        }
         else
-        this->enemySpawnTimer += 1.f;
+        {
+            this->enemySpawnTime += 1.f;
+        }
+    }
+
+    // Move the enemies
+    for (auto &e : this->enemies)
+    {
+        e.move(0.f, 1.f);
     }
 }
 
 void Game::renderEnemies()
 {
-    
-    
+    // REndering enemies
+    for (auto &e : this->enemies)
+    {
+        this->window->draw(e);
+    }
 }
+
 void Game::pollEvents()
 {
     while (this->window->pollEvent(this->ev))
     {
         switch (this->ev.type)
         {
-            case sf::Event::Closed:
+        case sf::Event::Closed:
             this->window->close();
             break;
         case sf::Event::KeyPressed:
-        if (this->ev.key.code == sf::Keyboard::Escape)
-        this->window->close();
-        break;
+            if (this->ev.key.code == sf::Keyboard::Escape)
+                this->window->close();
+            break;
+        }
     }
-}
 }
 
 void Game::updateMousePositions()
@@ -117,17 +127,15 @@ void Game::updateMousePositions()
     Updates the mouse postions
     * Mouse postions relateive to window (Vector2i)
     */
-   this->mousePosWindow = sf::Mouse::getPosition(*this->window);
+    this->mousePosWindow = sf::Mouse::getPosition(*this->window);
 }
-
-
 
 void Game::update()
 {
     this->pollEvents();
-    
-    this->updateMousePosition();
-    
+
+    this->updateMousePositions();
+
     this->updateEnemies();
 }
 
