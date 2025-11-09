@@ -35,11 +35,11 @@ int main() {
         //Update
 
         //Render
-        window.clear(); // clrea old frame
+        window.clear(sf::Color(255,255,255,255)); // clrea old frame
 
         // Draw your game
 
-        
+
         window.display(); // tell app that window is done draowing
 
     }
