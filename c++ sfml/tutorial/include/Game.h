@@ -50,6 +50,7 @@ public:
     const bool getWindowIsOpen() const;
 
     // Functions
+    
     void spawnEnemy();
     void updateMousePositions();
     void pollEvents();

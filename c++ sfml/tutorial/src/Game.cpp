@@ -4,6 +4,12 @@
 void Game::initializeVariables()
 {
     this->window = nullptr;
+
+    // Game Logic
+    this->points = 0;
+    this->enemySpawnTimerMax = 1000.f;
+    this->enemySpawnTimer = this->enemySpawnTimerMax;
+    this->maxEnemies = 5;
 }
 
 void Game::initWindow()
@@ -12,7 +18,7 @@ void Game::initWindow()
     this->videoMode.width = 800;
 
     this->window = new sf::RenderWindow(this->videoMode, "My first game (Tutorial)", sf::Style::Titlebar | sf::Style::Close);
-    this->window->setFramerateLimit(120);
+    this->window->setFramerateLimit(60);
 }
 
 void Game::initEnemies()
