@@ -2,6 +2,9 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <iostream>
+#include <vector>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
@@ -16,27 +19,44 @@
 class Game
 {
 private:
-    //Varibles
-    //Window
-    sf::RenderWindow* window;
+    // Varibles
+    // Window
+    sf::RenderWindow *window;
     sf::VideoMode videoMode;
     sf::Event ev;
 
-    //Prive functions
+    // Mouse positions
+    sf::Vector2i mousePosWindow;
+
+    // Game logic
+    int points;
+    float enemySpawnTime;
+    float enemySpawnTimerMax;
+    int maxEnemies;
+    // Game objects
+    std::vector<sf::RectangleShape> enemies;
+    sf::RectangleShape enemy;
+
+    // Prive functions
     void initializeVariables();
     void initWindow();
+    void initEnemies();
 
 public:
     // Constructors /Destructors
     Game();
     virtual ~Game();
-    //Accessors
+    // Accessors
     const bool getWindowIsOpen() const;
 
     // Functions
+    void spawnEnemy();
+    void updateMousePositions();
     void pollEvents();
     void update();
+    void updateEnemies();
     void render();
+    void renderEnemies();
 };
 
 #endif

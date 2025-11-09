@@ -177,10 +177,10 @@
       }
     },
     {
-      // Compile and run SFML project - works from any file in the project
+      // Compile and run SFML project - works from any file in any SFML project with src/include/bin structure
       "label": "Compile and Run SFML .cpp file",
       "type": "shell",
-      "command": "Set-Location -LiteralPath 'C:/Users/muaro/Documents/GitHub/Learning-assistent/c++ sfml/tutorial'; chcp 65001 >$null; g++ src/*.cpp -Iinclude -IC:/msys64/ucrt64/include -LC:/msys64/ucrt64/lib -o bin/main.exe -lsfml-graphics -lsfml-window -lsfml-system; if ($?) { & ./bin/main.exe }",
+      "command": "$projectRoot = Split-Path -Parent (Split-Path -Parent '${fileDirname}'); if (Test-Path \"$projectRoot/src\") { $projectRoot } else { $projectRoot = Split-Path -Parent '${fileDirname}'; if (Test-Path \"$projectRoot/src\") { $projectRoot } else { $projectRoot = '${fileDirname}' } }; Set-Location -LiteralPath $projectRoot; chcp 65001 >$null; $sourceFiles = Get-ChildItem -Path src -Filter *.cpp | ForEach-Object { $_.FullName }; g++ $sourceFiles -Iinclude -IC:/msys64/ucrt64/include -LC:/msys64/ucrt64/lib -o bin/main.exe -lsfml-graphics -lsfml-window -lsfml-system; if ($?) { & ./bin/main.exe }",
       "problemMatcher": [],
       "group": "build",
       "presentation": {
