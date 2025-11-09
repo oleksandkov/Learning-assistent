@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <vector>
+#include <ctime>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -50,7 +51,7 @@ public:
     const bool getWindowIsOpen() const;
 
     // Functions
-    
+
     void spawnEnemy();
     void updateMousePositions();
     void pollEvents();

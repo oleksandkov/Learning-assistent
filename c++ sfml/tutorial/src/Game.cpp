@@ -57,13 +57,27 @@ const bool Game::getWindowIsOpen() const
 
 void Game::spawnEnemy()
 {
-
+    /*
+    spawns enemies and sets theier colors and positions
+    - sets the random postions
+    - sets a random color
+    - adds enemy to hte vector
+    */
 
 }
 
 void Game::updateEnemies()
 {
+    //Updateing the timer for enemy spawning
+    if(this->enemies.size() < this->maxEnemies)
+    {
     
+        if(this->enemySpawnTimer >= this->enemySpawnTimerMax)
+            this->spawnEnemy();
+            this->enemySpawnTimer = 0.f;
+        else
+        this->enemySpawnTimer += 1.f;
+    }
 }
 
 void Game::renderEnemies()
