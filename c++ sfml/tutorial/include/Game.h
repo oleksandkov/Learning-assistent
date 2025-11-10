@@ -65,7 +65,7 @@ public:
     const bool getEndGame() const;
 
     // Functions
-    void renderText();
+    void renderText(sf::RenderTarget* target);
     void updateText();
     void spawnEnemy();
     void updateMousePositions();

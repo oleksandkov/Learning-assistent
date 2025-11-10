@@ -74,7 +74,11 @@ const bool Game::getEndGame() const
 }
 
 // Functions
+void Game::renderText()
+{
 
+
+}
 void Game::spawnEnemy()
 {
     /*
@@ -227,5 +231,6 @@ void Game::render()
 
     // Draw game objects
     this->renderEnemies();
+    this->renderText();
     this->window->display();
 }
