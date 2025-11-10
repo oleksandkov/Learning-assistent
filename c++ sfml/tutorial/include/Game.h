@@ -65,7 +65,8 @@ public:
     const bool getEndGame() const;
 
     // Functions
-
+    void renderText();
+    void updateText();
     void spawnEnemy();
     void updateMousePositions();
     void pollEvents();
