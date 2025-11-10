@@ -25,7 +25,14 @@ void Game::initWindow()
 }
 void Game::initFonts()
 {
-    this->font.loadFromFile("Fonts/GothicA1-Regular.ttf");
+    if(this->font.loadFromFile("Fonts/GothicA1-Regular.ttf"));
+    {
+        std::cout << "ERROR::GAME::INIFONTS::Failed to load font!" << "\n";
+    }
+}
+void Game::initText()
+{
+    this->uiText.setFont(this->font);
 }
 
 void Game::initEnemies()

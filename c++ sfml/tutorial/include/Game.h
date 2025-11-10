@@ -34,6 +34,9 @@ private:
     //Resources
     sf::Font font;
 
+    //Text
+    sf::Text uiText;
+
     // Game logic
     bool endGame;
     int health;
@@ -47,6 +50,7 @@ private:
     sf::RectangleShape enemy;
 
     // Prive functions
+    void initText();
     void initFonts();
     void initializeVariables();
     void initWindow();
