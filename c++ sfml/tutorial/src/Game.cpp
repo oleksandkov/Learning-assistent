@@ -2,6 +2,15 @@
 #include <sstream>
 
 // Private functions
+void Game::initEnemyFont()
+{
+    // Load a font for enemy text labels
+    if(!this->enemyFont.loadFromFile("Fonts/GothicA1-Regular.ttf"))
+    {
+        std::cout << "ERROR::GAME::INITENEMYFONT::Failed to load enemy font!" << "\n";
+    }
+}
+
 void Game::initializeVariables()
 {
     this->window = nullptr;
@@ -39,16 +48,6 @@ void Game::initText()
     this->uiText.setString("NONE");
 }
 
-void Game::initEnemies()
-{
-    this->enemy.setPosition(10.f, 10.f);
-    this->enemy.setSize(sf::Vector2f(100.f, 100.f));
-    // this->enemy.setScale(sf::Vector2f(0.5f, 0.5f));
-    this->enemy.setFillColor(sf::Color::Cyan);
-    // this->enemy.setOutlineColor(sf::Color::Green);
-    // this->enemy.setOutlineThickness(1.f);
-}
-
 // Consturctions / Destructors
 Game::Game()
 {
@@ -57,6 +56,7 @@ Game::Game()
     this->initWindow();
     this->initFonts();
     this->initText();
+    this->initEnemyFont(); 
     this->initEnemies();
 }
 
@@ -77,6 +77,14 @@ const bool Game::getEndGame() const
 }
 
 // Functions
+void Game::initEnemies()
+{
+    this->enemy.shape.setPosition(10.f, 10.f);
+    this->enemy.shape.setSize(sf::Vector2f(100.f, 100.f));
+    this->enemy.shape.setFillColor(sf::Color::Cyan);
+    this->enemy.isKeyboardEnemy = false;  // Default to mouse enemy
+    this->enemy.pointValue = 1;
+}
 
 void Game::updateText()
 {
@@ -96,64 +104,104 @@ void Game::renderText(sf::RenderTarget* target)
 }
 void Game::spawnEnemy()
 {
-    /*
-    spawns enemies and sets theier colors and positions
-    - sets the random postions
-    - sets a random color
-    - adds enemy to hte vector
-    */
-    this->enemy.setPosition(
-        static_cast<float>(rand() % static_cast<int>(this->window->getSize().x - this->enemy.getSize().x)),
+    // Position at random X, top of screen
+    this->enemy.shape.setPosition(
+        static_cast<float>(rand() % static_cast<int>(
+            this->window->getSize().x - this->enemy.shape.getSize().x)),
         0.f
     );
 
-    //Randomize enemy type
-    int type = rand() % 5;
+    // Randomize enemy type (now 0-7 for more variety)
+    int type = rand() % 8;
+    
     switch(type)
     {   
+        // MOUSE-BASED ENEMIES (original 5 types)
         case 0:
-            this->enemy.setFillColor(sf::Color::Magenta);
-            this->enemy.setSize(sf::Vector2f(10.f, 10.f));
+            this->enemy.shape.setFillColor(sf::Color::Magenta);
+            this->enemy.shape.setSize(sf::Vector2f(30.f, 30.f));
+            this->enemy.isKeyboardEnemy = false;
+            this->enemy.pointValue = 10;
             break;
         case 1:
-            this->enemy.setFillColor(sf::Color::Blue);
-            this->enemy.setSize(sf::Vector2f(30.f, 30.f));
+            this->enemy.shape.setFillColor(sf::Color::Blue);
+            this->enemy.shape.setSize(sf::Vector2f(30.f, 30.f));
+            this->enemy.isKeyboardEnemy = false;
+            this->enemy.pointValue = 7;
             break;
         case 2:
-            this->enemy.setFillColor(sf::Color::Cyan);
-            this->enemy.setSize(sf::Vector2f(50.f, 50.f));
+            this->enemy.shape.setFillColor(sf::Color::Cyan);
+            this->enemy.shape.setSize(sf::Vector2f(50.f, 50.f));
+            this->enemy.isKeyboardEnemy = false;
+            this->enemy.pointValue = 5;
             break;
         case 3:
-            this->enemy.setFillColor(sf::Color::Red);
-            this->enemy.setSize(sf::Vector2f(70.f, 70.f));
+            this->enemy.shape.setFillColor(sf::Color::Red);
+            this->enemy.shape.setSize(sf::Vector2f(70.f, 70.f));
+            this->enemy.isKeyboardEnemy = false;
+            this->enemy.pointValue = 3;
             break;
         case 4:
-            this->enemy.setFillColor(sf::Color::Green);
-            this->enemy.setSize(sf::Vector2f(100.f, 100.f));
+            this->enemy.shape.setFillColor(sf::Color::Green);
+            this->enemy.shape.setSize(sf::Vector2f(100.f, 100.f));
+            this->enemy.isKeyboardEnemy = false;
+            this->enemy.pointValue = 1;
+            break;
+            
+        // KEYBOARD-BASED ENEMIES (new types 5-7)
+        case 5:
+            // Enemy requiring 'A' key - Yellow with black border
+            this->enemy.shape.setFillColor(sf::Color::Yellow);
+            this->enemy.shape.setSize(sf::Vector2f(60.f, 60.f));
+            this->enemy.shape.setOutlineColor(sf::Color::Black);
+            this->enemy.shape.setOutlineThickness(2.f);
+            this->enemy.isKeyboardEnemy = true;
+            this->enemy.requiredKey = sf::Keyboard::A;
+            this->enemy.keyChar = 'A';
+            this->enemy.pointValue = 15;
+            break;
+            
+        case 6:
+            // Enemy requiring 'S' key - White with black border
+            this->enemy.shape.setFillColor(sf::Color::White);
+            this->enemy.shape.setSize(sf::Vector2f(60.f, 60.f));
+            this->enemy.shape.setOutlineColor(sf::Color::Black);
+            this->enemy.shape.setOutlineThickness(2.f);
+            this->enemy.isKeyboardEnemy = true;
+            this->enemy.requiredKey = sf::Keyboard::S;
+            this->enemy.keyChar = 'S';
+            this->enemy.pointValue = 15;
+            break;
+            
+        case 7:
+            // Enemy requiring 'D' key - Orange (Red + Green)
+            this->enemy.shape.setFillColor(sf::Color(255, 165, 0));  // Orange RGB
+            this->enemy.shape.setSize(sf::Vector2f(60.f, 60.f));
+            this->enemy.shape.setOutlineColor(sf::Color::Black);
+            this->enemy.shape.setOutlineThickness(2.f);
+            this->enemy.isKeyboardEnemy = true;
+            this->enemy.requiredKey = sf::Keyboard::D;
+            this->enemy.keyChar = 'D';
+            this->enemy.pointValue = 15;
             break;
             
         default:
-         this->enemy.setFillColor(sf::Color::Yellow);
-            this->enemy.setSize(sf::Vector2f(100.f, 100.f));
+            this->enemy.shape.setFillColor(sf::Color::Yellow);
+            this->enemy.shape.setSize(sf::Vector2f(100.f, 100.f));
+            this->enemy.isKeyboardEnemy = false;
+            this->enemy.pointValue = 1;
             break;
     }
 
-
-
-    // Spawn enemy
+    // Add to vector
     this->enemies.push_back(this->enemy);
-
-    //Remove enemies at end of screen
-
-
 }
 
 void Game::updateEnemies()
 {
-    // Updateing the timer for enemy spawning
+    // Spawn timer logic (unchanged)
     if (this->enemies.size() < this->maxEnemies)
     {
-
         if (this->enemySpawnTime >= this->enemySpawnTimerMax)
         {
             this->spawnEnemy();
@@ -168,70 +216,102 @@ void Game::updateEnemies()
     // Moving and updating enemies
     for (int i = 0; i < this->enemies.size(); i++)
     {
-        bool deleted = false;
-        this->enemies[i].move(0.f, 3.f);
+        // Move enemy down
+        this->enemies[i].shape.move(0.f, 3.f);
         
-        // IF the enemy is past the bottom of the screen
-        if(this->enemies[i].getPosition().y > this->window->getSize().y)
+        // Check if enemy fell off screen
+        if(this->enemies[i].shape.getPosition().y > this->window->getSize().y)
         {
             this->enemies.erase(this->enemies.begin() + i);
             this->health -= 1;
             std::cout << "Health: " << this->health << "\n";
+            continue;  // Skip to next iteration after erasing
         }
-        
-        // Check if clicked upon
-        
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    }
+    
+    // SEPARATE LOOP: Check for destruction (mouse clicks)
+    if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    {
+        if(this->mouseHeld == false)
         {
-            if(this->mouseHeld == false)
+            this->mouseHeld = true;
+            
+            for(int i = 0; i < this->enemies.size(); i++)
             {
-                this->mouseHeld = true;
-                bool deleted = false;
-                for(size_t i = 0; i < this->enemies.size() && deleted == false; i++)
+                // Only check MOUSE enemies
+                if(!this->enemies[i].isKeyboardEnemy && 
+                   this->enemies[i].shape.getGlobalBounds().contains(this->mousePosView))
                 {
-                    if (this->enemies[i].getGlobalBounds().contains(this->mousePosView))
-                    {
-                        
-                    // Gain points for killings
-                    if(this->enemies[i].getFillColor() == sf::Color::Magenta)
-                        this->points += 10;
-                    else if(this->enemies[i].getFillColor() == sf::Color::Blue)
-                        this->points += 7.f;
-                    else if(this->enemies[i].getFillColor() == sf::Color::Cyan)
-                        this->points += 5.f;
-                    else if(this->enemies[i].getFillColor() == sf::Color::Red)
-                        this->points += 3.f;
-                    else if(this->enemies[i].getFillColor() == sf::Color::Green)
-                        this->points += 1.f;
+                    // Award points
+                    this->points += this->enemies[i].pointValue;
                     std::cout << "Points: " << this->points << "\n";
-
-                    //Delete the enemy
-                        deleted = true;
-                        
+                    
+                    // Delete enemy
                     this->enemies.erase(this->enemies.begin() + i);
-                    }
-                
+                    break;  // Only destroy one per click
                 }
             }
         }
-        else 
+    }
+    else 
+    {
+        this->mouseHeld = false;
+    }
+    
+    // NEW: Check for destruction (keyboard presses)
+    for(int i = 0; i < this->enemies.size(); i++)
+    {
+        if(this->enemies[i].isKeyboardEnemy)
         {
-            this->mouseHeld = false;
+            // Check if the required key is pressed
+            if(sf::Keyboard::isKeyPressed(this->enemies[i].requiredKey))
+            {
+                // Award points
+                this->points += this->enemies[i].pointValue;
+                std::cout << "Key Enemy Destroyed! Points: " << this->points << "\n";
+                
+                // Delete enemy
+                this->enemies.erase(this->enemies.begin() + i);
+                i--;  // Adjust index after erasing
+                
+                // Small delay to prevent multiple detections
+                sf::sleep(sf::milliseconds(100));
+            }
         }
-        
-        
-    } 
+    }
 }
 
 void Game::renderEnemies(sf::RenderTarget* target)
 {
-    // REndering enemies
+    // Render all enemy shapes
     for (auto &e : this->enemies)
     {
-       target->draw(e);
+        target->draw(e.shape);
+        
+        // If it's a keyboard enemy, draw the required key on it
+        if(e.isKeyboardEnemy == true)
+        {
+            sf::Text keyText;
+            keyText.setFont(this->enemyFont);
+            keyText.setString(std::string(1, e.keyChar));  // Convert char to string
+            keyText.setCharacterSize(24);
+            keyText.setFillColor(sf::Color::Black);
+            
+            // Center the text on the enemy
+            sf::FloatRect textBounds = keyText.getLocalBounds();
+            keyText.setOrigin(
+                textBounds.left + textBounds.width / 2.0f,
+                textBounds.top + textBounds.height / 2.0f
+            );
+            keyText.setPosition(
+                e.shape.getPosition().x + e.shape.getSize().x / 2.0f,
+                e.shape.getPosition().y + e.shape.getSize().y / 2.0f
+            );
+            
+            target->draw(keyText);
+        }
     }
 }
-
 void Game::pollEvents()
 {
     while (this->window->pollEvent(this->ev))

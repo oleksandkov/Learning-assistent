@@ -14,14 +14,27 @@
 #include <SFML/Network.hpp>
 
 /*
-    Class that acts as the game engine
-    Wrapper class. Where all functions
+Class that acts as the game engine
+Wrapper class. Where all functions
 */
+
+// Enemy structure - must be defined BEFORE the Game class
+struct Enemy {
+    sf::RectangleShape shape;      // Visual representation
+    bool isKeyboardEnemy;          // true = keyboard, false = mouse
+    sf::Keyboard::Key requiredKey; // Which key destroys it
+    char keyChar;                  // Display character ('A', 'B', etc.)
+    int pointValue;                // How many points it's worth
+    
+    // Constructor with default values
+    Enemy() : isKeyboardEnemy(false), requiredKey(sf::Keyboard::Unknown), 
+              keyChar(' '), pointValue(1) {}
+};
 
 class Game
 {
-private:
-    // Varibles
+    private:
+    // Variables
     // Window
     sf::RenderWindow *window;
     sf::VideoMode videoMode;
@@ -47,8 +60,9 @@ private:
     int maxEnemies;
     bool mouseHeld;
     // Game objects
-    std::vector<sf::RectangleShape> enemies;
-    sf::RectangleShape enemy;
+    std::vector<Enemy> enemies;
+    Enemy enemy;
+    sf::Font enemyFont;
 
     // Prive functions
     void initText();
@@ -56,6 +70,7 @@ private:
     void initializeVariables();
     void initWindow();
     void initEnemies();
+    void initEnemyFont();
 
 public:
     // Constructors /Destructors
