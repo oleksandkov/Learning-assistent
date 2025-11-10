@@ -33,6 +33,9 @@ void Game::initFonts()
 void Game::initText()
 {
     this->uiText.setFont(this->font);
+    this->uiText.setCharacterSize(12);
+    this->uiText.setFillColor(sf::Color::White);
+    this->uiText.setString("NONE");
 }
 
 void Game::initEnemies()
