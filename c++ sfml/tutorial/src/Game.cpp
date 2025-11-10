@@ -25,7 +25,7 @@ void Game::initWindow()
 }
 void Game::initFonts()
 {
-    
+    this->font.loadFromFIle("F")
 }
 
 void Game::initEnemies()
