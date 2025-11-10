@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <sstream>
 
 // Private functions
 void Game::initializeVariables()
@@ -7,11 +8,11 @@ void Game::initializeVariables()
 
     // Game Logic
     this->endGame = false;
-    this->health = 10;
+    this->health = 25;
     this->points = 0;
-    this->enemySpawnTimerMax = 10.f;
+    this->enemySpawnTimerMax = 20.f;
     this->enemySpawnTime = this->enemySpawnTimerMax;
-    this->maxEnemies = 10;
+    this->maxEnemies = 5;
     this->mouseHeld = false;
 }
 
@@ -25,7 +26,7 @@ void Game::initWindow()
 }
 void Game::initFonts()
 {
-    if(this->font.loadFromFile("Fonts/GothicA1-Regular.ttf"));
+    if(this->font.loadFromFile("Fonts/GothicA1-Regular.ttf"))
     {
         std::cout << "ERROR::GAME::INIFONTS::Failed to load font!" << "\n";
     }
@@ -33,7 +34,7 @@ void Game::initFonts()
 void Game::initText()
 {
     this->uiText.setFont(this->font);
-    this->uiText.setCharacterSize(12);
+    this->uiText.setCharacterSize(24);
     this->uiText.setFillColor(sf::Color::White);
     this->uiText.setString("NONE");
 }
@@ -42,7 +43,7 @@ void Game::initEnemies()
 {
     this->enemy.setPosition(10.f, 10.f);
     this->enemy.setSize(sf::Vector2f(100.f, 100.f));
-    this->enemy.setScale(sf::Vector2f(0.5f, 0.5f));
+    // this->enemy.setScale(sf::Vector2f(0.5f, 0.5f));
     this->enemy.setFillColor(sf::Color::Cyan);
     // this->enemy.setOutlineColor(sf::Color::Green);
     // this->enemy.setOutlineThickness(1.f);
@@ -54,6 +55,8 @@ Game::Game()
 
     this->initializeVariables();
     this->initWindow();
+    this->initFonts();
+    this->initText();
     this->initEnemies();
 }
 
@@ -74,9 +77,21 @@ const bool Game::getEndGame() const
 }
 
 // Functions
-void Game::renderText()
-{
 
+void Game::updateText()
+{
+    std::stringstream ss;
+
+    ss << "Points: " << this->points << "\n"
+        << "Health: " << this->health << '\n';
+
+        this->uiText.setString(ss.str());
+}
+
+
+void Game::renderText(sf::RenderTarget* target)
+{
+    target->draw(this->uiText);
 
 }
 void Game::spawnEnemy()
@@ -91,7 +106,39 @@ void Game::spawnEnemy()
         static_cast<float>(rand() % static_cast<int>(this->window->getSize().x - this->enemy.getSize().x)),
         0.f
     );
-    this->enemy.setFillColor(sf::Color::Green);
+
+    //Randomize enemy type
+    int type = rand() % 5;
+    switch(type)
+    {   
+        case 0:
+            this->enemy.setFillColor(sf::Color::Magenta);
+            this->enemy.setSize(sf::Vector2f(10.f, 10.f));
+            break;
+        case 1:
+            this->enemy.setFillColor(sf::Color::Blue);
+            this->enemy.setSize(sf::Vector2f(30.f, 30.f));
+            break;
+        case 2:
+            this->enemy.setFillColor(sf::Color::Cyan);
+            this->enemy.setSize(sf::Vector2f(50.f, 50.f));
+            break;
+        case 3:
+            this->enemy.setFillColor(sf::Color::Red);
+            this->enemy.setSize(sf::Vector2f(70.f, 70.f));
+            break;
+        case 4:
+            this->enemy.setFillColor(sf::Color::Green);
+            this->enemy.setSize(sf::Vector2f(100.f, 100.f));
+            break;
+            
+        default:
+         this->enemy.setFillColor(sf::Color::Yellow);
+            this->enemy.setSize(sf::Vector2f(100.f, 100.f));
+            break;
+    }
+
+
 
     // Spawn enemy
     this->enemies.push_back(this->enemy);
@@ -144,13 +191,24 @@ void Game::updateEnemies()
                 {
                     if (this->enemies[i].getGlobalBounds().contains(this->mousePosView))
                     {
-                        //Delete the enemy
+                        
+                    // Gain points for killings
+                    if(this->enemies[i].getFillColor() == sf::Color::Magenta)
+                        this->points += 10;
+                    else if(this->enemies[i].getFillColor() == sf::Color::Blue)
+                        this->points += 7.f;
+                    else if(this->enemies[i].getFillColor() == sf::Color::Cyan)
+                        this->points += 5.f;
+                    else if(this->enemies[i].getFillColor() == sf::Color::Red)
+                        this->points += 3.f;
+                    else if(this->enemies[i].getFillColor() == sf::Color::Green)
+                        this->points += 1.f;
+                    std::cout << "Points: " << this->points << "\n";
+
+                    //Delete the enemy
                         deleted = true;
                         
                     this->enemies.erase(this->enemies.begin() + i);
-                    // Gain points for killings
-                    this->points += 10.f;
-                    std::cout << "Points: " << this->points << "\n";
                     }
                 
                 }
@@ -165,12 +223,12 @@ void Game::updateEnemies()
     } 
 }
 
-void Game::renderEnemies()
+void Game::renderEnemies(sf::RenderTarget* target)
 {
     // REndering enemies
     for (auto &e : this->enemies)
     {
-        this->window->draw(e);
+       target->draw(e);
     }
 }
 
@@ -209,6 +267,7 @@ void Game::update()
 
         
         this->updateMousePositions();
+        this->updateText();
         
         this->updateEnemies();
     }
@@ -230,7 +289,7 @@ void Game::render()
     this->window->clear();
 
     // Draw game objects
-    this->renderEnemies();
-    this->renderText();
+    this->renderEnemies(this->window);
+    this->renderText(this->window);
     this->window->display();
 }

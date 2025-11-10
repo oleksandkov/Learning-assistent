@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <ctime>
+#include <string>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -73,7 +74,7 @@ public:
     void update();
     void updateEnemies();
     void render();
-    void renderEnemies();
+    void renderEnemies(sf::RenderTarget* target);
 };
 
 #endif
