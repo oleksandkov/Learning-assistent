@@ -43,7 +43,7 @@ private:
     sf::Vector2f bodyVelocity;
     float startHeight;
     const float gravity = 400.f;
-    const float maxArmLength = 60.f;
+    const float maxArmLength = 80.f;  // Increased for better reach
     const float swingSpeed = 100.f;
     
     // Wall

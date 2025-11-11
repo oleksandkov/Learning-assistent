@@ -159,15 +159,15 @@ void ClimbingGame::handleInput(float deltaTime) {
     
     // Active hand controls (move the free hand)
     if (activeHand == HandControl::LEFT) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) moveActiveHand(0.f, -2.f);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) moveActiveHand(0.f, 2.f);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) moveActiveHand(-2.f, 0.f);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) moveActiveHand(2.f, 0.f);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) moveActiveHand(0.f, -3.f);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) moveActiveHand(0.f, 3.f);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) moveActiveHand(-3.f, 0.f);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) moveActiveHand(3.f, 0.f);
     } else {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) moveActiveHand(0.f, -2.f);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) moveActiveHand(0.f, 2.f);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) moveActiveHand(-2.f, 0.f);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) moveActiveHand(2.f, 0.f);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) moveActiveHand(0.f, -3.f);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) moveActiveHand(0.f, 3.f);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) moveActiveHand(-3.f, 0.f);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) moveActiveHand(3.f, 0.f);
     }
     
     // Passive hand controls body swing when other hand is active
@@ -296,7 +296,7 @@ void ClimbingGame::render() {
     controlText.setPosition(camera.getCenter().x - 380.f, camera.getCenter().y + 250.f);
     
     window.draw(heightText);
-    window.draw(controlText);
+    // window.draw(controlText);
     
     window.display();
 }
