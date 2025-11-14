@@ -3,12 +3,14 @@
 ## 1. Run the Program
 
 ### Option A: Using Batch File (Easiest)
+
 ```batch
 cd internet-speed-tracker
 compile.bat
 ```
 
 ### Option B: Using PowerShell
+
 ```powershell
 cd internet-speed-tracker
 $sourceFiles = "src/SpeedTester.cpp src/Logger.cpp src/Visualizer.cpp src/main.cpp"
@@ -20,10 +22,12 @@ g++ $sourceFiles $flags -o bin/speed_tracker.exe
 ## 2. What You'll See
 
 1. **Console Window**:
+
    - Status messages: "Running speed test..."
    - Speed results: Download/Upload/Ping values
 
 2. **SFML Visualization Window** (1200x700):
+
    - Green line = Download speed trend
    - Red line = Upload speed trend
    - Grid background for reference
@@ -36,6 +40,7 @@ g++ $sourceFiles $flags -o bin/speed_tracker.exe
 ## 3. How It Works
 
 **Continuous Monitoring Loop:**
+
 ```
 Start → Run Speed Test (Download, Upload, Ping)
        ↓
@@ -64,18 +69,21 @@ internet-speed-tracker/
 ## 5. Key Code Sections
 
 ### Speed Measurement
+
 ```cpp
 SpeedResult result = tester.runTest();
 // Returns: downloadSpeed, uploadSpeed, ping, isValid
 ```
 
 ### Logging Results
+
 ```cpp
 logger.logResult(result);
 // Appends to speed_log.csv
 ```
 
 ### Graph Rendering
+
 ```cpp
 visualizer.update(globalResults);  // Update data
 visualizer.render();               // Draw graphs
@@ -84,20 +92,26 @@ visualizer.render();               // Draw graphs
 ## 6. Customization
 
 ### Change Test Interval (default: 60 seconds)
+
 Edit `src/main.cpp` line ~46:
+
 ```cpp
 std::thread monitor(monitoringThread, std::ref(tester), std::ref(logger), 120);  // 120 seconds
 ```
 
 ### Change Window Size
+
 Edit `include/Visualizer.h`:
+
 ```cpp
 const int WINDOW_WIDTH = 1400;   // Change width
 const int WINDOW_HEIGHT = 800;   // Change height
 ```
 
 ### Use Different Test Server
+
 Edit `src/SpeedTester.cpp` constructor:
+
 ```cpp
 SpeedTester tester("http://speedtest.ftp.otenet.gr/files/test10Mb.db");
 ```
@@ -105,6 +119,7 @@ SpeedTester tester("http://speedtest.ftp.otenet.gr/files/test10Mb.db");
 ## 7. Understanding the Visualization
 
 **Graph Coordinates:**
+
 - **X-axis**: Time progression (left to right)
 - **Y-axis**: Speed in Mbps (bottom to top)
 - **Grid lines**: Reference for speed values
@@ -112,6 +127,7 @@ SpeedTester tester("http://speedtest.ftp.otenet.gr/files/test10Mb.db");
 - **Lines**: Speed trend over time
 
 **Statistics Panel:**
+
 - Tests: Total number of tests run
 - Avg Down: Average download speed
 - Avg Up: Average upload speed
@@ -120,6 +136,7 @@ SpeedTester tester("http://speedtest.ftp.otenet.gr/files/test10Mb.db");
 ## 8. Data Analysis
 
 ### Read Historical Data
+
 ```cpp
 Logger logger;
 auto results = logger.readLog();
@@ -127,6 +144,7 @@ auto results = logger.readLog();
 ```
 
 ### Calculate Statistics
+
 ```cpp
 double avgSpeed = tester.getAverageDownload();
 double avgUpload = tester.getAverageUpload();
@@ -135,13 +153,13 @@ double avgPing = tester.getAveragePing();
 
 ## 9. Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Window won't open | Check SFML libraries installed correctly |
-| Speed test shows 0 | Internet might be offline, check connectivity |
-| Font not found | Arial.ttf should be at C:/Windows/Fonts/ |
-| Compilation error | Ensure g++ path and SFML path are correct |
-| CSV file empty | Check file permissions, ensure /bin directory exists |
+| Issue              | Solution                                             |
+| ------------------ | ---------------------------------------------------- |
+| Window won't open  | Check SFML libraries installed correctly             |
+| Speed test shows 0 | Internet might be offline, check connectivity        |
+| Font not found     | Arial.ttf should be at C:/Windows/Fonts/             |
+| Compilation error  | Ensure g++ path and SFML path are correct            |
+| CSV file empty     | Check file permissions, ensure /bin directory exists |
 
 ## 10. Learning Takeaways
 
@@ -172,4 +190,3 @@ For issues or questions about the code, refer to README.md for detailed document
 ---
 
 **Happy Speed Monitoring!** 🚀
-

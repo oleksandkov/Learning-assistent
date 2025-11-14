@@ -31,23 +31,27 @@ internet-speed-tracker/
 ## Key Components
 
 ### SpeedTester Class
+
 - **measureDownloadSpeed()**: Uses curl to test download speed from test server
 - **measureUploadSpeed()**: Simulates upload test with PowerShell
 - **measurePing()**: Tests latency to Google DNS (8.8.8.8)
 - **runTest()**: Executes full test and stores result
 
 ### Visualizer Class
+
 - **SFML Window**: 1200x700 resolution, 30 FPS
 - **Graph Display**: Green line for download, red line for upload
 - **Statistics Panel**: Shows test count and averages
 - **Legend**: Easy identification of metrics
 
 ### Logger Class
+
 - **CSV Format**: Timestamp, Download, Upload, Ping
 - **File Append**: Continuous logging without overwriting
 - **Data Recovery**: Read log for historical analysis
 
 ### Monitoring System
+
 - **Background Thread**: Runs speed tests without blocking UI
 - **Configurable Interval**: Default 60 seconds between tests
 - **Thread-Safe**: Mutex protection for shared data
@@ -77,6 +81,7 @@ g++ $sourceFiles $flags -o bin/speed_tracker.exe
 ## Program Output
 
 ### Console Output
+
 ```
 Internet Speed Tracker - SFML Visualization
 Starting continuous monitoring (Test every 60 seconds)...
@@ -90,6 +95,7 @@ Download: 43.12 Mbps, Upload: 8.92 Mbps, Ping: 16.00 ms
 ```
 
 ### CSV Log File (speed_log.csv)
+
 ```
 Timestamp,Download(Mbps),Upload(Mbps),Ping(ms)
 2025-11-14 10:15:30,45.23,8.56,18.00
@@ -98,6 +104,7 @@ Timestamp,Download(Mbps),Upload(Mbps),Ping(ms)
 ```
 
 ### SFML Visualization
+
 - **Green Line**: Download speed trend
 - **Red Line**: Upload speed trend
 - **Grid**: Reference for speed values
@@ -158,19 +165,25 @@ monitoringThread()
 ## Customization
 
 ### Change Test Interval
+
 In `src/main.cpp`, line ~46:
+
 ```cpp
 std::thread monitor(monitoringThread, std::ref(tester), std::ref(logger), 60);  // 60 seconds
 ```
 
 ### Change Test Server
+
 In `src/SpeedTester.cpp`:
+
 ```cpp
 SpeedTester tester("http://your-test-server.com/test-file.db");
 ```
 
 ### Adjust Window Size
+
 In `include/Visualizer.h`:
+
 ```cpp
 const int WINDOW_WIDTH = 1200;
 const int WINDOW_HEIGHT = 700;
@@ -196,15 +209,18 @@ Library paths: C:/msys64/ucrt64/lib
 ## Common Issues
 
 ### Font Not Loading
+
 - Ensure Arial font is available at `C:/Windows/Fonts/arial.ttf`
 - Program continues without font but text won't display
 
 ### Speed Test Fails
+
 - Check internet connection
 - Verify curl.exe is available in PATH
 - Test server might be down - try alternative server URL
 
 ### SFML Window Won't Open
+
 - Verify SFML libraries are correctly installed
 - Check that all 3 SFML libs are linked (-lsfml-graphics -lsfml-window -lsfml-system)
 
@@ -222,6 +238,7 @@ Library paths: C:/msys64/ucrt64/lib
 ## Testing & Validation
 
 The program has been validated with:
+
 - Multiple consecutive speed tests
 - Graph rendering with 10+ data points
 - CSV file integrity after multiple tests
@@ -239,4 +256,3 @@ The program has been validated with:
 ## License
 
 Educational project for learning C++, SFML, and multi-threaded programming.
-
