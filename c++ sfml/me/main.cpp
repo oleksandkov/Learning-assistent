@@ -140,7 +140,7 @@ private:
 int main()
 {
     // Window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "The Game", sf::Style::Default);
+    sf::RenderWindow window(sf::VideoMode(800, 600), "The Game", sf::Style::Fullscreen);
     window.setFramerateLimit(60);
     // Objects
     Square x;
