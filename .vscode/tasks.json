@@ -189,6 +189,20 @@
         "focus": false,
         "panel": "shared"
       }
+    },
+    {
+      // Compile and run single SFML .cpp file - works from any individual .cpp file
+      "label": "Compile and Run Single SFML .cpp file",
+      "type": "shell",
+      "command": "Set-Location -LiteralPath '${fileDirname}'; chcp 65001 >$null; g++ '${fileBasename}' -IC:/msys64/ucrt64/include -LC:/msys64/ucrt64/lib -o '${fileBasenameNoExtension}.exe' -lsfml-graphics -lsfml-window -lsfml-system; if ($?) { & '.\\${fileBasenameNoExtension}.exe' }",
+      "problemMatcher": [],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
     }
     //         {
     //             "label": "Run Current .bat File (UTF-8) not cmd",
