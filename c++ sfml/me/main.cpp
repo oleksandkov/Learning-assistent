@@ -12,6 +12,7 @@ class Square : public sf::RectangleShape
 private:
     sf::Vector2f newPos;
     sf::Vector2f currentPos;
+    sf::Vector2f oldPos;
     bool hasReachedTarget;
 
 public:
@@ -26,16 +27,21 @@ public:
 
     // Functions
 
-    void moveSquareDynamic(float speed = 5.f)
+    void moveSquareDynamic(const Square &other, float speed = 5.f)
     {
+        oldPos =  getPosition();
+        
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            move(0.f, -speed);
+        move(0.f, -speed);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             move(0.f, speed);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             move(-speed, 0.f);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             move(speed, 0.f);
+
+            if(collidesWith(other))
+                setPosition(oldPos);
     }
 
     void setNewPos(float x, float y)
@@ -206,13 +212,8 @@ int main()
         }
 
         //Test collision
-        sf::Vector2f oldPosition = y.getPosition(); 
-        y.moveSquareDynamic();                      
-        if (y.collidesWith(x)) 
-        {
-            y.setPosition(oldPosition); 
-        }
-
+        y.moveSquareDynamic(x);                      
+        
         //ending
         window.clear(sf::Color::Blue);
 
