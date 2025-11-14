@@ -27,7 +27,14 @@ private:
         hasReachedTarget = true;
     };
     
-    
+    bool loseCondition(Square* other) 
+    {
+        if(getGlobalBounds().intersects(other->getGlobalBounds()))
+        {
+            return true; // Return true when collision detected
+        }
+        return false;
+    }
     
 
     void addToCollisionList(Square* other)
@@ -149,13 +156,21 @@ int main()
     Square y;
     y.setPosition(sf::Vector2f(400.f, 100.f));
 
+    Square floor;
+    floor.setPosition(sf::Vector2f(0.f, 500.f));
+    floor.setFillColor(sf::Color::Magenta);
+    floor.setSize(sf::Vector2f(800.f, 100.f));
     // Command sequence state
     int currentCommand_y = 0;
     int currentCommand_x = 0;
 
     // Add to collision lists
     x.addToCollisionList(&y);
+    // x.addToCollisionList(&floor);
     y.addToCollisionList(&x);
+    y.addToCollisionList(&floor);
+    floor.addToCollisionList(&x);
+    floor.addToCollisionList(&y);
 
     while (window.isOpen())
     {
@@ -208,12 +223,19 @@ int main()
             }
         }
 
+        // Lose condition check
+        if (y.loseCondition(&x))
+        {
+            window.close(); 
+        }
+        
         //Test collision
         y.moveSquareDynamic();                      
         
         //ending
         window.clear(sf::Color::Blue);
-
+        
+        window.draw(floor);
         window.draw(x);
         window.draw(y);
 
