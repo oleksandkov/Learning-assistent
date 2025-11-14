@@ -17,7 +17,9 @@ private:
     bool hasReachedTarget;
     std::vector<Square*> others;
     
-    public:
+public:
+    static long long int points;  
+    
     Square()
     {
         setSize(sf::Vector2f(100.f, 100.f));
@@ -26,7 +28,26 @@ private:
         setOutlineColor(sf::Color::Black);
         hasReachedTarget = true;
     };
-    
+    // Points logic
+    void getPoints(Square* floor)
+    {
+        sf::FloatRect thisBounds = getGlobalBounds();
+        sf::FloatRect floorBounds = floor->getGlobalBounds();
+        
+        float distanceToFloor = floorBounds.top - (thisBounds.top + thisBounds.height);
+        
+        if (distanceToFloor >= 0 && distanceToFloor <= 50.f)
+        {
+            points += 1; 
+        }
+    }
+
+    long long int showPoints()
+    {
+        return points;
+    }
+
+    // Lose condition functions
     bool loseCondition(Square* other) 
     {
         if(getGlobalBounds().intersects(other->getGlobalBounds()))
@@ -144,11 +165,26 @@ private:
     }
 };
 
+long long int Square::points = 0;
+
 int main()
 {
     // Window
     sf::RenderWindow window(sf::VideoMode(800, 600), "The Game", sf::Style::Fullscreen);
     window.setFramerateLimit(60);
+    
+    // Font and text setup
+    sf::Font font;
+    if (!font.loadFromFile("GothicA1-Regular.ttf")) {
+        std::cout << "Error loading font!" << std::endl;    
+    }
+    
+    sf::Text pointsText;
+    pointsText.setFont(font);
+    pointsText.setCharacterSize(24);
+    pointsText.setFillColor(sf::Color::White);
+    pointsText.setPosition(10.f, 10.f);
+    
     // Objects
     Square x;
     x.setPosition(sf::Vector2f(100.f, 100.f));
@@ -160,25 +196,27 @@ int main()
     floor.setPosition(sf::Vector2f(0.f, 500.f));
     floor.setFillColor(sf::Color::Magenta);
     floor.setSize(sf::Vector2f(800.f, 100.f));
+    
     // Command sequence state
     int currentCommand_y = 0;
     int currentCommand_x = 0;
 
     // Add to collision lists
-    x.addToCollisionList(&y);
+    // x.addToCollisionList(&y);
     // x.addToCollisionList(&floor);
-    y.addToCollisionList(&x);
+    // y.addToCollisionList(&x);
     y.addToCollisionList(&floor);
     floor.addToCollisionList(&x);
     floor.addToCollisionList(&y);
 
+    
     while (window.isOpen())
     {
         sf::Event event;
         while (window.pollEvent(event))
         {
             if (event.type == sf::Event::Closed)
-                window.close();
+            window.close();
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
                 window.close();
         }
@@ -222,10 +260,22 @@ int main()
                 currentCommand_x = 0; 
             }
         }
+        // Points - track and display when changed
+        static long long int oldPoints = 0;  
+        y.getPoints(&floor);
+        if (Square::points != oldPoints) {  
+            std::cout << "Points: " << Square::points << std::endl;
+            oldPoints = Square::points;  
+        }
+        // Update points text
+        pointsText.setString("Points: " + std::to_string(Square::points));
+        
+
 
         // Lose condition check
         if (y.loseCondition(&x))
         {
+            std::cout << "Game Over! Final Points: " << Square::points << std::endl;
             window.close(); 
         }
         
@@ -235,6 +285,7 @@ int main()
         //ending
         window.clear(sf::Color::Blue);
         
+        window.draw(pointsText);
         window.draw(floor);
         window.draw(x);
         window.draw(y);
