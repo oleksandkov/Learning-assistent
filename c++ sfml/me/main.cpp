@@ -29,7 +29,11 @@ public:
         setOutlineColor(sf::Color::Black);
         hasReachedTarget = true;
     };
-
+    // Teleport
+    void teleport(float x, float y)
+    {
+        setPosition(x, y);
+    }
     // Points logic
     void getPoints(Square *object)
     {
@@ -221,10 +225,14 @@ int main()
     Square y;
     y.setPosition(sf::Vector2f(400.f, 100.f));
     y.setScale(sf::Vector2f(0.5f, 0.5f));
+    y.setFillColor(sf::Color::Yellow);
 
     Square z;
     z.setPosition(sf::Vector2f(-50.f, 200.f));
     z.setScale(sf::Vector2f(0.6f, 0.6f));
+    Square z_1;
+    z_1.setPosition(sf::Vector2f(-50.f, 200.f));
+    z_1.setScale(sf::Vector2f(0.5f, 0.5f));
 
     Square floor;
     floor.setPosition(sf::Vector2f(0.f, 500.f));
@@ -233,14 +241,14 @@ int main()
 
     Square pointArea;
     pointArea.setSize(sf::Vector2f(35.f, 35.f));
-    pointArea.setFillColor(sf::Color(255, 255, 255, 100));
+    pointArea.setFillColor(sf::Color(0, 255, 0, 100));
     pointArea.setPosition(sf::Vector2f(300.f, 300.f));
 
     // Command sequence state
     int currentCommand_y = 0;
     int currentCommand_x = 0;
     int currentCommand_z = 0;
-
+    int currentCommand_z1 = 0;
     // Add to collision lists
     // x.addToCollisionList(&y);
     // x.addToCollisionList(&floor);
@@ -311,7 +319,7 @@ int main()
         //      if (z.isAtTarget())  currentCommand_z = 0;
         //  }
 
-        static sf::Clock pauseTimer;
+        static sf::Clock pauseTimer_z;
         static bool isPausing = false;
 
         if (currentCommand_z == 0 && !isPausing)
@@ -321,13 +329,13 @@ int main()
             if (z.isAtTarget())
             {
                 isPausing = true;
-                pauseTimer.restart();
+                pauseTimer_z.restart();
             }
         }
         else if (currentCommand_z == 0 && isPausing)
         {
 
-            if (pauseTimer.getElapsedTime().asSeconds() > 2.0f)
+            if (pauseTimer_z.getElapsedTime().asSeconds() > 2.0f)
             {
                 currentCommand_z = 1;
                 isPausing = false;
@@ -340,18 +348,110 @@ int main()
             if (z.isAtTarget())
             {
                 isPausing = true;
-                pauseTimer.restart();
+                pauseTimer_z.restart();
             }
         }
         else if (currentCommand_z == 1 && isPausing)
         {
 
-            if (pauseTimer.getElapsedTime().asSeconds() > 2.0f)
+            if (pauseTimer_z.getElapsedTime().asSeconds() > 2.0f)
             {
                 currentCommand_z = 0;
                 isPausing = false;
             }
         }
+        // Move z1
+        static sf::Clock pauseTimer_z1;
+        static bool isPausing_z1 = false;
+        static int pathChoice = 0;
+        static bool pathChosen = false;
+        
+        if (!pathChosen) {
+            srand(time(NULL));
+            pathChoice = rand() % 2;
+            pathChosen = true;
+        }
+        
+        if (pathChoice == 0) {
+            if (currentCommand_z1 == 0 && !isPausing_z1) 
+            {
+                z_1.setNewPos(850.f, 460.f);
+                z_1.moveSquare(10.f);
+                if (z_1.isAtTarget())
+                {
+                    isPausing_z1 = true;
+                    pauseTimer_z1.restart();
+                }
+            } 
+            else if (currentCommand_z1 == 0 && isPausing_z1)
+            {
+                if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
+                {
+                    currentCommand_z1 = 1;
+                    isPausing_z1 = false;
+                }
+            } 
+            else if (currentCommand_z1 == 1 && !isPausing_z1)
+            {
+                z_1.setNewPos(-80.f, -20.f);
+                z_1.moveSquare(10.f);
+                if (z_1.isAtTarget())
+                {
+                    isPausing_z1 = true;
+                    pauseTimer_z1.restart();
+                }
+            } 
+            else if (currentCommand_z1 == 1 && isPausing_z1)
+            {
+                if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
+                {
+                    currentCommand_z1 = 0;
+                    isPausing_z1 = false;
+                    pathChosen = false; // Allow new path selection
+                }
+            }
+        }
+        else if (pathChoice == 1)
+        {
+            if (currentCommand_z1 == 0 && !isPausing_z1) 
+            {
+                z_1.setNewPos(870.f, 30.f);
+                z_1.moveSquare(10.f);
+                if (z_1.isAtTarget())
+                {
+                    isPausing_z1 = true;
+                    pauseTimer_z1.restart();
+                }
+            } 
+            else if (currentCommand_z1 == 0 && isPausing_z1)
+            {
+                if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
+                {
+                    currentCommand_z1 = 1;
+                    isPausing_z1 = false;
+                }
+            } 
+            else if (currentCommand_z1 == 1 && !isPausing_z1)
+            {
+                z_1.setNewPos(-80.f, 400.f);
+                z_1.moveSquare(10.f);
+                if (z_1.isAtTarget())
+                {
+                    isPausing_z1 = true;
+                    pauseTimer_z1.restart();
+                }
+            } 
+            else if (currentCommand_z1 == 1 && isPausing_z1)
+            {
+                if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
+                {
+                    currentCommand_z1 = 0;
+                    isPausing_z1 = false;
+                    pathChosen = false; // Allow new path selection
+                }
+            }
+        }
+
 
         // Points - track and display when changed
         static long long int oldPoints = 0;
@@ -369,7 +469,7 @@ int main()
         timerText.setString("Time: " + std::to_string((int)currentTime) + "s");
 
         // Lose condition check
-        if (y.loseCondition(&x) || y.loseCondition(&z))
+        if (y.loseCondition(&x) || y.loseCondition(&z) || y.loseCondition(&z_1))
         {
             std::cout << "Game Over! Final Points: " << Square::points << std::endl;
             window.close();
@@ -384,6 +484,7 @@ int main()
         window.draw(x);
         window.draw(y);
         window.draw(z);
+        window.draw(z_1);
         window.draw(pointsText);
         window.draw(timerText);
         window.draw(floor);
