@@ -35,42 +35,48 @@ private:
         others.push_back(other);
     }
 
-    void globalCollisionCheck()
+    bool globalCollisionCheck()
     {
         for (size_t i = 0; i < others.size(); i++)
         {
-            oldPos = getPosition();
             if(collidesWith(*others[i]))
             {
-                setPosition(oldPos);
+                return true;
             }
         }
-        
+        return false;
     }
-    // bool collidesWithAny() {
-    //     for (Square* other : others) {
-    //         if (other != this && collidesWith(*other)) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
 
-    void moveSquareDynamic(const Square &other, float speed = 5.f)
+    void moveSquareDynamic(float speed = 5.f)
     {
-        oldPos =  getPosition();
-        
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-        move(0.f, -speed);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            move(0.f, speed);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            move(-speed, 0.f);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            move(speed, 0.f);
-
-            if(collidesWith(other))
+        {
+            oldPos = getPosition();
+            move(0.f, -speed);
+            if(globalCollisionCheck())
                 setPosition(oldPos);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        {
+            oldPos = getPosition();
+            move(0.f, speed);
+            if(globalCollisionCheck())
+                setPosition(oldPos);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        {
+            oldPos = getPosition();
+            move(-speed, 0.f);
+            if(globalCollisionCheck())
+                setPosition(oldPos);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        {
+            oldPos = getPosition();
+            move(speed, 0.f);
+            if(globalCollisionCheck())
+                setPosition(oldPos);
+        }
     }
 
     void setNewPos(float x, float y)
@@ -90,26 +96,9 @@ private:
         return getGlobalBounds().intersects(other.getGlobalBounds());
     }
 
-    // void moveSquare(float speed = 2.f)
-    // {
-    //     sf::Vector2f currentPos = getPosition();
-    //     sf::Vector2f direction = newPos - currentPos;
-    //     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
-
-    //     if (distance > speed)
-    //     {
-    //         direction /= distance;
-    //         move(direction.x * speed, direction.y * speed);
-    //     }
-    //     else if (distance > 0)
-    //     {
-    //         setPosition(newPos);
-    //         hasReachedTarget = true;
-    //     }
-    // }
-
-    // Funcitons
-    void moveSquare(const Square &other, float speed = 2.f)
+   
+    // Functions
+    void moveSquare(float speed = 2.f)
     {
         sf::Vector2f currentPos = getPosition();
         sf::Vector2f direction = newPos - currentPos;
@@ -124,7 +113,7 @@ private:
             sf::Vector2f oldPos = getPosition();
             setPosition(nextPos); 
 
-            if (collidesWith(other))
+            if (globalCollisionCheck())
             {
                 setPosition(oldPos);
             }
@@ -136,7 +125,7 @@ private:
             sf::Vector2f oldPos = getPosition();
             setPosition(newPos); 
 
-            if (collidesWith(other)) 
+            if (globalCollisionCheck())
             {
                 setPosition(oldPos); 
             }
@@ -164,6 +153,10 @@ int main()
     int currentCommand_y = 0;
     int currentCommand_x = 0;
 
+    // Add to collision lists
+    x.addToCollisionList(&y);
+    y.addToCollisionList(&x);
+
     while (window.isOpen())
     {
         sf::Event event;
@@ -175,38 +168,13 @@ int main()
                 window.close();
         }
 
-        // Update - Sequential command execution
-        // Move y
-        // if (currentCommand_y == 0)
-        // {
-        //     if (!y.isAtTarget())
-        //     {
-        //         y.moveSquare();
-        //     }
-        //     else
-        //     {
-        //         y.setNewPos(400.f, 400.f);
-        //         currentCommand_y = 1;
-        //     }
-        // }
-        // else if (currentCommand_y == 1)
-        // {
-        //     if (!y.isAtTarget())
-        //     {
-        //         y.moveSquare();
-        //     }
-        //     else
-        //     {
-        //         y.setNewPos(100.f, 100.f);
-        //         currentCommand_y = 0;
-        //     }
-        // }
+        
 
         // Move x 
         if (currentCommand_x == 0)
         {
             x.setNewPos(100.f, 400.f);   
-            x.moveSquare(y); 
+            x.moveSquare(); 
             if (x.isAtTarget())
             {
                 currentCommand_x = 1;
@@ -215,7 +183,7 @@ int main()
         else if (currentCommand_x == 1)
         {
             x.setNewPos(400.f, 400.f);    
-            x.moveSquare(y); 
+            x.moveSquare(); 
             if (x.isAtTarget())
             {
                 currentCommand_x = 2;
@@ -224,7 +192,7 @@ int main()
         else if (currentCommand_x == 2)
         {
             x.setNewPos(400.f, 100.f);    
-            x.moveSquare(y); 
+            x.moveSquare(); 
             if (x.isAtTarget())
             {
                 currentCommand_x = 3;
@@ -233,7 +201,7 @@ int main()
         else if (currentCommand_x == 3)
         {
             x.setNewPos(100.f, 100.f);    
-            x.moveSquare(y); 
+            x.moveSquare(); 
             if (x.isAtTarget())
             {
                 currentCommand_x = 0; 
@@ -241,7 +209,7 @@ int main()
         }
 
         //Test collision
-        y.moveSquareDynamic(x);                      
+        y.moveSquareDynamic();                      
         
         //ending
         window.clear(sf::Color::Blue);
@@ -254,3 +222,14 @@ int main()
 
     return 0;
 }
+
+
+
+
+// --- Code Explanation ---
+// File extension: .cpp
+// Total lines: 226
+// Comment lines: 9
+// Empty lines: 36
+// Functions detected: 8
+// This file contains code in .cpp. Add more details as needed.
