@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <vector>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/System.hpp>
@@ -14,8 +15,9 @@ private:
     sf::Vector2f currentPos;
     sf::Vector2f oldPos;
     bool hasReachedTarget;
-
-public:
+    std::vector<Square*> others;
+    
+    public:
     Square()
     {
         setSize(sf::Vector2f(100.f, 100.f));
@@ -24,8 +26,19 @@ public:
         setOutlineColor(sf::Color::Black);
         hasReachedTarget = true;
     };
+    
+    
+    
 
-    // Functions
+   
+    bool collidesWithAny() {
+        for (Square* other : others) {
+            if (other != this && collidesWith(*other)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     void moveSquareDynamic(const Square &other, float speed = 5.f)
     {
@@ -61,23 +74,23 @@ public:
         return getGlobalBounds().intersects(other.getGlobalBounds());
     }
 
-    void moveSquare(float speed = 2.f)
-    {
-        sf::Vector2f currentPos = getPosition();
-        sf::Vector2f direction = newPos - currentPos;
-        float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+    // void moveSquare(float speed = 2.f)
+    // {
+    //     sf::Vector2f currentPos = getPosition();
+    //     sf::Vector2f direction = newPos - currentPos;
+    //     float distance = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-        if (distance > speed)
-        {
-            direction /= distance;
-            move(direction.x * speed, direction.y * speed);
-        }
-        else if (distance > 0)
-        {
-            setPosition(newPos);
-            hasReachedTarget = true;
-        }
-    }
+    //     if (distance > speed)
+    //     {
+    //         direction /= distance;
+    //         move(direction.x * speed, direction.y * speed);
+    //     }
+    //     else if (distance > 0)
+    //     {
+    //         setPosition(newPos);
+    //         hasReachedTarget = true;
+    //     }
+    // }
 
     // Funcitons
     void moveSquare(const Square &other, float speed = 2.f)
