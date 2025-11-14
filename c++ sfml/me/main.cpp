@@ -30,15 +30,31 @@ private:
     
     
 
-   
-    bool collidesWithAny() {
-        for (Square* other : others) {
-            if (other != this && collidesWith(*other)) {
-                return true;
+    void addToCollisionList(Square* other)
+    {
+        others.push_back(other);
+    }
+
+    void globalCollisionCheck()
+    {
+        for (size_t i = 0; i < others.size(); i++)
+        {
+            oldPos = getPosition();
+            if(collidesWith(*others[i]))
+            {
+                setPosition(oldPos);
             }
         }
-        return false;
+        
     }
+    // bool collidesWithAny() {
+    //     for (Square* other : others) {
+    //         if (other != this && collidesWith(*other)) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 
     void moveSquareDynamic(const Square &other, float speed = 5.f)
     {
