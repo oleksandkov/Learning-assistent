@@ -358,14 +358,14 @@ int main()
     boostSpead.setPosition(sf::Vector2f(300.f, 250.f));
     boostSpead.setSize(sf::Vector2f(200.f, 50.f));
     boostSpead.setFillColor(sf::Color(255, 255, 255, 128));
-    boostSpead.setButtonText("Boost Speed (+5pts)", 20, sf::Color::Black);
+    boostSpead.setButtonText("Boost Speed (+2pts)", 20, sf::Color::Black);
 
     Button boostTimeImmune;
     boostTimeImmune.setFont(font);
     boostTimeImmune.setPosition(sf::Vector2f(300.f, 320.f));
     boostTimeImmune.setSize(sf::Vector2f(200.f, 50.f));
     boostTimeImmune.setFillColor(sf::Color(255, 255, 255, 128));
-    boostTimeImmune.setButtonText("Time Immune (2sec)", 20, sf::Color::Black);
+    boostTimeImmune.setButtonText("Time Immune (1sec)", 20, sf::Color::Black);
 
     Button back;
     back.setFont(font);
@@ -385,7 +385,7 @@ int main()
     winText.setFont(font);
     winText.setCharacterSize(48);
     winText.setFillColor(sf::Color::White);
-    winText.setPosition(250.f, 250.f);
+    winText.setPosition(300.f, 100.f);
     winText.setString("You Win!");
 
     // Command sequence state
@@ -711,10 +711,10 @@ int main()
             if (!showUpgradeWindow)
             {
                 // Game Over window
+                window.draw(gameOverWindow);
                 window.draw(upgrades);
                 window.draw(upgrades.getText());
 
-                window.draw(gameOverWindow);
                 window.draw(restartButton);
                 window.draw(restartButton.getText());
                 window.draw(exitButton);
@@ -797,13 +797,16 @@ int main()
         }
         if (gameOver && wincheck)
         {
-            window.draw(winText);
-            window.draw(finalPoints);
-            finalPoints.setString("Final Points: " + std::to_string(Square::points));
             window.draw(gameOverWindow);
+            window.draw(winText);
+            // window.draw(finalPoints);
+            // finalPoints.setString("Final Points: " + std::to_string(Square::points));
             window.draw(restartButton);
             window.draw(restartButton.getText());
             restartButton.isHover(window);
+            window.draw(exitButton);
+            window.draw(exitButton.getText());
+            exitButton.isHover(window);
 
             if (restartButton.isClicked(gameEvent, window))
             {
@@ -820,6 +823,10 @@ int main()
                 currentCommand_z = 0;
                 currentCommand_z1 = 0;
                 currentCommand_z2 = 0;
+            }
+            if (exitButton.isClicked(gameEvent, window))
+            {
+                window.close();
             }
         }
 
