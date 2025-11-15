@@ -267,7 +267,13 @@ int main()
     window.setFramerateLimit(60);
 
     // Game logic global
+    bool wincheck = false;
     bool gameOver = false;
+    bool showUpgradeWindow = false;
+    float mainspead = 5.f;
+    float *changeminaspead = &mainspead;
+    float immuneTime = 2.f;
+    float *changeimmuneTime = &immuneTime;
 
     // Font and text setup
     sf::Font font;
@@ -338,6 +344,49 @@ int main()
     exitButton.setSize(sf::Vector2f(200.f, 50.f));
     exitButton.setFillColor(sf::Color(255, 255, 255, 128));
     exitButton.setButtonText("Exit Game", 24, sf::Color::Black);
+
+    // Upgrade buttons and logic
+    Button upgrades;
+    upgrades.setFont(font);
+    upgrades.setPosition(sf::Vector2f(600.f, 10.f));
+    upgrades.setSize(sf::Vector2f(190.f, 50.f));
+    upgrades.setFillColor(sf::Color(255, 255, 255, 128));
+    upgrades.setButtonText("Upgrades", 24, sf::Color::Black);
+
+    Button boostSpead;
+    boostSpead.setFont(font);
+    boostSpead.setPosition(sf::Vector2f(300.f, 250.f));
+    boostSpead.setSize(sf::Vector2f(200.f, 50.f));
+    boostSpead.setFillColor(sf::Color(255, 255, 255, 128));
+    boostSpead.setButtonText("Boost Speed (+5pts)", 20, sf::Color::Black);
+
+    Button boostTimeImmune;
+    boostTimeImmune.setFont(font);
+    boostTimeImmune.setPosition(sf::Vector2f(300.f, 320.f));
+    boostTimeImmune.setSize(sf::Vector2f(200.f, 50.f));
+    boostTimeImmune.setFillColor(sf::Color(255, 255, 255, 128));
+    boostTimeImmune.setButtonText("Time Immune (2sec)", 20, sf::Color::Black);
+
+    Button back;
+    back.setFont(font);
+    back.setPosition(sf::Vector2f(300.f, 390.f));
+    back.setSize(sf::Vector2f(200.f, 50.f));
+    back.setFillColor(sf::Color(255, 255, 255, 128));
+    back.setButtonText("Back", 24, sf::Color::Black);
+
+    sf::Text finalPoints;
+    finalPoints.setFont(font);
+    finalPoints.setCharacterSize(32);
+    finalPoints.setFillColor(sf::Color::White);
+    finalPoints.setPosition(300.f, 150.f);
+
+    // Win window
+    sf::Text winText;
+    winText.setFont(font);
+    winText.setCharacterSize(48);
+    winText.setFillColor(sf::Color::White);
+    winText.setPosition(250.f, 250.f);
+    winText.setString("You Win!");
 
     // Command sequence state
     int currentCommand_y = 0;
@@ -616,19 +665,23 @@ int main()
             // Update timer text
             float currentTime = gameTimer.getElapsedTime().asSeconds();
             timerText.setString("Time: " + std::to_string((int)currentTime) + "s");
-
-        } // End of !gameOver block
+        }
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Lose condition check
-        if (((y.loseCondition(&x) || y.loseCondition(&z) || y.loseCondition(&z_1) || y.loseCondition(&z_2)) && gameTimer.getElapsedTime().asSeconds() > 2.f) || gameTimer.getElapsedTime().asSeconds() > 60.f)
+        if (((y.loseCondition(&x) || y.loseCondition(&z) || y.loseCondition(&z_1) || y.loseCondition(&z_2)) && gameTimer.getElapsedTime().asSeconds() > immuneTime) || gameTimer.getElapsedTime().asSeconds() > 60.f)
         {
             gameOver = true;
+        }
+        // win condition check
+        if (Square::points >= 10000)
+        {
+            gameOver = true;
+            wincheck = true;
         }
 
         if (!gameOver)
         {
-
-            y.moveSquareDynamic(5.f, 800.f, 600.f);
+            y.moveSquareDynamic(mainspead, 800.f, 600.f);
             if (gameTimer.getElapsedTime().asSeconds() < 2.f)
             {
                 y.setFillColor(sf::Color(255, 255, 0, 128));
@@ -652,40 +705,94 @@ int main()
         window.draw(floor);
         window.draw(pointArea);
 
-        if (gameOver)
+        if (gameOver && !wincheck)
         {
-            // Stop timer and other preceses
 
-            // Game Over window
-            window.draw(gameOverWindow);
-            window.draw(restartButton);
-            window.draw(restartButton.getText());
-            window.draw(exitButton);
-            window.draw(exitButton.getText());
-
-            restartButton.isHover(window);
-            exitButton.isHover(window);
-
-            if (restartButton.isClicked(gameEvent, window))
+            if (!showUpgradeWindow)
             {
-                // Reset game state
-                gameOver = false;
-                Square::points = 0;
-                gameTimer.restart();
-                x.setPosition(sf::Vector2f(100.f, 100.f));
-                y.setPosition(sf::Vector2f(400.f, 100.f));
-                z.setPosition(sf::Vector2f(-50.f, 200.f));
-                z_1.setPosition(sf::Vector2f(-50.f, 200.f));
-                z_2.setPosition(sf::Vector2f(-50.f, 200.f));
-                currentCommand_x = 0;
-                currentCommand_z = 0;
-                currentCommand_z1 = 0;
-                currentCommand_z2 = 0;
+                // Game Over window
+                window.draw(upgrades);
+                window.draw(upgrades.getText());
+
+                window.draw(gameOverWindow);
+                window.draw(restartButton);
+                window.draw(restartButton.getText());
+                window.draw(exitButton);
+                window.draw(exitButton.getText());
+
+                restartButton.isHover(window);
+                exitButton.isHover(window);
+                upgrades.isHover(window);
+
+                if (restartButton.isClicked(gameEvent, window))
+                {
+                    // Reset game state
+                    gameOver = false;
+                    Square::points = 0;
+                    gameTimer.restart();
+                    x.setPosition(sf::Vector2f(100.f, 100.f));
+                    y.setPosition(sf::Vector2f(400.f, 100.f));
+                    z.setPosition(sf::Vector2f(-50.f, 200.f));
+                    z_1.setPosition(sf::Vector2f(-50.f, 200.f));
+                    z_2.setPosition(sf::Vector2f(-50.f, 200.f));
+                    currentCommand_x = 0;
+                    currentCommand_z = 0;
+                    currentCommand_z1 = 0;
+                    currentCommand_z2 = 0;
+                }
+
+                if (exitButton.isClicked(gameEvent, window))
+                {
+                    window.close();
+                }
+
+                if (upgrades.isClicked(gameEvent, window))
+                {
+                    showUpgradeWindow = true;
+                }
             }
-
-            if (exitButton.isClicked(gameEvent, window))
+            else
             {
-                window.close();
+                // Upgrade window
+                window.draw(gameOverWindow);
+                window.draw(boostSpead);
+                window.draw(boostSpead.getText());
+                window.draw(boostTimeImmune);
+                window.draw(boostTimeImmune.getText());
+                window.draw(back);
+                window.draw(back.getText());
+
+                boostSpead.isHover(window);
+                boostTimeImmune.isHover(window);
+                back.isHover(window);
+
+                window.draw(finalPoints);
+                finalPoints.setString("Final Points: " + std::to_string(Square::points));
+
+                if (boostSpead.isClicked(gameEvent, window))
+                {
+
+                    if (Square::points >= 500.f)
+                    {
+
+                        *changeminaspead += 2.f;
+                        Square::points -= 500.f;
+                    }
+                }
+
+                if (boostTimeImmune.isClicked(gameEvent, window))
+                {
+                    if (Square::points >= 1000.f)
+                    {
+                        *changeimmuneTime += 1.f;
+                        Square::points -= 1000.f;
+                    }
+                }
+
+                if (back.isClicked(gameEvent, window))
+                {
+                    showUpgradeWindow = false;
+                }
             }
         }
 
