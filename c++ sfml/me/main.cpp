@@ -291,6 +291,19 @@ int main()
     pointArea.setFillColor(sf::Color(0, 255, 0, 100));
     pointArea.setPosition(sf::Vector2f(300.f, 300.f));
 
+    // Game over windwo
+
+    sf::RectangleShape gameOverWindow;
+    gameOverWindow.setSize(sf::Vector2f(800.f, 600.f));
+    gameOverWindow.setFillColor(sf::Color(0, 0, 0, 200));
+
+    Button restartButton;
+    restartButton.setPosition(sf::Vector2f(300.f, 250.f));
+    restartButton.setSize(sf::Vector2f(200.f, 50.f));
+
+    Button exitButton;
+    exitButton.setPosition(sf::Vector2f(300.f, 350.f));
+    exitButton.setSize(sf::Vector2f(200.f, 50.f));
     // Command sequence state
     int currentCommand_y = 0;
     int currentCommand_x = 0;
@@ -574,9 +587,9 @@ int main()
 
         // Lose condition check
 
-        if (((y.loseCondition(&x) || y.loseCondition(&z) || y.loseCondition(&z_1) || y.loseCondition(&z_2)) && gameTimer.getElapsedTime().asSeconds() > 2.) && gameTimer.getElapsedTime().asSeconds() > 60.f)
+        if ((((y.loseCondition(&x) || y.loseCondition(&z) || y.loseCondition(&z_1) || y.loseCondition(&z_2)) && gameTimer.getElapsedTime().asSeconds() > 2.) && gameTimer.getElapsedTime().asSeconds() > 60.f) && !gameOver == false)
         {
-            std::cout << "Game Over! Final Points: " << Square::points << std::endl;
+            // Game Over windwo
         }
 
         // Test collision
