@@ -89,6 +89,8 @@ private:
 
 public:
     static long long int points;
+    
+    static int point_value;
 
     Square()
     {
@@ -111,7 +113,8 @@ public:
 
         if (thisBounds.intersects(objectBounds))
         {
-            points += 1;
+            point_value = 1;
+            points += point_value;
         }
     }
 
@@ -259,6 +262,7 @@ public:
 };
 
 long long int Square::points = 0;
+int Square::point_value = 1;
 
 int main()
 {
@@ -270,10 +274,15 @@ int main()
     bool wincheck = false;
     bool gameOver = false;
     bool showUpgradeWindow = false;
+    bool showDifficultyWindow = true; 
     float mainspead = 5.f;
     float *changeminaspead = &mainspead;
     float immuneTime = 2.f;
     float *changeimmuneTime = &immuneTime;
+    bool gameStart = false;
+    bool spawnEnemy_z = false;   
+    bool spawnEnemy_z1 = false;  
+    bool spawnEnemy_z2 = false;  
 
     // Font and text setup
     sf::Font font;
@@ -369,10 +378,18 @@ int main()
 
     Button back;
     back.setFont(font);
-    back.setPosition(sf::Vector2f(300.f, 390.f));
+    back.setPosition(sf::Vector2f(300.f, 460.f));
     back.setSize(sf::Vector2f(200.f, 50.f));
     back.setFillColor(sf::Color(255, 255, 255, 128));
     back.setButtonText("Back", 24, sf::Color::Black);
+
+    Button upagredPoints;
+    upagredPoints.setFont(font);
+    upagredPoints.setPosition(sf::Vector2f(300.f, 390.f));
+    upagredPoints.setSize(sf::Vector2f(200.f, 50.f));
+    upagredPoints.setFillColor(sf::Color(255, 255, 255, 128));
+    upagredPoints.setButtonText("Point Gain (+0.5)", 20, sf::Color::Black);
+
 
     sf::Text finalPoints;
     finalPoints.setFont(font);
@@ -387,6 +404,31 @@ int main()
     winText.setFillColor(sf::Color::White);
     winText.setPosition(300.f, 100.f);
     winText.setString("You Win!");
+
+    // Difficulty 
+    Button difficultyEasy;
+    difficultyEasy.setFont(font);
+    difficultyEasy.setPosition(sf::Vector2f(300.f, 250.f));
+    difficultyEasy.setSize(sf::Vector2f(200.f, 50.f));
+    difficultyEasy.setFillColor(sf::Color(255, 255, 255, 128));
+    difficultyEasy.setButtonText("Easy", 24, sf::Color::Black);
+
+    Button difficultyMedium;
+    difficultyMedium.setFont(font);
+    difficultyMedium.setPosition(sf::Vector2f(300.f, 320.f));
+    difficultyMedium.setSize(sf::Vector2f(200.f, 50.f));
+    difficultyMedium.setFillColor(sf::Color(255, 255, 255, 128));
+    difficultyMedium.setButtonText("Medium", 24, sf::Color::Black);
+
+    Button difficultyHard;
+    difficultyHard.setFont(font);
+    difficultyHard.setPosition(sf::Vector2f(300.f, 390.f));
+    difficultyHard.setSize(sf::Vector2f(200.f, 50.f));
+    difficultyHard.setFillColor(sf::Color(255, 255, 255, 128));
+    difficultyHard.setButtonText("Hard", 24, sf::Color::Black);
+
+
+
 
     // Command sequence state
     int currentCommand_y = 0;
@@ -417,6 +459,51 @@ int main()
         // Store evetns
 
         gameEvent = event;
+
+        // Display difficulty selection window before game starts
+        if (showDifficultyWindow)
+        {
+            difficultyEasy.isHover(window);
+            difficultyMedium.isHover(window);
+            difficultyHard.isHover(window);
+
+            if (difficultyEasy.isClicked(gameEvent, window))
+            {
+                mainspead = 5.f;
+                immuneTime = 2.f;
+                // Easy: Only 1 enemy (x)
+                spawnEnemy_z = false;
+                spawnEnemy_z1 = false;
+                spawnEnemy_z2 = false;
+                showDifficultyWindow = false;
+                gameStart = true;
+                gameTimer.restart();
+            }
+            if (difficultyMedium.isClicked(gameEvent, window))
+            {
+                mainspead = 5.f;
+                immuneTime = 2.f;
+                // Medium: 2 enemies (x and z)
+                spawnEnemy_z = true;
+                spawnEnemy_z1 = false;
+                spawnEnemy_z2 = false;
+                showDifficultyWindow = false;
+                gameStart = true;
+                gameTimer.restart();
+            }
+            if (difficultyHard.isClicked(gameEvent, window))
+            {
+                mainspead = 5.f;
+                immuneTime = 2.f;
+                // Hard: 3 enemies (x, z, and z1 OR z2)
+                spawnEnemy_z = true;
+                spawnEnemy_z1 = true;
+                spawnEnemy_z2 = true;
+                showDifficultyWindow = false;
+                gameStart = true;
+                gameTimer.restart();
+            }
+        }
 
         if (!gameOver)
         {
@@ -464,42 +551,45 @@ int main()
             static sf::Clock pauseTimer_z;
             static bool isPausing = false;
 
-            if (currentCommand_z == 0 && !isPausing)
+            if (spawnEnemy_z)
             {
-                z.setNewPos(870.f, 200.f);
-                z.moveSquare(15.f);
-                if (z.isAtTarget())
+                if (currentCommand_z == 0 && !isPausing)
                 {
-                    isPausing = true;
-                    pauseTimer_z.restart();
+                    z.setNewPos(870.f, 200.f);
+                    z.moveSquare(15.f);
+                    if (z.isAtTarget())
+                    {
+                        isPausing = true;
+                        pauseTimer_z.restart();
+                    }
                 }
-            }
-            else if (currentCommand_z == 0 && isPausing)
-            {
+                else if (currentCommand_z == 0 && isPausing)
+                {
 
-                if (pauseTimer_z.getElapsedTime().asSeconds() > 2.0f)
-                {
-                    currentCommand_z = 1;
-                    isPausing = false;
+                    if (pauseTimer_z.getElapsedTime().asSeconds() > 2.0f)
+                    {
+                        currentCommand_z = 1;
+                        isPausing = false;
+                    }
                 }
-            }
-            else if (currentCommand_z == 1 && !isPausing)
-            {
-                z.setNewPos(-60.f, 200.f);
-                z.moveSquare(15.f);
-                if (z.isAtTarget())
+                else if (currentCommand_z == 1 && !isPausing)
                 {
-                    isPausing = true;
-                    pauseTimer_z.restart();
+                    z.setNewPos(-60.f, 200.f);
+                    z.moveSquare(15.f);
+                    if (z.isAtTarget())
+                    {
+                        isPausing = true;
+                        pauseTimer_z.restart();
+                    }
                 }
-            }
-            else if (currentCommand_z == 1 && isPausing)
-            {
+                else if (currentCommand_z == 1 && isPausing)
+                {
 
-                if (pauseTimer_z.getElapsedTime().asSeconds() > 2.0f)
-                {
-                    currentCommand_z = 0;
-                    isPausing = false;
+                    if (pauseTimer_z.getElapsedTime().asSeconds() > 2.0f)
+                    {
+                        currentCommand_z = 0;
+                        isPausing = false;
+                    }
                 }
             }
             // Move z1
@@ -508,90 +598,93 @@ int main()
             static int pathChoice = 0;
             static bool pathChosen = false;
 
-            if (!pathChosen)
+            if (spawnEnemy_z1)
             {
-                srand(time(NULL));
-                pathChoice = rand() % 2;
-                pathChosen = true;
-            }
+                if (!pathChosen)
+                {
+                    srand(time(NULL));
+                    pathChoice = rand() % 2;
+                    pathChosen = true;
+                }
 
-            if (pathChoice == 0)
-            {
-                if (currentCommand_z1 == 0 && !isPausing_z1)
+                if (pathChoice == 0)
                 {
-                    z_1.setNewPos(850.f, 460.f);
-                    z_1.moveSquare(10.f);
-                    if (z_1.isAtTarget())
+                    if (currentCommand_z1 == 0 && !isPausing_z1)
                     {
-                        isPausing_z1 = true;
-                        pauseTimer_z1.restart();
+                        z_1.setNewPos(850.f, 460.f);
+                        z_1.moveSquare(10.f);
+                        if (z_1.isAtTarget())
+                        {
+                            isPausing_z1 = true;
+                            pauseTimer_z1.restart();
+                        }
+                    }
+                    else if (currentCommand_z1 == 0 && isPausing_z1)
+                    {
+                        if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
+                        {
+                            currentCommand_z1 = 1;
+                            isPausing_z1 = false;
+                        }
+                    }
+                    else if (currentCommand_z1 == 1 && !isPausing_z1)
+                    {
+                        z_1.setNewPos(-80.f, -20.f);
+                        z_1.moveSquare(10.f);
+                        if (z_1.isAtTarget())
+                        {
+                            isPausing_z1 = true;
+                            pauseTimer_z1.restart();
+                        }
+                    }
+                    else if (currentCommand_z1 == 1 && isPausing_z1)
+                    {
+                        if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
+                        {
+                            currentCommand_z1 = 0;
+                            isPausing_z1 = false;
+                            pathChosen = false; // Allow new path selection
+                        }
                     }
                 }
-                else if (currentCommand_z1 == 0 && isPausing_z1)
+                else if (pathChoice == 1)
                 {
-                    if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
+                    if (currentCommand_z1 == 0 && !isPausing_z1)
                     {
-                        currentCommand_z1 = 1;
-                        isPausing_z1 = false;
+                        z_1.setNewPos(870.f, 30.f);
+                        z_1.moveSquare(10.f);
+                        if (z_1.isAtTarget())
+                        {
+                            isPausing_z1 = true;
+                            pauseTimer_z1.restart();
+                        }
                     }
-                }
-                else if (currentCommand_z1 == 1 && !isPausing_z1)
-                {
-                    z_1.setNewPos(-80.f, -20.f);
-                    z_1.moveSquare(10.f);
-                    if (z_1.isAtTarget())
+                    else if (currentCommand_z1 == 0 && isPausing_z1)
                     {
-                        isPausing_z1 = true;
-                        pauseTimer_z1.restart();
+                        if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
+                        {
+                            currentCommand_z1 = 1;
+                            isPausing_z1 = false;
+                        }
                     }
-                }
-                else if (currentCommand_z1 == 1 && isPausing_z1)
-                {
-                    if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
+                    else if (currentCommand_z1 == 1 && !isPausing_z1)
                     {
-                        currentCommand_z1 = 0;
-                        isPausing_z1 = false;
-                        pathChosen = false; // Allow new path selection
+                        z_1.setNewPos(-80.f, 400.f);
+                        z_1.moveSquare(10.f);
+                        if (z_1.isAtTarget())
+                        {
+                            isPausing_z1 = true;
+                            pauseTimer_z1.restart();
+                        }
                     }
-                }
-            }
-            else if (pathChoice == 1)
-            {
-                if (currentCommand_z1 == 0 && !isPausing_z1)
-                {
-                    z_1.setNewPos(870.f, 30.f);
-                    z_1.moveSquare(10.f);
-                    if (z_1.isAtTarget())
+                    else if (currentCommand_z1 == 1 && isPausing_z1)
                     {
-                        isPausing_z1 = true;
-                        pauseTimer_z1.restart();
-                    }
-                }
-                else if (currentCommand_z1 == 0 && isPausing_z1)
-                {
-                    if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
-                    {
-                        currentCommand_z1 = 1;
-                        isPausing_z1 = false;
-                    }
-                }
-                else if (currentCommand_z1 == 1 && !isPausing_z1)
-                {
-                    z_1.setNewPos(-80.f, 400.f);
-                    z_1.moveSquare(10.f);
-                    if (z_1.isAtTarget())
-                    {
-                        isPausing_z1 = true;
-                        pauseTimer_z1.restart();
-                    }
-                }
-                else if (currentCommand_z1 == 1 && isPausing_z1)
-                {
-                    if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
-                    {
-                        currentCommand_z1 = 0;
-                        isPausing_z1 = false;
-                        pathChosen = false; // Allow new path selection
+                        if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
+                        {
+                            currentCommand_z1 = 0;
+                            isPausing_z1 = false;
+                            pathChosen = false; // Allow new path selection
+                        }
                     }
                 }
             }
@@ -602,51 +695,54 @@ int main()
             static float randy2 = 0.0f;
             static bool initialized_z2 = false;
 
-            if (!initialized_z2)
+            if (spawnEnemy_z2)
             {
-                srand(time(NULL));
-                randy1 = static_cast<float>(rand() % 500);
-                randy2 = static_cast<float>(rand() % 500);
-                z_2.teleport(-80.f, randy1);
-                initialized_z2 = true;
-            }
+                if (!initialized_z2)
+                {
+                    srand(time(NULL));
+                    randy1 = static_cast<float>(rand() % 500);
+                    randy2 = static_cast<float>(rand() % 500);
+                    z_2.teleport(-80.f, randy1);
+                    initialized_z2 = true;
+                }
 
-            if (initialized_z2)
-            {
-                if (currentCommand_z2 == 0 && !isPausing_z2)
+                if (initialized_z2)
                 {
-                    z_2.setNewPos(870.f, randy1);
-                    z_2.moveSquare(12.f);
-                    if (z_2.isAtTarget())
+                    if (currentCommand_z2 == 0 && !isPausing_z2)
                     {
-                        isPausing_z2 = true;
-                        pauseTimer_z2.restart();
+                        z_2.setNewPos(870.f, randy1);
+                        z_2.moveSquare(12.f);
+                        if (z_2.isAtTarget())
+                        {
+                            isPausing_z2 = true;
+                            pauseTimer_z2.restart();
+                        }
                     }
-                }
-                else if (currentCommand_z2 == 0 && isPausing_z2)
-                {
-                    if (pauseTimer_z2.getElapsedTime().asSeconds() > 2.0f)
+                    else if (currentCommand_z2 == 0 && isPausing_z2)
                     {
-                        currentCommand_z2 = 1;
-                        isPausing_z2 = false;
+                        if (pauseTimer_z2.getElapsedTime().asSeconds() > 2.0f)
+                        {
+                            currentCommand_z2 = 1;
+                            isPausing_z2 = false;
+                        }
                     }
-                }
-                else if (currentCommand_z2 == 1 && !isPausing_z2)
-                {
-                    z_2.setNewPos(-80.f, randy2);
-                    z_2.moveSquare(12.f);
-                    if (z_2.isAtTarget())
+                    else if (currentCommand_z2 == 1 && !isPausing_z2)
                     {
-                        isPausing_z2 = true;
-                        pauseTimer_z2.restart();
+                        z_2.setNewPos(-80.f, randy2);
+                        z_2.moveSquare(12.f);
+                        if (z_2.isAtTarget())
+                        {
+                            isPausing_z2 = true;
+                            pauseTimer_z2.restart();
+                        }
                     }
-                }
-                else if (currentCommand_z2 == 1 && isPausing_z2)
-                {
-                    if (pauseTimer_z2.getElapsedTime().asSeconds() > 2.0f)
+                    else if (currentCommand_z2 == 1 && isPausing_z2)
                     {
-                        currentCommand_z2 = 0;
-                        isPausing_z2 = false;
+                        if (pauseTimer_z2.getElapsedTime().asSeconds() > 2.0f)
+                        {
+                            currentCommand_z2 = 0;
+                            isPausing_z2 = false;
+                        }
                     }
                 }
             }
@@ -668,7 +764,7 @@ int main()
         }
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Lose condition check
-        if (((y.loseCondition(&x) || y.loseCondition(&z) || y.loseCondition(&z_1) || y.loseCondition(&z_2)) && gameTimer.getElapsedTime().asSeconds() > immuneTime) || gameTimer.getElapsedTime().asSeconds() > 60.f)
+        if (((y.loseCondition(&x) || y.loseCondition(&z) || y.loseCondition(&z_1) || y.loseCondition(&z_2)) && gameTimer.getElapsedTime().asSeconds() > immuneTime) || gameTimer.getElapsedTime().asSeconds() > 300.f)
         {
             gameOver = true;
         }
@@ -697,13 +793,28 @@ int main()
 
         window.draw(x);
         window.draw(y);
-        window.draw(z);
-        window.draw(z_1);
-        window.draw(z_2);
+        if (spawnEnemy_z)
+            window.draw(z);
+        if (spawnEnemy_z1)
+            window.draw(z_1);
+        if (spawnEnemy_z2)
+            window.draw(z_2);
         window.draw(pointsText);
         window.draw(timerText);
         window.draw(floor);
         window.draw(pointArea);
+
+        // Display difficulty window overlay
+        if (showDifficultyWindow)
+        {
+            window.draw(gameOverWindow);
+            window.draw(difficultyEasy);
+            window.draw(difficultyEasy.getText());
+            window.draw(difficultyMedium);
+            window.draw(difficultyMedium.getText());
+            window.draw(difficultyHard);
+            window.draw(difficultyHard.getText());
+        }
 
         if (gameOver && !wincheck)
         {
@@ -765,9 +876,21 @@ int main()
                 boostSpead.isHover(window);
                 boostTimeImmune.isHover(window);
                 back.isHover(window);
+                upagredPoints.isHover(window);
+                window.draw(upagredPoints);
+                window.draw(upagredPoints.getText());
 
                 window.draw(finalPoints);
                 finalPoints.setString("Final Points: " + std::to_string(Square::points));
+
+                if (upagredPoints.isClicked(gameEvent, window))
+                {
+                    if (Square::points >= 400.f)
+                    {
+                        Square::point_value += 0.5;
+                        Square::points -= 400.f;
+                    }
+                }
 
                 if (boostSpead.isClicked(gameEvent, window))
                 {
