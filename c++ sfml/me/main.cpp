@@ -9,6 +9,47 @@
 
 #include "Game.cpp"
 
+class Button : public sf::RectangleShape
+{
+private:
+    sf::RectangleShape button;
+    sf::RectangleShape blackBackgound;
+    sf::Text buttonText;
+
+public:
+    Button()
+    {
+        setSize(sf::Vector2f(200.f, 100.f));
+        setFillColor(sf::Color(200, 200, 200, 200));
+        setOutlineThickness(2.f);
+        setOutlineColor(sf::Color::Black);
+    };
+
+    void isHover()
+    {
+        if (getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)))
+        {
+            setFillColor(sf::Color(255, 255, 255, 255));
+        }
+        else
+        {
+            setFillColor(sf::Color(200, 200, 200, 200));
+        }
+    }
+
+    bool isClicked(sf::Event event)
+    {
+        if (event.type == sf::Event::MouseButtonPressed)
+        {
+            if (getGlobalBounds().contains(sf::Vector2f(sf::Mouse::getPosition().x, sf::Mouse::getPosition().y)))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
 class Square : public sf::RectangleShape
 {
 private:
@@ -197,6 +238,9 @@ int main()
     sf::RenderWindow window(sf::VideoMode(800, 600), "The Game", sf::Style::Default);
     window.setFramerateLimit(60);
 
+    // Game logic global
+    bool gameOver = false;
+
     // Font and text setup
     sf::Font font;
     if (!font.loadFromFile("GothicA1-Regular.ttf"))
@@ -225,28 +269,28 @@ int main()
     Square y;
     y.setPosition(sf::Vector2f(400.f, 100.f));
     y.setScale(sf::Vector2f(0.5f, 0.5f));
-    
+
     Square z;
     z.setPosition(sf::Vector2f(-50.f, 200.f));
     z.setScale(sf::Vector2f(0.6f, 0.6f));
     Square z_1;
     z_1.setPosition(sf::Vector2f(-50.f, 200.f));
     z_1.setScale(sf::Vector2f(0.5f, 0.5f));
-    
+
     Square z_2;
     z_2.setPosition(sf::Vector2f(-50.f, 200.f));
     z_2.setScale(sf::Vector2f(0.5f, 0.5f));
-    
+
     Square floor;
     floor.setPosition(sf::Vector2f(0.f, 500.f));
     floor.setFillColor(sf::Color::Magenta);
     floor.setSize(sf::Vector2f(800.f, 100.f));
-    
+
     Square pointArea;
     pointArea.setSize(sf::Vector2f(35.f, 35.f));
     pointArea.setFillColor(sf::Color(0, 255, 0, 100));
     pointArea.setPosition(sf::Vector2f(300.f, 300.f));
-    
+
     // Command sequence state
     int currentCommand_y = 0;
     int currentCommand_x = 0;
@@ -261,8 +305,7 @@ int main()
     floor.addToCollisionList(&x);
     floor.addToCollisionList(&y);
 
-    
-    while (window.isOpen() && gameTimer.getElapsedTime().asSeconds() < 60.f)
+    while (window.isOpen())
     {
         sf::Event event;
         while (window.pollEvent(event))
@@ -531,21 +574,21 @@ int main()
 
         // Lose condition check
 
-        if ((y.loseCondition(&x) || y.loseCondition(&z) || y.loseCondition(&z_1) || y.loseCondition(&z_2)) && gameTimer.getElapsedTime().asSeconds() > 2.f)
+        if (((y.loseCondition(&x) || y.loseCondition(&z) || y.loseCondition(&z_1) || y.loseCondition(&z_2)) && gameTimer.getElapsedTime().asSeconds() > 2.) && gameTimer.getElapsedTime().asSeconds() > 60.f)
         {
             std::cout << "Game Over! Final Points: " << Square::points << std::endl;
-            window.close();
         }
 
         // Test collision
         y.moveSquareDynamic(5.f, 800.f, 600.f);
         if (gameTimer.getElapsedTime().asSeconds() < 2.f)
-    {
-        y.setFillColor(sf::Color(255, 255, 0, 128)); 
-    } else
-    {
-        y.setFillColor(sf::Color::Yellow);
-    }
+        {
+            y.setFillColor(sf::Color(255, 255, 0, 128));
+        }
+        else
+        {
+            y.setFillColor(sf::Color::Yellow);
+        }
 
         // ending
         window.clear(sf::Color::Blue);
