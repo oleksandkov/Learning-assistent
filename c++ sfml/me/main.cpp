@@ -225,35 +225,34 @@ int main()
     Square y;
     y.setPosition(sf::Vector2f(400.f, 100.f));
     y.setScale(sf::Vector2f(0.5f, 0.5f));
-    y.setFillColor(sf::Color::Yellow);
-
+    
     Square z;
     z.setPosition(sf::Vector2f(-50.f, 200.f));
     z.setScale(sf::Vector2f(0.6f, 0.6f));
     Square z_1;
     z_1.setPosition(sf::Vector2f(-50.f, 200.f));
     z_1.setScale(sf::Vector2f(0.5f, 0.5f));
-
+    
     Square z_2;
     z_2.setPosition(sf::Vector2f(-50.f, 200.f));
     z_2.setScale(sf::Vector2f(0.5f, 0.5f));
-
+    
     Square floor;
     floor.setPosition(sf::Vector2f(0.f, 500.f));
     floor.setFillColor(sf::Color::Magenta);
     floor.setSize(sf::Vector2f(800.f, 100.f));
-
+    
     Square pointArea;
     pointArea.setSize(sf::Vector2f(35.f, 35.f));
     pointArea.setFillColor(sf::Color(0, 255, 0, 100));
     pointArea.setPosition(sf::Vector2f(300.f, 300.f));
-
+    
     // Command sequence state
     int currentCommand_y = 0;
     int currentCommand_x = 0;
     int currentCommand_z = 0;
     int currentCommand_z1 = 0;
-     int currentCommand_z2 = 0;
+    int currentCommand_z2 = 0;
     // Add to collision lists
     // x.addToCollisionList(&y);
     // x.addToCollisionList(&floor);
@@ -262,6 +261,7 @@ int main()
     floor.addToCollisionList(&x);
     floor.addToCollisionList(&y);
 
+    
     while (window.isOpen() && gameTimer.getElapsedTime().asSeconds() < 60.f)
     {
         sf::Event event;
@@ -370,15 +370,17 @@ int main()
         static bool isPausing_z1 = false;
         static int pathChoice = 0;
         static bool pathChosen = false;
-        
-        if (!pathChosen) {
+
+        if (!pathChosen)
+        {
             srand(time(NULL));
             pathChoice = rand() % 2;
             pathChosen = true;
         }
-        
-        if (pathChoice == 0) {
-            if (currentCommand_z1 == 0 && !isPausing_z1) 
+
+        if (pathChoice == 0)
+        {
+            if (currentCommand_z1 == 0 && !isPausing_z1)
             {
                 z_1.setNewPos(850.f, 460.f);
                 z_1.moveSquare(10.f);
@@ -387,7 +389,7 @@ int main()
                     isPausing_z1 = true;
                     pauseTimer_z1.restart();
                 }
-            } 
+            }
             else if (currentCommand_z1 == 0 && isPausing_z1)
             {
                 if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
@@ -395,7 +397,7 @@ int main()
                     currentCommand_z1 = 1;
                     isPausing_z1 = false;
                 }
-            } 
+            }
             else if (currentCommand_z1 == 1 && !isPausing_z1)
             {
                 z_1.setNewPos(-80.f, -20.f);
@@ -405,7 +407,7 @@ int main()
                     isPausing_z1 = true;
                     pauseTimer_z1.restart();
                 }
-            } 
+            }
             else if (currentCommand_z1 == 1 && isPausing_z1)
             {
                 if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
@@ -418,7 +420,7 @@ int main()
         }
         else if (pathChoice == 1)
         {
-            if (currentCommand_z1 == 0 && !isPausing_z1) 
+            if (currentCommand_z1 == 0 && !isPausing_z1)
             {
                 z_1.setNewPos(870.f, 30.f);
                 z_1.moveSquare(10.f);
@@ -427,7 +429,7 @@ int main()
                     isPausing_z1 = true;
                     pauseTimer_z1.restart();
                 }
-            } 
+            }
             else if (currentCommand_z1 == 0 && isPausing_z1)
             {
                 if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
@@ -435,7 +437,7 @@ int main()
                     currentCommand_z1 = 1;
                     isPausing_z1 = false;
                 }
-            } 
+            }
             else if (currentCommand_z1 == 1 && !isPausing_z1)
             {
                 z_1.setNewPos(-80.f, 400.f);
@@ -445,7 +447,7 @@ int main()
                     isPausing_z1 = true;
                     pauseTimer_z1.restart();
                 }
-            } 
+            }
             else if (currentCommand_z1 == 1 && isPausing_z1)
             {
                 if (pauseTimer_z1.getElapsedTime().asSeconds() > 3.0f)
@@ -463,54 +465,55 @@ int main()
         static float randy2 = 0.0f;
         static bool initialized_z2 = false;
 
-        if (!initialized_z2) {
-            srand(time(NULL)); 
+        if (!initialized_z2)
+        {
+            srand(time(NULL));
             randy1 = static_cast<float>(rand() % 500);
             randy2 = static_cast<float>(rand() % 500);
             z_2.teleport(-80.f, randy1);
             initialized_z2 = true;
         }
-        
-        if (initialized_z2) {
-            if (currentCommand_z2 == 0 && !isPausing_z2) 
-            {
-            z_2.setNewPos(870.f, randy1);
-            z_2.moveSquare(12.f);
-            if (z_2.isAtTarget())
-            {
-                isPausing_z2 = true;
-                pauseTimer_z2.restart();
-            }
-        } 
-        else if (currentCommand_z2 == 0 && isPausing_z2)
+
+        if (initialized_z2)
         {
-            if (pauseTimer_z2.getElapsedTime().asSeconds() > 2.0f)
+            if (currentCommand_z2 == 0 && !isPausing_z2)
             {
-                currentCommand_z2 = 1;
-                isPausing_z2 = false;
-                
+                z_2.setNewPos(870.f, randy1);
+                z_2.moveSquare(12.f);
+                if (z_2.isAtTarget())
+                {
+                    isPausing_z2 = true;
+                    pauseTimer_z2.restart();
+                }
             }
-        } 
-        else if (currentCommand_z2 == 1 && !isPausing_z2)
-        {
-            z_2.setNewPos(-80.f, randy2);
-            z_2.moveSquare(12.f);
-            if (z_2.isAtTarget())
+            else if (currentCommand_z2 == 0 && isPausing_z2)
             {
-                isPausing_z2 = true;
-                pauseTimer_z2.restart();
+                if (pauseTimer_z2.getElapsedTime().asSeconds() > 2.0f)
+                {
+                    currentCommand_z2 = 1;
+                    isPausing_z2 = false;
+                }
             }
-        } 
-        else if (currentCommand_z2 == 1 && isPausing_z2)
-        {
-            if (pauseTimer_z2.getElapsedTime().asSeconds() > 2.0f)
+            else if (currentCommand_z2 == 1 && !isPausing_z2)
             {
-                currentCommand_z2 = 0;
-                isPausing_z2 = false;
+                z_2.setNewPos(-80.f, randy2);
+                z_2.moveSquare(12.f);
+                if (z_2.isAtTarget())
+                {
+                    isPausing_z2 = true;
+                    pauseTimer_z2.restart();
+                }
+            }
+            else if (currentCommand_z2 == 1 && isPausing_z2)
+            {
+                if (pauseTimer_z2.getElapsedTime().asSeconds() > 2.0f)
+                {
+                    currentCommand_z2 = 0;
+                    isPausing_z2 = false;
+                }
             }
         }
-    }
-        
+
         // Points - track and display when changed
         static long long int oldPoints = 0;
         y.getPoints(&pointArea);
@@ -527,7 +530,8 @@ int main()
         timerText.setString("Time: " + std::to_string((int)currentTime) + "s");
 
         // Lose condition check
-        if (y.loseCondition(&x) || y.loseCondition(&z) || y.loseCondition(&z_1) || y.loseCondition(&z_2))
+
+        if ((y.loseCondition(&x) || y.loseCondition(&z) || y.loseCondition(&z_1) || y.loseCondition(&z_2)) && gameTimer.getElapsedTime().asSeconds() > 2.f)
         {
             std::cout << "Game Over! Final Points: " << Square::points << std::endl;
             window.close();
@@ -535,6 +539,13 @@ int main()
 
         // Test collision
         y.moveSquareDynamic(5.f, 800.f, 600.f);
+        if (gameTimer.getElapsedTime().asSeconds() < 2.f)
+    {
+        y.setFillColor(sf::Color(255, 255, 0, 128)); 
+    } else
+    {
+        y.setFillColor(sf::Color::Yellow);
+    }
 
         // ending
         window.clear(sf::Color::Blue);
