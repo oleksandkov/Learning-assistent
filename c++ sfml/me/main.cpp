@@ -795,6 +795,33 @@ int main()
                 }
             }
         }
+        if (gameOver && wincheck)
+        {
+            window.draw(winText);
+            window.draw(finalPoints);
+            finalPoints.setString("Final Points: " + std::to_string(Square::points));
+            window.draw(gameOverWindow);
+            window.draw(restartButton);
+            window.draw(restartButton.getText());
+            restartButton.isHover(window);
+
+            if (restartButton.isClicked(gameEvent, window))
+            {
+                // Reset game state
+                gameOver = false;
+                Square::points = 0;
+                gameTimer.restart();
+                x.setPosition(sf::Vector2f(100.f, 100.f));
+                y.setPosition(sf::Vector2f(400.f, 100.f));
+                z.setPosition(sf::Vector2f(-50.f, 200.f));
+                z_1.setPosition(sf::Vector2f(-50.f, 200.f));
+                z_2.setPosition(sf::Vector2f(-50.f, 200.f));
+                currentCommand_x = 0;
+                currentCommand_z = 0;
+                currentCommand_z1 = 0;
+                currentCommand_z2 = 0;
+            }
+        }
 
         window.display();
     }
