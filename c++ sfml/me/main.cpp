@@ -89,8 +89,8 @@ private:
 
 public:
     static long long int points;
-    
-    static int point_value;
+
+    static float point_value;
 
     Square()
     {
@@ -113,8 +113,7 @@ public:
 
         if (thisBounds.intersects(objectBounds))
         {
-            point_value = 1;
-            points += point_value;
+            points += static_cast<long long int>(point_value);
         }
     }
 
@@ -262,7 +261,7 @@ public:
 };
 
 long long int Square::points = 0;
-int Square::point_value = 1;
+float Square::point_value = 1.f;
 
 int main()
 {
@@ -274,15 +273,15 @@ int main()
     bool wincheck = false;
     bool gameOver = false;
     bool showUpgradeWindow = false;
-    bool showDifficultyWindow = true; 
+    bool showDifficultyWindow = true;
     float mainspead = 5.f;
     float *changeminaspead = &mainspead;
     float immuneTime = 2.f;
     float *changeimmuneTime = &immuneTime;
     bool gameStart = false;
-    bool spawnEnemy_z = false;   
-    bool spawnEnemy_z1 = false;  
-    bool spawnEnemy_z2 = false;  
+    bool spawnEnemy_z = false;
+    bool spawnEnemy_z1 = false;
+    bool spawnEnemy_z2 = false;
 
     // Font and text setup
     sf::Font font;
@@ -314,14 +313,14 @@ int main()
     y.setScale(sf::Vector2f(0.5f, 0.5f));
 
     Square z;
-    z.setPosition(sf::Vector2f(-50.f, 200.f));
+    z.setPosition(sf::Vector2f(-80.f, 200.f));
     z.setScale(sf::Vector2f(0.6f, 0.6f));
     Square z_1;
-    z_1.setPosition(sf::Vector2f(-50.f, 200.f));
+    z_1.setPosition(sf::Vector2f(-80.f, 200.f));
     z_1.setScale(sf::Vector2f(0.5f, 0.5f));
 
     Square z_2;
-    z_2.setPosition(sf::Vector2f(-50.f, 200.f));
+    z_2.setPosition(sf::Vector2f(-80.f, 200.f));
     z_2.setScale(sf::Vector2f(0.5f, 0.5f));
 
     Square floor;
@@ -390,7 +389,6 @@ int main()
     upagredPoints.setFillColor(sf::Color(255, 255, 255, 128));
     upagredPoints.setButtonText("Point Gain (+0.5)", 20, sf::Color::Black);
 
-
     sf::Text finalPoints;
     finalPoints.setFont(font);
     finalPoints.setCharacterSize(32);
@@ -405,7 +403,7 @@ int main()
     winText.setPosition(300.f, 100.f);
     winText.setString("You Win!");
 
-    // Difficulty 
+    // Difficulty
     Button difficultyEasy;
     difficultyEasy.setFont(font);
     difficultyEasy.setPosition(sf::Vector2f(300.f, 250.f));
@@ -426,9 +424,6 @@ int main()
     difficultyHard.setSize(sf::Vector2f(200.f, 50.f));
     difficultyHard.setFillColor(sf::Color(255, 255, 255, 128));
     difficultyHard.setButtonText("Hard", 24, sf::Color::Black);
-
-
-
 
     // Command sequence state
     int currentCommand_y = 0;
@@ -505,7 +500,7 @@ int main()
             }
         }
 
-        if (!gameOver)
+        if (!gameOver && showDifficultyWindow == false)
         {
             // PointArea
             pointArea.randomPlacement(800.f, 400.f, 5.f);
@@ -574,7 +569,7 @@ int main()
                 }
                 else if (currentCommand_z == 1 && !isPausing)
                 {
-                    z.setNewPos(-60.f, 200.f);
+                    z.setNewPos(-80.f, 200.f);
                     z.moveSquare(15.f);
                     if (z.isAtTarget())
                     {
@@ -775,7 +770,7 @@ int main()
             wincheck = true;
         }
 
-        if (!gameOver)
+        if (!gameOver && showDifficultyWindow == false)
         {
             y.moveSquareDynamic(mainspead, 800.f, 600.f);
             if (gameTimer.getElapsedTime().asSeconds() < 2.f)
@@ -887,7 +882,7 @@ int main()
                 {
                     if (Square::points >= 400.f)
                     {
-                        Square::point_value += 0.5;
+                        Square::point_value += 0.5f;
                         Square::points -= 400.f;
                     }
                 }
