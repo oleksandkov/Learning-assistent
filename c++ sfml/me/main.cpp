@@ -9,6 +9,7 @@
 
 #include "Game.cpp"
 
+
 class Button : public sf::RectangleShape
 {
 private:
@@ -89,6 +90,8 @@ private:
 
 public:
     static long long int points;
+
+    static int healthPoints;
 
     static float point_value;
 
@@ -283,6 +286,7 @@ int main()
     bool spawnEnemy_z1 = false;
     bool spawnEnemy_z2 = false;
 
+    
     // Font and text setup
     sf::Font font;
     if (!font.loadFromFile("GothicA1-Regular.ttf"))
@@ -310,8 +314,10 @@ int main()
 
     Square y;
     y.setPosition(sf::Vector2f(400.f, 100.f));
-    y.setScale(sf::Vector2f(0.5f, 0.5f));
-
+    sf::Vector2f current_size(50.f, 50.f);
+    sf::Vector2f* currentsize = &current_size;
+    y.setSize(sf::Vector2f(current_size));
+    
     Square z;
     z.setPosition(sf::Vector2f(-80.f, 200.f));
     z.setScale(sf::Vector2f(0.6f, 0.6f));
@@ -363,28 +369,37 @@ int main()
 
     Button boostSpead;
     boostSpead.setFont(font);
-    boostSpead.setPosition(sf::Vector2f(300.f, 250.f));
+    boostSpead.setPosition(sf::Vector2f(300.f, 200.f));
     boostSpead.setSize(sf::Vector2f(200.f, 50.f));
     boostSpead.setFillColor(sf::Color(255, 255, 255, 128));
     boostSpead.setButtonText("Boost Speed (+2pts)", 20, sf::Color::Black);
 
+    
+    
     Button boostTimeImmune;
     boostTimeImmune.setFont(font);
-    boostTimeImmune.setPosition(sf::Vector2f(300.f, 320.f));
+    boostTimeImmune.setPosition(sf::Vector2f(300.f, 260.f));
     boostTimeImmune.setSize(sf::Vector2f(200.f, 50.f));
     boostTimeImmune.setFillColor(sf::Color(255, 255, 255, 128));
     boostTimeImmune.setButtonText("Time Immune (1sec)", 20, sf::Color::Black);
-
+    
+    Button smalleruser;
+    smalleruser.setFont(font);
+    smalleruser.setPosition(sf::Vector2f(300.f, 320.f));
+    smalleruser.setSize(sf::Vector2f(200.f, 50.f));
+    smalleruser.setFillColor(sf::Color(255, 255, 255, 128));
+    smalleruser.setButtonText("Do the user square smaller", 20, sf::Color::Black);
+    
     Button back;
     back.setFont(font);
-    back.setPosition(sf::Vector2f(300.f, 460.f));
+    back.setPosition(sf::Vector2f(300.f, 440.f));
     back.setSize(sf::Vector2f(200.f, 50.f));
     back.setFillColor(sf::Color(255, 255, 255, 128));
     back.setButtonText("Back", 24, sf::Color::Black);
 
     Button upagredPoints;
     upagredPoints.setFont(font);
-    upagredPoints.setPosition(sf::Vector2f(300.f, 390.f));
+    upagredPoints.setPosition(sf::Vector2f(300.f, 380.f));
     upagredPoints.setSize(sf::Vector2f(200.f, 50.f));
     upagredPoints.setFillColor(sf::Color(255, 255, 255, 128));
     upagredPoints.setButtonText("Point Gain (+0.5)", 20, sf::Color::Black);
@@ -393,7 +408,7 @@ int main()
     finalPoints.setFont(font);
     finalPoints.setCharacterSize(32);
     finalPoints.setFillColor(sf::Color::White);
-    finalPoints.setPosition(300.f, 150.f);
+    finalPoints.setPosition(250.f, 100.f);
 
     // Win window
     sf::Text winText;
@@ -424,6 +439,8 @@ int main()
     difficultyHard.setSize(sf::Vector2f(200.f, 50.f));
     difficultyHard.setFillColor(sf::Color(255, 255, 255, 128));
     difficultyHard.setButtonText("Hard", 24, sf::Color::Black);
+
+
 
     // Command sequence state
     int currentCommand_y = 0;
@@ -747,7 +764,7 @@ int main()
             y.getPoints(&pointArea);
             if (Square::points != oldPoints)
             {
-                std::cout << "Points: " << Square::points << std::endl;
+                std::cout << "Points: " << Square::points  << std::endl;
                 oldPoints = Square::points;
             }
             // Update points text
@@ -834,7 +851,7 @@ int main()
                 {
                     // Reset game state
                     gameOver = false;
-                    Square::points = 0;
+                    // Square::points = 0;
                     gameTimer.restart();
                     x.setPosition(sf::Vector2f(100.f, 100.f));
                     y.setPosition(sf::Vector2f(400.f, 100.f));
@@ -874,6 +891,10 @@ int main()
                 upagredPoints.isHover(window);
                 window.draw(upagredPoints);
                 window.draw(upagredPoints.getText());
+                window.draw(smalleruser);
+                window.draw(smalleruser.getText());
+                    smalleruser.isHover(window);
+
 
                 window.draw(finalPoints);
                 finalPoints.setString("Final Points: " + std::to_string(Square::points));
@@ -903,6 +924,15 @@ int main()
                     if (Square::points >= 1000.f)
                     {
                         *changeimmuneTime += 1.f;
+                        Square::points -= 1000.f;
+                    }
+                }
+                if(smalleruser.isClicked(gameEvent,window))
+                {
+                    if (Square::points >= 1000.f)
+                    {
+                        *currentsize = sf::Vector2f(0.8f * currentsize->x, 0.8f * currentsize->y);
+                        y.setSize(*currentsize);
                         Square::points -= 1000.f;
                     }
                 }
