@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
-class Objects : public sf::RectangleShape, public sf::CircleShape
+class Objects : public sf::Sprite
 {
 private:
     sf::Clock clock;
@@ -39,14 +39,14 @@ int main()
     roof.setOutlineColor(sf::Color::Black);
     roof.setOutlineThickness(2.f);
 
-    // Load texture from image
+    // Load texture from image, initialize sprite
     sf::Texture texture;
     if (!texture.loadFromFile("assets/pixe.png"))
     {
         std::cerr << "Error loading texture from assets/pixe.png" << std::endl;
         return -1;
     }
-    sf::Sprite sprite;
+    Objects sprite;
     sprite.setTexture(texture);
     sprite.setPosition(window.getSize().x / 2.f - texture.getSize().x / 2.f, window.getSize().y / 2.f - texture.getSize().y / 2.f);
     sprite.setScale(0.5f, 0.5f);
@@ -78,6 +78,7 @@ int main()
             };
         }
 
+        // Move sprites
         float deltaTime = clock.restart().asSeconds();
         sf::Vector2f movement(0.f, 0.f);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
