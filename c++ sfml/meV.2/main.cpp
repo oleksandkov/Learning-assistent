@@ -18,6 +18,27 @@ public:
                sf::Keyboard::isKeyPressed(sf::Keyboard::S) ||
                sf::Keyboard::isKeyPressed(sf::Keyboard::D);
     }
+    void getCollisionWith(const sf::RectangleShape& shape)
+    {
+        sf::Vector2f position = this->getPosition();
+        if (this->getGlobalBounds().intersects(shape.getGlobalBounds()))
+        {
+            sf::FloatRect spriteBounds = this->getGlobalBounds();
+            sf::FloatRect shapeBounds = shape.getGlobalBounds();
+
+            // Resolve collision with floor (bottom)
+            if (spriteBounds.top + spriteBounds.height > shapeBounds.top && spriteBounds.top < shapeBounds.top)
+            {
+                this->setPosition(this->getPosition().x, shapeBounds.top - spriteBounds.height);
+            }
+
+            // Resolve collision with roof (top)
+            if (spriteBounds.top < shapeBounds.top + shapeBounds.height && spriteBounds.top + spriteBounds.height > shapeBounds.top + shapeBounds.height)
+            {
+                this->setPosition(this->getPosition().x, shapeBounds.top + shapeBounds.height);
+            }
+        }
+    }
 };
 
 int main()
@@ -70,7 +91,7 @@ int main()
     bool isMoving = false;
 
     static sf::Clock animClock;
-static bool toggle = false;
+    static bool toggle = false;
 
     Objects sprite;
     sprite.setTexture(staticpos);
@@ -90,18 +111,6 @@ static bool toggle = false;
                 window.close();
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
                 window.close();
-            // if (event.type == sf::Event::Resized)
-            // {
-            //     sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-            //     window.setView(sf::View(visibleArea));
-            // };
-            // if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F11)
-            // {
-            //     static bool fullscreen = false;
-            //     fullscreen = !fullscreen;
-            //     window.create(fullscreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode(800, 600), "The Game", fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
-            //     window.setVerticalSyncEnabled(true);
-            // };
         }
 
         // Move sprites
@@ -117,15 +126,19 @@ static bool toggle = false;
             movement.x += speed * deltaTime;
         sprite.move(movement);
 
+        // Handle collisions
+        sprite.getCollisionWith(floor);
+        sprite.getCollisionWith(roof);
+
         // Character animation logic
-        
+
         isMoving = sprite.isCharacterMoving();
         if (isMoving && (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)))
         {
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
             {
-                sprite.setScale(-0.5f, 0.5f); // Flip horizontally for left
-                if (animClock.getElapsedTime().asSeconds() > 0.15f) 
+                sprite.setScale(0.5f, 0.5f); // Flip horizontally for left
+                if (animClock.getElapsedTime().asSeconds() > 0.15f)
                 {
                     if (toggle)
                         sprite.setTexture(move1);
@@ -137,8 +150,8 @@ static bool toggle = false;
             }
             else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             {
-                sprite.setScale(0.5f, 0.5f); // Normal for right
-                if (animClock.getElapsedTime().asSeconds() > 0.15f) 
+                sprite.setScale(-0.5f, 0.5f); // Normal for right
+                if (animClock.getElapsedTime().asSeconds() > 0.15f)
                 {
                     if (toggle)
                         sprite.setTexture(move1);
@@ -151,11 +164,9 @@ static bool toggle = false;
         }
         else
         {
-            sprite.setScale(0.5f, 0.5f); // Reset scale when not moving left/right
+            sprite.setScale(0.3f, 0.3f); 
             sprite.setTexture(staticpos);
         }
-
-
 
         window.clear(sf::Color::Black);
         window.draw(background);
