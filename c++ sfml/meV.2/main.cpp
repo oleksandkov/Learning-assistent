@@ -8,10 +8,11 @@ private:
     float speed;
 
 public:
-    Objects() : speed(200.f) {}
+    Objects() {}
     ~Objects() {}
 
-    bool isCharacterMoving() {
+    bool isCharacterMoving()
+    {
         return sf::Keyboard::isKeyPressed(sf::Keyboard::W) ||
                sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||
                sf::Keyboard::isKeyPressed(sf::Keyboard::S) ||
@@ -58,20 +59,22 @@ int main()
     {
         std::cerr << "Error loading texture from assets/move1a.png" << std::endl;
         return -1;
-    } 
+    }
     sf::Texture move2;
     if (!move2.loadFromFile("assets/move2a.png"))
     {
         std::cerr << "Error loading texture from assets/move2a.png" << std::endl;
         return -1;
     }
-    // Character animation logic
+    // Character animation logic initialization
     bool isMoving = false;
-    
 
+    static sf::Clock animClock;
+static bool toggle = false;
 
     Objects sprite;
     sprite.setTexture(staticpos);
+    sprite.setOrigin(staticpos.getSize().x / 2.f, staticpos.getSize().y / 2.f);
     sprite.setScale(0.5f, 0.5f);
 
     sf::Clock clock;
@@ -87,18 +90,18 @@ int main()
                 window.close();
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
                 window.close();
-            if (event.type == sf::Event::Resized)
-            {
-                sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-                window.setView(sf::View(visibleArea));
-            };
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F11)
-            {
-                static bool fullscreen = false;
-                fullscreen = !fullscreen;
-                window.create(fullscreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode(800, 600), "The Game", fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
-                window.setVerticalSyncEnabled(true);
-            };
+            // if (event.type == sf::Event::Resized)
+            // {
+            //     sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+            //     window.setView(sf::View(visibleArea));
+            // };
+            // if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F11)
+            // {
+            //     static bool fullscreen = false;
+            //     fullscreen = !fullscreen;
+            //     window.create(fullscreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode(800, 600), "The Game", fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
+            //     window.setVerticalSyncEnabled(true);
+            // };
         }
 
         // Move sprites
@@ -114,8 +117,45 @@ int main()
             movement.x += speed * deltaTime;
         sprite.move(movement);
 
-        // Update isMoving
+        // Character animation logic
+        
         isMoving = sprite.isCharacterMoving();
+        if (isMoving && (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)))
+        {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            {
+                sprite.setScale(-0.5f, 0.5f); // Flip horizontally for left
+                if (animClock.getElapsedTime().asSeconds() > 0.15f) 
+                {
+                    if (toggle)
+                        sprite.setTexture(move1);
+                    else
+                        sprite.setTexture(move2);
+                    toggle = !toggle;
+                    animClock.restart();
+                }
+            }
+            else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            {
+                sprite.setScale(0.5f, 0.5f); // Normal for right
+                if (animClock.getElapsedTime().asSeconds() > 0.15f) 
+                {
+                    if (toggle)
+                        sprite.setTexture(move1);
+                    else
+                        sprite.setTexture(move2);
+                    toggle = !toggle;
+                    animClock.restart();
+                }
+            }
+        }
+        else
+        {
+            sprite.setScale(0.5f, 0.5f); // Reset scale when not moving left/right
+            sprite.setTexture(staticpos);
+        }
+
+
 
         window.clear(sf::Color::Black);
         window.draw(background);
