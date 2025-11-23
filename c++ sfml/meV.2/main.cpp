@@ -36,6 +36,20 @@ int main()
     roof.setOutlineColor(sf::Color::Black);
     roof.setOutlineThickness(2.f);
 
+    // Load texture from image
+    sf::Texture texture;
+    if (!texture.loadFromFile("assets/pixel art.jpg"))
+    {
+        std::cerr << "Error loading texture from assets/pixel art.jpg" << std::endl;
+        return -1;
+    }
+
+    // Create sprite and set texture
+    sf::Sprite sprite;
+    sprite.setTexture(texture);
+    // Position the sprite, for example, center it
+    sprite.setPosition(window.getSize().x / 2.f - texture.getSize().x / 2.f, window.getSize().y / 2.f - texture.getSize().y / 2.f);
+
     // Main loop
     while (window.isOpen())
     {
@@ -52,6 +66,7 @@ int main()
         window.draw(background);
         window.draw(floor);
         window.draw(roof);
+        window.draw(sprite);
 
         window.display();
     }
