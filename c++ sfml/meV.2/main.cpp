@@ -39,20 +39,29 @@ int main()
     roof.setOutlineColor(sf::Color::Black);
     roof.setOutlineThickness(2.f);
 
-    // Load texture from image, initialize sprite
-    sf::Texture texture;
-    if (!texture.loadFromFile("assets/pixe.png"))
+    // Load textures for animation
+    sf::Texture texture1, texture2;
+    if (!texture1.loadFromFile("assets/move1a.png"))
     {
-        std::cerr << "Error loading texture from assets/pixe.png" << std::endl;
+        std::cerr << "Error loading texture from assets/move1a.png" << std::endl;
         return -1;
     }
-    Objects sprite;
-    sprite.setTexture(texture);
-    sprite.setPosition(window.getSize().x / 2.f - texture.getSize().x / 2.f, window.getSize().y / 2.f - texture.getSize().y / 2.f);
+    if (!texture2.loadFromFile("assets/move2a.png"))
+    {
+        std::cerr << "Error loading texture from assets/move2a.png" << std::endl;
+        return -1;
+    }
+    sf::Sprite sprite;
+    sprite.setTexture(texture1);
+    sprite.setOrigin(texture1.getSize().x / 2.f, texture1.getSize().y / 2.f); // Center origin for flipping
+    sprite.setPosition(window.getSize().x / 2.f - texture1.getSize().x / 2.f, window.getSize().y / 2.f - texture1.getSize().y / 2.f);
     sprite.setScale(0.5f, 0.5f);
 
     sf::Clock clock;
     float speed = 200.f;
+    sf::Clock animationClock;
+    float animationTime = 0.2f; // Switch texture every 0.2 seconds
+    bool isMoving = false;
 
     // Main loop
     while (window.isOpen())
@@ -68,6 +77,7 @@ int main()
             {
                 sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
                 window.setView(sf::View(visibleArea));
+                sprite.setPosition(event.size.width / 2.f, event.size.height / 2.f);
             };
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F11)
             {
@@ -75,6 +85,7 @@ int main()
                 fullscreen = !fullscreen;
                 window.create(fullscreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode(800, 600), "The Game", fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
                 window.setVerticalSyncEnabled(true);
+                sprite.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
             };
         }
 
@@ -90,6 +101,28 @@ int main()
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             movement.x += speed * deltaTime;
         sprite.move(movement);
+
+        // Animation and direction
+        isMoving = (movement.x != 0.f || movement.y != 0.f);
+        if (isMoving) {
+            animationTime -= deltaTime;
+            if (animationTime <= 0.f) {
+                static bool alt = false;
+                alt = !alt;
+                sprite.setTexture(alt ? texture1 : texture2);
+                animationTime = 0.2f;
+            }
+            // Set scale based on horizontal direction
+            if (movement.x < 0) { // moving left
+                sprite.setScale(-0.5f, 0.5f);
+            } else if (movement.x > 0) { // moving right
+                sprite.setScale(0.5f, 0.5f);
+            }
+        } else {
+            // Not moving, reset to default
+            sprite.setScale(0.5f, 0.5f);
+            sprite.setTexture(texture1);
+        }
 
         window.clear(sf::Color::Black);
         window.draw(background);
