@@ -37,6 +37,18 @@ public:
             {
                 this->setPosition(this->getPosition().x, shapeBounds.top + shapeBounds.height);
             }
+
+            // Resolve collision with left wall
+            if (spriteBounds.left + spriteBounds.width > shapeBounds.left && spriteBounds.left < shapeBounds.left)
+            {
+                this->setPosition(shapeBounds.left - spriteBounds.width, this->getPosition().y);
+            }
+
+            // Resolve collision with right wall
+            if (spriteBounds.left < shapeBounds.left + shapeBounds.width && spriteBounds.left + spriteBounds.width > shapeBounds.left + shapeBounds.width)
+            {
+                this->setPosition(shapeBounds.left + shapeBounds.width, this->getPosition().y);
+            }
         }
     }
 };
