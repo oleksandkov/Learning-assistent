@@ -18,7 +18,7 @@ public:
                sf::Keyboard::isKeyPressed(sf::Keyboard::S) ||
                sf::Keyboard::isKeyPressed(sf::Keyboard::D);
     }
-    void getCollisionWith(const sf::RectangleShape& shape)
+    void getCollisionWith(const sf::RectangleShape &shape)
     {
         sf::Vector2f position = this->getPosition();
         if (this->getGlobalBounds().intersects(shape.getGlobalBounds()))
@@ -164,7 +164,7 @@ int main()
         }
         else
         {
-            sprite.setScale(0.3f, 0.3f); 
+            sprite.setScale(0.3f, 0.3f);
             sprite.setTexture(staticpos);
         }
 
