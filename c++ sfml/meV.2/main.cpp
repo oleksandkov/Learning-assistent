@@ -14,7 +14,7 @@ public:
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "The Game", sf::Style::Fullscreen);
+    sf::RenderWindow window(sf::VideoMode(800, 600), "The Game");
     window.setVerticalSyncEnabled(true);
 
     // Background setup
@@ -64,20 +64,19 @@ int main()
                 window.close();
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
                 window.close();
-            if(event.type == sf::Event::Resized)
+            if (event.type == sf::Event::Resized)
             {
                 sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
                 window.setView(sf::View(visibleArea));
             };
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F11)
             {
-            static bool fullscreen = false;
-            fullscreen = !fullscreen;
-            window.create(fullscreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode(800, 600), "The Game", fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
-            window.setVerticalSyncEnabled(true);
+                static bool fullscreen = false;
+                fullscreen = !fullscreen;
+                window.create(fullscreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode(800, 600), "The Game", fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
+                window.setVerticalSyncEnabled(true);
             };
         }
-            
 
         float deltaTime = clock.restart().asSeconds();
         sf::Vector2f movement(0.f, 0.f);
