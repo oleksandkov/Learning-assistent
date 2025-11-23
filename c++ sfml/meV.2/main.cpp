@@ -4,8 +4,11 @@
 class Objects : public sf::RectangleShape, public sf::CircleShape
 {
 private:
+    sf::Clock clock;
+    float speed;
+
 public:
-    Objects() {}
+    Objects() : speed(200.f) {}
     ~Objects() {}
 };
 
@@ -38,17 +41,18 @@ int main()
 
     // Load texture from image
     sf::Texture texture;
-    if (!texture.loadFromFile("assets/pixel art.jpg"))
+    if (!texture.loadFromFile("assets/pixe.png"))
     {
-        std::cerr << "Error loading texture from assets/pixel art.jpg" << std::endl;
+        std::cerr << "Error loading texture from assets/pixe.png" << std::endl;
         return -1;
     }
-
-    // Create sprite and set texture
     sf::Sprite sprite;
     sprite.setTexture(texture);
-    // Position the sprite, for example, center it
     sprite.setPosition(window.getSize().x / 2.f - texture.getSize().x / 2.f, window.getSize().y / 2.f - texture.getSize().y / 2.f);
+    sprite.setScale(0.5f, 0.5f);
+
+    sf::Clock clock;
+    float speed = 200.f;
 
     // Main loop
     while (window.isOpen())
@@ -60,7 +64,56 @@ int main()
                 window.close();
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
                 window.close();
+            if (event.type == sf::Event::Resized)
+            {
+                // Update view to match new size
+                sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+                window.setView(sf::View(visibleArea));
+
+                // Update background size
+                background.setSize(sf::Vector2f(event.size.width, event.size.height));
+
+                // Update floor position and size
+                floor.setSize(sf::Vector2f(event.size.width, 100.f));
+                floor.setPosition(0.f, event.size.height - 100.f);
+
+                // Update roof size
+                roof.setSize(sf::Vector2f(event.size.width, 50.f));
+
+                // Optionally reposition sprite to center
+                sprite.setPosition(event.size.width / 2.f - (texture.getSize().x * sprite.getScale().x) / 2.f, event.size.height / 2.f - (texture.getSize().y * sprite.getScale().y) / 2.f);
+            }
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F11)
+            {
+                static bool fullscreen = false;
+                fullscreen = !fullscreen;
+                window.create(fullscreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode(800, 600), "The Game", fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
+                window.setVerticalSyncEnabled(true);
+
+                // Reset view
+                sf::FloatRect visibleArea(0, 0, window.getSize().x, window.getSize().y);
+                window.setView(sf::View(visibleArea));
+
+                // Recreate shapes with new size
+                background.setSize(sf::Vector2f(window.getSize()));
+                floor.setSize(sf::Vector2f(window.getSize().x, 100.f));
+                floor.setPosition(0.f, window.getSize().y - 100.f);
+                roof.setSize(sf::Vector2f(window.getSize().x, 50.f));
+                sprite.setPosition(window.getSize().x / 2.f - (texture.getSize().x * sprite.getScale().x) / 2.f, window.getSize().y / 2.f - (texture.getSize().y * sprite.getScale().y) / 2.f);
+            }
         }
+
+        float deltaTime = clock.restart().asSeconds();
+        sf::Vector2f movement(0.f, 0.f);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            movement.y -= speed * deltaTime;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            movement.y += speed * deltaTime;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            movement.x -= speed * deltaTime;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            movement.x += speed * deltaTime;
+        sprite.move(movement);
 
         window.clear(sf::Color::Black);
         window.draw(background);
