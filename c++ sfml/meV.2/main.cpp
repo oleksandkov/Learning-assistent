@@ -1,11 +1,13 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <vector>
 
 class Objects : public sf::Sprite
 {
 private:
     sf::Clock clock;
     float speed;
+    std::vector<Objects *> others;
 
 public:
     Objects() {}
@@ -18,6 +20,15 @@ public:
                sf::Keyboard::isKeyPressed(sf::Keyboard::S) ||
                sf::Keyboard::isKeyPressed(sf::Keyboard::D);
     }
+    bool loseCondition(sf::RectangleShape *shape)
+    {
+        if (getGlobalBounds().intersects(shape->getGlobalBounds()))
+        {
+            return true; // Return true when collision detected
+        }
+        return false;
+    }
+
     void getCollisionWith(const sf::RectangleShape &shape)
     {
         sf::Vector2f position = this->getPosition();
@@ -50,6 +61,23 @@ public:
                 this->setPosition(shapeBounds.left + shapeBounds.width, this->getPosition().y);
             }
         }
+    }
+
+    void addToCollisionList(Objects *other)
+    {
+        others.push_back(other);
+    }
+
+    bool globalCollisionCheck()
+    {
+        for (size_t i = 0; i < others.size(); i++)
+        {
+            if (getGlobalBounds().intersects(others[i]->getGlobalBounds()))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 };
 
