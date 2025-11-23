@@ -10,6 +10,13 @@ private:
 public:
     Objects() : speed(200.f) {}
     ~Objects() {}
+
+    bool isCharacterMoving() {
+        return sf::Keyboard::isKeyPressed(sf::Keyboard::W) ||
+               sf::Keyboard::isKeyPressed(sf::Keyboard::A) ||
+               sf::Keyboard::isKeyPressed(sf::Keyboard::S) ||
+               sf::Keyboard::isKeyPressed(sf::Keyboard::D);
+    }
 };
 
 int main()
@@ -39,29 +46,36 @@ int main()
     roof.setOutlineColor(sf::Color::Black);
     roof.setOutlineThickness(2.f);
 
-    // Load textures for animation
-    sf::Texture texture1, texture2;
-    if (!texture1.loadFromFile("assets/move1a.png"))
+    // Load texture from images
+    sf::Texture staticpos;
+    if (!staticpos.loadFromFile("assets/pixe.png"))
+    {
+        std::cerr << "Error loading texture from assets/pixe.png" << std::endl;
+        return -1;
+    }
+    sf::Texture move1;
+    if (!move1.loadFromFile("assets/move1a.png"))
     {
         std::cerr << "Error loading texture from assets/move1a.png" << std::endl;
         return -1;
-    }
-    if (!texture2.loadFromFile("assets/move2a.png"))
+    } 
+    sf::Texture move2;
+    if (!move2.loadFromFile("assets/move2a.png"))
     {
         std::cerr << "Error loading texture from assets/move2a.png" << std::endl;
         return -1;
     }
-    sf::Sprite sprite;
-    sprite.setTexture(texture1);
-    sprite.setOrigin(texture1.getSize().x / 2.f, texture1.getSize().y / 2.f); // Center origin for flipping
-    sprite.setPosition(window.getSize().x / 2.f - texture1.getSize().x / 2.f, window.getSize().y / 2.f - texture1.getSize().y / 2.f);
+    // Character animation logic
+    bool isMoving = false;
+    
+
+
+    Objects sprite;
+    sprite.setTexture(staticpos);
     sprite.setScale(0.5f, 0.5f);
 
     sf::Clock clock;
     float speed = 200.f;
-    sf::Clock animationClock;
-    float animationTime = 0.2f; // Switch texture every 0.2 seconds
-    bool isMoving = false;
 
     // Main loop
     while (window.isOpen())
@@ -77,7 +91,6 @@ int main()
             {
                 sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
                 window.setView(sf::View(visibleArea));
-                sprite.setPosition(event.size.width / 2.f, event.size.height / 2.f);
             };
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F11)
             {
@@ -85,7 +98,6 @@ int main()
                 fullscreen = !fullscreen;
                 window.create(fullscreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode(800, 600), "The Game", fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
                 window.setVerticalSyncEnabled(true);
-                sprite.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
             };
         }
 
@@ -102,27 +114,8 @@ int main()
             movement.x += speed * deltaTime;
         sprite.move(movement);
 
-        // Animation and direction
-        isMoving = (movement.x != 0.f || movement.y != 0.f);
-        if (isMoving) {
-            animationTime -= deltaTime;
-            if (animationTime <= 0.f) {
-                static bool alt = false;
-                alt = !alt;
-                sprite.setTexture(alt ? texture1 : texture2);
-                animationTime = 0.2f;
-            }
-            // Set scale based on horizontal direction
-            if (movement.x < 0) { // moving left
-                sprite.setScale(-0.5f, 0.5f);
-            } else if (movement.x > 0) { // moving right
-                sprite.setScale(0.5f, 0.5f);
-            }
-        } else {
-            // Not moving, reset to default
-            sprite.setScale(0.5f, 0.5f);
-            sprite.setTexture(texture1);
-        }
+        // Update isMoving
+        isMoving = sprite.isCharacterMoving();
 
         window.clear(sf::Color::Black);
         window.draw(background);
