@@ -34,6 +34,16 @@ void Character::update()
 {
     if (isWalking)
     {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        {
+            setScale(-1.f, 1.f); 
+            setOrigin(frameSize.x, 0);
+        }
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        {
+            setScale(1.f, 1.f); 
+            setOrigin(0, 0);
+        }
         setTexture(walkTexture);
     }
     else
