@@ -33,7 +33,6 @@ void Character::update()
         setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
         animationClock.restart();
     }
-    initializeHitbox();
 }
 
 void Character::moveCharacter()
@@ -50,9 +49,10 @@ void Character::moveCharacter()
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         movement.x += speed * deltaTime;
     move(movement);
+    initializeHitbox();
     for (const auto& rect : collisionList)
     {
-        if (getGlobalBounds().intersects(rect))
+        if (hitbox.getGlobalBounds().intersects(rect))
         {
             setPosition(oldpos);
             break;
@@ -67,8 +67,10 @@ void Character::addToCollisionList(sf::RectangleShape& rect)
 
 void Character::initializeHitbox()
 {
-    hitbox.setSize(sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height));
-    hitbox.setPosition(getGlobalBounds().left, getGlobalBounds().top);
+   float scale = 0.8f; // Adjust this value (0.8 = 80% size)
+    sf::FloatRect bounds = getGlobalBounds();
+    hitbox.setSize(sf::Vector2f(bounds.width * scale, bounds.height * scale));
+    hitbox.setPosition(bounds.left + (bounds.width * (1 - scale) / 2), bounds.top + (bounds.height * (1 - scale) / 2));
     hitbox.setFillColor(sf::Color::Transparent);
     hitbox.setOutlineColor(sf::Color::Red);
     hitbox.setOutlineThickness(1.f);

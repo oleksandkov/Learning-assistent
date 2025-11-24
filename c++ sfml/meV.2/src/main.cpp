@@ -33,7 +33,8 @@ int main()
 
     Character character;
 
-   
+    character.addToCollisionList(floor);
+    // character.addToCollisionList(roof);
 
     // Main loop
     while (window.isOpen())
@@ -49,8 +50,6 @@ int main()
 
         // Move sprites
         character.moveCharacter();
-        character.addToCollisionList(floor);
-        // character.addToCollisionList(roof);
 
         character.update();
 
