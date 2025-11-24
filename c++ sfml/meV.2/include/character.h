@@ -13,12 +13,15 @@ private:
     int currentFrame;
     int totalFrames;
     sf::Vector2i frameSize;
-    float animationSpeed; // seconds per frame
+    float animationSpeed; 
+    sf::Clock clock;
+    float speed;
 
 public:
     Character();
     ~Character();
-    void update(float deltaTime);
+    void update();
+    void moveCharacter();
 };
 
 #endif

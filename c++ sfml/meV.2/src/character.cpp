@@ -2,19 +2,21 @@
 
 Character::Character()
 {
-    totalFrames = 4; // Assume 4 frames in Idle.png
-    animationSpeed = 0.2f; // 0.2 seconds per frame
+    totalFrames = 8; 
+    animationSpeed = 0.1f; 
     currentFrame = 0;
+    speed = 200.f;
 
     if (!characterTexture.loadFromFile("assets/Idle.png"))
     {
         std::cerr << "Error loading character texture" << std::endl;
     }
 
-    frameSize.x = characterTexture.getSize().x;
-    frameSize.y = characterTexture.getSize().y / totalFrames;
+    frameSize.x = characterTexture.getSize().x / totalFrames;
+    frameSize.y = characterTexture.getSize().y;
 
     setTexture(characterTexture);
+
     setTextureRect(sf::IntRect(0, 0, frameSize.x, frameSize.y));
     setPosition(100.f, 100.f);
 }
@@ -23,13 +25,28 @@ Character::~Character()
 {
 }
 
-void Character::update(float deltaTime)
+void Character::update()
 {
     if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
     {
         currentFrame = (currentFrame + 1) % totalFrames;
-        setTextureRect(sf::IntRect(0, currentFrame * frameSize.y, frameSize.x, frameSize.y));
+        setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
         animationClock.restart();
     }
+}
+
+void Character::moveCharacter()
+{
+    float deltaTime = clock.restart().asSeconds();
+    sf::Vector2f movement(0.f, 0.f);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        movement.y -= speed * deltaTime;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+        movement.y += speed * deltaTime;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        movement.x -= speed * deltaTime;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+        movement.x += speed * deltaTime;
+    move(movement);
 }
 

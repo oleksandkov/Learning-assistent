@@ -33,8 +33,7 @@ int main()
 
     Character character;
 
-    sf::Clock clock;
-    float speed = 200.f;
+   
 
     // Main loop
     while (window.isOpen())
@@ -49,18 +48,10 @@ int main()
         }
 
         // Move sprites
-        float deltaTime = clock.restart().asSeconds();
-        sf::Vector2f movement(0.f, 0.f);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            movement.y -= speed * deltaTime;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            movement.y += speed * deltaTime;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            movement.x -= speed * deltaTime;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            movement.x += speed * deltaTime;
+        character.moveCharacter();
+        
 
-        character.update(deltaTime);
+        character.update();
 
         window.clear(sf::Color::Black);
         window.draw(background);
