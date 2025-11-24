@@ -11,8 +11,8 @@ Character::Character()
         std::cerr << "Error loading character texture" << std::endl;
     }
 
-    frameSize.x = characterTexture.getSize().x / totalFrames;
-    frameSize.y = characterTexture.getSize().y;
+    frameSize.x = characterTexture.getSize().x;
+    frameSize.y = characterTexture.getSize().y / totalFrames;
 
     setTexture(characterTexture);
     setTextureRect(sf::IntRect(0, 0, frameSize.x, frameSize.y));
@@ -28,7 +28,8 @@ void Character::update(float deltaTime)
     if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
     {
         currentFrame = (currentFrame + 1) % totalFrames;
-        setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
+        setTextureRect(sf::IntRect(0, currentFrame * frameSize.y, frameSize.x, frameSize.y));
         animationClock.restart();
     }
 }
+
