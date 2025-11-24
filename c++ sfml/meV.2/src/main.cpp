@@ -1,20 +1,12 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <character.h>
 
-class Objects : public sf::Sprite
-{
-private:
-    sf::Clock clock;
-    float speed;
-
-public:
-    Objects() : speed(200.f) {}
-    ~Objects() {}
-};
 
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "The Game");
+
     window.setVerticalSyncEnabled(true);
 
     // Background setup
@@ -39,17 +31,7 @@ int main()
     roof.setOutlineColor(sf::Color::Black);
     roof.setOutlineThickness(2.f);
 
-    // Load texture from image, initialize sprite
-    sf::Texture texture;
-    if (!texture.loadFromFile("assets/pixe.png"))
-    {
-        std::cerr << "Error loading texture from assets/pixe.png" << std::endl;
-        return -1;
-    }
-    Objects sprite;
-    sprite.setTexture(texture);
-    sprite.setPosition(window.getSize().x / 2.f - texture.getSize().x / 2.f, window.getSize().y / 2.f - texture.getSize().y / 2.f);
-    sprite.setScale(0.5f, 0.5f);
+    Character character;
 
     sf::Clock clock;
     float speed = 200.f;
@@ -64,18 +46,6 @@ int main()
                 window.close();
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
                 window.close();
-            if (event.type == sf::Event::Resized)
-            {
-                sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
-                window.setView(sf::View(visibleArea));
-            };
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::F11)
-            {
-                static bool fullscreen = false;
-                fullscreen = !fullscreen;
-                window.create(fullscreen ? sf::VideoMode::getDesktopMode() : sf::VideoMode(800, 600), "The Game", fullscreen ? sf::Style::Fullscreen : sf::Style::Default);
-                window.setVerticalSyncEnabled(true);
-            };
         }
 
         // Move sprites
@@ -89,13 +59,14 @@ int main()
             movement.x -= speed * deltaTime;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
             movement.x += speed * deltaTime;
-        sprite.move(movement);
+
+        character.update(deltaTime);
 
         window.clear(sf::Color::Black);
         window.draw(background);
         window.draw(floor);
         window.draw(roof);
-        window.draw(sprite);
+        window.draw(character);
 
         window.display();
     }
