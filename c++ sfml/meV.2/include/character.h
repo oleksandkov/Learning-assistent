@@ -8,7 +8,8 @@
 class Character : public sf::Sprite
 {
 private:
-    sf::Texture characterTexture;
+    sf::Texture idleTexture;
+    sf::Texture walkTexture;
     sf::Clock animationClock;
     int currentFrame;
     int totalFrames;
@@ -18,6 +19,7 @@ private:
     float speed;
     std::vector<sf::FloatRect> collisionList;
     sf::Vector2f oldpos;
+    bool isWalking;
     
     
     public:

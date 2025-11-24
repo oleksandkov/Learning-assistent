@@ -34,7 +34,7 @@ int main()
     Character character;
 
     character.addToCollisionList(floor);
-    // character.addToCollisionList(roof);
+    character.addToCollisionList(roof);
 
     // Main loop
     while (window.isOpen())

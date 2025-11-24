@@ -6,16 +6,21 @@ Character::Character()
     animationSpeed = 0.1f; 
     currentFrame = 0;
     speed = 200.f;
+    isWalking = false;
 
-    if (!characterTexture.loadFromFile("assets/Idle.png"))
+    if (!idleTexture.loadFromFile("assets/Idle.png"))
     {
-        std::cerr << "Error loading character texture" << std::endl;
+        std::cerr << "Error loading idle texture" << std::endl;
+    }
+    if (!walkTexture.loadFromFile("assets/Walk.png"))
+    {
+        std::cerr << "Error loading walk texture" << std::endl;
     }
 
-    frameSize.x = characterTexture.getSize().x / totalFrames;
-    frameSize.y = characterTexture.getSize().y;
+    frameSize.x = idleTexture.getSize().x / totalFrames;
+    frameSize.y = idleTexture.getSize().y;
 
-    setTexture(characterTexture);
+    setTexture(idleTexture);
 
     setTextureRect(sf::IntRect(0, 0, frameSize.x, frameSize.y));
     setPosition(100.f, 100.f);
@@ -27,6 +32,14 @@ Character::~Character()
 
 void Character::update()
 {
+    if (isWalking)
+    {
+        setTexture(walkTexture);
+    }
+    else
+    {
+        setTexture(idleTexture);
+    }
     if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
     {
         currentFrame = (currentFrame + 1) % totalFrames;
@@ -48,6 +61,7 @@ void Character::moveCharacter()
         movement.x -= speed * deltaTime;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         movement.x += speed * deltaTime;
+    isWalking = (movement.x != 0.f);
     move(movement);
     initializeHitbox();
     for (const auto& rect : collisionList)
@@ -67,10 +81,10 @@ void Character::addToCollisionList(sf::RectangleShape& rect)
 
 void Character::initializeHitbox()
 {
-   float scale = 0.8f; // Adjust this value (0.8 = 80% size)
+   float scale = 0.38f; // Adjust this value (0.8 = 80% size)
     sf::FloatRect bounds = getGlobalBounds();
-    hitbox.setSize(sf::Vector2f(bounds.width * scale, bounds.height * scale));
-    hitbox.setPosition(bounds.left + (bounds.width * (1 - scale) / 2), bounds.top + (bounds.height * (1 - scale) / 2));
+    hitbox.setSize(sf::Vector2f(bounds.width * scale, bounds.height * scale - 15.f));
+    hitbox.setPosition(bounds.left + (bounds.width * (1 - scale) / 2), bounds.top + (((bounds.height * (1 - scale)) + 107.f)/ 2));
     hitbox.setFillColor(sf::Color::Transparent);
     hitbox.setOutlineColor(sf::Color::Red);
     hitbox.setOutlineThickness(1.f);
