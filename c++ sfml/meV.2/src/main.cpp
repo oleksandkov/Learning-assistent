@@ -50,7 +50,7 @@ int main()
         // Move sprites
         character.moveCharacter();
         character.addToCollisionList(floor);
-        character.addToCollisionList(roof);
+        // character.addToCollisionList(roof);
 
         character.update();
 
@@ -59,6 +59,15 @@ int main()
         window.draw(floor);
         window.draw(roof);
         window.draw(character);
+
+        // Draw hitbox
+        sf::RectangleShape hitbox;
+        hitbox.setSize(sf::Vector2f(character.getGlobalBounds().width, character.getGlobalBounds().height));
+        hitbox.setPosition(character.getGlobalBounds().left, character.getGlobalBounds().top);
+        hitbox.setFillColor(sf::Color::Transparent);
+        hitbox.setOutlineColor(sf::Color::Red);
+        hitbox.setOutlineThickness(1.f);
+        window.draw(hitbox);
 
         window.display();
     }
