@@ -18,14 +18,16 @@ private:
     float speed;
     std::vector<sf::FloatRect> collisionList;
     sf::Vector2f oldpos;
-
-
-public:
+    
+    
+    public:
+    sf::RectangleShape hitbox;
     Character();
     ~Character();
     void update();
     void moveCharacter();
     void addToCollisionList(sf::RectangleShape& rect);
+    void initializeHitbox();
 };
 
 #endif

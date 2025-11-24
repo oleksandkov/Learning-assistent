@@ -33,6 +33,7 @@ void Character::update()
         setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
         animationClock.restart();
     }
+    initializeHitbox();
 }
 
 void Character::moveCharacter()
@@ -62,4 +63,13 @@ void Character::moveCharacter()
 void Character::addToCollisionList(sf::RectangleShape& rect)
 {
     collisionList.push_back(rect.getGlobalBounds());
+}
+
+void Character::initializeHitbox()
+{
+    hitbox.setSize(sf::Vector2f(getGlobalBounds().width, getGlobalBounds().height));
+    hitbox.setPosition(getGlobalBounds().left, getGlobalBounds().top);
+    hitbox.setFillColor(sf::Color::Transparent);
+    hitbox.setOutlineColor(sf::Color::Red);
+    hitbox.setOutlineThickness(1.f);
 }
