@@ -37,6 +37,7 @@ void Character::update()
 
 void Character::moveCharacter()
 {
+    sf::Vector2f oldpos = getPosition();
     float deltaTime = clock.restart().asSeconds();
     sf::Vector2f movement(0.f, 0.f);
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -48,21 +49,12 @@ void Character::moveCharacter()
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         movement.x += speed * deltaTime;
     move(movement);
-}
-
-void Character::addToCollisionList(sf::RectangleShape& rect)
-{
-    collisionList.push_back(rect.getGlobalBounds());
-}
-
-void Character::collisionDetection()
-{
-    sf::Vector2f oldpos = getPosition();
     for (const auto& rect : collisionList)
     {
         if (getGlobalBounds().intersects(rect))
         {
             setPosition(oldpos);
+            break;
         }
     }
 }

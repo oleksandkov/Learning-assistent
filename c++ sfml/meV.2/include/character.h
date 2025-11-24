@@ -25,7 +25,6 @@ public:
     ~Character();
     void update();
     void moveCharacter();
-    void collisionDetection();
     void addToCollisionList(sf::RectangleShape& rect);
 };
 

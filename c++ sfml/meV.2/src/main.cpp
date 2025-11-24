@@ -51,7 +51,6 @@ int main()
         character.moveCharacter();
         character.addToCollisionList(floor);
         character.addToCollisionList(roof);
-        character.collisionDetection();
 
         character.update();
 
