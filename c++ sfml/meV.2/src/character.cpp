@@ -58,3 +58,8 @@ void Character::moveCharacter()
         }
     }
 }
+
+void Character::addToCollisionList(sf::RectangleShape& rect)
+{
+    collisionList.push_back(rect.getGlobalBounds());
+}
