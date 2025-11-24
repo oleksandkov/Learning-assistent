@@ -49,7 +49,9 @@ int main()
 
         // Move sprites
         character.moveCharacter();
-        
+        character.addToCollisionList(floor);
+        character.addToCollisionList(roof);
+        character.collisionDetection();
 
         character.update();
 

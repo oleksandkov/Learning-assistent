@@ -16,12 +16,17 @@ private:
     float animationSpeed; 
     sf::Clock clock;
     float speed;
+    std::vector<sf::FloatRect> collisionList;
+    sf::Vector2f oldpos;
+
 
 public:
     Character();
     ~Character();
     void update();
     void moveCharacter();
+    void collisionDetection();
+    void addToCollisionList(sf::RectangleShape& rect);
 };
 
 #endif

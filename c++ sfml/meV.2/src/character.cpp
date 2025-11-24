@@ -50,3 +50,19 @@ void Character::moveCharacter()
     move(movement);
 }
 
+void Character::addToCollisionList(sf::RectangleShape& rect)
+{
+    collisionList.push_back(rect.getGlobalBounds());
+}
+
+void Character::collisionDetection()
+{
+    sf::Vector2f oldpos = getPosition();
+    for (const auto& rect : collisionList)
+    {
+        if (getGlobalBounds().intersects(rect))
+        {
+            setPosition(oldpos);
+        }
+    }
+}
