@@ -75,9 +75,10 @@ void Character::moveCharacter()
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         movement.x += speed * deltaTime;
     // Jumping
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && onGround)
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && onGround) {
         velocity.y = jumpVelocity;
         isJumping = true;
+    }
     isWalking = (movement.x != 0.f);
     move(movement);
     initializeHitbox();
