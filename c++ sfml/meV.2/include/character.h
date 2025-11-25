@@ -24,6 +24,7 @@ private:
     bool isJumping;
     sf::Vector2f velocity;
     bool onGround;
+    float jumpVelocity;
     
     
     public:

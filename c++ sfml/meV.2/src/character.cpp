@@ -9,6 +9,7 @@ Character::Character()
     isWalking = false;
     velocity = sf::Vector2f(0.f, 0.f);
     onGround = false;
+    jumpVelocity = -300.f;
 
     if (!idleTexture.loadFromFile("assets/Idle.png"))
     {
@@ -52,10 +53,7 @@ void Character::update()
     }
     else if (isJumping)
     {
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-        {
-            setTexture(jumpTexture);
-        }
+        setTexture(jumpTexture);
     }
     else
     {
@@ -82,7 +80,8 @@ void Character::moveCharacter()
         movement.x += speed * deltaTime;
     // Jumping
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && onGround)
-        velocity.y = -300.f;
+        velocity.y = jumpVelocity;
+        isJumping = true;
     isWalking = (movement.x != 0.f);
     move(movement);
     initializeHitbox();
@@ -134,5 +133,6 @@ void Character::characterLogic() {
         setPosition(getPosition().x, floorBounds.top - getGlobalBounds().height);
         velocity.y = 0.f;
         onGround = true;
+        isJumping = false;
     }
 }
