@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <character.h>
+#include "objects.h"
 
 
 int main()
@@ -16,13 +17,8 @@ int main()
     background.setFillColor(sf::Color(100.f, 149.f, 237.f));
     // Map Floor/Roff setrup
     // Setup flloor
-    sf::RectangleShape floor;
-    floor.setSize(sf::Vector2f(window.getSize().x, 100.f));
-    floor.setPosition(0.f, window.getSize().y - 100.f);
-    floor.setFillColor(sf::Color(139, 69, 19));
-    floor.setOutlineColor(sf::Color::Black);
-    floor.setOutlineThickness(2.f);
-
+    Floor floor(window.getSize().x, 100.f);
+    floor.shape.move(0.f, window.getSize().y - 100.f);
     // Setup roof
     sf::RectangleShape roof;
     roof.setSize(sf::Vector2f(window.getSize().x, 50.f));
@@ -33,8 +29,8 @@ int main()
 
     Character character;
 
-    character.addToCollisionList(floor);
-    character.addToCollisionList(roof);
+    character.addToCollisionList(floor.shape.getGlobalBounds());
+    character.addToCollisionList(roof.getGlobalBounds());
 
     // Main loop
     while (window.isOpen())
@@ -53,9 +49,12 @@ int main()
 
         character.update();
 
+        character.characterLogic();
+
         window.clear(sf::Color::Black);
         window.draw(background);
-        window.draw(floor);
+        window.draw(floor.shape);
+        // window.draw(floor1.shape);
         window.draw(roof);
         window.draw(character);
 

@@ -7,6 +7,8 @@ Character::Character()
     currentFrame = 0;
     speed = 200.f;
     isWalking = false;
+    velocity = sf::Vector2f(0.f, 0.f);
+    onGround = false;
 
     if (!idleTexture.loadFromFile("assets/Idle.png"))
     {
@@ -16,6 +18,8 @@ Character::Character()
     {
         std::cerr << "Error loading walk texture" << std::endl;
     }
+    if (!jumpTexture.loadFromFile("assets/Jump.png"))
+        std::cerr << "Error loading jump texture" << std::endl;
 
     frameSize.x = idleTexture.getSize().x / totalFrames;
     frameSize.y = idleTexture.getSize().y;
@@ -46,6 +50,13 @@ void Character::update()
         }
         setTexture(walkTexture);
     }
+    else if (isJumping)
+    {
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+        {
+            setTexture(jumpTexture);
+        }
+    }
     else
     {
         setTexture(idleTexture);
@@ -63,14 +74,15 @@ void Character::moveCharacter()
     sf::Vector2f oldpos = getPosition();
     float deltaTime = clock.restart().asSeconds();
     sf::Vector2f movement(0.f, 0.f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-        movement.y -= speed * deltaTime;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
         movement.y += speed * deltaTime;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         movement.x -= speed * deltaTime;
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         movement.x += speed * deltaTime;
+    // Jumping
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && onGround)
+        velocity.y = -300.f;
     isWalking = (movement.x != 0.f);
     move(movement);
     initializeHitbox();
@@ -84,9 +96,9 @@ void Character::moveCharacter()
     }
 }
 
-void Character::addToCollisionList(sf::RectangleShape& rect)
+void Character::addToCollisionList(sf::FloatRect rect)
 {
-    collisionList.push_back(rect.getGlobalBounds());
+    collisionList.push_back(rect);
 }
 
 void Character::initializeHitbox()
@@ -98,4 +110,29 @@ void Character::initializeHitbox()
     hitbox.setFillColor(sf::Color::Transparent);
     hitbox.setOutlineColor(sf::Color::Red);
     hitbox.setOutlineThickness(1.f);
+}
+
+void Character::characterLogic() {
+    float dt = 0.016f; // Approximate delta time for 60 FPS
+    sf::FloatRect floorBounds = collisionList[0]; // Assume first collision is floor
+
+    // Check if on ground
+    onGround = getGlobalBounds().intersects(floorBounds);
+
+    // Apply gravity if not on ground
+    if (!onGround) {
+        velocity.y += 980.f * dt; // Gravity acceleration
+    } else {
+        velocity.y = 0.f;
+    }
+
+    // Move by velocity
+    move(0.f, velocity.y * dt);
+
+    // Check for floor collision after movement
+    if (getGlobalBounds().intersects(floorBounds)) {
+        setPosition(getPosition().x, floorBounds.top - getGlobalBounds().height);
+        velocity.y = 0.f;
+        onGround = true;
+    }
 }

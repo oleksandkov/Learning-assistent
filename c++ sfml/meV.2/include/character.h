@@ -10,6 +10,7 @@ class Character : public sf::Sprite
 private:
     sf::Texture idleTexture;
     sf::Texture walkTexture;
+    sf::Texture jumpTexture;
     sf::Clock animationClock;
     int currentFrame;
     int totalFrames;
@@ -20,6 +21,9 @@ private:
     std::vector<sf::FloatRect> collisionList;
     sf::Vector2f oldpos;
     bool isWalking;
+    bool isJumping;
+    sf::Vector2f velocity;
+    bool onGround;
     
     
     public:
@@ -28,8 +32,9 @@ private:
     ~Character();
     void update();
     void moveCharacter();
-    void addToCollisionList(sf::RectangleShape& rect);
+    void addToCollisionList(sf::FloatRect rect);
     void initializeHitbox();
+    void characterLogic();
 };
 
 #endif
