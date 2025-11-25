@@ -25,6 +25,7 @@ private:
     sf::Vector2f velocity;
     bool onGround;
     float jumpVelocity;
+    float jumpAnimationSpeed;
     
     
     public:

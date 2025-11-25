@@ -10,6 +10,7 @@ Character::Character()
     velocity = sf::Vector2f(0.f, 0.f);
     onGround = false;
     jumpVelocity = -500.f;
+    jumpAnimationSpeed = 0.15f;
 
     if (!idleTexture.loadFromFile("assets/Idle.png"))
     {
@@ -114,7 +115,7 @@ void Character::characterLogic() {
     // Check if on ground (intersects any collision object)
     onGround = false;
     for (const auto& rect : collisionList) {
-        if (getGlobalBounds().intersects(rect)) {
+        if (hitbox.getGlobalBounds().intersects(rect)) {
             onGround = true;
             break;
         }
@@ -132,7 +133,7 @@ void Character::characterLogic() {
 
     // Check for collision after movement with any object
     for (const auto& rect : collisionList) {
-        if (getGlobalBounds().intersects(rect)) {
+        if (hitbox.getGlobalBounds().intersects(rect)) {
             setPosition(getPosition().x, rect.top - getGlobalBounds().height);
             velocity.y = 0.f;
             onGround = true;
