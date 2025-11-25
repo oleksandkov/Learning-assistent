@@ -5,18 +5,24 @@
 class GameObject : public sf::Sprite
 {
 
-    private:
-    
+private:
 public:
     GameObject();
     ~GameObject();
-
 };
 
-struct Floor {
+struct Floor
+{
     sf::RectangleShape shape;
     sf::Texture texture;
     Floor(float width, float height);
+};
+
+struct Platform
+{
+    sf::RectangleShape shape;
+    sf::Texture texture;
+    Platform(float width, float height);
 };
 
 #endif // OBJECTS_H

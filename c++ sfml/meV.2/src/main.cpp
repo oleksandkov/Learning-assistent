@@ -3,7 +3,6 @@
 #include <character.h>
 #include "objects.h"
 
-
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 600), "The Game");
@@ -19,6 +18,10 @@ int main()
     // Setup flloor
     Floor floor(window.getSize().x, 100.f);
     floor.shape.move(0.f, window.getSize().y - 100.f);
+    // Setup platform
+    Platform platform(200.f, 20.f);
+    platform.shape.setPosition(300.f, 400.f);
+
     // Setup roof
     sf::RectangleShape roof;
     roof.setSize(sf::Vector2f(window.getSize().x, 50.f));
@@ -31,6 +34,7 @@ int main()
 
     character.addToCollisionList(floor.shape.getGlobalBounds());
     character.addToCollisionList(roof.getGlobalBounds());
+    character.addToCollisionList(platform.shape.getGlobalBounds());
 
     // Main loop
     while (window.isOpen())
@@ -54,7 +58,7 @@ int main()
         window.clear(sf::Color::Black);
         window.draw(background);
         window.draw(floor.shape);
-        // window.draw(floor1.shape);
+        window.draw(platform.shape);
         window.draw(roof);
         window.draw(character);
 

@@ -9,7 +9,7 @@ Character::Character()
     isWalking = false;
     velocity = sf::Vector2f(0.f, 0.f);
     onGround = false;
-    jumpVelocity = -300.f;
+    jumpVelocity = -500.f;
 
     if (!idleTexture.loadFromFile("assets/Idle.png"))
     {
@@ -19,8 +19,8 @@ Character::Character()
     {
         std::cerr << "Error loading walk texture" << std::endl;
     }
-    if (!jumpTexture.loadFromFile("assets/Jump.png"))
-        std::cerr << "Error loading jump texture" << std::endl;
+    // if (!jumpTexture.loadFromFile("assets/Jump.png"))
+    //     std::cerr << "Error loading jump texture" << std::endl;
 
     frameSize.x = idleTexture.getSize().x / totalFrames;
     frameSize.y = idleTexture.getSize().y;
@@ -50,10 +50,6 @@ void Character::update()
             setOrigin(0, 0);
         }
         setTexture(walkTexture);
-    }
-    else if (isJumping)
-    {
-        setTexture(jumpTexture);
     }
     else
     {
@@ -113,10 +109,15 @@ void Character::initializeHitbox()
 
 void Character::characterLogic() {
     float dt = 0.016f; // Approximate delta time for 60 FPS
-    sf::FloatRect floorBounds = collisionList[0]; // Assume first collision is floor
 
-    // Check if on ground
-    onGround = getGlobalBounds().intersects(floorBounds);
+    // Check if on ground (intersects any collision object)
+    onGround = false;
+    for (const auto& rect : collisionList) {
+        if (getGlobalBounds().intersects(rect)) {
+            onGround = true;
+            break;
+        }
+    }
 
     // Apply gravity if not on ground
     if (!onGround) {
@@ -128,11 +129,14 @@ void Character::characterLogic() {
     // Move by velocity
     move(0.f, velocity.y * dt);
 
-    // Check for floor collision after movement
-    if (getGlobalBounds().intersects(floorBounds)) {
-        setPosition(getPosition().x, floorBounds.top - getGlobalBounds().height);
-        velocity.y = 0.f;
-        onGround = true;
-        isJumping = false;
+    // Check for collision after movement with any object
+    for (const auto& rect : collisionList) {
+        if (getGlobalBounds().intersects(rect)) {
+            setPosition(getPosition().x, rect.top - getGlobalBounds().height);
+            velocity.y = 0.f;
+            onGround = true;
+            isJumping = false;
+            break; // Stop at the first collision (highest object)
+        }
     }
 }
