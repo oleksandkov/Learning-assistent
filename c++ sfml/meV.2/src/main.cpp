@@ -33,7 +33,6 @@ int main()
     // Setrup walls
     Wall leftWall(500.f, window.getSize().y);
     leftWall.shape.setPosition(0.f, 0.f);
-    
 
     Character character;
     character.setPosition(600.f, 100.f);
@@ -47,7 +46,7 @@ int main()
     // Create enemy
     Enemy enemy;
     enemy.setPosition(900.f, 100.f);
-    
+
     enemy.addToCollisionList(floor.shape.getGlobalBounds());
     enemy.addToCollisionList(roof.shape.getGlobalBounds());
     enemy.addToCollisionList(platform2.shape.getGlobalBounds());
