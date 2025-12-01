@@ -5,7 +5,7 @@ Character::Character()
     totalFrames = 8;
     animationSpeed = 0.1f;
     currentFrame = 0;
-    speed = 200.f;
+    speed = 250.f;
     isWalking = false;
     velocity = sf::Vector2f(0.f, 0.f);
     onGround = false;
@@ -111,52 +111,48 @@ void Character::initializeHitbox()
 
 void Character::characterLogic()
 {
-    float dt = 0.016f; // Approximate delta time for 60 FPS
+    float dt = physicsClock.restart().asSeconds();
+    if (dt > 0.1f)
+        dt = 0.016f;
 
-    // Check if on ground (intersects any collision object)
-    onGround = false;
-    for (const auto &rect : collisionList)
-    {
-        if (hitbox.getGlobalBounds().intersects(rect))
-        {
-            onGround = true;
-            break;
-        }
-    }
-
-    // Apply gravity if not on ground
-    if (!onGround)
-    {
-        velocity.y += 980.f * dt; // Gravity acceleration
-    }
-    else
-    {
-        velocity.y = 0.f;
-    }
+    // Apply gravity
+    velocity.y += 980.f * dt; // Gravity acceleration
 
     // Move by velocity
     move(0.f, velocity.y * dt);
 
-    // Check for collision after movement with any object
+    // Update hitbox after movement
+    initializeHitbox();
+
+    // Reset ground status
+    onGround = false;
+
+    // Check for collisions after vertical movement
     for (const auto &rect : collisionList)
     {
         if (hitbox.getGlobalBounds().intersects(rect))
         {
-            setPosition(getPosition().x, rect.top - getGlobalBounds().height);
-            velocity.y = 0.f;
-            onGround = true;
-            isJumping = false;
-            break; // Stop at the first collision (highest object)
-        }
-        if ( !onGround)
-        {   
-            oldpos = getPosition();
-            if( hitbox.getGlobalBounds().intersects(rect) && velocity.y < 0)
-            {   
-            hitbox.setPosition(getPosition().x, rect.top - rect.height);
-            velocity.y = 0.f;
-            break;
+            // Collision detected - determine if hitting from above or below
+            if (velocity.y > 0.f) // Falling down - hit floor/platform from above
+            {
+                // Position character on top of the collision object
+                float correctY = rect.top - getGlobalBounds().height;
+                setPosition(getPosition().x, correctY);
+                velocity.y = 0.f;
+                onGround = true;
+                isJumping = false;
+                initializeHitbox(); // Update hitbox after position correction
+                break;
             }
+            else if (velocity.y < 0.f) // Jumping up - hit ceiling/platform from below
+            {
+                // Push character back slightly to stop intersection
+                move(0.f, 1.f);
+                velocity.y = 0.f;
+                isJumping = false;
+                initializeHitbox();
+                break;
+            }
+        }
     }
-}
 }

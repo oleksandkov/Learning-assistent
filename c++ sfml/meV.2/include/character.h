@@ -15,8 +15,9 @@ private:
     int currentFrame;
     int totalFrames;
     sf::Vector2i frameSize;
-    float animationSpeed; 
+    float animationSpeed;
     sf::Clock clock;
+    sf::Clock physicsClock;
     float speed;
     std::vector<sf::FloatRect> collisionList;
     sf::Vector2f oldpos;
@@ -26,9 +27,8 @@ private:
     bool onGround;
     float jumpVelocity;
     float jumpAnimationSpeed;
-    
-    
-    public:
+
+public:
     sf::RectangleShape hitbox;
     Character();
     ~Character();

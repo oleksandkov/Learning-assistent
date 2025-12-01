@@ -19,8 +19,11 @@ int main()
     Floor floor(window.getSize().x, 100.f);
     floor.shape.move(0.f, window.getSize().y - 100.f);
     // Setup platform
-    Platform platform(200.f, 20.f);
-    platform.shape.setPosition(300.f, 400.f);
+    // Platform platform(200.f, 20.f);
+    // platform.shape.setPosition(300.f, 400.f);
+
+    Platform platform2(150.f, 20.f);
+    platform2.shape.setPosition(600.f, 330.f);
 
     // Setup roof
     sf::RectangleShape roof;
@@ -34,7 +37,8 @@ int main()
 
     character.addToCollisionList(floor.shape.getGlobalBounds());
     character.addToCollisionList(roof.getGlobalBounds());
-    character.addToCollisionList(platform.shape.getGlobalBounds());
+    // character.addToCollisionList(platform.shape.getGlobalBounds());
+    character.addToCollisionList(platform2.shape.getGlobalBounds());
 
     // Main loop
     while (window.isOpen())
@@ -58,7 +62,8 @@ int main()
         window.clear(sf::Color::Black);
         window.draw(background);
         window.draw(floor.shape);
-        window.draw(platform.shape);
+        // window.draw(platform.shape);
+        window.draw(platform2.shape);
         window.draw(roof);
         window.draw(character);
 
