@@ -83,6 +83,13 @@ int main()
             enemy.takeDamage();
         }
 
+        // Check if enemy touches character
+        if (!enemy.shouldBeRemoved() &&
+            enemy.hitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()))
+        {
+            character.takeDamage(10.f);
+        }
+
         // Update camera to follow character
         camera.setCenter(character.getPosition().x + 50.f, character.getPosition().y);
         window.setView(camera);

@@ -12,10 +12,12 @@ private:
     sf::Texture walkTexture;
     sf::Texture jumpTexture;
     sf::Texture attackTexture;
+    sf::Texture hurtTexture;
     sf::Clock animationClock;
     int currentFrame;
     int totalFrames;
     int attackFrames;
+    int hurtFrames;
     sf::Vector2i frameSize;
     float animationSpeed;
     sf::Clock clock;
@@ -31,6 +33,11 @@ private:
     float jumpAnimationSpeed;
     bool isAttacking;
     bool wasSpacePressed;
+    bool isHurt;
+    float health;
+    sf::Clock damageCooldownClock;
+    float damageCooldown;
+    bool canTakeDamage;
 
 public:
     sf::RectangleShape hitbox;
@@ -43,6 +50,9 @@ public:
     void initializeHitbox();
     void updateAttackHitbox();
     void characterLogic();
+    void takeDamage(float damage);
+    float getHealth() const;
+    bool getIsAttacking() const;
 };
 
 #endif

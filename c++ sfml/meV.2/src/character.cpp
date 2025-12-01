@@ -4,6 +4,7 @@ Character::Character()
 {
     totalFrames = 8;
     attackFrames = 4;
+    hurtFrames = 6;
     animationSpeed = 0.1f;
     currentFrame = 0;
     speed = 250.f;
@@ -14,6 +15,10 @@ Character::Character()
     jumpAnimationSpeed = 0.15f;
     isAttacking = false;
     wasSpacePressed = false;
+    isHurt = false;
+    health = 100.f;
+    damageCooldown = 1.0f; // 1 second cooldown between damage
+    canTakeDamage = true;
 
     if (!idleTexture.loadFromFile("assets/Idle.png"))
     {
@@ -26,6 +31,10 @@ Character::Character()
     if (!attackTexture.loadFromFile("assets/Attack_1.png"))
     {
         std::cerr << "Error loading attack texture" << std::endl;
+    }
+    if (!hurtTexture.loadFromFile("assets/Hurt.png"))
+    {
+        std::cerr << "Error loading hurt texture" << std::endl;
     }
     // if (!jumpTexture.loadFromFile("assets/Jump.png"))
     //     std::cerr << "Error loading jump texture" << std::endl;
@@ -51,7 +60,23 @@ Character::~Character()
 
 void Character::update()
 {
-    if (isAttacking)
+    if (isHurt)
+    {
+        setTexture(hurtTexture);
+        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        {
+            currentFrame++;
+            if (currentFrame >= hurtFrames)
+            {
+                currentFrame = 0;
+                isHurt = false;
+                setTexture(idleTexture);
+            }
+            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
+            animationClock.restart();
+        }
+    }
+    else if (isAttacking)
     {
         setTexture(attackTexture);
         if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
@@ -184,6 +209,12 @@ void Character::updateAttackHitbox()
 
 void Character::characterLogic()
 {
+    // Update damage cooldown
+    if (!canTakeDamage && damageCooldownClock.getElapsedTime().asSeconds() >= damageCooldown)
+    {
+        canTakeDamage = true;
+    }
+
     float dt = physicsClock.restart().asSeconds();
     if (dt > 0.1f)
         dt = 0.016f;
@@ -228,4 +259,29 @@ void Character::characterLogic()
             }
         }
     }
+}
+
+void Character::takeDamage(float damage)
+{
+    if (canTakeDamage && health > 0)
+    {
+        health -= damage;
+        isHurt = true;
+        isAttacking = false;
+        currentFrame = 0;
+        animationClock.restart();
+
+        if (health < 0)
+            health = 0;
+
+        canTakeDamage = false;
+        damageCooldownClock.restart();
+
+        std::cout << "Character took damage! Health: " << health << std::endl;
+    }
+}
+
+float Character::getHealth() const
+{
+    return health;
 }

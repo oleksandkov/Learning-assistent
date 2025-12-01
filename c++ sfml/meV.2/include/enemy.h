@@ -23,6 +23,7 @@ private:
     sf::Clock movementClock;
     sf::Clock physicsClock;
     float speed;
+    float health;
     std::vector<sf::FloatRect> collisionList;
     sf::Vector2f velocity;
     bool onGround;

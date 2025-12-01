@@ -7,7 +7,6 @@ Enemy::Enemy()
     walkFrames = 8;
     jumpFrames = 12;
     deadFrames = 3;
-
     animationSpeed = 0.1f;
     currentFrame = 0;
     speed = 120.f;
