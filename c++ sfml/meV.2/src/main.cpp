@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <character.h>
+#include <enemy.h>
 #include "objects.h"
 
 int main()
@@ -43,6 +44,15 @@ int main()
     character.addToCollisionList(platform2.shape.getGlobalBounds());
     character.addToCollisionList(leftWall.shape.getGlobalBounds());
 
+    // Create enemy
+    Enemy enemy;
+    enemy.setPosition(900.f, 100.f);
+    
+    enemy.addToCollisionList(floor.shape.getGlobalBounds());
+    enemy.addToCollisionList(roof.shape.getGlobalBounds());
+    enemy.addToCollisionList(platform2.shape.getGlobalBounds());
+    enemy.addToCollisionList(leftWall.shape.getGlobalBounds());
+
     // Main loop
     while (window.isOpen())
     {
@@ -62,6 +72,18 @@ int main()
 
         character.characterLogic();
 
+        // Update enemy
+        enemy.enemyAI(character.getPosition());
+        enemy.update();
+        enemy.enemyLogic();
+
+        // Check if character's attack hits enemy
+        if (character.attackHitbox.getGlobalBounds().intersects(enemy.hitbox.getGlobalBounds()) &&
+            character.attackHitbox.getGlobalBounds().width > 0 && !enemy.getIsDead())
+        {
+            enemy.takeDamage();
+        }
+
         // Update camera to follow character
         camera.setCenter(character.getPosition().x + 50.f, character.getPosition().y);
         window.setView(camera);
@@ -80,6 +102,13 @@ int main()
         window.draw(character.hitbox);
         if (character.attackHitbox.getGlobalBounds().width > 0)
             window.draw(character.attackHitbox);
+
+        // Enemy
+        if (!enemy.shouldBeRemoved())
+        {
+            window.draw(enemy);
+            window.draw(enemy.hitbox);
+        }
 
         window.display();
     }
