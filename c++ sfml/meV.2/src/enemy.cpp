@@ -5,9 +5,8 @@ Enemy::Enemy()
     // Frame counts for different animations
     idleFrames = 8;
     walkFrames = 8;
-    jumpFrames = 12;
     deadFrames = 3;
-    animationSpeed = 0.1f;
+    animationSpeed = 0.15f; // Slower animation for better visibility
     currentFrame = 0;
     speed = 120.f;
 
@@ -19,7 +18,6 @@ Enemy::Enemy()
     // State flags
     isIdle = true;
     isWalking = false;
-    isJumping = false;
     isDead = false;
     shouldRemove = false;
 
@@ -34,10 +32,6 @@ Enemy::Enemy()
     if (!walkTexture.loadFromFile("assets/enemy/Walk.png"))
     {
         std::cerr << "Error loading enemy walk texture" << std::endl;
-    }
-    if (!jumpTexture.loadFromFile("assets/enemy/Jump.png"))
-    {
-        std::cerr << "Error loading enemy jump texture" << std::endl;
     }
     if (!deadTexture.loadFromFile("assets/enemy/Dead.png"))
     {
@@ -58,30 +52,7 @@ Enemy::~Enemy()
 
 void Enemy::update()
 {
-    if (isJumping)
-    {
-        setTexture(jumpTexture);
-        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
-        {
-            if (currentFrame < jumpFrames - 1)
-            {
-                currentFrame++;
-            }
-            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
-            animationClock.restart();
-        }
-    }
-    else if (isWalking)
-    {
-        setTexture(walkTexture);
-        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
-        {
-            currentFrame = (currentFrame + 1) % walkFrames;
-            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
-            animationClock.restart();
-        }
-    }
-    else if (isDead)
+    if (isDead)
     {
         setTexture(deadTexture);
         if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
@@ -98,7 +69,23 @@ void Enemy::update()
             animationClock.restart();
         }
     }
-    else
+    else if (isWalking)
+    {
+        setTexture(walkTexture);
+
+        // Calculate frameSize for walk texture
+        sf::Vector2i walkFrameSize;
+        walkFrameSize.x = walkTexture.getSize().x / walkFrames;
+        walkFrameSize.y = walkTexture.getSize().y;
+
+        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        {
+            currentFrame = (currentFrame + 1) % walkFrames;
+            setTextureRect(sf::IntRect(currentFrame * walkFrameSize.x, 0, walkFrameSize.x, walkFrameSize.y));
+            animationClock.restart();
+        }
+    }
+    else // isIdle
     {
         setTexture(idleTexture);
         if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
@@ -209,8 +196,7 @@ void Enemy::enemyLogic()
                 setPosition(getPosition().x, correctY);
                 velocity.y = 0.f;
                 onGround = true;
-                isJumping = false;
-                currentFrame = 0; // Reset jump animation
+                currentFrame = 0; // Reset animation
                 initializeHitbox();
                 break;
             }
@@ -232,7 +218,6 @@ void Enemy::takeDamage()
         isDead = true;
         isIdle = false;
         isWalking = false;
-        isJumping = false;
         currentFrame = 0;
         animationClock.restart();
     }

@@ -10,13 +10,11 @@ class Enemy : public sf::Sprite
 private:
     sf::Texture idleTexture;
     sf::Texture walkTexture;
-    sf::Texture jumpTexture;
     sf::Texture deadTexture;
     sf::Clock animationClock;
     int currentFrame;
     int idleFrames;
     int walkFrames;
-    int jumpFrames;
     int deadFrames;
     sf::Vector2i frameSize;
     float animationSpeed;
@@ -30,7 +28,6 @@ private:
     float jumpVelocity;
     bool isIdle;
     bool isWalking;
-    bool isJumping;
     bool isDead;
     bool shouldRemove;
 

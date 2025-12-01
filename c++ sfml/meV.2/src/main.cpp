@@ -34,6 +34,9 @@ int main()
     Wall leftWall(500.f, window.getSize().y);
     leftWall.shape.setPosition(0.f, 0.f);
 
+    Wall rightWall(500.f, window.getSize().y);
+    rightWall.shape.setPosition(2000.f, 0.f);
+
     Character character;
     character.setPosition(600.f, 100.f);
 
@@ -42,6 +45,7 @@ int main()
     // character.addToCollisionList(platform.shape.getGlobalBounds());
     character.addToCollisionList(platform2.shape.getGlobalBounds());
     character.addToCollisionList(leftWall.shape.getGlobalBounds());
+    character.addToCollisionList(rightWall.shape.getGlobalBounds());
 
     // Create enemy
     Enemy enemy;
@@ -51,6 +55,16 @@ int main()
     enemy.addToCollisionList(roof.shape.getGlobalBounds());
     enemy.addToCollisionList(platform2.shape.getGlobalBounds());
     enemy.addToCollisionList(leftWall.shape.getGlobalBounds());
+    enemy.addToCollisionList(rightWall.shape.getGlobalBounds());
+
+    Enemy enemy2;
+    enemy2.setPosition(1200.f, 100.f);
+
+    enemy2.addToCollisionList(floor.shape.getGlobalBounds());
+    enemy2.addToCollisionList(roof.shape.getGlobalBounds());
+    enemy2.addToCollisionList(platform2.shape.getGlobalBounds());
+    enemy2.addToCollisionList(leftWall.shape.getGlobalBounds());
+    enemy2.addToCollisionList(rightWall.shape.getGlobalBounds());
 
     // Main loop
     while (window.isOpen())
@@ -98,6 +112,7 @@ int main()
         window.draw(background);
         // Map
         window.draw(leftWall.shape);
+        window.draw(rightWall.shape);
         window.draw(platform2.shape);
         // Essentially Floor/Roof
         window.draw(floor.shape);
