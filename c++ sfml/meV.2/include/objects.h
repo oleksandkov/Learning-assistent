@@ -25,4 +25,11 @@ struct Platform
     Platform(float width, float height);
 };
 
+struct Wall
+{
+    sf::RectangleShape shape;
+    sf::Texture texture;
+    Wall(float width, float height);
+};
+
 #endif // OBJECTS_H

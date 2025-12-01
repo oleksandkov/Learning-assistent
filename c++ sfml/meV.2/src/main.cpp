@@ -15,34 +15,33 @@ int main()
 
     // Background setup
     sf::RectangleShape background;
-    background.setSize(sf::Vector2f(window.getSize()));
+    background.setSize(sf::Vector2f(5000.f, 3000.f));
     background.setPosition(0.f, 0.f);
     background.setFillColor(sf::Color(100.f, 149.f, 237.f));
     // Map Floor/Roff setrup
     // Setup flloor
     Floor floor(2000.f, 100.f);
     floor.shape.move(0.f, window.getSize().y - 100.f);
+    Floor roof(3000.f, -500.f);
+    roof.shape.setPosition(0.f, 0.f);
     // Setup platform
-    // Platform platform(200.f, 20.f);
-    // platform.shape.setPosition(300.f, 400.f);
 
     Platform platform2(150.f, 20.f);
     platform2.shape.setPosition(600.f, 330.f);
 
-    // Setup roof
-    sf::RectangleShape roof;
-    roof.setSize(sf::Vector2f(window.getSize().x, 50.f));
-    roof.setPosition(0.f, 0.f);
-    roof.setFillColor(sf::Color(169, 169, 169));
-    roof.setOutlineColor(sf::Color::Black);
-    roof.setOutlineThickness(2.f);
+    // Setrup walls
+    Wall leftWall(500.f, window.getSize().y);
+    leftWall.shape.setPosition(0.f, 0.f);
+    
 
     Character character;
+    character.setPosition(600.f, 100.f);
 
     character.addToCollisionList(floor.shape.getGlobalBounds());
-    character.addToCollisionList(roof.getGlobalBounds());
+    character.addToCollisionList(roof.shape.getGlobalBounds());
     // character.addToCollisionList(platform.shape.getGlobalBounds());
     character.addToCollisionList(platform2.shape.getGlobalBounds());
+    character.addToCollisionList(leftWall.shape.getGlobalBounds());
 
     // Main loop
     while (window.isOpen())
@@ -66,13 +65,16 @@ int main()
         // Update camera to follow character
         camera.setCenter(character.getPosition().x + 50.f, character.getPosition().y);
         window.setView(camera);
-
+        // Background
         window.clear(sf::Color::Black);
         window.draw(background);
-        window.draw(floor.shape);
-        // window.draw(platform.shape);
+        // Map
+        window.draw(leftWall.shape);
         window.draw(platform2.shape);
-        window.draw(roof);
+        // Essentially Floor/Roof
+        window.draw(floor.shape);
+        window.draw(roof.shape);
+        // Character
         window.draw(character);
 
         window.draw(character.hitbox);
