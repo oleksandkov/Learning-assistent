@@ -9,6 +9,10 @@ int main()
 
     window.setVerticalSyncEnabled(true);
 
+    // Create camera view
+    sf::View camera(sf::FloatRect(0.f, 0.f, 700.f, 400.f));
+    window.setView(camera);
+
     // Background setup
     sf::RectangleShape background;
     background.setSize(sf::Vector2f(window.getSize()));
@@ -16,7 +20,7 @@ int main()
     background.setFillColor(sf::Color(100.f, 149.f, 237.f));
     // Map Floor/Roff setrup
     // Setup flloor
-    Floor floor(window.getSize().x, 100.f);
+    Floor floor(2000.f, 100.f);
     floor.shape.move(0.f, window.getSize().y - 100.f);
     // Setup platform
     // Platform platform(200.f, 20.f);
@@ -59,6 +63,10 @@ int main()
 
         character.characterLogic();
 
+        // Update camera to follow character
+        camera.setCenter(character.getPosition().x + 50.f, character.getPosition().y);
+        window.setView(camera);
+
         window.clear(sf::Color::Black);
         window.draw(background);
         window.draw(floor.shape);
@@ -68,6 +76,8 @@ int main()
         window.draw(character);
 
         window.draw(character.hitbox);
+        if (character.attackHitbox.getGlobalBounds().width > 0)
+            window.draw(character.attackHitbox);
 
         window.display();
     }

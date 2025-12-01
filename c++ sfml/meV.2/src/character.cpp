@@ -3,6 +3,7 @@
 Character::Character()
 {
     totalFrames = 8;
+    attackFrames = 4;
     animationSpeed = 0.1f;
     currentFrame = 0;
     speed = 250.f;
@@ -11,6 +12,8 @@ Character::Character()
     onGround = false;
     jumpVelocity = -500.f;
     jumpAnimationSpeed = 0.15f;
+    isAttacking = false;
+    wasSpacePressed = false;
 
     if (!idleTexture.loadFromFile("assets/Idle.png"))
     {
@@ -19,6 +22,10 @@ Character::Character()
     if (!walkTexture.loadFromFile("assets/Walk.png"))
     {
         std::cerr << "Error loading walk texture" << std::endl;
+    }
+    if (!attackTexture.loadFromFile("assets/Attack_1.png"))
+    {
+        std::cerr << "Error loading attack texture" << std::endl;
     }
     // if (!jumpTexture.loadFromFile("assets/Jump.png"))
     //     std::cerr << "Error loading jump texture" << std::endl;
@@ -30,6 +37,12 @@ Character::Character()
 
     setTextureRect(sf::IntRect(0, 0, frameSize.x, frameSize.y));
     setPosition(100.f, 100.f);
+
+    // Initialize attack hitbox
+    attackHitbox.setSize(sf::Vector2f(20.f, 20.f));
+    attackHitbox.setFillColor(sf::Color::Transparent);
+    attackHitbox.setOutlineColor(sf::Color::Blue);
+    attackHitbox.setOutlineThickness(2.f);
 }
 
 Character::~Character()
@@ -38,7 +51,23 @@ Character::~Character()
 
 void Character::update()
 {
-    if (isWalking)
+    if (isAttacking)
+    {
+        setTexture(attackTexture);
+        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        {
+            currentFrame++;
+            if (currentFrame >= attackFrames)
+            {
+                currentFrame = 0;
+                isAttacking = false;
+                setTexture(idleTexture);
+            }
+            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
+            animationClock.restart();
+        }
+    }
+    else if (isWalking)
     {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         {
@@ -51,16 +80,22 @@ void Character::update()
             setOrigin(0, 0);
         }
         setTexture(walkTexture);
+        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        {
+            currentFrame = (currentFrame + 1) % totalFrames;
+            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
+            animationClock.restart();
+        }
     }
     else
     {
         setTexture(idleTexture);
-    }
-    if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
-    {
-        currentFrame = (currentFrame + 1) % totalFrames;
-        setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
-        animationClock.restart();
+        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        {
+            currentFrame = (currentFrame + 1) % totalFrames;
+            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
+            animationClock.restart();
+        }
     }
 }
 
@@ -80,9 +115,20 @@ void Character::moveCharacter()
         velocity.y = jumpVelocity;
         isJumping = true;
     }
+
+    bool isSpacePressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Space);
+    if (isSpacePressed && !wasSpacePressed && !isAttacking)
+    {
+        isAttacking = true;
+        currentFrame = 0;
+        animationClock.restart();
+    }
+    wasSpacePressed = isSpacePressed;
+
     isWalking = (movement.x != 0.f);
     move(movement);
     initializeHitbox();
+    updateAttackHitbox();
     for (const auto &rect : collisionList)
     {
         if (hitbox.getGlobalBounds().intersects(rect))
@@ -107,6 +153,33 @@ void Character::initializeHitbox()
     hitbox.setFillColor(sf::Color::Transparent);
     hitbox.setOutlineColor(sf::Color::Red);
     hitbox.setOutlineThickness(1.f);
+}
+
+void Character::updateAttackHitbox()
+{
+    if (isAttacking && currentFrame >= 1 && currentFrame < attackFrames)
+    {
+        // Position attack hitbox next to character hitbox
+        sf::FloatRect charHitbox = hitbox.getGlobalBounds();
+        float attackWidth = 20.f;
+        float attackHeight = 40.f;
+
+        attackHitbox.setSize(sf::Vector2f(attackWidth, attackHeight));
+
+        if (getScale().x < 0) // Facing left
+        {
+            attackHitbox.setPosition(charHitbox.left - attackWidth, charHitbox.top + (charHitbox.height - attackHeight) / 2);
+        }
+        else // Facing right
+        {
+            attackHitbox.setPosition(charHitbox.left + charHitbox.width, charHitbox.top + (charHitbox.height - attackHeight) / 2);
+        }
+    }
+    else
+    {
+        // Hide attack hitbox when not attacking
+        attackHitbox.setSize(sf::Vector2f(0.f, 0.f));
+    }
 }
 
 void Character::characterLogic()

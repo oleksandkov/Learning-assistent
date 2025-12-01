@@ -11,9 +11,11 @@ private:
     sf::Texture idleTexture;
     sf::Texture walkTexture;
     sf::Texture jumpTexture;
+    sf::Texture attackTexture;
     sf::Clock animationClock;
     int currentFrame;
     int totalFrames;
+    int attackFrames;
     sf::Vector2i frameSize;
     float animationSpeed;
     sf::Clock clock;
@@ -27,15 +29,19 @@ private:
     bool onGround;
     float jumpVelocity;
     float jumpAnimationSpeed;
+    bool isAttacking;
+    bool wasSpacePressed;
 
 public:
     sf::RectangleShape hitbox;
+    sf::RectangleShape attackHitbox;
     Character();
     ~Character();
     void update();
     void moveCharacter();
     void addToCollisionList(sf::FloatRect rect);
     void initializeHitbox();
+    void updateAttackHitbox();
     void characterLogic();
 };
 
