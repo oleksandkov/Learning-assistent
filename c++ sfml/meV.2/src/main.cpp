@@ -86,9 +86,14 @@ int main()
         character.characterLogic();
 
         // Update enemy
-        enemy.enemyAI(character.getPosition());
+        enemy.enemyAI(character.getPosition(), character.getHealth());
         enemy.update();
         enemy.enemyLogic();
+
+        // Update enemy2
+        enemy2.enemyAI(character.getPosition(), character.getHealth());
+        enemy2.update();
+        enemy2.enemyLogic();
 
         // Check if character's attack hits enemy
         if (character.attackHitbox.getGlobalBounds().intersects(enemy.hitbox.getGlobalBounds()) &&
@@ -97,9 +102,23 @@ int main()
             enemy.takeDamage();
         }
 
+        // Check if character's attack hits enemy2
+        if (character.attackHitbox.getGlobalBounds().intersects(enemy2.hitbox.getGlobalBounds()) &&
+            character.attackHitbox.getGlobalBounds().width > 0 && !enemy2.getIsDead())
+        {
+            enemy2.takeDamage();
+        }
+
         // Check if enemy touches character
         if (!enemy.shouldBeRemoved() &&
             enemy.hitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()))
+        {
+            character.takeDamage(10.f);
+        }
+
+        // Check if enemy2 touches character
+        if (!enemy2.shouldBeRemoved() &&
+            enemy2.hitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()))
         {
             character.takeDamage(10.f);
         }
@@ -129,6 +148,13 @@ int main()
         {
             window.draw(enemy);
             window.draw(enemy.hitbox);
+        }
+
+        // Enemy2
+        if (!enemy2.shouldBeRemoved())
+        {
+            window.draw(enemy2);
+            window.draw(enemy2.hitbox);
         }
 
         window.display();

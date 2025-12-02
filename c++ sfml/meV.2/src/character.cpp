@@ -250,10 +250,14 @@ void Character::characterLogic()
             }
             else if (velocity.y < 0.f) // Jumping up - hit ceiling/platform from below
             {
-                // Push character back slightly to stop intersection
-                move(0.f, 1.f);
-                velocity.y = 0.f;
-                isJumping = false;
+                // Position character directly below the collision object
+                // float correctY = rect.top + rect.height;
+                // setPosition(getPosition().x, correctY);
+                // Add slight downward push to separate from obstacle
+                move(0.f, 2.f);
+                velocity.y = 0.f; // Stop upward movement
+                isJumping = false; // Stop jumping state
+                // Character will now start falling due to gravity on next frame
                 initializeHitbox();
                 break;
             }

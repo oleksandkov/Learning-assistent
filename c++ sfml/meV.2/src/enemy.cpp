@@ -72,16 +72,10 @@ void Enemy::update()
     else if (isWalking)
     {
         setTexture(walkTexture);
-
-        // Calculate frameSize for walk texture
-        sf::Vector2i walkFrameSize;
-        walkFrameSize.x = walkTexture.getSize().x / walkFrames;
-        walkFrameSize.y = walkTexture.getSize().y;
-
         if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
         {
             currentFrame = (currentFrame + 1) % walkFrames;
-            setTextureRect(sf::IntRect(currentFrame * walkFrameSize.x, 0, walkFrameSize.x, walkFrameSize.y));
+            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
             animationClock.restart();
         }
     }
@@ -97,10 +91,23 @@ void Enemy::update()
     }
 }
 
-void Enemy::enemyAI(sf::Vector2f playerPosition)
+void Enemy::enemyAI(sf::Vector2f playerPosition, float playerHealth)
 {
     if (isDead)
         return;
+
+    // Stop enemy AI if player is dead
+    if (playerHealth <= 0.f)
+    {
+        if (isWalking) // Transitioning from walking to idle
+        {
+            currentFrame = 0;
+            animationClock.restart();
+        }
+        isIdle = true;
+        isWalking = false;
+        return; // Exit early, no need to process AI
+    }
 
     float deltaTime = movementClock.restart().asSeconds();
     sf::Vector2f currentPos = getPosition();
@@ -110,20 +117,23 @@ void Enemy::enemyAI(sf::Vector2f playerPosition)
     // Check if player is in detection range
     if (distanceToPlayer < detectionRange)
     {
-        // Chase player - walk towards them
+        if (isIdle) // Transitioning from idle to walking
+        {
+            currentFrame = 0; // Reset animation frame
+            animationClock.restart();
+        }
         isIdle = false;
         isWalking = true;
 
         if (playerPosition.x < currentPos.x)
         {
-            // Move left towards player
+            
             setScale(-1.f, 1.f);
             setOrigin(frameSize.x, 0);
             move(-speed * deltaTime, 0.f);
         }
         else
         {
-            // Move right towards player
             setScale(1.f, 1.f);
             setOrigin(0, 0);
             move(speed * deltaTime, 0.f);
@@ -131,7 +141,11 @@ void Enemy::enemyAI(sf::Vector2f playerPosition)
     }
     else
     {
-        // Player not in range - stay idle
+        if (isWalking) // Transitioning from walking to idle
+        {
+            currentFrame = 0; // Reset animation frame
+            animationClock.restart();
+        }
         isIdle = true;
         isWalking = false;
     }
@@ -196,7 +210,6 @@ void Enemy::enemyLogic()
                 setPosition(getPosition().x, correctY);
                 velocity.y = 0.f;
                 onGround = true;
-                currentFrame = 0; // Reset animation
                 initializeHitbox();
                 break;
             }
