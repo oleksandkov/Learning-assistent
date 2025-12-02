@@ -66,6 +66,14 @@ int main()
     enemy2.addToCollisionList(leftWall.shape.getGlobalBounds());
     enemy2.addToCollisionList(rightWall.shape.getGlobalBounds());
 
+    Enemy enemy3;
+    enemy3.setPosition(1500.f, 100.f);
+    enemy3.addToCollisionList(floor.shape.getGlobalBounds());
+    enemy3.addToCollisionList(roof.shape.getGlobalBounds());
+    enemy3.addToCollisionList(platform2.shape.getGlobalBounds());
+    enemy3.addToCollisionList(leftWall.shape.getGlobalBounds());
+
+
     // Main loop
     while (window.isOpen())
     {
@@ -95,6 +103,13 @@ int main()
         enemy2.update();
         enemy2.enemyLogic();
 
+        // Update enemy3
+        enemy3.enemyAI(character.getPosition(), character.getHealth());
+        enemy3.update();
+        enemy3.enemyLogic();
+
+        
+
         // Check if character's attack hits enemy
         if (character.attackHitbox.getGlobalBounds().intersects(enemy.hitbox.getGlobalBounds()) &&
             character.attackHitbox.getGlobalBounds().width > 0 && !enemy.getIsDead())
@@ -107,6 +122,12 @@ int main()
             character.attackHitbox.getGlobalBounds().width > 0 && !enemy2.getIsDead())
         {
             enemy2.takeDamage();
+        }
+        // Check if character's attack hits enemy3
+        if (character.attackHitbox.getGlobalBounds().intersects(enemy3.hitbox.getGlobalBounds()) &&
+            character.attackHitbox.getGlobalBounds().width > 0 && !enemy3.getIsDead())
+        {
+            enemy3.takeDamage();
         }
 
         // Check if enemy touches character
@@ -155,6 +176,12 @@ int main()
         {
             window.draw(enemy2);
             window.draw(enemy2.hitbox);
+        }
+        // Enemy3
+        if (!enemy3.shouldBeRemoved())
+        {
+            window.draw(enemy3);
+            window.draw(enemy3.hitbox);
         }
 
         window.display();
