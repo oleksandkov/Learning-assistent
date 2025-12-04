@@ -19,11 +19,15 @@ Enemy::Enemy()
     isWalking = false;
     isDead = false;
     shouldRemove = false;
+    wasHitThisFrame = false;
 
     // AI behavior
     detectionRange = 400.f;
     isStaying = false;
     platformBounds = sf::FloatRect(0.f, 0.f, 0.f, 0.f);
+
+    // Health
+    health = 20.f; // Default health for enemy
 
     // Load textures
     if (!idleTexture.loadFromFile("assets/enemy/Idle.png"))
@@ -247,18 +251,25 @@ void Enemy::enemyLogic()
     }
 }
 
-void Enemy::takeDamage()
+void Enemy::takeDamage(float damageAmount)
 {
-    if (!isDead)
+    if (!isDead && !wasHitThisFrame)
     {
-        isDead = true;
-        isIdle = false;
-        isWalking = false;
-        currentFrame = 0;
-        animationClock.restart();
+        health -= damageAmount;
+        wasHitThisFrame = true; // Mark as hit this frame
+
+        if (health <= 0.f)
+        {
+            health = 0.f;
+            isDead = true;
+            isIdle = false;
+            isWalking = false;
+            currentFrame = 0;
+            animationClock.restart();
+            std::cout << "Enemy died!" << std::endl;
+        }
     }
 }
-
 bool Enemy::getIsDead() const
 {
     return isDead;
@@ -267,4 +278,19 @@ bool Enemy::getIsDead() const
 bool Enemy::shouldBeRemoved() const
 {
     return shouldRemove;
+}
+
+float Enemy::getHealth() const
+{
+    return health;
+}
+
+void Enemy::setHealth(float newHealth)
+{
+    health = newHealth;
+}
+
+void Enemy::resetHitFlag()
+{
+    wasHitThisFrame = false;
 }

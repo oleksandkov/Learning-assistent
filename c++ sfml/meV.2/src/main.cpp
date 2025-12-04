@@ -94,6 +94,7 @@ int main()
     enemy.addToCollisionList(platform2.shape.getGlobalBounds());
     enemy.addToCollisionList(leftWall.shape.getGlobalBounds());
     enemy.addToCollisionList(rightWall.shape.getGlobalBounds());
+    enemy.setHealth(50.f);
 
     // Create enemy2
     Enemy enemy2;
@@ -106,7 +107,6 @@ int main()
     enemy2.addToCollisionList(platform2.shape.getGlobalBounds());
     enemy2.addToCollisionList(leftWall.shape.getGlobalBounds());
     enemy2.addToCollisionList(rightWall.shape.getGlobalBounds());
-
 
     // Main loop
     while (window.isOpen())
@@ -156,21 +156,19 @@ int main()
         enemy2.update();
         enemy2.enemyLogic();
 
-
         // Check if character's attack hits enemy
         if (character.attackHitbox.getGlobalBounds().intersects(enemy.hitbox.getGlobalBounds()) &&
             character.attackHitbox.getGlobalBounds().width > 0 && !enemy.getIsDead())
         {
-            enemy.takeDamage();
+            enemy.takeDamage(character.getDamage());
         }
 
         // Check if character's attack hits enemy2
         if (character.attackHitbox.getGlobalBounds().intersects(enemy2.hitbox.getGlobalBounds()) &&
             character.attackHitbox.getGlobalBounds().width > 0 && !enemy2.getIsDead())
         {
-            enemy2.takeDamage();
+            enemy2.takeDamage(character.getDamage());
         }
-
 
         // Check if enemy touches character
         if (!enemy.shouldBeRemoved() &&
@@ -186,6 +184,12 @@ int main()
             character.takeDamage(10.f);
         }
 
+        // Reset hit flags only when attack ends (attack hitbox is hidden)
+        if (character.attackHitbox.getGlobalBounds().width == 0)
+        {
+            enemy.resetHitFlag();
+            enemy2.resetHitFlag();
+        }
         // Update camera to follow character
         camera.setCenter(character.getPosition().x + 50.f, character.getPosition().y);
         window.setView(camera);

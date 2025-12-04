@@ -41,6 +41,7 @@ private:
     sf::Clock damageCooldownClock;
     float damageCooldown;
     bool canTakeDamage;
+    float damage;
     sf::Texture heartTexture;
     std::vector<sf::Sprite> hearts;
 
@@ -57,6 +58,7 @@ public:
     void characterLogic();
     void takeDamage(float damage);
     float getHealth() const;
+    float getDamage() const;
     bool getIsAttacking() const;
     bool getIsDead() const;
     void getHealthInterface(sf::RenderWindow &window);

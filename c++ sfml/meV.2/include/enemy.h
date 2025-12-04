@@ -11,12 +11,13 @@ private:
     sf::Texture idleTexture;
     sf::Texture walkTexture;
     sf::Texture deadTexture;
-    sf::Texture arrow;
+    sf::Texture attackTexture;
     sf::Clock animationClock;
     int currentFrame;
     int idleFrames;
     int walkFrames;
     int deadFrames;
+    int attackFrames;
     sf::Vector2i frameSize;
     float animationSpeed;
     sf::Clock movementClock;
@@ -30,6 +31,7 @@ private:
     bool isWalking;
     bool isDead;
     bool shouldRemove;
+    bool wasHitThisFrame; // Track if enemy was hit in current attack frame
 
     // AI behavior variables
     float detectionRange;
@@ -46,9 +48,12 @@ public:
     void addToCollisionList(sf::FloatRect rect);
     void initializeHitbox();
     void enemyLogic();
-    void takeDamage();
+    void takeDamage(float damageAmount);
     bool getIsDead() const;
     bool shouldBeRemoved() const;
+    float getHealth() const;
+    void setHealth(float newHealth);
+    void resetHitFlag();
 };
 
 #endif

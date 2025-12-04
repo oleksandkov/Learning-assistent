@@ -21,6 +21,7 @@ Character::Character()
     health = 100.f;
     damageCooldown = 1.0f; // 1 second cooldown between damage
     canTakeDamage = true;
+    damage = 20.f; // Damage dealt to enemies per hit
 
     if (!idleTexture.loadFromFile("assets/Idle.png"))
     {
@@ -363,6 +364,11 @@ void Character::getHealthInterface(sf::RenderWindow &window)
 float Character::getHealth() const
 {
     return health;
+}
+
+float Character::getDamage() const
+{
+    return damage;
 }
 
 bool Character::getIsDead() const
