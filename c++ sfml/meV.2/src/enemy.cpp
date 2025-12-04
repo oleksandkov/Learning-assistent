@@ -6,6 +6,7 @@ Enemy::Enemy()
     idleFrames = 8;
     walkFrames = 8;
     deadFrames = 3;
+    attackFrames = 4;
     animationSpeed = 0.15f; // Slower animation for better visibility
     currentFrame = 0;
     speed = 120.f;
@@ -20,6 +21,7 @@ Enemy::Enemy()
     isDead = false;
     shouldRemove = false;
     wasHitThisFrame = false;
+    isAttacking = false;
 
     // AI behavior
     detectionRange = 400.f;
@@ -28,6 +30,11 @@ Enemy::Enemy()
 
     // Health
     health = 20.f; // Default health for enemy
+
+    // Attack
+    attackDamage = 10.f;
+    attackCooldown = 1.0f; // 1 second cooldown between attacks
+    canAttack = true;
 
     // Load textures
     if (!idleTexture.loadFromFile("assets/enemy/Idle.png"))
@@ -42,6 +49,10 @@ Enemy::Enemy()
     {
         std::cerr << "Error loading enemy dead texture" << std::endl;
     }
+    if (!attackTexture.loadFromFile("assets/enemy/Attack_1.png"))
+    {
+        std::cerr << "Error loading enemy attack texture" << std::endl;
+    }
 
     frameSize.x = idleTexture.getSize().x / idleFrames;
     frameSize.y = idleTexture.getSize().y;
@@ -49,6 +60,12 @@ Enemy::Enemy()
     setTexture(idleTexture);
     setTextureRect(sf::IntRect(0, 0, frameSize.x, frameSize.y));
     setPosition(300.f, 100.f);
+
+    // Initialize attack hitbox
+    attackHitbox.setSize(sf::Vector2f(20.f, 20.f));
+    attackHitbox.setFillColor(sf::Color::Transparent);
+    attackHitbox.setOutlineColor(sf::Color::Yellow);
+    attackHitbox.setOutlineThickness(2.f);
 }
 
 Enemy::~Enemy()
@@ -84,7 +101,23 @@ void Enemy::update()
             animationClock.restart();
         }
     }
-    else // isIdle
+    else if (isAttacking)
+    {
+        setTexture(attackTexture);
+        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        {
+            currentFrame++;
+            if (currentFrame >= attackFrames)
+            {
+                currentFrame = 0;
+                isAttacking = false;
+                setTexture(idleTexture);
+            }
+            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
+            animationClock.restart();
+        }
+    }
+    else // Idle
     {
         setTexture(idleTexture);
         if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
@@ -93,6 +126,41 @@ void Enemy::update()
             setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
             animationClock.restart();
         }
+    }
+
+    // Update attack cooldown
+    if (!canAttack && attackCooldownClock.getElapsedTime().asSeconds() >= attackCooldown)
+    {
+        canAttack = true;
+    }
+
+    // Update attack hitbox position and visibility
+    if (isAttacking)
+    {
+        // Ensure attack hitbox has proper size during attack
+        attackHitbox.setSize(sf::Vector2f(30.f, 30.f));
+
+        // Position attack hitbox right next to the enemy's main hitbox
+        initializeHitbox(); // Update hitbox first to get current position
+        sf::FloatRect mainHitbox = hitbox.getGlobalBounds();
+        float attackWidth = 30.f;
+        float attackHeight = 30.f;
+
+        if (getScale().x > 0)
+        {
+            // Facing right - place attack hitbox right after main hitbox
+            attackHitbox.setPosition(mainHitbox.left + mainHitbox.width, mainHitbox.top + (mainHitbox.height - attackHeight) / 2);
+        }
+        else
+        {
+            // Facing left - place attack hitbox left before main hitbox
+            attackHitbox.setPosition(mainHitbox.left - attackWidth, mainHitbox.top + (mainHitbox.height - attackHeight) / 2);
+        }
+    }
+    else
+    {
+        // Hide attack hitbox when not attacking
+        attackHitbox.setSize(sf::Vector2f(0.f, 0.f));
     }
 }
 
@@ -122,38 +190,59 @@ void Enemy::enemyAI(sf::Vector2f playerPosition, float playerHealth)
     // Check if player is in detection range
     if (distanceToPlayer < detectionRange)
     {
-        if (isIdle) // Transitioning from idle to walking
+        // Check if close enough to attack (attack range)
+        float attackRange = 80.f;
+
+        // Check if character is at same height level (within reasonable vertical distance)
+        float verticalDistance = std::abs(playerPosition.y - currentPos.y);
+        float maxHeightDifference = 50.f; // Allow 50 pixels of height difference
+
+        if (distanceToPlayer < attackRange && canAttack && !isAttacking && verticalDistance < maxHeightDifference)
         {
-            currentFrame = 0; // Reset animation frame
+            // Start attack
+            isAttacking = true;
+            isWalking = false;
+            isIdle = false;
+            canAttack = false;
+            currentFrame = 0;
             animationClock.restart();
+            attackCooldownClock.restart();
         }
-        isIdle = false;
-        isWalking = true;
-
-        if (playerPosition.x < currentPos.x)
+        else if (!isAttacking)
         {
-            setScale(-1.f, 1.f);
-            setOrigin(frameSize.x, 0);
-            move(-speed * deltaTime, 0.f);
-        }
-        else
-        {
-            setScale(1.f, 1.f);
-            setOrigin(0, 0);
-            move(speed * deltaTime, 0.f);
-        }
-
-        // If isStaying, keep enemy within platform bounds
-        if (isStaying)
-        {
-            sf::Vector2f newPos = getPosition();
-            if (newPos.x < platformBounds.left)
+            if (isIdle) // Transitioning from idle to walking
             {
-                setPosition(platformBounds.left, newPos.y);
+                currentFrame = 0; // Reset animation frame
+                animationClock.restart();
             }
-            else if (newPos.x + getGlobalBounds().width > platformBounds.left + platformBounds.width)
+            isIdle = false;
+            isWalking = true;
+
+            if (playerPosition.x < currentPos.x)
             {
-                setPosition(platformBounds.left + platformBounds.width - getGlobalBounds().width, newPos.y);
+                setScale(-1.f, 1.f);
+                setOrigin(frameSize.x, 0);
+                move(-speed * deltaTime, 0.f);
+            }
+            else
+            {
+                setScale(1.f, 1.f);
+                setOrigin(0, 0);
+                move(speed * deltaTime, 0.f);
+            }
+
+            // If isStaying, keep enemy within platform bounds
+            if (isStaying)
+            {
+                sf::Vector2f newPos = getPosition();
+                if (newPos.x < platformBounds.left)
+                {
+                    setPosition(platformBounds.left, newPos.y);
+                }
+                else if (newPos.x + getGlobalBounds().width > platformBounds.left + platformBounds.width)
+                {
+                    setPosition(platformBounds.left + platformBounds.width - getGlobalBounds().width, newPos.y);
+                }
             }
         }
     }
@@ -166,6 +255,7 @@ void Enemy::enemyAI(sf::Vector2f playerPosition, float playerHealth)
         }
         isIdle = true;
         isWalking = false;
+        isAttacking = false;
     }
 
     // Check collision and revert if needed
@@ -293,4 +383,14 @@ void Enemy::setHealth(float newHealth)
 void Enemy::resetHitFlag()
 {
     wasHitThisFrame = false;
+}
+
+float Enemy::getAttackDamage() const
+{
+    return attackDamage;
+}
+
+bool Enemy::getIsAttacking() const
+{
+    return isAttacking;
 }

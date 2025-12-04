@@ -170,18 +170,20 @@ int main()
             enemy2.takeDamage(character.getDamage());
         }
 
-        // Check if enemy touches character
-        if (!enemy.shouldBeRemoved() &&
-            enemy.hitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()))
+        // Check if enemy's attack hits character
+        if (enemy.attackHitbox.getGlobalBounds().width > 0 &&
+            enemy.attackHitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()) &&
+            !character.getIsDead())
         {
-            character.takeDamage(10.f);
+            character.takeDamage(enemy.getAttackDamage());
         }
 
-        // Check if enemy2 touches character
-        if (!enemy2.shouldBeRemoved() &&
-            enemy2.hitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()))
+        // Check if enemy2's attack hits character
+        if (enemy2.attackHitbox.getGlobalBounds().width > 0 &&
+            enemy2.attackHitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()) &&
+            !character.getIsDead())
         {
-            character.takeDamage(10.f);
+            character.takeDamage(enemy2.getAttackDamage());
         }
 
         // Reset hit flags only when attack ends (attack hitbox is hidden)
@@ -232,7 +234,14 @@ int main()
         {
             window.draw(enemy2);
             window.draw(enemy2.hitbox);
+            // Draw enemy2 attack hitbox for debugging
+            if (enemy2.attackHitbox.getGlobalBounds().width > 0)
+                window.draw(enemy2.attackHitbox);
         }
+
+        // Draw enemy attack hitbox for debugging
+        if (!enemy.shouldBeRemoved() && enemy.attackHitbox.getGlobalBounds().width > 0)
+            window.draw(enemy.attackHitbox);
 
         // Health interface
         character.getHealthInterface(window);

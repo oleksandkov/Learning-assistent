@@ -31,7 +31,12 @@ private:
     bool isWalking;
     bool isDead;
     bool shouldRemove;
-    bool wasHitThisFrame; // Track if enemy was hit in current attack frame
+    bool wasHitThisFrame;
+    bool isAttacking;
+    float attackDamage;
+    sf::Clock attackCooldownClock;
+    float attackCooldown;
+    bool canAttack;
 
     // AI behavior variables
     float detectionRange;
@@ -39,7 +44,8 @@ private:
 public:
     sf::RectangleShape hitbox;
     bool isStaying;
-    sf::FloatRect platformBounds; // Bounds of the platform enemy stays on
+    sf::FloatRect platformBounds;
+    sf::RectangleShape attackHitbox;
 
     Enemy();
     ~Enemy();
@@ -54,6 +60,8 @@ public:
     float getHealth() const;
     void setHealth(float newHealth);
     void resetHitFlag();
+    float getAttackDamage() const;
+    bool getIsAttacking() const;
 };
 
 #endif
