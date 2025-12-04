@@ -26,7 +26,6 @@ private:
     std::vector<sf::FloatRect> collisionList;
     sf::Vector2f velocity;
     bool onGround;
-    float jumpVelocity;
     bool isIdle;
     bool isWalking;
     bool isDead;
@@ -37,6 +36,8 @@ private:
 
 public:
     sf::RectangleShape hitbox;
+    bool isStaying;
+    sf::FloatRect platformBounds; // Bounds of the platform enemy stays on
 
     Enemy();
     ~Enemy();

@@ -15,7 +15,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Create camera view
-    sf::View camera(sf::FloatRect(0.f, 0.f, 700.f, 400.f));
+    sf::View camera(sf::FloatRect(0.f, 0.f, 900.f, 800.f));
     window.setView(camera);
 
     // Background setup
@@ -43,11 +43,11 @@ int main()
     roof.shape.setPosition(0.f, 0.f);
     // Setup platform
 
-    Platform platform2(150.f, 20.f, 1.0f);
+    Platform platform2(150.f, 30.f, 1.0f);
     platform2.shape.setPosition(600.f, 330.f);
 
-    Platform platform(300.f, 20.f, 1.0f);
-    platform.shape.setPosition(1000.f, 450.f);
+    Platform platform(300.f, 30.f, 1.0f);
+    platform.shape.setPosition(1000.f, 390.f);
 
     // Setrup walls
     Wall leftWall(500.f, window.getSize().y);
@@ -86,6 +86,8 @@ int main()
     // Create enemy
     Enemy enemy;
     enemy.setPosition(900.f, 100.f);
+    enemy.isStaying = true;
+    enemy.platformBounds = floor.shape.getGlobalBounds();
 
     enemy.addToCollisionList(floor.shape.getGlobalBounds());
     enemy.addToCollisionList(roof.shape.getGlobalBounds());
@@ -93,8 +95,11 @@ int main()
     enemy.addToCollisionList(leftWall.shape.getGlobalBounds());
     enemy.addToCollisionList(rightWall.shape.getGlobalBounds());
 
+    // Create enemy2
     Enemy enemy2;
     enemy2.setPosition(1200.f, 100.f);
+    enemy2.isStaying = true;
+    enemy2.platformBounds = platform.shape.getGlobalBounds();
 
     enemy2.addToCollisionList(floor.shape.getGlobalBounds());
     enemy2.addToCollisionList(roof.shape.getGlobalBounds());
@@ -102,12 +107,6 @@ int main()
     enemy2.addToCollisionList(leftWall.shape.getGlobalBounds());
     enemy2.addToCollisionList(rightWall.shape.getGlobalBounds());
 
-    Enemy enemy3;
-    enemy3.setPosition(1500.f, 100.f);
-    enemy3.addToCollisionList(floor.shape.getGlobalBounds());
-    enemy3.addToCollisionList(roof.shape.getGlobalBounds());
-    enemy3.addToCollisionList(platform2.shape.getGlobalBounds());
-    enemy3.addToCollisionList(leftWall.shape.getGlobalBounds());
 
     // Main loop
     while (window.isOpen())
@@ -157,10 +156,6 @@ int main()
         enemy2.update();
         enemy2.enemyLogic();
 
-        // Update enemy3
-        enemy3.enemyAI(character.getPosition(), character.getHealth());
-        enemy3.update();
-        enemy3.enemyLogic();
 
         // Check if character's attack hits enemy
         if (character.attackHitbox.getGlobalBounds().intersects(enemy.hitbox.getGlobalBounds()) &&
@@ -175,12 +170,7 @@ int main()
         {
             enemy2.takeDamage();
         }
-        // Check if character's attack hits enemy3
-        if (character.attackHitbox.getGlobalBounds().intersects(enemy3.hitbox.getGlobalBounds()) &&
-            character.attackHitbox.getGlobalBounds().width > 0 && !enemy3.getIsDead())
-        {
-            enemy3.takeDamage();
-        }
+
 
         // Check if enemy touches character
         if (!enemy.shouldBeRemoved() &&
@@ -204,8 +194,7 @@ int main()
         float parallaxFactor = 0.3f;
         float bgX = camera.getCenter().x - (camera.getCenter().x * parallaxFactor) - (background.getGlobalBounds().width / 2.0f);
         float bgY = camera.getCenter().y - (camera.getCenter().y * parallaxFactor) - (background.getGlobalBounds().height / 2.0f);
-        background.setPosition(bgX + 300.0f, bgY+ 100.0f);
-
+        background.setPosition(bgX + 300.0f, bgY + 100.0f);
 
         // Background
         window.clear(sf::Color::Black);
@@ -240,12 +229,7 @@ int main()
             window.draw(enemy2);
             window.draw(enemy2.hitbox);
         }
-        // Enemy3
-        if (!enemy3.shouldBeRemoved())
-        {
-            window.draw(enemy3);
-            window.draw(enemy3.hitbox);
-        }
+
         // Health interface
         character.getHealthInterface(window);
         if (character.getIsDead())

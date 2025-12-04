@@ -13,7 +13,6 @@ Enemy::Enemy()
     // Physics
     velocity = sf::Vector2f(0.f, 0.f);
     onGround = false;
-    jumpVelocity = -400.f;
 
     // State flags
     isIdle = true;
@@ -23,6 +22,8 @@ Enemy::Enemy()
 
     // AI behavior
     detectionRange = 400.f;
+    isStaying = false;
+    platformBounds = sf::FloatRect(0.f, 0.f, 0.f, 0.f);
 
     // Load textures
     if (!idleTexture.loadFromFile("assets/enemy/Idle.png"))
@@ -127,7 +128,6 @@ void Enemy::enemyAI(sf::Vector2f playerPosition, float playerHealth)
 
         if (playerPosition.x < currentPos.x)
         {
-            
             setScale(-1.f, 1.f);
             setOrigin(frameSize.x, 0);
             move(-speed * deltaTime, 0.f);
@@ -137,6 +137,20 @@ void Enemy::enemyAI(sf::Vector2f playerPosition, float playerHealth)
             setScale(1.f, 1.f);
             setOrigin(0, 0);
             move(speed * deltaTime, 0.f);
+        }
+
+        // If isStaying, keep enemy within platform bounds
+        if (isStaying)
+        {
+            sf::Vector2f newPos = getPosition();
+            if (newPos.x < platformBounds.left)
+            {
+                setPosition(platformBounds.left, newPos.y);
+            }
+            else if (newPos.x + getGlobalBounds().width > platformBounds.left + platformBounds.width)
+            {
+                setPosition(platformBounds.left + platformBounds.width - getGlobalBounds().width, newPos.y);
+            }
         }
     }
     else
@@ -187,6 +201,22 @@ void Enemy::enemyLogic()
     if (dt > 0.1f)
         dt = 0.016f;
 
+    // If isStaying, don't apply gravity - keep enemy on platform
+    if (isStaying)
+    {
+        velocity.y = 0.f;
+
+        // Keep enemy at the platform level
+        sf::Vector2f currentPos = getPosition();
+        float correctY = platformBounds.top - getGlobalBounds().height;
+        setPosition(currentPos.x, correctY);
+
+        // Update hitbox after movement
+        initializeHitbox();
+        onGround = true;
+        return;
+    }
+
     // Apply gravity
     velocity.y += 980.f * dt;
 
@@ -210,13 +240,6 @@ void Enemy::enemyLogic()
                 setPosition(getPosition().x, correctY);
                 velocity.y = 0.f;
                 onGround = true;
-                initializeHitbox();
-                break;
-            }
-            else if (velocity.y < 0.f) // Jumping up
-            {
-                move(0.f, 1.f);
-                velocity.y = 0.f;
                 initializeHitbox();
                 break;
             }
