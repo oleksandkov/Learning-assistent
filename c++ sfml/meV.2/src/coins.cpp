@@ -28,8 +28,8 @@ bool Coin::loadTexture()
 }
 
 Coin::Coin(float x, float y, float lifetime)
-    : isCollected(false), rotationAngle(0.f), floatOffset(0.f), baseY(y), originalPosition(x, y),
-      lifeTime(0.f), maxLifeTime(lifetime), isExpired(false)
+    : isCollected(false), isExpired(false), lifeTime(0.f), maxLifeTime(lifetime),
+      originalPosition(x, y), baseY(y), rotationAngle(0.f), floatOffset(0.f)
 {
     if (!loadTexture())
         return;
@@ -44,35 +44,35 @@ Coin::Coin(float x, float y, float lifetime)
     std::mt19937 gen(rd());
     std::uniform_real_distribution<float> dis(0.0f, 360.0f);
     rotationAngle = dis(gen);
-    floatOffset = dis(gen) / 57.3f;
+    floatOffset = rotationAngle / 57.3f;
 }
 
 Coin::~Coin() {}
 
 void Coin::update()
 {
-    if (!isCollected && !isExpired)
+    if (isCollected || isExpired)
+        return;
+
+    lifeTime += 0.016f;
+
+    if (lifeTime >= maxLifeTime)
     {
-        lifeTime += 0.016f;
+        isExpired = true;
+        return;
+    }
 
-        if (lifeTime >= maxLifeTime)
-        {
-            isExpired = true;
-            return;
-        }
+    floatOffset += 0.05f;
+    float floatY = baseY + std::sin(floatOffset) * 5.0f;
+    setPosition(originalPosition.x, floatY);
+    setScale(0.02f, 0.02f);
+    setRotation(0.0f);
 
-        floatOffset += 0.05f;
-        float floatY = baseY + std::sin(floatOffset) * 5.0f;
-        setPosition(originalPosition.x, floatY);
-        setScale(0.02f, 0.02f);
-        setRotation(0.0f);
-
-        float fadeRatio = 1.0f - (lifeTime / maxLifeTime);
-        if (fadeRatio < 0.3f)
-        {
-            sf::Uint8 alpha = static_cast<sf::Uint8>(255 * (fadeRatio / 0.3f));
-            setColor(sf::Color(255, 255, 255, alpha));
-        }
+    float fadeRatio = 1.0f - (lifeTime / maxLifeTime);
+    if (fadeRatio < 0.3f)
+    {
+        sf::Uint8 alpha = static_cast<sf::Uint8>(255 * (fadeRatio / 0.3f));
+        setColor(sf::Color(255, 255, 255, alpha));
     }
 }
 
@@ -113,12 +113,9 @@ void Coins::update()
         std::mt19937 gen(rd());
         std::uniform_int_distribution<size_t> dis(0, coinSpawnPositions.size() - 1);
 
-        size_t randomIndex = dis(gen);
-        sf::Vector2f spawnPos = coinSpawnPositions[randomIndex];
+        sf::Vector2f spawnPos = coinSpawnPositions[dis(gen)];
         coins.push_back(new Coin(spawnPos.x, spawnPos.y, defaultCoinLifetime));
         spawnTimer = 0.0f;
-
-        std::cout << "New coin spawned randomly at (" << spawnPos.x << ", " << spawnPos.y << ")" << std::endl;
     }
 
     for (auto coin : coins)
@@ -137,12 +134,13 @@ void Coins::checkCollision(sf::FloatRect characterBounds)
 {
     for (auto coin : coins)
     {
-        if (!coin->getIsCollected() && !coin->getIsExpired() &&
-            characterBounds.intersects(coin->getGlobalBounds()))
+        if (coin->getIsCollected() || coin->getIsExpired())
+            continue;
+
+        if (characterBounds.intersects(coin->getGlobalBounds()))
         {
             coin->setCollected(true);
             collectedCoinsCounter++;
-            std::cout << "Coin collected! Total collected: " << collectedCoinsCounter << std::endl;
         }
     }
 }

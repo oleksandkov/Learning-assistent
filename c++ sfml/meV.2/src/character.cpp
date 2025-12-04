@@ -23,16 +23,11 @@ Character::Character()
     canTakeDamage = true;
     velocity = sf::Vector2f(0.f, 0.f);
 
-    if (!idleTexture.loadFromFile("assets/Idle.png"))
-        std::cerr << "Error loading idle texture" << std::endl;
-    if (!walkTexture.loadFromFile("assets/Walk.png"))
-        std::cerr << "Error loading walk texture" << std::endl;
-    if (!attackTexture.loadFromFile("assets/Attack_1.png"))
-        std::cerr << "Error loading attack texture" << std::endl;
-    if (!hurtTexture.loadFromFile("assets/Hurt.png"))
-        std::cerr << "Error loading hurt texture" << std::endl;
-    if (!deadTexture.loadFromFile("assets/Dead.png"))
-        std::cerr << "Error loading dead texture" << std::endl;
+    idleTexture.loadFromFile("assets/Idle.png");
+    walkTexture.loadFromFile("assets/Walk.png");
+    attackTexture.loadFromFile("assets/Attack_1.png");
+    hurtTexture.loadFromFile("assets/Hurt.png");
+    deadTexture.loadFromFile("assets/Dead.png");
 
     frameSize.x = idleTexture.getSize().x / totalFrames;
     frameSize.y = idleTexture.getSize().y;
@@ -50,48 +45,35 @@ Character::~Character() {}
 
 void Character::update()
 {
+    if (animationClock.getElapsedTime().asSeconds() < animationSpeed)
+        return;
+
     if (isDead)
     {
         setTexture(deadTexture);
-        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
-        {
-            if (currentFrame < deadFrames - 1)
-                currentFrame++;
-            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
-            animationClock.restart();
-        }
-        return;
+        if (currentFrame < deadFrames - 1)
+            currentFrame++;
     }
     else if (isHurt)
     {
         setTexture(hurtTexture);
-        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        currentFrame++;
+        if (currentFrame >= hurtFrames)
         {
-            currentFrame++;
-            if (currentFrame >= hurtFrames)
-            {
-                currentFrame = 0;
-                isHurt = false;
-                setTexture(idleTexture);
-            }
-            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
-            animationClock.restart();
+            currentFrame = 0;
+            isHurt = false;
+            setTexture(idleTexture);
         }
     }
     else if (isAttacking)
     {
         setTexture(attackTexture);
-        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        currentFrame++;
+        if (currentFrame >= attackFrames)
         {
-            currentFrame++;
-            if (currentFrame >= attackFrames)
-            {
-                currentFrame = 0;
-                isAttacking = false;
-                setTexture(idleTexture);
-            }
-            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
-            animationClock.restart();
+            currentFrame = 0;
+            isAttacking = false;
+            setTexture(idleTexture);
         }
     }
     else if (isWalking)
@@ -107,23 +89,16 @@ void Character::update()
             setOrigin(0, 0);
         }
         setTexture(walkTexture);
-        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
-        {
-            currentFrame = (currentFrame + 1) % totalFrames;
-            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
-            animationClock.restart();
-        }
+        currentFrame = (currentFrame + 1) % totalFrames;
     }
     else
     {
         setTexture(idleTexture);
-        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
-        {
-            currentFrame = (currentFrame + 1) % totalFrames;
-            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
-            animationClock.restart();
-        }
+        currentFrame = (currentFrame + 1) % totalFrames;
     }
+
+    setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
+    animationClock.restart();
 }
 
 void Character::moveCharacter()
@@ -170,22 +145,20 @@ void Character::moveCharacter()
 
 void Character::updateAttackHitbox()
 {
-    if (isAttacking && currentFrame >= 1 && currentFrame < attackFrames)
-    {
-        sf::FloatRect charHitbox = hitbox.getGlobalBounds();
-        float attackWidth = 20.f;
-        float attackHeight = 40.f;
-        attackHitbox.setSize(sf::Vector2f(attackWidth, attackHeight));
-
-        if (getScale().x < 0)
-            attackHitbox.setPosition(charHitbox.left - attackWidth, charHitbox.top + (charHitbox.height - attackHeight) / 2);
-        else
-            attackHitbox.setPosition(charHitbox.left + charHitbox.width, charHitbox.top + (charHitbox.height - attackHeight) / 2);
-    }
-    else
+    if (!isAttacking || currentFrame < 1 || currentFrame >= attackFrames)
     {
         attackHitbox.setSize(sf::Vector2f(0.f, 0.f));
+        return;
     }
+
+    const float attackWidth = 20.f;
+    const float attackHeight = 40.f;
+    attackHitbox.setSize(sf::Vector2f(attackWidth, attackHeight));
+
+    sf::FloatRect charHitbox = hitbox.getGlobalBounds();
+    float xPos = (getScale().x < 0) ? charHitbox.left - attackWidth : charHitbox.left + charHitbox.width;
+    float yPos = charHitbox.top + (charHitbox.height - attackHeight) / 2;
+    attackHitbox.setPosition(xPos, yPos);
 }
 
 void Character::addToCollisionList(sf::FloatRect rect)
@@ -195,10 +168,16 @@ void Character::addToCollisionList(sf::FloatRect rect)
 
 void Character::initializeHitbox()
 {
-    float scale = 0.38f;
+    const float scale = 0.38f;
     sf::FloatRect bounds = getGlobalBounds();
-    hitbox.setSize(sf::Vector2f(bounds.width * scale, bounds.height * scale - 15.f));
-    hitbox.setPosition(bounds.left + (bounds.width * (1 - scale) / 2), bounds.top + (((bounds.height * (1 - scale)) + 107.f) / 2));
+
+    float width = bounds.width * scale;
+    float height = bounds.height * scale - 15.f;
+    float xPos = bounds.left + bounds.width * (1 - scale) / 2;
+    float yPos = bounds.top + (bounds.height * (1 - scale) + 107.f) / 2;
+
+    hitbox.setSize(sf::Vector2f(width, height));
+    hitbox.setPosition(xPos, yPos);
     hitbox.setFillColor(sf::Color::Transparent);
     hitbox.setOutlineColor(sf::Color::Red);
     hitbox.setOutlineThickness(1.f);
@@ -246,31 +225,30 @@ void Character::characterLogic()
 
 void Character::takeDamage(float damage)
 {
-    if (canTakeDamage && health > 0 && !isDead)
+    if (!canTakeDamage || health <= 0 || isDead)
+        return;
+
+    health -= damage;
+    canTakeDamage = false;
+    damageCooldownClock.restart();
+
+    if (health <= 0)
     {
-        health -= damage;
-
-        if (health <= 0)
-        {
-            health = 0;
-            isDead = true;
-            isHurt = false;
-            isAttacking = false;
-            currentFrame = 0;
-            animationClock.restart();
-            std::cout << "Character died!" << std::endl;
-        }
-        else
-        {
-            isHurt = true;
-            isAttacking = false;
-            currentFrame = 0;
-            animationClock.restart();
-            std::cout << "Character took damage! Health: " << health << std::endl;
-        }
-
-        canTakeDamage = false;
-        damageCooldownClock.restart();
+        health = 0;
+        isDead = true;
+        isHurt = false;
+        isAttacking = false;
+        currentFrame = 0;
+        animationClock.restart();
+        std::cout << "Character died!" << std::endl;
+    }
+    else
+    {
+        isHurt = true;
+        isAttacking = false;
+        currentFrame = 0;
+        animationClock.restart();
+        std::cout << "Character took damage! Health: " << health << std::endl;
     }
 }
 

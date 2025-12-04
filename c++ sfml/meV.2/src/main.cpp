@@ -208,17 +208,30 @@ int main()
             sf::Vector2f spawnPos = Enemy::getRandomSpawnPosition();
             newEnemy.setPosition(spawnPos.x, spawnPos.y);
 
-            if (spawnPos.x >= 600.f && spawnPos.x <= 800.f && spawnPos.y < 400.f)
-                newEnemy.platformBounds = platform2.shape.getGlobalBounds();
-            else if (spawnPos.x >= 900.f && spawnPos.x <= 1100.f && spawnPos.y < 400.f)
-                newEnemy.platformBounds = platform.shape.getGlobalBounds();
-            else if (spawnPos.x >= 1200.f && spawnPos.x <= 1400.f && spawnPos.y < 400.f)
-                newEnemy.platformBounds = platform3.shape.getGlobalBounds();
-            else if (spawnPos.x >= 1500.f && spawnPos.x <= 1700.f && spawnPos.y < 400.f)
-                newEnemy.platformBounds = platform4.shape.getGlobalBounds();
-            else if (spawnPos.x >= 1800.f && spawnPos.x <= 2000.f && spawnPos.y < 400.f)
-                newEnemy.platformBounds = platform5.shape.getGlobalBounds();
-            else
+            struct PlatformZone
+            {
+                float minX, maxX;
+                sf::FloatRect bounds;
+            };
+            PlatformZone zones[] = {
+                {600.f, 800.f, platform2.shape.getGlobalBounds()},
+                {900.f, 1100.f, platform.shape.getGlobalBounds()},
+                {1200.f, 1400.f, platform3.shape.getGlobalBounds()},
+                {1500.f, 1700.f, platform4.shape.getGlobalBounds()},
+                {1800.f, 2000.f, platform5.shape.getGlobalBounds()}};
+
+            bool foundPlatform = false;
+            for (const auto &zone : zones)
+            {
+                if (spawnPos.x >= zone.minX && spawnPos.x <= zone.maxX && spawnPos.y < 400.f)
+                {
+                    newEnemy.platformBounds = zone.bounds;
+                    foundPlatform = true;
+                    break;
+                }
+            }
+
+            if (!foundPlatform)
                 newEnemy.platformBounds = floor.shape.getGlobalBounds();
 
             newEnemy.addToCollisionList(floor.shape.getGlobalBounds());
@@ -256,42 +269,41 @@ int main()
 
         coinsManager.checkCollision(character.hitbox.getGlobalBounds());
 
-        if (character.attackHitbox.getGlobalBounds().intersects(enemy.hitbox.getGlobalBounds()) &&
-            character.attackHitbox.getGlobalBounds().width > 0 && !enemy.getIsDead())
-            enemy.takeDamage(character.getDamage());
-
-        if (character.attackHitbox.getGlobalBounds().intersects(enemy2.hitbox.getGlobalBounds()) &&
-            character.attackHitbox.getGlobalBounds().width > 0 && !enemy2.getIsDead())
-            enemy2.takeDamage(character.getDamage());
-
-        if (enemy.attackHitbox.getGlobalBounds().width > 0 &&
-            enemy.attackHitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()) &&
-            !character.getIsDead())
-            character.takeDamage(enemy.getAttackDamage());
-
-        if (enemy2.attackHitbox.getGlobalBounds().width > 0 &&
-            enemy2.attackHitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()) &&
-            !character.getIsDead())
-            character.takeDamage(enemy2.getAttackDamage());
-
-        for (auto &spawnedEnemy : spawnedEnemies)
+        if (character.attackHitbox.getGlobalBounds().width > 0)
         {
-            if (character.attackHitbox.getGlobalBounds().intersects(spawnedEnemy.hitbox.getGlobalBounds()) &&
-                character.attackHitbox.getGlobalBounds().width > 0 && !spawnedEnemy.getIsDead())
-                spawnedEnemy.takeDamage(character.getDamage());
+            if (!enemy.getIsDead() && character.attackHitbox.getGlobalBounds().intersects(enemy.hitbox.getGlobalBounds()))
+                enemy.takeDamage(character.getDamage());
 
-            if (spawnedEnemy.attackHitbox.getGlobalBounds().width > 0 &&
-                spawnedEnemy.attackHitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()) &&
-                !character.getIsDead())
-                character.takeDamage(spawnedEnemy.getAttackDamage());
+            if (!enemy2.getIsDead() && character.attackHitbox.getGlobalBounds().intersects(enemy2.hitbox.getGlobalBounds()))
+                enemy2.takeDamage(character.getDamage());
+
+            for (auto &spawnedEnemy : spawnedEnemies)
+            {
+                if (!spawnedEnemy.getIsDead() && character.attackHitbox.getGlobalBounds().intersects(spawnedEnemy.hitbox.getGlobalBounds()))
+                    spawnedEnemy.takeDamage(character.getDamage());
+            }
         }
-
-        if (character.attackHitbox.getGlobalBounds().width == 0)
+        else
         {
             enemy.resetHitFlag();
             enemy2.resetHitFlag();
             for (auto &spawnedEnemy : spawnedEnemies)
                 spawnedEnemy.resetHitFlag();
+        }
+
+        if (!character.getIsDead())
+        {
+            if (enemy.attackHitbox.getGlobalBounds().width > 0 && enemy.attackHitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()))
+                character.takeDamage(enemy.getAttackDamage());
+
+            if (enemy2.attackHitbox.getGlobalBounds().width > 0 && enemy2.attackHitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()))
+                character.takeDamage(enemy2.getAttackDamage());
+
+            for (auto &spawnedEnemy : spawnedEnemies)
+            {
+                if (spawnedEnemy.attackHitbox.getGlobalBounds().width > 0 && spawnedEnemy.attackHitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()))
+                    character.takeDamage(spawnedEnemy.getAttackDamage());
+            }
         }
 
         camera.setCenter(character.getPosition().x + 50.f, character.getPosition().y);

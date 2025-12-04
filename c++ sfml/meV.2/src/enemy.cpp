@@ -35,14 +35,10 @@ Enemy::Enemy()
     attackCooldown = 1.0f;
     canAttack = true;
 
-    if (!idleTexture.loadFromFile("assets/enemy/Idle.png"))
-        std::cerr << "Error loading enemy idle texture" << std::endl;
-    if (!walkTexture.loadFromFile("assets/enemy/Walk.png"))
-        std::cerr << "Error loading enemy walk texture" << std::endl;
-    if (!deadTexture.loadFromFile("assets/enemy/Dead.png"))
-        std::cerr << "Error loading enemy dead texture" << std::endl;
-    if (!attackTexture.loadFromFile("assets/enemy/Attack_1.png"))
-        std::cerr << "Error loading enemy attack texture" << std::endl;
+    idleTexture.loadFromFile("assets/enemy/Idle.png");
+    walkTexture.loadFromFile("assets/enemy/Walk.png");
+    deadTexture.loadFromFile("assets/enemy/Dead.png");
+    attackTexture.loadFromFile("assets/enemy/Attack_1.png");
 
     frameSize.x = idleTexture.getSize().x / idleFrames;
     frameSize.y = idleTexture.getSize().y;
@@ -60,88 +56,64 @@ Enemy::~Enemy() {}
 
 void Enemy::update()
 {
+    if (animationClock.getElapsedTime().asSeconds() < animationSpeed)
+        return;
+
     if (isDead)
     {
         setTexture(deadTexture);
-        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        if (currentFrame < deadFrames - 1)
+            currentFrame++;
+        else
+            shouldRemove = true;
+    }
+    else if (isAttacking)
+    {
+        setTexture(attackTexture);
+        currentFrame++;
+        if (currentFrame >= attackFrames)
         {
-            if (currentFrame < deadFrames - 1)
-            {
-                currentFrame++;
-            }
-            else
-            {
-                shouldRemove = true; // Mark for removal when animation finishes
-            }
-            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
-            animationClock.restart();
+            currentFrame = 0;
+            isAttacking = false;
+            setTexture(idleTexture);
         }
     }
     else if (isWalking)
     {
         setTexture(walkTexture);
-        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
-        {
-            currentFrame = (currentFrame + 1) % walkFrames;
-            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
-            animationClock.restart();
-        }
-    }
-    else if (isAttacking)
-    {
-        setTexture(attackTexture);
-        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
-        {
-            currentFrame++;
-            if (currentFrame >= attackFrames)
-            {
-                currentFrame = 0;
-                isAttacking = false;
-                setTexture(idleTexture);
-            }
-            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
-            animationClock.restart();
-        }
+        currentFrame = (currentFrame + 1) % walkFrames;
     }
     else
     {
         setTexture(idleTexture);
-        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
-        {
-            currentFrame = (currentFrame + 1) % idleFrames;
-            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
-            animationClock.restart();
-        }
+        currentFrame = (currentFrame + 1) % idleFrames;
     }
+
+    setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
+    animationClock.restart();
 
     if (!canAttack && attackCooldownClock.getElapsedTime().asSeconds() >= attackCooldown)
         canAttack = true;
 
-    if (isAttacking)
-    {
-        attackHitbox.setSize(sf::Vector2f(30.f, 30.f));
-        initializeHitbox();
-        sf::FloatRect mainHitbox = hitbox.getGlobalBounds();
-        float attackWidth = 30.f;
-        float attackHeight = 30.f;
-
-        if (getScale().x > 0)
-            attackHitbox.setPosition(mainHitbox.left + mainHitbox.width, mainHitbox.top + (mainHitbox.height - attackHeight) / 2);
-        else
-            attackHitbox.setPosition(mainHitbox.left - attackWidth, mainHitbox.top + (mainHitbox.height - attackHeight) / 2);
-    }
-    else
+    if (!isAttacking)
     {
         attackHitbox.setSize(sf::Vector2f(0.f, 0.f));
+        return;
     }
+
+    const float attackSize = 30.f;
+    attackHitbox.setSize(sf::Vector2f(attackSize, attackSize));
+    initializeHitbox();
+
+    sf::FloatRect mainHitbox = hitbox.getGlobalBounds();
+    float xPos = (getScale().x > 0) ? mainHitbox.left + mainHitbox.width : mainHitbox.left - attackSize;
+    float yPos = mainHitbox.top + (mainHitbox.height - attackSize) / 2;
+    attackHitbox.setPosition(xPos, yPos);
 }
 
 void Enemy::enemyAI(sf::Vector2f playerPosition, float playerHealth)
 {
-    if (isDead)
-        return;
-
-    if (playerHealth <= 0.f)
+    if (isDead || playerHealth <= 0.f)
     {
         if (isWalking)
         {
@@ -156,58 +128,13 @@ void Enemy::enemyAI(sf::Vector2f playerPosition, float playerHealth)
     float deltaTime = movementClock.restart().asSeconds();
     sf::Vector2f currentPos = getPosition();
     sf::Vector2f oldPos = currentPos;
+
+    const float attackRange = 80.f;
+    const float maxHeightDifference = 50.f;
     float distanceToPlayer = std::abs(playerPosition.x - currentPos.x);
+    float verticalDistance = std::abs(playerPosition.y - currentPos.y);
 
-    if (distanceToPlayer < detectionRange)
-    {
-        float attackRange = 80.f;
-        float verticalDistance = std::abs(playerPosition.y - currentPos.y);
-        float maxHeightDifference = 50.f;
-
-        if (distanceToPlayer < attackRange && canAttack && !isAttacking && verticalDistance < maxHeightDifference)
-        {
-            isAttacking = true;
-            isWalking = false;
-            isIdle = false;
-            canAttack = false;
-            currentFrame = 0;
-            animationClock.restart();
-            attackCooldownClock.restart();
-        }
-        else if (!isAttacking)
-        {
-            if (isIdle)
-            {
-                currentFrame = 0;
-                animationClock.restart();
-            }
-            isIdle = false;
-            isWalking = true;
-
-            if (playerPosition.x < currentPos.x)
-            {
-                setScale(-1.f, 1.f);
-                setOrigin(frameSize.x, 0);
-                move(-speed * deltaTime, 0.f);
-            }
-            else
-            {
-                setScale(1.f, 1.f);
-                setOrigin(0, 0);
-                move(speed * deltaTime, 0.f);
-            }
-
-            if (isStaying)
-            {
-                sf::Vector2f newPos = getPosition();
-                if (newPos.x < platformBounds.left)
-                    setPosition(platformBounds.left, newPos.y);
-                else if (newPos.x + getGlobalBounds().width > platformBounds.left + platformBounds.width)
-                    setPosition(platformBounds.left + platformBounds.width - getGlobalBounds().width, newPos.y);
-            }
-        }
-    }
-    else
+    if (distanceToPlayer >= detectionRange)
     {
         if (isWalking)
         {
@@ -217,6 +144,45 @@ void Enemy::enemyAI(sf::Vector2f playerPosition, float playerHealth)
         isIdle = true;
         isWalking = false;
         isAttacking = false;
+        return;
+    }
+
+    if (distanceToPlayer < attackRange && canAttack && !isAttacking && verticalDistance < maxHeightDifference)
+    {
+        isAttacking = true;
+        isWalking = false;
+        isIdle = false;
+        canAttack = false;
+        currentFrame = 0;
+        animationClock.restart();
+        attackCooldownClock.restart();
+    }
+    else if (!isAttacking)
+    {
+        if (isIdle)
+        {
+            currentFrame = 0;
+            animationClock.restart();
+        }
+        isIdle = false;
+        isWalking = true;
+
+        bool moveLeft = playerPosition.x < currentPos.x;
+        setScale(moveLeft ? -1.f : 1.f, 1.f);
+        setOrigin(moveLeft ? frameSize.x : 0, 0);
+        move((moveLeft ? -speed : speed) * deltaTime, 0.f);
+
+        if (isStaying)
+        {
+            sf::Vector2f newPos = getPosition();
+            float minX = platformBounds.left;
+            float maxX = platformBounds.left + platformBounds.width - getGlobalBounds().width;
+
+            if (newPos.x < minX)
+                setPosition(minX, newPos.y);
+            else if (newPos.x > maxX)
+                setPosition(maxX, newPos.y);
+        }
     }
 
     initializeHitbox();
@@ -237,10 +203,16 @@ void Enemy::addToCollisionList(sf::FloatRect rect)
 
 void Enemy::initializeHitbox()
 {
-    float scale = 0.38f;
+    const float scale = 0.38f;
     sf::FloatRect bounds = getGlobalBounds();
-    hitbox.setSize(sf::Vector2f(bounds.width * scale, bounds.height * scale - 15.f));
-    hitbox.setPosition(bounds.left + (bounds.width * (1 - scale) / 2), bounds.top + (((bounds.height * (1 - scale)) + 107.f) / 2));
+
+    float width = bounds.width * scale;
+    float height = bounds.height * scale - 15.f;
+    float xPos = bounds.left + bounds.width * (1 - scale) / 2;
+    float yPos = bounds.top + (bounds.height * (1 - scale) + 107.f) / 2;
+
+    hitbox.setSize(sf::Vector2f(width, height));
+    hitbox.setPosition(xPos, yPos);
     hitbox.setFillColor(sf::Color::Transparent);
     hitbox.setOutlineColor(sf::Color::Green);
     hitbox.setOutlineThickness(1.f);
