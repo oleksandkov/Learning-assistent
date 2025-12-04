@@ -140,6 +140,24 @@ int main()
     enemy2.addToCollisionList(leftWall.shape.getGlobalBounds());
     enemy2.addToCollisionList(rightWall.shape.getGlobalBounds());
 
+    // Vector to hold spawned enemies
+    std::vector<Enemy> spawnedEnemies;
+
+    // Setup enemy spawner - define spawn positions on platforms
+    std::vector<sf::Vector2f> spawnPositions = {
+        sf::Vector2f(650.f, 350.f),  // On platform2
+        sf::Vector2f(1000.f, 300.f), // On platform
+        sf::Vector2f(1300.f, 350.f), // On platform3
+        sf::Vector2f(1600.f, 280.f), // On platform4
+        sf::Vector2f(1900.f, 230.f), // On platform5
+        sf::Vector2f(700.f, 480.f),  // On floor
+        sf::Vector2f(1200.f, 480.f), // On floor
+        sf::Vector2f(1800.f, 480.f)  // On floor
+    };
+
+    // Initialize spawner with 2.0 second spawn period and max 3 enemies
+    Enemy::initializeSpawner(spawnPositions, 2.0f, 3);
+
     // Create coins and place them on platforms
     Coins coinsManager(2.0f, 10.0f); // 2 second spawn interval, 10 second coin lifetime
     coinsManager.setSpawnInterval(10.0f);
@@ -257,6 +275,69 @@ int main()
         enemy2.update();
         enemy2.enemyLogic();
 
+        // Spawn new enemies if needed
+        if (Enemy::shouldSpawnNewEnemy())
+        {
+            Enemy newEnemy;
+            newEnemy.isStaying = true;
+
+            // Randomly assign a platform based on spawn position
+            sf::Vector2f spawnPos = Enemy::getRandomSpawnPosition();
+            newEnemy.setPosition(spawnPos.x, spawnPos.y);
+
+            // Assign platform bounds - determine which platform based on X position
+            if (spawnPos.x >= 600.f && spawnPos.x <= 800.f && spawnPos.y < 400.f)
+                newEnemy.platformBounds = platform2.shape.getGlobalBounds();
+            else if (spawnPos.x >= 900.f && spawnPos.x <= 1100.f && spawnPos.y < 400.f)
+                newEnemy.platformBounds = platform.shape.getGlobalBounds();
+            else if (spawnPos.x >= 1200.f && spawnPos.x <= 1400.f && spawnPos.y < 400.f)
+                newEnemy.platformBounds = platform3.shape.getGlobalBounds();
+            else if (spawnPos.x >= 1500.f && spawnPos.x <= 1700.f && spawnPos.y < 400.f)
+                newEnemy.platformBounds = platform4.shape.getGlobalBounds();
+            else if (spawnPos.x >= 1800.f && spawnPos.x <= 2000.f && spawnPos.y < 400.f)
+                newEnemy.platformBounds = platform5.shape.getGlobalBounds();
+            else
+                newEnemy.platformBounds = floor.shape.getGlobalBounds();
+
+            // Add collision list for all platforms
+            newEnemy.addToCollisionList(floor.shape.getGlobalBounds());
+            newEnemy.addToCollisionList(roof.shape.getGlobalBounds());
+            newEnemy.addToCollisionList(platform2.shape.getGlobalBounds());
+            newEnemy.addToCollisionList(platform3.shape.getGlobalBounds());
+            newEnemy.addToCollisionList(platform4.shape.getGlobalBounds());
+            newEnemy.addToCollisionList(platform5.shape.getGlobalBounds());
+            newEnemy.addToCollisionList(platform6.shape.getGlobalBounds());
+            newEnemy.addToCollisionList(platform7.shape.getGlobalBounds());
+            newEnemy.addToCollisionList(leftWall.shape.getGlobalBounds());
+            newEnemy.addToCollisionList(rightWall.shape.getGlobalBounds());
+            newEnemy.setHealth(30.f);
+
+            spawnedEnemies.push_back(newEnemy);
+        }
+
+        // Update all spawned enemies
+        for (auto &spawnedEnemy : spawnedEnemies)
+        {
+            spawnedEnemy.enemyAI(character.getPosition(), character.getHealth());
+            spawnedEnemy.update();
+            spawnedEnemy.enemyLogic();
+        }
+
+        // Remove dead enemies from spawn list
+        std::vector<Enemy> enemiesBeforeRemoval = spawnedEnemies;
+        spawnedEnemies.erase(
+            std::remove_if(spawnedEnemies.begin(), spawnedEnemies.end(),
+                           [](Enemy &e)
+                           { return e.shouldBeRemoved(); }),
+            spawnedEnemies.end());
+
+        // Decrement enemy count for each removed enemy
+        size_t removed = enemiesBeforeRemoval.size() - spawnedEnemies.size();
+        for (size_t i = 0; i < removed; i++)
+        {
+            Enemy::decrementEnemyCount();
+        }
+
         // Check coin collection
         coinsManager.checkCollision(character.hitbox.getGlobalBounds());
 
@@ -290,11 +371,35 @@ int main()
             character.takeDamage(enemy2.getAttackDamage());
         }
 
+        // Check collisions with spawned enemies
+        for (auto &spawnedEnemy : spawnedEnemies)
+        {
+            // Check if character's attack hits spawned enemy
+            if (character.attackHitbox.getGlobalBounds().intersects(spawnedEnemy.hitbox.getGlobalBounds()) &&
+                character.attackHitbox.getGlobalBounds().width > 0 && !spawnedEnemy.getIsDead())
+            {
+                spawnedEnemy.takeDamage(character.getDamage());
+            }
+
+            // Check if spawned enemy's attack hits character
+            if (spawnedEnemy.attackHitbox.getGlobalBounds().width > 0 &&
+                spawnedEnemy.attackHitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()) &&
+                !character.getIsDead())
+            {
+                character.takeDamage(spawnedEnemy.getAttackDamage());
+            }
+        }
+
         // Reset hit flags only when attack ends (attack hitbox is hidden)
         if (character.attackHitbox.getGlobalBounds().width == 0)
         {
             enemy.resetHitFlag();
             enemy2.resetHitFlag();
+            // Reset hit flags for all spawned enemies
+            for (auto &spawnedEnemy : spawnedEnemies)
+            {
+                spawnedEnemy.resetHitFlag();
+            }
         }
         // Update camera to follow character
         camera.setCenter(character.getPosition().x + 50.f, character.getPosition().y);
@@ -350,6 +455,19 @@ int main()
             // Draw enemy2 attack hitbox for debugging
             if (enemy2.attackHitbox.getGlobalBounds().width > 0)
                 window.draw(enemy2.attackHitbox);
+        }
+
+        // Draw spawned enemies
+        for (auto &spawnedEnemy : spawnedEnemies)
+        {
+            if (!spawnedEnemy.shouldBeRemoved())
+            {
+                window.draw(spawnedEnemy);
+                window.draw(spawnedEnemy.hitbox);
+                // Draw spawned enemy attack hitbox for debugging
+                if (spawnedEnemy.attackHitbox.getGlobalBounds().width > 0)
+                    window.draw(spawnedEnemy.attackHitbox);
+            }
         }
 
         // Draw enemy attack hitbox for debugging

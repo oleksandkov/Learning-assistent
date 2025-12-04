@@ -41,6 +41,11 @@ private:
     // AI behavior variables
     float detectionRange;
 
+    // Enemy spawning
+    static sf::Clock spawnClock;
+    static std::vector<sf::Vector2f> spawnPositions;
+    static size_t currentEnemyCount;
+
     // Static kill tracking
     static size_t totalKilledEnemies;
     static sf::Font killInterfaceFont;
@@ -74,7 +79,18 @@ public:
     static void resetKillCounter();
     static void getKillInterface(sf::RenderWindow &window);
 
+    // Static spawning management
+    static void initializeSpawner(const std::vector<sf::Vector2f> &positions, float spawnPeriod, size_t maxEnemies);
+    static bool shouldSpawnNewEnemy();
+    static sf::Vector2f getRandomSpawnPosition();
+    static void updateSpawner();
+    static void resetSpawner();
+    static void decrementEnemyCount();
+    static size_t getCurrentEnemyCount();
+
 private:
+    static float spawnPeriod;
+    static size_t maxEnemyCount;
     static bool loadKillInterfaceResources();
 };
 

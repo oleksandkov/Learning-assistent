@@ -6,6 +6,13 @@ sf::Font Enemy::killInterfaceFont;
 sf::Texture Enemy::killInterfaceTexture;
 bool Enemy::killInterfaceLoaded = false;
 
+// Enemy spawner static members
+sf::Clock Enemy::spawnClock;
+std::vector<sf::Vector2f> Enemy::spawnPositions;
+size_t Enemy::currentEnemyCount = 0;
+float Enemy::spawnPeriod = 2.0f;
+size_t Enemy::maxEnemyCount = 5;
+
 Enemy::Enemy()
 {
     // Frame counts for different animations
@@ -469,4 +476,71 @@ void Enemy::getKillInterface(sf::RenderWindow &window)
     // Draw enemy kill interface
     window.draw(enemyIcon);
     window.draw(killText);
+}
+
+// ============================================
+// ENEMY SPAWNER FUNCTIONS
+// ============================================
+
+void Enemy::initializeSpawner(const std::vector<sf::Vector2f> &positions, float period, size_t maxEnemies)
+{
+    spawnPositions = positions;
+    spawnPeriod = period;
+    maxEnemyCount = maxEnemies;
+    currentEnemyCount = 0;
+    spawnClock.restart();
+}
+
+bool Enemy::shouldSpawnNewEnemy()
+{
+    if (currentEnemyCount >= maxEnemyCount)
+    {
+        return false;
+    }
+
+    if (spawnClock.getElapsedTime().asSeconds() >= spawnPeriod)
+    {
+        spawnClock.restart();
+        currentEnemyCount++;
+        return true;
+    }
+
+    return false;
+}
+
+sf::Vector2f Enemy::getRandomSpawnPosition()
+{
+    if (spawnPositions.empty())
+    {
+        return sf::Vector2f(400.f, 400.f); // Default spawn position
+    }
+
+    // Generate random index
+    size_t randomIndex = std::rand() % spawnPositions.size();
+    return spawnPositions[randomIndex];
+}
+
+void Enemy::updateSpawner()
+{
+    // This function can be called to check and potentially spawn enemies
+    // The actual spawning logic should be handled in the main game loop
+}
+
+void Enemy::resetSpawner()
+{
+    spawnClock.restart();
+    currentEnemyCount = 0;
+}
+
+void Enemy::decrementEnemyCount()
+{
+    if (currentEnemyCount > 0)
+    {
+        currentEnemyCount--;
+    }
+}
+
+size_t Enemy::getCurrentEnemyCount()
+{
+    return currentEnemyCount;
 }
