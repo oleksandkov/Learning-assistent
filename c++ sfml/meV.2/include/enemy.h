@@ -8,90 +8,60 @@
 class Enemy : public sf::Sprite
 {
 private:
-    sf::Texture idleTexture;
-    sf::Texture walkTexture;
-    sf::Texture deadTexture;
-    sf::Texture attackTexture;
-    sf::Clock animationClock;
-    int currentFrame;
-    int idleFrames;
-    int walkFrames;
-    int deadFrames;
-    int attackFrames;
+    sf::Texture idleTexture, walkTexture, deadTexture, attackTexture;
+    sf::Clock animationClock, movementClock, physicsClock, attackCooldownClock;
     sf::Vector2i frameSize;
-    float animationSpeed;
-    sf::Clock movementClock;
-    sf::Clock physicsClock;
-    float speed;
-    float health;
-    std::vector<sf::FloatRect> collisionList;
     sf::Vector2f velocity;
-    bool onGround;
-    bool isIdle;
-    bool isWalking;
-    bool isDead;
-    bool shouldRemove;
-    bool wasHitThisFrame;
-    bool isAttacking;
-    float attackDamage;
-    sf::Clock attackCooldownClock;
-    float attackCooldown;
-    bool canAttack;
+    std::vector<sf::FloatRect> collisionList;
 
-    // AI behavior variables
-    float detectionRange;
+    int currentFrame, idleFrames, walkFrames, deadFrames, attackFrames;
+    float animationSpeed, speed, health, detectionRange, attackDamage, attackCooldown;
+    bool onGround, isIdle, isWalking, isDead, shouldRemove;
+    bool wasHitThisFrame, isAttacking, canAttack;
 
-    // Enemy spawning
     static sf::Clock spawnClock;
     static std::vector<sf::Vector2f> spawnPositions;
-    static size_t currentEnemyCount;
-
-    // Static kill tracking
-    static size_t totalKilledEnemies;
+    static size_t currentEnemyCount, totalKilledEnemies, maxEnemyCount;
+    static float spawnPeriod;
     static sf::Font killInterfaceFont;
     static sf::Texture killInterfaceTexture;
     static bool killInterfaceLoaded;
 
+    static bool loadKillInterfaceResources();
+
 public:
-    sf::RectangleShape hitbox;
-    bool isStaying;
+    sf::RectangleShape hitbox, attackHitbox;
     sf::FloatRect platformBounds;
-    sf::RectangleShape attackHitbox;
+    bool isStaying;
 
     Enemy();
     ~Enemy();
+
     void update();
     void enemyAI(sf::Vector2f playerPosition, float playerHealth);
-    void addToCollisionList(sf::FloatRect rect);
-    void initializeHitbox();
     void enemyLogic();
     void takeDamage(float damageAmount);
+    void addToCollisionList(sf::FloatRect rect);
+    void initializeHitbox();
+    void resetHitFlag();
+
     bool getIsDead() const;
     bool shouldBeRemoved() const;
-    float getHealth() const;
-    void setHealth(float newHealth);
-    void resetHitFlag();
-    float getAttackDamage() const;
     bool getIsAttacking() const;
+    float getHealth() const;
+    float getAttackDamage() const;
+    void setHealth(float newHealth);
 
-    // Static kill tracking methods
     static size_t getTotalKilledEnemies();
+    static size_t getCurrentEnemyCount();
     static void resetKillCounter();
     static void getKillInterface(sf::RenderWindow &window);
-
-    // Static spawning management
     static void initializeSpawner(const std::vector<sf::Vector2f> &positions, float spawnPeriod, size_t maxEnemies);
     static bool shouldSpawnNewEnemy();
     static sf::Vector2f getRandomSpawnPosition();
     static void updateSpawner();
     static void resetSpawner();
     static void decrementEnemyCount();
-    static size_t getCurrentEnemyCount();
-
-private:
-    static float spawnPeriod;
-    static size_t maxEnemyCount;
-    static bool loadKillInterfaceResources();
 };
 
 #endif

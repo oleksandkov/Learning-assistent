@@ -8,60 +8,36 @@
 class Character : public sf::Sprite
 {
 private:
-    sf::Texture idleTexture;
-    sf::Texture walkTexture;
-    sf::Texture jumpTexture;
-    sf::Texture attackTexture;
-    sf::Texture hurtTexture;
-    sf::Texture deadTexture;
-    sf::Clock animationClock;
-    int currentFrame;
-    int totalFrames;
-    int attackFrames;
-    int hurtFrames;
-    int deadFrames;
+    sf::Texture idleTexture, walkTexture, jumpTexture, attackTexture, hurtTexture, deadTexture, heartTexture;
+    sf::Clock animationClock, clock, physicsClock, damageCooldownClock;
     sf::Vector2i frameSize;
-    float animationSpeed;
-    sf::Clock clock;
-    sf::Clock physicsClock;
-    float speed;
+    sf::Vector2f velocity, oldpos;
     std::vector<sf::FloatRect> collisionList;
-    sf::Vector2f oldpos;
-    bool isWalking;
-    bool isJumping;
-    sf::Vector2f velocity;
-    bool onGround;
-    float jumpVelocity;
-    float jumpAnimationSpeed;
-    bool isAttacking;
-    bool wasSpacePressed;
-    bool isHurt;
-    bool isDead;
-    float health;
-    sf::Clock damageCooldownClock;
-    float damageCooldown;
-    bool canTakeDamage;
-    float damage;
-    sf::Texture heartTexture;
     std::vector<sf::Sprite> hearts;
 
+    int currentFrame, totalFrames, attackFrames, hurtFrames, deadFrames;
+    float animationSpeed, jumpAnimationSpeed, speed, jumpVelocity, health, damageCooldown, damage;
+    bool isWalking, isJumping, onGround, isAttacking, wasSpacePressed, isHurt, isDead, canTakeDamage;
+
 public:
-    sf::RectangleShape hitbox;
-    sf::RectangleShape attackHitbox;
+    sf::RectangleShape hitbox, attackHitbox;
+
     Character();
     ~Character();
+
     void update();
     void moveCharacter();
+    void characterLogic();
+    void takeDamage(float damage);
     void addToCollisionList(sf::FloatRect rect);
     void initializeHitbox();
     void updateAttackHitbox();
-    void characterLogic();
-    void takeDamage(float damage);
+    void getHealthInterface(sf::RenderWindow &window);
+
     float getHealth() const;
     float getDamage() const;
     bool getIsAttacking() const;
     bool getIsDead() const;
-    void getHealthInterface(sf::RenderWindow &window);
 };
 
 #endif
