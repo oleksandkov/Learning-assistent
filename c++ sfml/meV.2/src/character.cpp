@@ -5,6 +5,7 @@ Character::Character()
     totalFrames = 8;
     attackFrames = 4;
     hurtFrames = 6;
+    deadFrames = 3;
     animationSpeed = 0.1f;
     currentFrame = 0;
     speed = 250.f;
@@ -16,6 +17,7 @@ Character::Character()
     isAttacking = false;
     wasSpacePressed = false;
     isHurt = false;
+    isDead = false;
     health = 100.f;
     damageCooldown = 1.0f; // 1 second cooldown between damage
     canTakeDamage = true;
@@ -35,6 +37,10 @@ Character::Character()
     if (!hurtTexture.loadFromFile("assets/Hurt.png"))
     {
         std::cerr << "Error loading hurt texture" << std::endl;
+    }
+    if (!deadTexture.loadFromFile("assets/Dead.png"))
+    {
+        std::cerr << "Error loading dead texture" << std::endl;
     }
     // if (!jumpTexture.loadFromFile("assets/Jump.png"))
     //     std::cerr << "Error loading jump texture" << std::endl;
@@ -60,7 +66,21 @@ Character::~Character()
 
 void Character::update()
 {
-    if (isHurt)
+    if (isDead)
+    {
+        setTexture(deadTexture);
+        if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
+        {
+            if (currentFrame < deadFrames - 1)
+            {
+                currentFrame++;
+            }
+            setTextureRect(sf::IntRect(currentFrame * frameSize.x, 0, frameSize.x, frameSize.y));
+            animationClock.restart();
+        }
+        return; // Don't process other animations when dead
+    }
+    else if (isHurt)
     {
         setTexture(hurtTexture);
         if (animationClock.getElapsedTime().asSeconds() >= animationSpeed)
@@ -126,6 +146,9 @@ void Character::update()
 
 void Character::moveCharacter()
 {
+    if (isDead)
+        return; // No movement when dead
+
     sf::Vector2f oldpos = getPosition();
     float deltaTime = clock.restart().asSeconds();
     sf::Vector2f movement(0.f, 0.f);
@@ -255,7 +278,7 @@ void Character::characterLogic()
                 // setPosition(getPosition().x, correctY);
                 // Add slight downward push to separate from obstacle
                 move(0.f, 2.f);
-                velocity.y = 0.f; // Stop upward movement
+                velocity.y = 0.f;  // Stop upward movement
                 isJumping = false; // Stop jumping state
                 // Character will now start falling due to gravity on next frame
                 initializeHitbox();
@@ -267,25 +290,83 @@ void Character::characterLogic()
 
 void Character::takeDamage(float damage)
 {
-    if (canTakeDamage && health > 0)
+    if (canTakeDamage && health > 0 && !isDead)
     {
         health -= damage;
-        isHurt = true;
-        isAttacking = false;
-        currentFrame = 0;
-        animationClock.restart();
 
-        if (health < 0)
+        if (health <= 0)
+        {
             health = 0;
+            isDead = true;
+            isHurt = false;
+            isAttacking = false;
+            currentFrame = 0;
+            animationClock.restart();
+            std::cout << "Character died!" << std::endl;
+        }
+        else
+        {
+            isHurt = true;
+            isAttacking = false;
+            currentFrame = 0;
+            animationClock.restart();
+            std::cout << "Character took damage! Health: " << health << std::endl;
+        }
 
         canTakeDamage = false;
         damageCooldownClock.restart();
+    }
+}
 
-        std::cout << "Character took damage! Health: " << health << std::endl;
+void Character::getHealthInterface(sf::RenderWindow &window)
+{
+    // Load heart texture (only once)
+    static bool heartLoaded = false;
+    if (!heartLoaded)
+    {
+        if (!heartTexture.loadFromFile("assets/Heart_pixelart_(transparent_background).svg.png"))
+        {
+            std::cerr << "Error loading heart texture" << std::endl;
+        }
+        heartLoaded = true;
+    }
+
+    sf::View currentView = window.getView();
+    sf::Vector2f viewCenter = currentView.getCenter();
+    sf::Vector2f viewSize = currentView.getSize();
+
+    int numHearts = static_cast<int>(health / 20.f);
+    if (health > 0 && numHearts == 0)
+        numHearts = 1;
+
+    hearts.clear();
+
+    float heartSize = 30.f;   // Size of each heart
+    float heartSpacing = 5.f; // Space between hearts
+    float startX = viewCenter.x - viewSize.x / 2.f + 10.f;
+    float startY = viewCenter.y - viewSize.y / 2.f + 10.f;
+
+    for (int i = 0; i < numHearts && i < 10; i++) // Max 10 hearts
+    {
+        sf::Sprite heart;
+        heart.setTexture(heartTexture);
+
+        sf::Vector2u textureSize = heartTexture.getSize();
+        heart.setScale(heartSize / textureSize.x, heartSize / textureSize.y);
+
+        heart.setPosition(startX + i * (heartSize + heartSpacing), startY);
+
+        hearts.push_back(heart);
+        window.draw(heart);
     }
 }
 
 float Character::getHealth() const
 {
     return health;
+}
+
+bool Character::getIsDead() const
+{
+    return isDead;
 }

@@ -11,6 +11,7 @@ private:
     sf::Texture idleTexture;
     sf::Texture walkTexture;
     sf::Texture deadTexture;
+    sf::Texture arrow;
     sf::Clock animationClock;
     int currentFrame;
     int idleFrames;

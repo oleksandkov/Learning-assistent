@@ -13,11 +13,13 @@ private:
     sf::Texture jumpTexture;
     sf::Texture attackTexture;
     sf::Texture hurtTexture;
+    sf::Texture deadTexture;
     sf::Clock animationClock;
     int currentFrame;
     int totalFrames;
     int attackFrames;
     int hurtFrames;
+    int deadFrames;
     sf::Vector2i frameSize;
     float animationSpeed;
     sf::Clock clock;
@@ -34,10 +36,13 @@ private:
     bool isAttacking;
     bool wasSpacePressed;
     bool isHurt;
+    bool isDead;
     float health;
     sf::Clock damageCooldownClock;
     float damageCooldown;
     bool canTakeDamage;
+    sf::Texture heartTexture;
+    std::vector<sf::Sprite> hearts;
 
 public:
     sf::RectangleShape hitbox;
@@ -53,6 +58,8 @@ public:
     void takeDamage(float damage);
     float getHealth() const;
     bool getIsAttacking() const;
+    bool getIsDead() const;
+    void getHealthInterface(sf::RenderWindow &window);
 };
 
 #endif

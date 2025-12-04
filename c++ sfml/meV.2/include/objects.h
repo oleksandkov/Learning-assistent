@@ -22,7 +22,7 @@ struct Platform
 {
     sf::RectangleShape shape;
     sf::Texture texture;
-    Platform(float width, float height);
+    Platform(float width, float height, float textureScale = 1.0f);
 };
 
 struct Wall
