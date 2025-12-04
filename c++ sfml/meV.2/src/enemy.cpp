@@ -1,5 +1,11 @@
 #include <enemy.h>
 
+// Static member definitions
+size_t Enemy::totalKilledEnemies = 0;
+sf::Font Enemy::killInterfaceFont;
+sf::Texture Enemy::killInterfaceTexture;
+bool Enemy::killInterfaceLoaded = false;
+
 Enemy::Enemy()
 {
     // Frame counts for different animations
@@ -356,7 +362,8 @@ void Enemy::takeDamage(float damageAmount)
             isWalking = false;
             currentFrame = 0;
             animationClock.restart();
-            std::cout << "Enemy died!" << std::endl;
+            totalKilledEnemies++; // Track the kill
+            std::cout << "Enemy died! Total enemies killed: " << totalKilledEnemies << std::endl;
         }
     }
 }
@@ -393,4 +400,73 @@ float Enemy::getAttackDamage() const
 bool Enemy::getIsAttacking() const
 {
     return isAttacking;
+}
+
+// Static kill tracking methods
+size_t Enemy::getTotalKilledEnemies()
+{
+    return totalKilledEnemies;
+}
+
+void Enemy::resetKillCounter()
+{
+    totalKilledEnemies = 0;
+}
+
+bool Enemy::loadKillInterfaceResources()
+{
+    if (!killInterfaceLoaded)
+    {
+        if (!killInterfaceFont.loadFromFile("assets/fonts/GothicA1-Regular.ttf"))
+        {
+            std::cerr << "Error loading interface font for enemy kill counter" << std::endl;
+        }
+        if (!killInterfaceTexture.loadFromFile("assets/enemy/Dead.png"))
+        {
+            std::cerr << "Error loading enemy interface texture" << std::endl;
+        }
+        killInterfaceLoaded = true;
+    }
+    return killInterfaceLoaded;
+}
+
+void Enemy::getKillInterface(sf::RenderWindow &window)
+{
+    // Ensure resources are loaded
+    loadKillInterfaceResources();
+
+    sf::View currentView = window.getView();
+    sf::Vector2f viewCenter = currentView.getCenter();
+    sf::Vector2f viewSize = currentView.getSize();
+
+    // Position under coin interface (coin interface is at ~50px from top, enemy kills go at ~80px)
+    float startX = viewCenter.x - viewSize.x / 2.f + 10.f;
+    float startY = viewCenter.y - viewSize.y / 2.f + 80.f; // 80px from top
+
+    // Create enemy skull icon for interface
+    sf::Sprite enemyIcon;
+    enemyIcon.setTexture(killInterfaceTexture);
+
+    // Scale enemy icon to appropriate size (small skull icon)
+    sf::Vector2u textureSize = killInterfaceTexture.getSize();
+    float iconSize = 25.f;
+
+    // For enemy spritesheet, we might need to show just one frame
+    sf::IntRect iconRect(0, 0, textureSize.x / 4, textureSize.y); // Assuming 4 frames, take first
+    enemyIcon.setTextureRect(iconRect);
+
+    enemyIcon.setScale(iconSize / (textureSize.x / 4), iconSize / textureSize.y);
+    enemyIcon.setPosition(startX, startY);
+
+    // Create text for enemy kill count
+    sf::Text killText;
+    killText.setFont(killInterfaceFont);
+    killText.setString("x " + std::to_string(getTotalKilledEnemies()));
+    killText.setCharacterSize(20);
+    killText.setFillColor(sf::Color::Red); // Red color for enemy kills
+    killText.setPosition(startX + iconSize + 5.f, startY + 2.f);
+
+    // Draw enemy kill interface
+    window.draw(enemyIcon);
+    window.draw(killText);
 }

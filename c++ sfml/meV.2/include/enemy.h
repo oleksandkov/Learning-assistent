@@ -41,6 +41,12 @@ private:
     // AI behavior variables
     float detectionRange;
 
+    // Static kill tracking
+    static size_t totalKilledEnemies;
+    static sf::Font killInterfaceFont;
+    static sf::Texture killInterfaceTexture;
+    static bool killInterfaceLoaded;
+
 public:
     sf::RectangleShape hitbox;
     bool isStaying;
@@ -62,6 +68,14 @@ public:
     void resetHitFlag();
     float getAttackDamage() const;
     bool getIsAttacking() const;
+
+    // Static kill tracking methods
+    static size_t getTotalKilledEnemies();
+    static void resetKillCounter();
+    static void getKillInterface(sf::RenderWindow &window);
+
+private:
+    static bool loadKillInterfaceResources();
 };
 
 #endif

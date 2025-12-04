@@ -1,6 +1,7 @@
 #ifndef OBJECTS_H
 #define OBJECTS_H
 #include <SFML/Graphics.hpp>
+#include "coins.h"
 
 class GameObject : public sf::Sprite
 {

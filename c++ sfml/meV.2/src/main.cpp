@@ -3,6 +3,7 @@
 #include <character.h>
 #include <enemy.h>
 #include "objects.h"
+#include "coins.h"
 
 int main()
 {
@@ -139,6 +140,72 @@ int main()
     enemy2.addToCollisionList(leftWall.shape.getGlobalBounds());
     enemy2.addToCollisionList(rightWall.shape.getGlobalBounds());
 
+    // Create coins and place them on platforms
+    Coins coinsManager(2.0f, 10.0f); // 2 second spawn interval, 10 second coin lifetime
+    coinsManager.setSpawnInterval(10.0f);
+    coinsManager.setDefaultCoinLifetime(20.0f);
+
+    for (float x = 600.f; x <= 800.f; x += 25.f)
+    {
+        coinsManager.addCoinPosition(x, 315.f); // Above platform only
+    }
+
+    // Platform (900, 330) - 200px wide - single layer above
+    for (float x = 900.f; x <= 1100.f; x += 25.f)
+    {
+        coinsManager.addCoinPosition(x, 265.f); // Above platform only
+    }
+
+    // Platform 3 (1200, 380) - 200px wide - single layer above
+    for (float x = 1200.f; x <= 1400.f; x += 25.f)
+    {
+        coinsManager.addCoinPosition(x, 315.f); // Above platform only
+    }
+
+    // Platform 4 (1500, 310) - 200px wide - single layer above
+    for (float x = 1500.f; x <= 1700.f; x += 25.f)
+    {
+        coinsManager.addCoinPosition(x, 245.f); // Above platform only
+    }
+
+    // Platform 5 (1800, 260) - 200px wide - single layer above
+    for (float x = 1800.f; x <= 2000.f; x += 25.f)
+    {
+        coinsManager.addCoinPosition(x, 195.f); // Above platform only
+    }
+
+    // Platform 6 (1050, 170) - 300px wide - single layer above
+    for (float x = 1050.f; x <= 1350.f; x += 25.f)
+    {
+        coinsManager.addCoinPosition(x, 105.f); // Above platform only
+    }
+
+    // Platform 7 (1550, 145) - 200px wide - single layer above
+    for (float x = 1550.f; x <= 1750.f; x += 25.f)
+    {
+        coinsManager.addCoinPosition(x, 80.f); // Above platform only
+    }
+
+    // Higher floor level coins - avoiding walls (left wall: 0-500px, right wall: 2000+px)
+    // Safe floor area: 520px to 1980px - moved higher from y=500 to y=450
+    for (float x = 520.f; x <= 1980.f; x += 30.f)
+    {
+        coinsManager.addCoinPosition(x, 450.f); // Higher floor level
+    }
+
+    // Additional coins in air between platforms - single layer only
+    // Between platform2 and platform (800-900)
+    for (float x = 820.f; x <= 880.f; x += 30.f)
+    {
+        coinsManager.addCoinPosition(x, 420.f); // Single layer between platforms
+    }
+
+    // Between platform3 and platform4 (1400-1500)
+    for (float x = 1420.f; x <= 1480.f; x += 30.f)
+    {
+        coinsManager.addCoinPosition(x, 420.f); // Single layer between platforms
+    }
+
     // Main loop
     while (window.isOpen())
     {
@@ -177,6 +244,9 @@ int main()
 
         character.characterLogic();
 
+        // Update coins
+        coinsManager.update();
+
         // Update enemy
         enemy.enemyAI(character.getPosition(), character.getHealth());
         enemy.update();
@@ -186,6 +256,9 @@ int main()
         enemy2.enemyAI(character.getPosition(), character.getHealth());
         enemy2.update();
         enemy2.enemyLogic();
+
+        // Check coin collection
+        coinsManager.checkCollision(character.hitbox.getGlobalBounds());
 
         // Check if character's attack hits enemy
         if (character.attackHitbox.getGlobalBounds().intersects(enemy.hitbox.getGlobalBounds()) &&
@@ -249,6 +322,10 @@ int main()
         // Essentially Floor/Roof
         window.draw(floor.shape);
         window.draw(roof.shape);
+
+        // Draw coins
+        coinsManager.draw(window);
+
         // Character
         window.draw(character);
 
@@ -281,6 +358,13 @@ int main()
 
         // Health interface
         character.getHealthInterface(window);
+
+        // Coin interface
+        coinsManager.getCoinInterface(window);
+
+        // Enemy kill interface
+        Enemy::getKillInterface(window);
+
         if (character.getIsDead())
         {
             // Center game over elements on camera
