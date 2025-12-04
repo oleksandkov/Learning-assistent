@@ -242,6 +242,9 @@ void Character::characterLogic()
     if (dt > 0.1f)
         dt = 0.016f;
 
+    // Save position before applying gravity and movement
+    sf::Vector2f oldPosition = getPosition();
+
     // Apply gravity
     velocity.y += 980.f * dt; // Gravity acceleration
 
@@ -262,26 +265,22 @@ void Character::characterLogic()
             // Collision detected - determine if hitting from above or below
             if (velocity.y > 0.f) // Falling down - hit floor/platform from above
             {
-                // Position character on top of the collision object
-                float correctY = rect.top - getGlobalBounds().height;
-                setPosition(getPosition().x, correctY);
+                // Revert to old position and set on ground
+                setPosition(oldPosition);
+                initializeHitbox();
                 velocity.y = 0.f;
                 onGround = true;
                 isJumping = false;
-                initializeHitbox(); // Update hitbox after position correction
                 break;
             }
             else if (velocity.y < 0.f) // Jumping up - hit ceiling/platform from below
             {
-                // Position character directly below the collision object
-                // float correctY = rect.top + rect.height;
-                // setPosition(getPosition().x, correctY);
-                // Add slight downward push to separate from obstacle
-                move(0.f, 2.f);
+                // Revert to old position and stop upward movement
+                setPosition(oldPosition);
+                initializeHitbox();
                 velocity.y = 0.f;  // Stop upward movement
                 isJumping = false; // Stop jumping state
                 // Character will now start falling due to gravity on next frame
-                initializeHitbox();
                 break;
             }
         }
