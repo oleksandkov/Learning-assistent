@@ -43,11 +43,27 @@ int main()
     roof.shape.setPosition(0.f, 0.f);
     // Setup platform
 
-    Platform platform2(150.f, 30.f, 1.0f);
-    platform2.shape.setPosition(600.f, 330.f);
+    Platform platform2(200.f, 30.f, 1.0f);
+    platform2.shape.setPosition(600.f, 380.f);
 
-    Platform platform(300.f, 30.f, 1.0f);
-    platform.shape.setPosition(1000.f, 390.f);
+    Platform platform(200.f, 30.f, 1.0f);
+    platform.shape.setPosition(900.f, 330.f);
+
+    // Additional platforms to create a nice map
+    Platform platform3(200.f, 30.f, 1.0f);
+    platform3.shape.setPosition(1200.f, 380.f);
+
+    Platform platform4(200.f, 30.f, 1.0f);
+    platform4.shape.setPosition(1500.f, 310.f);
+
+    Platform platform5(200.f, 30.f, 1.0f);
+    platform5.shape.setPosition(1800.f, 260.f);
+
+    Platform platform6(300.f, 30.f, 1.0f);
+    platform6.shape.setPosition(1050.f, 170.f);
+
+    Platform platform7(200.f, 30.f, 1.0f);
+    platform7.shape.setPosition(1550.f, 145.f);
 
     // Setrup walls
     Wall leftWall(500.f, window.getSize().y);
@@ -74,37 +90,52 @@ int main()
     gameOverText.setOrigin(gameOverText.getGlobalBounds().width / 2.f, gameOverText.getGlobalBounds().height / 2.f);
     // Create character
     Character character;
-    character.setPosition(600.f, 100.f);
+    character.setPosition(700.f, 210.f);
 
     character.addToCollisionList(floor.shape.getGlobalBounds());
     character.addToCollisionList(roof.shape.getGlobalBounds());
     character.addToCollisionList(platform.shape.getGlobalBounds());
     character.addToCollisionList(platform2.shape.getGlobalBounds());
+    character.addToCollisionList(platform3.shape.getGlobalBounds());
+    character.addToCollisionList(platform4.shape.getGlobalBounds());
+    character.addToCollisionList(platform5.shape.getGlobalBounds());
+    character.addToCollisionList(platform6.shape.getGlobalBounds());
+    character.addToCollisionList(platform7.shape.getGlobalBounds());
     character.addToCollisionList(leftWall.shape.getGlobalBounds());
     character.addToCollisionList(rightWall.shape.getGlobalBounds());
 
     // Create enemy
     Enemy enemy;
-    enemy.setPosition(900.f, 100.f);
+    enemy.setPosition(900.f, 390.f);
     enemy.isStaying = true;
-    enemy.platformBounds = floor.shape.getGlobalBounds();
+    enemy.platformBounds = platform.shape.getGlobalBounds();
 
     enemy.addToCollisionList(floor.shape.getGlobalBounds());
     enemy.addToCollisionList(roof.shape.getGlobalBounds());
     enemy.addToCollisionList(platform2.shape.getGlobalBounds());
+    enemy.addToCollisionList(platform3.shape.getGlobalBounds());
+    enemy.addToCollisionList(platform4.shape.getGlobalBounds());
+    enemy.addToCollisionList(platform5.shape.getGlobalBounds());
+    enemy.addToCollisionList(platform6.shape.getGlobalBounds());
+    enemy.addToCollisionList(platform7.shape.getGlobalBounds());
     enemy.addToCollisionList(leftWall.shape.getGlobalBounds());
     enemy.addToCollisionList(rightWall.shape.getGlobalBounds());
     enemy.setHealth(50.f);
 
     // Create enemy2
     Enemy enemy2;
-    enemy2.setPosition(1200.f, 100.f);
+    enemy2.setPosition(1350.f, 300.f);
     enemy2.isStaying = true;
-    enemy2.platformBounds = platform.shape.getGlobalBounds();
+    enemy2.platformBounds = platform7.shape.getGlobalBounds();
 
     enemy2.addToCollisionList(floor.shape.getGlobalBounds());
     enemy2.addToCollisionList(roof.shape.getGlobalBounds());
     enemy2.addToCollisionList(platform2.shape.getGlobalBounds());
+    enemy2.addToCollisionList(platform3.shape.getGlobalBounds());
+    enemy2.addToCollisionList(platform4.shape.getGlobalBounds());
+    enemy2.addToCollisionList(platform5.shape.getGlobalBounds());
+    enemy2.addToCollisionList(platform6.shape.getGlobalBounds());
+    enemy2.addToCollisionList(platform7.shape.getGlobalBounds());
     enemy2.addToCollisionList(leftWall.shape.getGlobalBounds());
     enemy2.addToCollisionList(rightWall.shape.getGlobalBounds());
 
@@ -210,6 +241,11 @@ int main()
         window.draw(rightWall.shape);
         window.draw(platform2.shape);
         window.draw(platform.shape);
+        window.draw(platform3.shape);
+        window.draw(platform4.shape);
+        window.draw(platform5.shape);
+        window.draw(platform6.shape);
+        window.draw(platform7.shape);
         // Essentially Floor/Roof
         window.draw(floor.shape);
         window.draw(roof.shape);
