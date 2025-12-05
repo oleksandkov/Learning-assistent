@@ -37,7 +37,7 @@ Character::Character()
 
     attackHitbox.setSize(sf::Vector2f(20.f, 20.f));
     attackHitbox.setFillColor(sf::Color::Transparent);
-    attackHitbox.setOutlineColor(sf::Color::Blue);
+    attackHitbox.setOutlineColor(sf::Color::Transparent);
     attackHitbox.setOutlineThickness(2.f);
 }
 
@@ -141,6 +141,9 @@ void Character::moveCharacter()
             break;
         }
     }
+
+
+
 }
 
 void Character::updateAttackHitbox()
@@ -179,7 +182,7 @@ void Character::initializeHitbox()
     hitbox.setSize(sf::Vector2f(width, height));
     hitbox.setPosition(xPos, yPos);
     hitbox.setFillColor(sf::Color::Transparent);
-    hitbox.setOutlineColor(sf::Color::Red);
+    hitbox.setOutlineColor(sf::Color::Transparent);
     hitbox.setOutlineThickness(1.f);
 }
 
@@ -254,12 +257,11 @@ void Character::takeDamage(float damage)
 
 void Character::getHealthInterface(sf::RenderWindow &window)
 {
-    static bool heartLoaded = false;
-    if (!heartLoaded)
+    // Check if texture is actually loaded (not just if loading was attempted)
+    if (heartTexture.getSize().x == 0 || heartTexture.getSize().y == 0)
     {
         if (!heartTexture.loadFromFile("assets/Heart_pixelart_(transparent_background).svg.png"))
             std::cerr << "Error loading heart texture" << std::endl;
-        heartLoaded = true;
     }
 
     sf::View currentView = window.getView();
@@ -291,5 +293,6 @@ void Character::getHealthInterface(sf::RenderWindow &window)
 
 float Character::getHealth() const { return health; }
 float Character::getDamage() const { return damage; }
+
 bool Character::getIsAttacking() const { return isAttacking; }
 bool Character::getIsDead() const { return isDead; }

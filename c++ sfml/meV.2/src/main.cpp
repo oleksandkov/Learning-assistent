@@ -8,13 +8,14 @@
 int main()
 {
     bool isFullscreen = false;
+    bool gameOver = false;
     sf::VideoMode windowedMode(800, 600);
     sf::VideoMode fullscreenMode = sf::VideoMode::getDesktopMode();
 
-    sf::RenderWindow window(windowedMode, "The Game");
+    sf::RenderWindow window(windowedMode, "Slime Face Breaker");
     window.setVerticalSyncEnabled(true);
 
-    sf::View camera(sf::FloatRect(0.f, 0.f, 900.f, 800.f));
+    sf::View camera(sf::FloatRect(0.f, 0.f, 600.f, 400.f));
     window.setView(camera);
 
     sf::Sprite background;
@@ -70,6 +71,22 @@ int main()
     gameOverText.setFillColor(sf::Color::White);
     gameOverText.setOrigin(gameOverText.getGlobalBounds().width / 2.f, gameOverText.getGlobalBounds().height / 2.f);
 
+    // Win condition and win window
+    sf::RectangleShape winWindow;
+    winWindow.setSize(sf::Vector2f(10000.f, 10000.f));
+    winWindow.setPosition(0.f, 0.f);
+    winWindow.setFillColor(sf::Color(255, 255, 255, 200));
+    sf::Text winText;
+    sf::Font winFont;
+    if (!winFont.loadFromFile("assets/fonts/GothicA1-Regular.ttf"))
+        std::cerr << "Error loading font" << std::endl;
+    winText.setFont(winFont);
+    winText.setString("You Win!");
+    winText.setCharacterSize(50);
+    winText.setFillColor(sf::Color::Black);
+    winText.setOrigin(winText.getGlobalBounds().width / 2.f, winText.getGlobalBounds().height / 2.f);
+    winText.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
+
     Character character;
     character.setPosition(700.f, 210.f);
 
@@ -85,38 +102,6 @@ int main()
     character.addToCollisionList(leftWall.shape.getGlobalBounds());
     character.addToCollisionList(rightWall.shape.getGlobalBounds());
 
-    Enemy enemy;
-    enemy.setPosition(900.f, 390.f);
-    enemy.isStaying = true;
-    enemy.platformBounds = platform.shape.getGlobalBounds();
-
-    enemy.addToCollisionList(floor.shape.getGlobalBounds());
-    enemy.addToCollisionList(roof.shape.getGlobalBounds());
-    enemy.addToCollisionList(platform2.shape.getGlobalBounds());
-    enemy.addToCollisionList(platform3.shape.getGlobalBounds());
-    enemy.addToCollisionList(platform4.shape.getGlobalBounds());
-    enemy.addToCollisionList(platform5.shape.getGlobalBounds());
-    enemy.addToCollisionList(platform6.shape.getGlobalBounds());
-    enemy.addToCollisionList(platform7.shape.getGlobalBounds());
-    enemy.addToCollisionList(leftWall.shape.getGlobalBounds());
-    enemy.addToCollisionList(rightWall.shape.getGlobalBounds());
-    enemy.setHealth(50.f);
-
-    Enemy enemy2;
-    enemy2.setPosition(1350.f, 300.f);
-    enemy2.isStaying = true;
-    enemy2.platformBounds = platform7.shape.getGlobalBounds();
-
-    enemy2.addToCollisionList(floor.shape.getGlobalBounds());
-    enemy2.addToCollisionList(roof.shape.getGlobalBounds());
-    enemy2.addToCollisionList(platform2.shape.getGlobalBounds());
-    enemy2.addToCollisionList(platform3.shape.getGlobalBounds());
-    enemy2.addToCollisionList(platform4.shape.getGlobalBounds());
-    enemy2.addToCollisionList(platform5.shape.getGlobalBounds());
-    enemy2.addToCollisionList(platform6.shape.getGlobalBounds());
-    enemy2.addToCollisionList(platform7.shape.getGlobalBounds());
-    enemy2.addToCollisionList(leftWall.shape.getGlobalBounds());
-    enemy2.addToCollisionList(rightWall.shape.getGlobalBounds());
 
     std::vector<Enemy> spawnedEnemies;
 
@@ -133,7 +118,7 @@ int main()
     Enemy::initializeSpawner(spawnPositions, 2.0f, 3);
 
     Coins coinsManager(2.0f, 10.0f);
-    coinsManager.setSpawnInterval(10.0f);
+    coinsManager.setSpawnInterval(2.0f);
     coinsManager.setDefaultCoinLifetime(20.0f);
 
     for (float x = 600.f; x <= 800.f; x += 25.f)
@@ -156,6 +141,15 @@ int main()
         coinsManager.addCoinPosition(x, 420.f);
     for (float x = 1420.f; x <= 1480.f; x += 30.f)
         coinsManager.addCoinPosition(x, 420.f);
+
+        // Buttons
+
+        Button restartbutton;
+        restartbutton.setSize(sf::Vector2f(200.f, 80.f));
+        restartbutton.setPosition(1000.f, 500.f);
+        restartbutton.setFillColor(sf::Color(100, 250, 50));
+        restartbutton.setFont(gameOverFont);
+        restartbutton.setButtonText("Restart", 24, sf::Color::Black);
 
     while (window.isOpen())
     {
@@ -184,21 +178,68 @@ int main()
                 window.setVerticalSyncEnabled(true);
                 window.setView(camera);
             }
+
+            // Handle restart button click when game is over
+            if (gameOver && restartbutton.isClicked(event, window))
+            {
+                // Reset game state
+                gameOver = false;
+                                
+                // Recreate character to reset all states (this automatically sets health to 100)
+                character = Character();
+                character.setPosition(700.f, 210.f);
+                
+                // Re-add collision lists for character
+                character.addToCollisionList(floor.shape.getGlobalBounds());
+                character.addToCollisionList(roof.shape.getGlobalBounds());
+                character.addToCollisionList(platform.shape.getGlobalBounds());
+                character.addToCollisionList(platform2.shape.getGlobalBounds());
+                character.addToCollisionList(platform3.shape.getGlobalBounds());
+                character.addToCollisionList(platform4.shape.getGlobalBounds());
+                character.addToCollisionList(platform5.shape.getGlobalBounds());
+                character.addToCollisionList(platform6.shape.getGlobalBounds());
+                character.addToCollisionList(platform7.shape.getGlobalBounds());
+                character.addToCollisionList(leftWall.shape.getGlobalBounds());
+                character.addToCollisionList(rightWall.shape.getGlobalBounds());
+                
+                // Clear spawned enemies
+                spawnedEnemies.clear();
+                
+                // Reset enemy spawner and counters
+                Enemy::resetKillCounter();
+                Enemy::resetSpawner();
+                
+                // Reinitialize enemy spawner with fresh settings
+                Enemy::initializeSpawner(spawnPositions, 2.0f, 3);
+                
+                // Reset coins completely
+                coinsManager.clear();
+                
+                // Reset coin spawn timer by recreating coins manager
+                coinsManager = Coins(2.0f, 10.0f);
+                coinsManager.setSpawnInterval(10.0f);
+                coinsManager.setDefaultCoinLifetime(20.0f);
+                
+            
+                
+                // Reset camera
+                camera.setCenter(character.getPosition().x + 50.f, character.getPosition().y);
+                window.setView(camera);
+                
+
+            }
         }
 
-        character.moveCharacter();
-        character.update();
-        character.characterLogic();
+        if(!gameOver)
+        {
+
+            character.moveCharacter();
+            character.update();
+            character.characterLogic();
+        };
 
         coinsManager.update();
 
-        enemy.enemyAI(character.getPosition(), character.getHealth());
-        enemy.update();
-        enemy.enemyLogic();
-
-        enemy2.enemyAI(character.getPosition(), character.getHealth());
-        enemy2.update();
-        enemy2.enemyLogic();
 
         if (Enemy::shouldSpawnNewEnemy())
         {
@@ -271,11 +312,6 @@ int main()
 
         if (character.attackHitbox.getGlobalBounds().width > 0)
         {
-            if (!enemy.getIsDead() && character.attackHitbox.getGlobalBounds().intersects(enemy.hitbox.getGlobalBounds()))
-                enemy.takeDamage(character.getDamage());
-
-            if (!enemy2.getIsDead() && character.attackHitbox.getGlobalBounds().intersects(enemy2.hitbox.getGlobalBounds()))
-                enemy2.takeDamage(character.getDamage());
 
             for (auto &spawnedEnemy : spawnedEnemies)
             {
@@ -285,19 +321,13 @@ int main()
         }
         else
         {
-            enemy.resetHitFlag();
-            enemy2.resetHitFlag();
             for (auto &spawnedEnemy : spawnedEnemies)
                 spawnedEnemy.resetHitFlag();
         }
 
         if (!character.getIsDead())
         {
-            if (enemy.attackHitbox.getGlobalBounds().width > 0 && enemy.attackHitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()))
-                character.takeDamage(enemy.getAttackDamage());
 
-            if (enemy2.attackHitbox.getGlobalBounds().width > 0 && enemy2.attackHitbox.getGlobalBounds().intersects(character.hitbox.getGlobalBounds()))
-                character.takeDamage(enemy2.getAttackDamage());
 
             for (auto &spawnedEnemy : spawnedEnemies)
             {
@@ -339,19 +369,7 @@ int main()
                 window.draw(character.attackHitbox);
         }
 
-        if (!enemy.shouldBeRemoved())
-        {
-            window.draw(enemy);
-            window.draw(enemy.hitbox);
-        }
-
-        if (!enemy2.shouldBeRemoved())
-        {
-            window.draw(enemy2);
-            window.draw(enemy2.hitbox);
-            if (enemy2.attackHitbox.getGlobalBounds().width > 0)
-                window.draw(enemy2.attackHitbox);
-        }
+        
 
         for (auto &spawnedEnemy : spawnedEnemies)
         {
@@ -364,12 +382,7 @@ int main()
             }
         }
 
-        if (!enemy.shouldBeRemoved() && enemy.attackHitbox.getGlobalBounds().width > 0)
-            window.draw(enemy.attackHitbox);
-
-        character.getHealthInterface(window);
-        coinsManager.getCoinInterface(window);
-        Enemy::getKillInterface(window);
+ 
 
         if (character.getIsDead())
         {
@@ -378,6 +391,55 @@ int main()
             gameOverWindow.setPosition(cameraCenter.x - 5000.f, cameraCenter.y - 5000.f);
             window.draw(gameOverWindow);
             window.draw(gameOverText);
+            gameOver = true;
+
+            // Position restart button below the game over text
+            sf::FloatRect gameOverBounds = gameOverText.getGlobalBounds();
+            restartbutton.setPosition(cameraCenter.x - restartbutton.getSize().x / 2.f, 
+                                    gameOverBounds.top + gameOverBounds.height + 50.f);
+            
+            restartbutton.setButtonText("Restart", 24, sf::Color::Black);
+            restartbutton.isHover(window);
+            window.draw(restartbutton);
+            window.draw(restartbutton.getText());
+        }
+
+        size_t totalKilledEnemies = Enemy::getTotalKilledEnemies();
+
+
+        if (coinsManager.getCollectedCoinsCount() >= 1 && totalKilledEnemies >= 1)
+        {
+            sf::Vector2f cameraCenter = camera.getCenter();
+            sf::Vector2f cameraSize = camera.getSize();
+            
+            // Center the win window on the camera view
+            winWindow.setPosition(cameraCenter.x - cameraSize.x/2.f, cameraCenter.y - cameraSize.y/2.f);
+            winWindow.setSize(cameraSize);
+            
+            // Center the win text on the camera
+            sf::FloatRect textBounds = winText.getLocalBounds();
+            winText.setOrigin(textBounds.left + textBounds.width/2.f, textBounds.top + textBounds.height/2.f);
+            winText.setPosition(cameraCenter.x, cameraCenter.y - 50.f);
+            
+            window.draw(winWindow);
+            window.draw(winText);
+            gameOver = true;
+
+            
+            sf::FloatRect winTextBounds = winText.getGlobalBounds();
+            restartbutton.setPosition(cameraCenter.x - restartbutton.getSize().x / 2.f, 
+            winTextBounds.top + winTextBounds.height + 50.f);
+            
+            restartbutton.setButtonText("Restart", 24, sf::Color::Black);
+            restartbutton.isHover(window);
+            window.draw(restartbutton);
+            window.draw(restartbutton.getText());
+        }
+        if(!gameOver && !character.getIsDead())
+        {
+            character.getHealthInterface(window);
+            coinsManager.getCoinInterface(window);
+            Enemy::getKillInterface(window);
         }
 
         window.display();

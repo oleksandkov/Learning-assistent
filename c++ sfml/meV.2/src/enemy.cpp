@@ -32,7 +32,7 @@ Enemy::Enemy()
     platformBounds = sf::FloatRect(0.f, 0.f, 0.f, 0.f);
     health = 20.f;
     attackDamage = 10.f;
-    attackCooldown = 1.0f;
+    attackCooldown = 2.5f;
     canAttack = true;
 
     idleTexture.loadFromFile("assets/enemy/Idle.png");
@@ -48,7 +48,7 @@ Enemy::Enemy()
 
     attackHitbox.setSize(sf::Vector2f(20.f, 20.f));
     attackHitbox.setFillColor(sf::Color::Transparent);
-    attackHitbox.setOutlineColor(sf::Color::Yellow);
+    attackHitbox.setOutlineColor(sf::Color::Transparent);
     attackHitbox.setOutlineThickness(2.f);
 }
 
@@ -214,7 +214,7 @@ void Enemy::initializeHitbox()
     hitbox.setSize(sf::Vector2f(width, height));
     hitbox.setPosition(xPos, yPos);
     hitbox.setFillColor(sf::Color::Transparent);
-    hitbox.setOutlineColor(sf::Color::Green);
+    hitbox.setOutlineColor(sf::Color::Transparent);
     hitbox.setOutlineThickness(1.f);
 }
 

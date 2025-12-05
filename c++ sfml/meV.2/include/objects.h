@@ -31,4 +31,23 @@ struct Wall
     Wall(float width, float height);
 };
 
+class Button : public sf::RectangleShape
+{
+private:
+    sf::Text buttonText;
+    sf::Font buttonfont;
+
+public:
+    Button();
+    Button(const sf::Vector2f &size);
+    ~Button();
+
+    void setFont(const sf::Font &font);
+    void setButtonText(const std::string &text, unsigned int charSize = 20, sf::Color color = sf::Color::Black);
+    sf::Text &getText();
+    void isHover(const sf::RenderWindow &window);
+    bool isClicked(const sf::Event &event, const sf::RenderWindow &window);
+};  
+
+
 #endif
