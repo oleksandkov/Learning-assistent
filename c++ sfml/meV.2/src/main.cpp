@@ -216,9 +216,29 @@ int main()
                 coinsManager.clear();
                 
                 // Reset coin spawn timer by recreating coins manager
-                coinsManager = Coins(2.0f, 10.0f);
-                coinsManager.setSpawnInterval(10.0f);
-                coinsManager.setDefaultCoinLifetime(20.0f);
+                coinsManager = Coins(10.0f, 10.0f);
+                
+                // Re-add all coin spawn positions
+                for (float x = 600.f; x <= 800.f; x += 25.f)
+                    coinsManager.addCoinPosition(x, 315.f);
+                for (float x = 900.f; x <= 1100.f; x += 25.f)
+                    coinsManager.addCoinPosition(x, 265.f);
+                for (float x = 1200.f; x <= 1400.f; x += 25.f)
+                    coinsManager.addCoinPosition(x, 315.f);
+                for (float x = 1500.f; x <= 1700.f; x += 25.f)
+                    coinsManager.addCoinPosition(x, 245.f);
+                for (float x = 1800.f; x <= 2000.f; x += 25.f)
+                    coinsManager.addCoinPosition(x, 195.f);
+                for (float x = 1050.f; x <= 1350.f; x += 25.f)
+                    coinsManager.addCoinPosition(x, 105.f);
+                for (float x = 1550.f; x <= 1750.f; x += 25.f)
+                    coinsManager.addCoinPosition(x, 80.f);
+                for (float x = 520.f; x <= 1980.f; x += 30.f)
+                    coinsManager.addCoinPosition(x, 450.f);
+                for (float x = 820.f; x <= 880.f; x += 30.f)
+                    coinsManager.addCoinPosition(x, 420.f);
+                for (float x = 1420.f; x <= 1480.f; x += 30.f)
+                    coinsManager.addCoinPosition(x, 420.f);
                 
             
                 
