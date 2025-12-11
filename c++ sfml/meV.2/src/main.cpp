@@ -427,7 +427,7 @@ int main()
         size_t totalKilledEnemies = Enemy::getTotalKilledEnemies();
 
 
-        if (coinsManager.getCollectedCoinsCount() >= 1 && totalKilledEnemies >= 1)
+        if (coinsManager.getCollectedCoinsCount() >= 4 && totalKilledEnemies >= 4)
         {
             sf::Vector2f cameraCenter = camera.getCenter();
             sf::Vector2f cameraSize = camera.getSize();
