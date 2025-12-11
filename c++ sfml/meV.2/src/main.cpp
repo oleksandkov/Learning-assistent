@@ -1,5 +1,6 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <character.h>
 #include <enemy.h>
 #include "objects.h"
@@ -150,6 +151,19 @@ int main()
         restartbutton.setFillColor(sf::Color(100, 250, 50));
         restartbutton.setFont(gameOverFont);
         restartbutton.setButtonText("Restart", 24, sf::Color::Black);
+
+        // Sound buffers and sounds
+        sf::SoundBuffer coinBuffer;
+        
+        
+        sf::Sound coinSound;
+
+
+        // Load sound files (assuming they exist in assets/sounds/)
+        if (!coinBuffer.loadFromFile("assets/sounds/coin.wav"))
+            std::cerr << "Error loading coin sound" << std::endl;
+        else
+            coinSound.setBuffer(coinBuffer);
 
     while (window.isOpen())
     {
@@ -328,7 +342,9 @@ int main()
         for (size_t i = 0; i < removed; i++)
             Enemy::decrementEnemyCount();
 
-        coinsManager.checkCollision(character.hitbox.getGlobalBounds());
+        int coinsCollected = coinsManager.checkCollision(character.hitbox.getGlobalBounds());
+        if (coinsCollected > 0)
+            coinSound.play();
 
         if (character.attackHitbox.getGlobalBounds().width > 0)
         {

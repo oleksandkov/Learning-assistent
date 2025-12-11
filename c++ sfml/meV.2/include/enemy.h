@@ -40,7 +40,7 @@ public:
     void update();
     void enemyAI(sf::Vector2f playerPosition, float playerHealth);
     void enemyLogic();
-    void takeDamage(float damageAmount);
+    bool takeDamage(float damageAmount);
     void addToCollisionList(sf::FloatRect rect);
     void initializeHitbox();
     void resetHitFlag();

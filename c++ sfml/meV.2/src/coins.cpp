@@ -130,8 +130,9 @@ void Coins::draw(sf::RenderWindow &window)
         coin->draw(window);
 }
 
-void Coins::checkCollision(sf::FloatRect characterBounds)
+int Coins::checkCollision(sf::FloatRect characterBounds)
 {
+    int collectedCount = 0;
     for (auto coin : coins)
     {
         if (coin->getIsCollected() || coin->getIsExpired())
@@ -141,8 +142,10 @@ void Coins::checkCollision(sf::FloatRect characterBounds)
         {
             coin->setCollected(true);
             collectedCoinsCounter++;
+            collectedCount++;
         }
     }
+    return collectedCount;
 }
 
 void Coins::cleanupExpiredCoins()

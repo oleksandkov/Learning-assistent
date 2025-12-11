@@ -29,6 +29,10 @@ Character::Character()
     hurtTexture.loadFromFile("assets/Hurt.png");
     deadTexture.loadFromFile("assets/Dead.png");
 
+    if (!hurtBuffer.loadFromFile("assets/sounds/ishurt.wav"))
+        std::cerr << "Error loading hurt sound" << std::endl;
+    hurtSound.setBuffer(hurtBuffer);
+
     frameSize.x = idleTexture.getSize().x / totalFrames;
     frameSize.y = idleTexture.getSize().y;
     setTexture(idleTexture);
@@ -226,12 +230,13 @@ void Character::characterLogic()
     }
 }
 
-void Character::takeDamage(float damage)
+bool Character::takeDamage(float damage)
 {
     if (!canTakeDamage || health <= 0 || isDead)
-        return;
+        return false;
 
     health -= damage;
+    hurtSound.play();
     canTakeDamage = false;
     damageCooldownClock.restart();
 
@@ -253,6 +258,7 @@ void Character::takeDamage(float damage)
         animationClock.restart();
         std::cout << "Character took damage! Health: " << health << std::endl;
     }
+    return true;
 }
 
 void Character::getHealthInterface(sf::RenderWindow &window)

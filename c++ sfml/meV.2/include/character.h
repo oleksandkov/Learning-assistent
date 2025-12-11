@@ -3,11 +3,14 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 
 class Character : public sf::Sprite
 {
 private:
+    sf::Sound hurtSound;
+    sf::SoundBuffer hurtBuffer;
     sf::Texture idleTexture;
     sf::Texture walkTexture;
     sf::Texture jumpTexture;
@@ -56,7 +59,7 @@ private:
     void initializeHitbox();
     void updateAttackHitbox();
     void characterLogic();
-    void takeDamage(float damage);
+    bool takeDamage(float damage);
     float getHealth() const;
     float getDamage() const;
     bool getIsAttacking() const;

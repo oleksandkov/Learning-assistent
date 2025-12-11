@@ -260,7 +260,7 @@ void Enemy::enemyLogic()
     }
 }
 
-void Enemy::takeDamage(float damageAmount)
+bool Enemy::takeDamage(float damageAmount)
 {
     if (!isDead && !wasHitThisFrame)
     {
@@ -278,7 +278,9 @@ void Enemy::takeDamage(float damageAmount)
             totalKilledEnemies++;
             std::cout << "Enemy died! Total enemies killed: " << totalKilledEnemies << std::endl;
         }
+        return true;
     }
+    return false;
 }
 
 bool Enemy::getIsDead() const { return isDead; }
