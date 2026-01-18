@@ -203,6 +203,20 @@
         "focus": false,
         "panel": "shared"
       }
+    },
+    {
+      // Compile and run any .java file
+      "label": "Compile and Run any .java file",
+      "type": "shell",
+      "command": "cd \"${fileDirname}\"; chcp 65001 >$null; javac ${fileBasename}; java ${fileBasenameNoExtension}",
+      "problemMatcher": [],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
     }
     //         {
     //             "label": "Run Current .bat File (UTF-8) not cmd",

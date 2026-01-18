@@ -2,6 +2,27 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "test",
+      "request": "launch",
+      "mainClass": "test",
+      "projectName": "Learning-assistent_d5a47c10"
+    },
+    {
+      "type": "java",
+      "name": "Test",
+      "request": "launch",
+      "mainClass": "Test",
+      "projectName": "Learning-assistent_d5a47c10"
+    },
+    {
+      "type": "java",
+      "name": "Main",
+      "request": "launch",
+      "mainClass": "Main",
+      "projectName": "Learning-assistent_d5a47c10"
+    },
+    {
       "type": "R-Debugger",
       "name": "Launch R-Workspace",
       "request": "launch",
@@ -77,7 +98,7 @@
           "ignoreFailures": true
         }
       ],
-        "preLaunchTask": "C/C++: g++.exe build active file"
+      "preLaunchTask": "C/C++: g++.exe build active file"
     },
     {
       "name": "C/C++ Runner: Debug Session",
@@ -86,41 +107,39 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-        "cwd": "${fileDirname}",
-        "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
-        "MIMode": "gdb",
-        "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
+      "cwd": "${fileDirname}",
+      "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
       "setupCommands": [
         {
           "description": "Enable pretty-printing for gdb",
           "text": "-enable-pretty-printing",
           "ignoreFailures": true
         }
-      ]
-        ,
-        "preLaunchTask": "C/C++: g++.exe build active file"
+      ],
+      "preLaunchTask": "C/C++: g++.exe build active file"
+    },
+    {
+      "name": "Compile and Run any .cpp file (auto-close window)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
+      "externalConsole": true,
+      "MIMode": "gdb",
+      "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "Compile and Run any .cpp file (auto-close window)"
     }
-      ,
-      {
-        "name": "Compile and Run any .cpp file (auto-close window)",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${fileDirname}",
-        "environment": [],
-        "externalConsole": true,
-        "MIMode": "gdb",
-        "miDebuggerPath": "C:\\msys64\\ucrt64\\bin\\gdb.exe",
-        "setupCommands": [
-          {
-            "description": "Enable pretty-printing for gdb",
-            "text": "-enable-pretty-printing",
-            "ignoreFailures": true
-          }
-        ],
-        "preLaunchTask": "Compile and Run any .cpp file (auto-close window)"
-      }
   ]
 }
