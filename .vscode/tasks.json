@@ -180,7 +180,7 @@
       // Compile and run SFML project - works from any file in any SFML project with src/include/bin structure
       "label": "Compile and Run SFML .cpp file",
       "type": "shell",
-      "command": "$projectRoot = Split-Path -Parent (Split-Path -Parent '${fileDirname}'); if (Test-Path \"$projectRoot/src\") { $projectRoot } else { $projectRoot = Split-Path -Parent '${fileDirname}'; if (Test-Path \"$projectRoot/src\") { $projectRoot } else { $projectRoot = '${fileDirname}' } }; Set-Location -LiteralPath $projectRoot; chcp 65001 >$null; $sourceFiles = Get-ChildItem -Path src -Filter *.cpp | ForEach-Object { $_.FullName }; g++ $sourceFiles -Iinclude -IC:/msys64/ucrt64/include -LC:/msys64/ucrt64/lib -o bin/main.exe -lsfml-graphics -lsfml-window -lsfml-system; if ($?) { & ./bin/main.exe }",
+      "command": "$projectRoot = Split-Path -Parent (Split-Path -Parent '${fileDirname}'); if (Test-Path \"$projectRoot/src\") { $projectRoot } else { $projectRoot = Split-Path -Parent '${fileDirname}'; if (Test-Path \"$projectRoot/src\") { $projectRoot } else { $projectRoot = '${fileDirname}' } }; Set-Location -LiteralPath $projectRoot; chcp 65001 >$null; $sourceFiles = Get-ChildItem -Path src -Filter *.cpp | ForEach-Object { $_.FullName }; g++ $sourceFiles -Iinclude -IC:/msys64/ucrt64/include -LC:/msys64/ucrt64/lib -o bin/main.exe -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio; if ($?) { & ./bin/main.exe }",
       "problemMatcher": [],
       "group": "build",
       "presentation": {
@@ -194,7 +194,7 @@
       // Compile and run single SFML .cpp file - works from any individual .cpp file
       "label": "Compile and Run Single SFML .cpp file",
       "type": "shell",
-      "command": "Set-Location -LiteralPath '${fileDirname}'; chcp 65001 >$null; g++ -std=c++17 '${fileBasename}' -IC:/msys64/ucrt64/include -LC:/msys64/ucrt64/lib -o '${fileBasenameNoExtension}.exe' -lsfml-graphics -lsfml-window -lsfml-system -lIphlpapi -lws2_32; if ($?) { & '.\\${fileBasenameNoExtension}.exe' }",
+      "command": "Set-Location -LiteralPath '${fileDirname}'; chcp 65001 >$null; g++ -std=c++17 '${fileBasename}' -IC:/msys64/ucrt64/include -LC:/msys64/ucrt64/lib -o '${fileBasenameNoExtension}.exe' -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lIphlpapi -lws2_32; if ($?) { & '.\\${fileBasenameNoExtension}.exe' }",
       "problemMatcher": [],
       "group": "build",
       "presentation": {

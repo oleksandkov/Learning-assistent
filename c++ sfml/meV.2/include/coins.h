@@ -48,7 +48,7 @@ public:
     void addCoinPosition(float x, float y);
     void update();
     void draw(sf::RenderWindow &window);
-    void checkCollision(sf::FloatRect characterBounds);
+    int checkCollision(sf::FloatRect characterBounds);
     void clear();
     void cleanupExpiredCoins();
     void getCoinInterface(sf::RenderWindow &window);
