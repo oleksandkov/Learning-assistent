@@ -5,24 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e79b0e9-d98b-4f88-b89e-9b10086f684a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/tasks.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/Lecture1.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/lesson.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/note.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/src/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 2/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 2/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 2/Lecture2.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 2/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 2/note.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/OOP/Lecture 2/src/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/learning_workflow/java/test.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/learning_workflow/java/test.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Laba1/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/OOP/Laba1/src/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,6 +63,21 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="UNNAMED_CLASS_CONFIGURATION" value="true" />
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="Laba1" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -99,7 +97,7 @@
       <workItem from="1770224507013" duration="1004000" />
       <workItem from="1770225973533" duration="257000" />
       <workItem from="1770226272618" duration="381000" />
-      <workItem from="1770226682767" duration="512000" />
+      <workItem from="1770226682767" duration="816000" />
     </task>
     <servers />
   </component>
