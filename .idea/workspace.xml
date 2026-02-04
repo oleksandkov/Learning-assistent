@@ -5,7 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e79b0e9-d98b-4f88-b89e-9b10086f684a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/my assist/r + ai 2025 feedback" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/tasks.json" beforeDir="false" afterPath="$PROJECT_DIR$/.vscode/tasks.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/Lecture1.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/lesson.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/note.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 1/src/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 2/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 2/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 2/Lecture2.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 2/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 2/note.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OOP/Lecture 2/src/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/learning_workflow/java/test.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/learning_workflow/java/test.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,9 +32,25 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
-}]]></component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;oleksandkov&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/oleksandkov/Learning-assistent.git&quot;,
+    &quot;accountId&quot;: &quot;0b15b7db-6efb-4f8b-bee4-21f8d110a163&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
   <component name="ProjectId" id="39D56G2yXDjLv1KxbqAThKh9gQc" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -25,6 +58,8 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Main.executor": "Run",
+    "Application.test.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -32,11 +67,16 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/muaro/Documents/GitHub/Learning-assistent",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "project.propCompiler",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -44,6 +84,7 @@
     <attachedChunks>
       <set>
         <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.30387.90" />
       </set>
     </attachedChunks>
   </component>
@@ -55,10 +96,18 @@
       <option name="presentableId" value="Default" />
       <updated>1770217624385</updated>
       <workItem from="1770217632487" duration="1852000" />
+      <workItem from="1770224507013" duration="1004000" />
+      <workItem from="1770225973533" duration="257000" />
+      <workItem from="1770226272618" duration="381000" />
+      <workItem from="1770226682767" duration="512000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
