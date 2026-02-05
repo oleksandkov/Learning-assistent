@@ -62,9 +62,36 @@ int main()
                 break;
             }
             else if (userCommand == "DISKCOMP")
+            {
 
+                string file1, file2;
+                cout << "Введіть шлях до першого файлу: ";
+                getline(cin, file1);
+                cout << "Введіть шлях до другого файлу: ";
+                getline(cin, file2);
+                string command = "FC \"" + file1 + "\" \"" + file2 + "\"";
+                system(command.c_str());
+                cin.get();
+            }
+            else if (userCommand == "DIR")
+            {
+                system("DIR");
+                cin.get();
+            }
+            else if (userCommand == "ERA")
+            {
+                cout << "Введіть шлях до файлу для видалення: ";
+                string fileToDelete;
+                getline(cin, fileToDelete);
+                string command = "DEL /p \"" + fileToDelete + "\"";
+                system(command.c_str());
+                cin.get();
+            }
+            else
+            {
                 system(userCommand.c_str());
-            cin.get();
+                cin.get();
+            }
         }
         else
         {
