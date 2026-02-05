@@ -4,8 +4,10 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("Введіть кількість цілих чисел:");
-        int n = scanner.nextInt();
+        System.out.print("Введіть кількість цілих чисел: \n ");
+        int n;
+        n = scanner.nextInt();
+
         
         int positive = 0;
         int negative = 0;
@@ -23,19 +25,19 @@ public class Main {
             }
         }
         
-        System.out.println("\nРезультати:");
+        System.out.println("Результати:");
         System.out.println("Додатніх чисел: " + positive);
         System.out.println("Від'ємних чисел: " + negative);
         System.out.println("Нулів: " + zeros);
         
         if (positive > negative && positive > zeros) {
-            System.out.println("\nБільше всього додатніх чисел");
+            System.out.println("Більше всього додатніх чисел");
         } else if (negative > positive && negative > zeros) {
-            System.out.println("\nБільше всього від'ємних чисел");
+            System.out.println("Більше всього від'ємних чисел");
         } else if (zeros > positive && zeros > negative) {
-            System.out.println("\nБільше всього нулів");
+            System.out.println("Більше всього нулів");
         } else {
-            System.out.println("\nДекілька типів чисел мають однакову кількість");
+            System.out.println("Декілька типів чисел мають однакову кількість");
         }
         
         scanner.close();
