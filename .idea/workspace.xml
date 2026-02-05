@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0e79b0e9-d98b-4f88-b89e-9b10086f684a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/OOP/Laba1/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/OOP/Laba1/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/Laba1/Main.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +26,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/oleksandkov/Learning-assistent.git&quot;,
-    &quot;accountId&quot;: &quot;0b15b7db-6efb-4f8b-bee4-21f8d110a163&quot;
+    &quot;accountId&quot;: &quot;5ffc4352-b5ba-4916-87d0-dd46c39348e9&quot;
   }
 }</component>
   <component name="KubernetesApiPersistence">{}</component>
@@ -57,8 +59,8 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "project.propCompiler",
     "vue.rearranger.settings.migration": "true"
   }
@@ -98,6 +100,8 @@
       <workItem from="1770225973533" duration="257000" />
       <workItem from="1770226272618" duration="381000" />
       <workItem from="1770226682767" duration="816000" />
+      <workItem from="1770278748207" duration="241000" />
+      <workItem from="1770279107873" duration="1213000" />
     </task>
     <servers />
   </component>

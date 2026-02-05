@@ -48,7 +48,12 @@
 !.vscode/launch.json
 !.vscode/tasks.json
 *keybindings*.json
+
+# IntelliJ IDEA project files
+OOP/Laba1/.idea/*.xml
+.idea/*.xml
 *settings*.json
+.idea/workspace.xml
 *.vscode/*
 
 # QODO files

@@ -1,13 +1,43 @@
+import java.util.Scanner;
 
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-void main() {
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    IO.println("Hello and welcome!");
-
-    for (int i = 1; i <= 5; i++) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        IO.println("i = " + i);
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.println("Введіть кількість цілих чисел:");
+        int n = scanner.nextInt();
+        
+        int positive = 0;
+        int negative = 0;
+        int zeros = 0;
+        
+        System.out.println("Введіть " + n + " цілих чисел:");
+        for (int i = 0; i < n; i++) {
+            int number = scanner.nextInt();
+            if (number > 0) {
+                positive++;
+            } else if (number < 0) {
+                negative++;
+            } else {
+                zeros++;
+            }
+        }
+        
+        System.out.println("\nРезультати:");
+        System.out.println("Додатніх чисел: " + positive);
+        System.out.println("Від'ємних чисел: " + negative);
+        System.out.println("Нулів: " + zeros);
+        
+        if (positive > negative && positive > zeros) {
+            System.out.println("\nБільше всього додатніх чисел");
+        } else if (negative > positive && negative > zeros) {
+            System.out.println("\nБільше всього від'ємних чисел");
+        } else if (zeros > positive && zeros > negative) {
+            System.out.println("\nБільше всього нулів");
+        } else {
+            System.out.println("\nДекілька типів чисел мають однакову кількість");
+        }
+        
+        scanner.close();
     }
 }
