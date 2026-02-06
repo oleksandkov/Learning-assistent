@@ -1,4 +1,3 @@
-import javax.xml.crypto.Data;
 import java.util.Scanner;
 
 class Shop {
@@ -100,7 +99,8 @@ class Shop {
     }
 
     public void compareAverPrice(Shop x) {
-
+        if (getAverPrice() > x.getAverPrice()) System.out.println(getName() + "is better than " + x.getName());
+        else System.out.println(x.getName() + "is better than" + getName());
     }
 
 
@@ -108,5 +108,65 @@ class Shop {
 
 
 public class Main2 {
-    
+    public static void main(String[] args) {
+        Shop x;
+        Shop y;
+        Shop z;
+        System.out.println("Here some shops:");
+        x = new Shop("ATB", "SuperMarket", "st. Kovmonavtiv", 3, "2025", 192.5, true);
+        y = new Shop("Comfy", "TechnoShop", "trc. Megamoll", 12, "2023", 600.5, true);
+        z = new Shop("Bazar", "Market", "trc. Megamoll", 2, "1999", 24.67, false);
+
+        x.showstat();
+        y.showstat();
+        z.showstat();
+
+        System.out.println("My favorite is " + x.getName());
+
+        System.out.println("COMPARISON:");
+        x.compareAverPrice(y);
+        System.out.println("The setters usage:");
+        x.setType("SUPPERPUPPERMARKET");
+        System.out.println("New Type of " + x.getName() + " is " + x.getType());
+
+        System.out.println("The Creation of hte new shop: ");
+        String Type;
+        String Name;
+        String Location;
+        Integer NumEmpl;
+        String Date;
+        double price;
+        boolean boolStatus;
+
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Set the name of shop:");
+        Name = scanner.nextLine();
+        
+        System.out.println("Set the Type of shop:");
+        Type = scanner.nextLine();
+        
+        System.out.println("Set the location: ");
+        Location = scanner.nextLine();
+        
+        System.out.println("Set the Number of employers in a shop: ");
+        NumEmpl = scanner.nextInt();
+        
+        System.out.println("Set the date of the opening: ");
+        scanner.nextLine(); // Clear buffer
+        Date = scanner.nextLine();
+        
+        System.out.println("Set the average price in a shop: ");
+        price = scanner.nextDouble();
+        
+        System.out.println("If it still working? (true/false): ");
+        boolStatus = scanner.nextBoolean();
+
+
+        Shop own = new Shop(Name, Type, Location, NumEmpl, Date, price, boolStatus);
+
+        System.out.println("Here your new shop:");
+        own.showstat();
+
+        scanner.close();
+    }
 }
