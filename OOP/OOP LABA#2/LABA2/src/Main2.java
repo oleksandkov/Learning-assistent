@@ -152,7 +152,7 @@ public class Main2 {
         NumEmpl = scanner.nextInt();
         
         System.out.println("Set the date of the opening: ");
-        scanner.nextLine(); 
+        scanner.nextLine();
         Date = scanner.nextLine();
         
         System.out.println("Set the average price in a shop: ");
