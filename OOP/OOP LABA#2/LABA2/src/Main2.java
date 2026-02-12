@@ -150,7 +150,12 @@ public class Main2 {
         
         System.out.println("Set the Number of employers in a shop: ");
         NumEmpl = scanner.nextInt();
-        
+        while (NumEmpl <= 0){
+
+            System.out.println("The number cant be less than 0, try again:");
+            NumEmpl = scanner.nextInt();
+        }
+
         System.out.println("Set the date of the opening: ");
         scanner.nextLine();
         Date = scanner.nextLine();
@@ -160,6 +165,7 @@ public class Main2 {
         
         System.out.println("If it still working? (true/false): ");
         boolStatus = scanner.nextBoolean();
+
 
 
         Shop own = new Shop(Name, Type, Location, NumEmpl, Date, price, boolStatus);
