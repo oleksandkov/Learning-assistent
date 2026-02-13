@@ -51,7 +51,11 @@
 
 # IntelliJ IDEA project files
 OOP/Laba1/.idea/*.xml
-.idea/*.xml
+.idea/
+*.iml
+out/
+bin/
+dist/
 *settings*.json
 .idea/workspace.xml
 *.vscode/*
