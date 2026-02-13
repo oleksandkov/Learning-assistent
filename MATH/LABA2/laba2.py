@@ -8,7 +8,8 @@ def print_matrix(matrix):
 
 def task_1_demo():
 	print("\n=== Завдання 1 ===")
-	print("Відношення (довільно): R(a, b) = 'a ділить b' на S = {1..n}")
+	print("Довільний варіант ")
+	print("Відношення : R(a, b) = 'a ділить b' на S = {1..n}")
 
 	n = 6
 	elements = list(range(1, n + 1))
@@ -34,7 +35,6 @@ def task_1_demo():
 
 
 def swap_ends_in_place(arr):
-	"""Міняє місцями 1-й з останнім, 2-й з передостаннім і т.д."""
 	left, right = 0, len(arr) - 1
 	while left < right:
 		arr[left], arr[right] = arr[right], arr[left]
