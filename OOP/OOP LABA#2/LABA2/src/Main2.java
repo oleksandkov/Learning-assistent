@@ -20,6 +20,11 @@ class Shop {
         this.StillWorking = StillWorking;
     }
 
+    public Shop() {
+        this("None", "None", "None", 0, "None", 0.0, false);
+
+    }
+
     // Getters
 
     public String getName() {
@@ -172,6 +177,10 @@ public class Main2 {
 
         System.out.println("Here your new shop:");
         own.showstat();
+
+
+        System.out.println("Here the default shop:");
+        Shop def = new Shop();
 
         scanner.close();
     }
