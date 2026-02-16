@@ -17,7 +17,7 @@ class SetTheoryLab:
         try: return set(map(int, entry.get().split()))
         except: return None
 
-    # ЗАВДАННЯ 1
+    # ЗАВДАННЯ 
     def setup_t1(self):
         tab = ttk.Frame(self.nb)
         self.nb.add(tab, text="1. Порівняння")
