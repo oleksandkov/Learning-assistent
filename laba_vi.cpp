@@ -2,6 +2,10 @@
 #include <string>
 using namespace std;
 
+
+// C:\Users\muaro\Documents\GitHub\Learning-assistent\ 
+
+
 string ask(string prompt) { cout << prompt; string s; getline(cin, s); return s; }
 
 void doStat(string drive) {
@@ -80,7 +84,7 @@ void commandMode() {
 
 void formMode() {
     cout << "  Приклад заповнення форми:\n";
-    cout << "    Оператор:  Іванов\n";
+    cout << "    Оператор:  Віталій\n";
     cout << "    Команда:   1 (STAT), 2 (DISKCOMP), 3 (ERA)\n";
     cout << "    Параметр 1: C:  або  C:\\test\\a.txt\n";
     cout << "    Параметр 2: C:\\test\\b.txt  (тільки для DISKCOMP)\n";
