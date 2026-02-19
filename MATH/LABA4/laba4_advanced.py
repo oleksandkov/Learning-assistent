@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 
 
-# Дані з лабораторної (завдання 1)
 FUNCTIONS_MINTERMS = [
     [0, 1, 2, 4, 5, 7, 8, 10, 11, 13, 14, 15],
     [0, 1, 2, 3, 4, 5, 7, 8, 10, 11, 13, 14],
@@ -64,7 +63,6 @@ def draw_kmap(canvas, minterms):
     rows = 4
     cols = 4
 
-    # Заголовок
     canvas.create_text(
         520,
         28,
@@ -73,7 +71,6 @@ def draw_kmap(canvas, minterms):
         fill="#0f172a",
     )
 
-    # Довідка по осях
     canvas.create_text(
         520,
         58,
@@ -82,31 +79,25 @@ def draw_kmap(canvas, minterms):
         fill="#334155",
     )
 
-    # Зовнішня рамка
     canvas.create_rectangle(x0, y0, x0 + cols * cell, y0 + rows * cell, width=2)
 
-    # Внутрішня сітка
     for i in range(1, cols):
         canvas.create_line(x0 + i * cell, y0, x0 + i * cell, y0 + rows * cell, width=1)
     for i in range(1, rows):
         canvas.create_line(x0, y0 + i * cell, x0 + cols * cell, y0 + i * cell, width=1)
 
-    # Підписи x1 / !x1 зверху (по 2 стовпці)
     canvas.create_text(x0 + cell, y0 - 32, text="x1", font=("Segoe UI", 14, "bold"))
     canvas.create_text(x0 + 3 * cell, y0 - 32, text="!x1", font=("Segoe UI", 14, "bold"))
     canvas.create_line(x0, y0 - 15, x0 + 2 * cell, y0 - 15, width=2)
     canvas.create_line(x0 + 2 * cell, y0 - 15, x0 + 4 * cell, y0 - 15, width=2)
 
-    # Підписи x2 / !x2 зліва (по 2 рядки)
     canvas.create_text(x0 - 42, y0 + cell, text="x2", font=("Segoe UI", 14, "bold"))
     canvas.create_text(x0 - 46, y0 + 3 * cell, text="!x2", font=("Segoe UI", 14, "bold"))
 
-    # Підписи x3 / !x3 знизу (по 2 стовпці)
     canvas.create_text(x0 + cell, y0 + rows * cell + 28, text="x3", font=("Segoe UI", 14, "bold"))
     canvas.create_text(x0 + 3 * cell, y0 + rows * cell + 28, text="!x3", font=("Segoe UI", 14, "bold"))
 
-    # Підписи x4 / !x4 справа (по рядках у Gray-порядку 10,11,01,00)
-    # Для рядків: 10 -> !x4, 11 -> x4, 01 -> x4, 00 -> !x4
+    
     right_labels = ["!x4", "x4", "x4", "!x4"]
     for r in range(4):
         yc = y0 + r * cell + cell / 2
@@ -114,7 +105,6 @@ def draw_kmap(canvas, minterms):
 
     
 
-    # Заповнення клітинок
     layout = karnaugh_layout_numbers()
     mts = set(minterms)
 
@@ -129,18 +119,17 @@ def draw_kmap(canvas, minterms):
             y2 = y1 + cell
 
             if val == 1:
-                fill_color = "#d1fae5"  # зелений для 1
+                fill_color = "#d1fae5"  
             else:
-                fill_color = "#f8fafc"  # світлий для 0
+                fill_color = "#f8fafc"  
 
             canvas.create_rectangle(x1 + 1, y1 + 1, x2 - 1, y2 - 1, fill=fill_color, outline="")
 
-            # Бітовий код і номер мінтерма (як у PDF)
+            
             bits = f"{(m >> 3) & 1}{(m >> 2) & 1}{(m >> 1) & 1}{m & 1}"
             canvas.create_text(x1 + 8, y1 + 10, text=bits, anchor="nw", font=("Consolas", 10), fill="#0f172a")
             canvas.create_text(x1 + 8, y1 + 28, text=str(m), anchor="nw", font=("Consolas", 11, "bold"), fill="#0f172a")
 
-            # Значення функції (велике)
             canvas.create_text(
                 x1 + cell / 2,
                 y1 + cell / 2 + 12,
@@ -183,7 +172,7 @@ header.pack(anchor="w")
 
 sub = ttk.Label(
     main,
-    text="Advanced-версія: графічна карта Карно + перевірка правильного розташування x і !x як у PDF",
+    text="Advanced-версія: графічна карта Карно + перевірка правильного розташування x і !x ",
 )
 sub.pack(anchor="w", pady=(0, 10))
 
@@ -221,14 +210,12 @@ ttk.Label(main, textvariable=minimal_var, font=("Consolas", 12)).pack(anchor="w"
 body = ttk.Frame(main)
 body.pack(fill="both", expand=True)
 
-# Ліва панель: графіка карти
 left = ttk.Frame(body)
 left.pack(side="left", fill="both", expand=True)
 
 canvas = tk.Canvas(left, bg="white", highlightthickness=1, highlightbackground="#cbd5e1")
 canvas.pack(fill="both", expand=True)
 
-# Права панель: таблиця істинності
 right = ttk.LabelFrame(body, text="Таблиця істинності")
 right.pack(side="right", fill="y", padx=(10, 0))
 

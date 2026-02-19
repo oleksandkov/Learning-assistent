@@ -1,13 +1,12 @@
+import static java.lang.Math.max;
 import java.util.Objects;
 import java.util.Scanner;
-
-import static sun.swing.MenuItemLayoutHelper.max;
 
 public class Unit {
     private Integer health;
     private Boolean isSpawned;
     private String Team;
-    private Integer damage;
+    private Integer damage; 
     private Boolean isDead;
     
     private static int numObjects = 0;

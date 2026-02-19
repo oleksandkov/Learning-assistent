@@ -88,7 +88,7 @@ header_label.pack(anchor="w")
 
 subtitle_label = ttk.Label(
 	main_frame,
-	text="Перенесення дисків зі стержня 1 на стержень 3 (стержень 2 — допоміжний)",
+	text="",
 	style="Info.TLabel",
 )
 subtitle_label.pack(anchor="w", pady=(0, 12))
