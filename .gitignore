@@ -66,3 +66,9 @@ dist/
 # .exe files
 
 *.exe
+
+# VIsual Studio 
+.vs/
+
+# Cach
+*.pyc
