@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-# Rozklad zanyat --- tkinter GUI   Run: python laba3.py
+
 import tkinter as tk
 from tkinter import ttk, simpledialog, messagebox
 
-# -- Data -------------------------------------------------------------------
+# -- Default sample generating -------------------------------------------------------------------
 groups   = [u'КН-11', u'КН-12', u'ІПЗ-21']
 teachers = [u'Іваненко І.І.',
             u'Петренко О.В.',
@@ -226,7 +225,6 @@ def main():
     for v in fvars:
         v.trace_add('write', lambda *_: apply_filter(tree_ref[0], fvars, status))
 
-    # Treeview
     tv = tk.Frame(root)
     tv.pack(side='left', fill='both', expand=True, padx=4, pady=4)
 

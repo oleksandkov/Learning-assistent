@@ -376,7 +376,7 @@ def draw_graph(canvas: tk.Canvas, matrix: List[List[float]], is_weighted: bool, 
 
 def gui_main() -> None:
     root = tk.Tk()
-    root.title("Лаба5 — Демонстрація графів")
+    root.title("Лаба5")
     root.geometry("800x520")
 
     variants = get_variants()
@@ -398,7 +398,7 @@ def gui_main() -> None:
 
     matrix_frame = tk.Frame(middle_frame)
     matrix_frame.pack(side=tk.RIGHT, fill=tk.Y)
-    tk.Label(matrix_frame, text="Оригінальна матриця:").pack(anchor=tk.N)
+    tk.Label(matrix_frame, text=" матриця:").pack(anchor=tk.N)
     matrix_text = tk.Text(matrix_frame, width=28, height=22, wrap=tk.NONE)
     matrix_text.pack(side=tk.TOP, padx=4)
     matrix_text.configure(state=tk.DISABLED)
