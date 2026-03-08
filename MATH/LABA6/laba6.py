@@ -1,69 +1,61 @@
+# Лабораторна робота №6 — Матричні способи представлення графів
+# Конвертер між матрицею суміжності та матрицею інцидентності
+
 from typing import List
 import random
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 
-INF = float('inf')
+# ── Конвенція матриці інцидентності (за підручником) ────────────────────────
+#   bij = +1  — xi є ПОЧАТКОВОЮ вершиною дуги aj  (орієнт.)
+#   bij = -1  — xi є КІНЦЕВОЮ   вершиною дуги aj  (орієнт.)
+#   bij = +1  — xi є кінцевою вершиною ребра aj   (неорієнт., обидві)
+#   bij = +2  — петля у xi                         (неорієнт.)
+#   bij = +1  — петля у xi                         (орієнт., 1 елемент)
+#   bij =  0  — xi не інцидентна aj
 
 
-def adjacency_to_incidence(adj: List[List[int]], graph_type: str) -> List[List[int]]:
+def adj_to_inc(adj: List[List[int]], gtype: str) -> List[List[int]]:
+    """Матриця суміжності → матриця інцидентності."""
     n = len(adj)
     cols: List[List[int]] = []
 
-    if graph_type == 'directed':
+    if gtype == 'directed':
         for i in range(n):
             for j in range(n):
-                if adj[i][j]:
-                    col = [0] * n
-                    col[i] = -1
-                    col[j] = 1
-                    cols.append(col)
+                if i == j and adj[i][j]:            # петля
+                    col = [0]*n; col[i] = 1; cols.append(col)
+                elif i != j and adj[i][j]:          # дуга i→j
+                    col = [0]*n; col[i] = 1; col[j] = -1; cols.append(col)
 
-    elif graph_type == 'undirected':
+    elif gtype == 'undirected':
         for i in range(n):
-            if adj[i][i]:
-                col = [0] * n
-                col[i] = 2
-                cols.append(col)
+            if adj[i][i]:                           # петля
+                col = [0]*n; col[i] = 2; cols.append(col)
         for i in range(n):
             for j in range(i+1, n):
-                if adj[i][j] or adj[j][i]:
-                    col = [0] * n
-                    col[i] = 1
-                    col[j] = 1
-                    cols.append(col)
+                if adj[i][j]:                       # ребро
+                    col = [0]*n; col[i] = 1; col[j] = 1; cols.append(col)
 
-    elif graph_type == 'mixed':
+    elif gtype == 'mixed':
         for i in range(n):
             if adj[i][i]:
-                col = [0] * n
-                col[i] = 2
-                cols.append(col)
+                col = [0]*n; col[i] = 2; cols.append(col)
         for i in range(n):
             for j in range(i+1, n):
-                a = adj[i][j]
-                b = adj[j][i]
-                if a and b:
-                    col = [0] * n
-                    col[i] = 1
-                    col[j] = 1
-                    cols.append(col)
-                elif a and not b:
-                    col = [0] * n
-                    col[i] = -1
-                    col[j] = 1
-                    cols.append(col)
-                elif b and not a:
-                    col = [0] * n
-                    col[j] = -1
-                    col[i] = 1
-                    cols.append(col)
+                a, b = adj[i][j], adj[j][i]
+                if a and b:                         # ребро (обидва напрямки)
+                    col = [0]*n; col[i] = 1; col[j] = 1; cols.append(col)
+                elif a:                             # дуга i→j
+                    col = [0]*n; col[i] = 1; col[j] = -1; cols.append(col)
+                elif b:                             # дуга j→i
+                    col = [0]*n; col[j] = 1; col[i] = -1; cols.append(col)
     else:
-        raise ValueError('unknown graph_type')
+        raise ValueError(f'Невідомий тип графа: {gtype}')
 
     if not cols:
-        return [ [] for _ in range(n) ]
+        return [[] for _ in range(n)]
 
     m = len(cols)
     inc = [[0]*m for _ in range(n)]
@@ -73,185 +65,357 @@ def adjacency_to_incidence(adj: List[List[int]], graph_type: str) -> List[List[i
     return inc
 
 
-def incidence_to_adjacency(inc: List[List[int]]) -> List[List[int]]:
+def inc_to_adj(inc: List[List[int]]) -> List[List[int]]:
+    """Матриця інцидентності → матриця суміжності."""
     n = len(inc)
-    if n == 0:
-        return []
+    if not n or not inc[0]:
+        return [[0]*n for _ in range(n)] if n else []
     m = len(inc[0])
     adj = [[0]*n for _ in range(n)]
     for j in range(m):
         col = [inc[i][j] for i in range(n)]
-        nonzero = [(i, val) for i,val in enumerate(col) if val != 0]
-        if len(nonzero) == 2:
-            (i1, v1), (i2, v2) = nonzero[0], nonzero[1]
-            if v1 == 1 and v2 == 1:
+        nz = [(i, v) for i, v in enumerate(col) if v != 0]
+        if len(nz) == 1:                            # петля
+            adj[nz[0][0]][nz[0][0]] = 1
+        elif len(nz) == 2:
+            (i1, v1), (i2, v2) = nz
+            if v1 == 1 and v2 == 1:                # неорієнт. ребро
+                adj[i1][i2] = adj[i2][i1] = 1
+            elif v1 == 1 and v2 == -1:             # дуга i1→i2
                 adj[i1][i2] = 1
+            elif v1 == -1 and v2 == 1:             # дуга i2→i1
                 adj[i2][i1] = 1
-            elif v1 == -1 and v2 == 1:
-                adj[i1][i2] = 1
-            elif v1 == 1 and v2 == -1:
-                adj[i2][i1] = 1
-            else:
-                adj[i1][i2] = 1
-                adj[i2][i1] = 1
-        elif len(nonzero) == 1:
-            i1, v1 = nonzero[0]
-            adj[i1][i1] = 1
-        else:
-            pass
+            else:                                   # запасний варіант
+                adj[i1][i2] = adj[i2][i1] = 1
     return adj
 
 
-def read_matrix(rows: int, cols: int=None) -> List[List[int]]:
-    mat: List[List[int]] = []
-    for r in range(rows):
-        while True:
-            line = input(f'row {r+1}: ').strip()
-            if not line:
-                continue
-            parts = line.replace(',', ' ').split()
-            vals = [int(x) for x in parts]
-            if cols is not None and len(vals) != cols:
-                print(f'expected {cols} values')
-                continue
-            mat.append(vals)
-            break
-    return mat
+# ── Допоміжні функції ────────────────────────────────────────────────────────
+
+def parse_matrix(text: str) -> List[List[int]]:
+    rows = []
+    for idx, line in enumerate(text.strip().splitlines(), 1):
+        line = line.strip()
+        if not line:
+            continue
+        parts = line.replace(',', ' ').split()
+        try:
+            rows.append([int(x) for x in parts])
+        except ValueError:
+            raise ValueError(f'Рядок {idx}: очікуються цілі числа — "{line}"')
+    if not rows:
+        raise ValueError('Порожній ввід — введіть матрицю у текстове поле')
+    L = len(rows[0])
+    for idx, r in enumerate(rows, 1):
+        if len(r) != L:
+            raise ValueError(f'Рядок {idx} має {len(r)} значень, очікується {L}')
+    return rows
 
 
-def print_matrix(mat: List[List[int]]):
-    for row in mat:
-        print(' '.join(str(x) for x in row))
+def mat_to_str(mat: List[List[int]], rpfx: str = 'x', cpfx: str = 'a') -> str:
+    """Форматування матриці з заголовками рядків і стовпців."""
+    if not mat or not mat[0]:
+        return '(порожня матриця)'
+    n, m = len(mat), len(mat[0])
+    # column width: fit both values and header labels
+    val_w   = max((len(str(v)) for row in mat for v in row), default=1)
+    label_w = max(len(f'{cpfx}{j+1}') for j in range(m))
+    w = max(val_w, label_w) + 1
+    hdr = ' ' * 5 + ''.join(f'{cpfx+str(j+1):>{w}}' for j in range(m))
+    lines = [hdr]
+    for i, row in enumerate(mat):
+        lines.append(f'{rpfx}{i+1:<4}' + ''.join(f'{v:>{w}}' for v in row))
+    return '\n'.join(lines)
 
 
-def random_adjacency(n: int, directed: bool=False, loops: bool=False, density: float=0.3) -> List[List[int]]:
+def graph_stats(adj: List[List[int]], gtype: str) -> str:
+    """Статистика графа за матрицею суміжності."""
+    n = len(adj)
+    if not n:
+        return 'Граф порожній'
+    loops = sum(1 for i in range(n) if adj[i][i])
+    if gtype == 'undirected':
+        edges = sum(adj[i][j] for i in range(n) for j in range(i+1, n))
+    else:
+        edges = sum(adj[i][j] for i in range(n) for j in range(n) if i != j)
+
+    lines = ['Аналіз графа', '─' * 35]
+    lines.append(f'Вершин (n): {n}   Ребер/дуг: {edges}   Петель: {loops}')
+    lines.append('─' * 35)
+    lines.append('Степені вершин:')
+
+    for i in range(n):
+        lp = ' ⟲' if adj[i][i] else ''
+        if gtype == 'directed':
+            out_d = sum(adj[i][j] for j in range(n) if j != i)
+            in_d  = sum(adj[k][i] for k in range(n) if k != i)
+            G      = [f'x{j+1}' for j in range(n) if j != i and adj[i][j]]
+            G_inv  = [f'x{k+1}' for k in range(n) if k != i and adj[k][i]]
+            lines.append(f'  x{i+1}{lp}: вихід={out_d} Г={G}')
+            lines.append(f'       захід={in_d} Г⁻¹={G_inv}')
+        else:
+            deg  = sum(adj[i][j] for j in range(n) if j != i)
+            nbrs = [f'x{j+1}' for j in range(n) if j != i and adj[i][j]]
+            lines.append(f'  x{i+1}{lp}: deg={deg}  Г={nbrs}')
+
+    if gtype == 'undirected' and edges > 0:
+        total_deg = sum(sum(adj[i][j] for j in range(n) if j != i) for i in range(n))
+        lines.append('─' * 35)
+        lines.append(f'Сума степенів = {total_deg} = 2 × {edges} ✓')
+    return '\n'.join(lines)
+
+
+def random_adj(n: int, directed: bool, density: float = 0.4) -> List[List[int]]:
     adj = [[0]*n for _ in range(n)]
     for i in range(n):
         for j in range(n):
-            if i == j and not loops:
+            if i == j:
                 continue
             if directed:
                 if random.random() < density:
                     adj[i][j] = 1
-            else:
-                if j > i and random.random() < density:
-                    adj[i][j] = adj[j][i] = 1
-    if loops:
-        for i in range(n):
-            if random.random() < density/2:
-                adj[i][i] = 1
+            elif j > i and random.random() < density:
+                adj[i][j] = adj[j][i] = 1
     return adj
 
 
-def format_matrix_str(mat: List[List[int]]) -> str:
-    if not mat:
-        return '<порожня матриця>'
-    return '\n'.join(' '.join(str(x) for x in row) for row in mat)
+# ── Готові приклади (з підручника) ──────────────────────────────────────────
+
+EXAMPLES = {
+    'Орієнт. 3×3 (цикл)': {
+        'gtype': 'directed',
+        'adj': [[0,1,0],[0,0,1],[1,0,0]],
+    },
+    'Неорієнт. 4×4': {
+        'gtype': 'undirected',
+        'adj': [[0,1,1,0],[1,0,0,1],[1,0,0,0],[0,1,0,0]],
+    },
+    'Орієнт. 6×6 (рис.6.3)': {
+        'gtype': 'directed',
+        'adj': [
+            [0, 1, 1, 0, 0, 0],
+            [0, 1, 0, 0, 1, 0],
+            [0, 0, 0, 0, 0, 0],
+            [0, 0, 1, 0, 0, 0],
+            [1, 0, 0, 1, 0, 0],
+            [1, 0, 0, 0, 1, 1],
+        ],
+    },
+    'Неорієнт. 6×6 (рис.6.4)': {
+        'gtype': 'undirected',
+        'adj': [
+            [0, 1, 1, 0, 0, 1],
+            [1, 0, 1, 0, 0, 0],
+            [1, 1, 0, 1, 0, 0],
+            [0, 0, 1, 0, 1, 1],
+            [0, 0, 0, 1, 0, 1],
+            [1, 0, 0, 1, 1, 0],
+        ],
+    },
+}
 
 
-def sample_variants():
-    variants = {}
-    variants['adj_1'] = [[0,1,0],[0,0,1],[1,0,0]]
-    variants['adj_2'] = [[0,1,1,0],[1,0,0,1],[1,0,0,0],[0,1,0,0]]
-    variants['inc_1'] = adjacency_to_incidence(variants['adj_1'],'directed')
-    variants['inc_2'] = adjacency_to_incidence(variants['adj_2'],'undirected')
-    return variants
 
 
-def control_questions(adj: List[List[int]], inc: List[List[int]]):
-    n = len(adj)
-    answers = []
-    answers.append('1. Основні способи представлення: матриця суміжності, матриця інцидентності, список суміжності.')
-    if n>0:
-        v = 1
-        outgoing = [j+1 for j in range(n) if adj[v-1][j]]
-        incoming = [i+1 for i in range(n) if adj[i][v-1]]
-        answers.append(f'2. Для вершини {v}: вихідні ребра -> {outgoing}; вхідні ребра -> {incoming}.')
-    else:
-        answers.append('2. Немає вершин у графі.')
-    answers.append('3. Сума степенів усіх вершин неорієнтованого графа дорівнює подвоєній кількості ребер (2E).')
-    answers.append('4. Відмінності: матриця суміжності показує пари вершин, матриця інцидентності показує зв\'зок ребер з вершинами; матриця інцидентності краще при багатьох вершинах і мало ребрах.')
-    return '\n\n'.join(answers)
+# ── GUI ─────────────────────────────────────────────────────────────────────
 
-
-def gui_main():
-    variants = sample_variants()
+def build_gui():
     root = tk.Tk()
-    root.title('Перекладач матриць графа — Лаба 6')
+    root.title('Лабораторна робота №6 — Матричні способи представлення графів')
+    root.minsize(760, 520)
 
-    frame = ttk.Frame(root, padding=10)
-    frame.grid(row=0, column=0, sticky='nsew')
+    tab_conv = ttk.Frame(root, padding=6)
+    tab_conv.pack(fill='both', expand=True)
+    tab_conv.columnconfigure(0, weight=1)
+    tab_conv.columnconfigure(1, weight=2)
+    tab_conv.rowconfigure(1, weight=1)
 
-    input_type = tk.StringVar(value='adj')
-    ttk.Label(frame, text='Одержано завдання у вигляді:').grid(row=0, column=0, sticky='w')
-    ttk.Radiobutton(frame, text='a) матриця суміжності', variable=input_type, value='adj').grid(row=1, column=0, sticky='w')
-    ttk.Radiobutton(frame, text='б) матриця інцидентності', variable=input_type, value='inc').grid(row=2, column=0, sticky='w')
+    # ── ЛІВА ПАНЕЛЬ: параметри та ввід ───────────────────────────────────────
+    left = ttk.Frame(tab_conv)
+    left.grid(row=0, column=0, rowspan=3, sticky='nsew', padx=(0, 6))
+    left.columnconfigure(0, weight=1)
 
-    ttk.Label(frame, text='Варіант/приклад:').grid(row=3, column=0, sticky='w')
-    var_choice = tk.StringVar(value='adj_1')
-    choice_menu = ttk.OptionMenu(frame, var_choice, 'adj_1', *variants.keys())
-    choice_menu.grid(row=3, column=1, sticky='w')
+    # --- 1. Тип графа ---
+    lf1 = ttk.LabelFrame(left, text=' 1. Тип графа ', padding=6)
+    lf1.grid(row=0, column=0, sticky='ew', pady=(0, 4))
 
-    ttk.Label(frame, text='Або згенерувати випадковий граф:').grid(row=4, column=0, sticky='w')
-    ttk.Label(frame, text='n:').grid(row=5, column=0, sticky='e')
-    n_entry = ttk.Entry(frame, width=5)
-    n_entry.insert(0,'5')
-    n_entry.grid(row=5, column=1, sticky='w')
-    ttk.Label(frame, text='щільність (0-1):').grid(row=6, column=0, sticky='e')
-    dens_entry = ttk.Entry(frame, width=5)
-    dens_entry.insert(0,'0.3')
-    dens_entry.grid(row=6, column=1, sticky='w')
-    directed_var = tk.BooleanVar(value=False)
-    ttk.Checkbutton(frame, text='орієнтований', variable=directed_var).grid(row=7, column=0, sticky='w')
+    gtype_var = tk.StringVar(value='directed')
+    for val, lbl, hint in [
+        ('directed',   'Орієнтований',   '  (дуги зі стрілками)'),
+        ('undirected', 'Неорієнтований', '  (ребра без напряму)'),
+        ('mixed',      'Змішаний',       '  (є і дуги, і ребра)'),
+    ]:
+        row_f = ttk.Frame(lf1)
+        row_f.pack(fill='x')
+        ttk.Radiobutton(row_f, text=lbl, variable=gtype_var, value=val).pack(side='left')
+        tk.Label(row_f, text=hint, font=('Arial', 8), fg='gray').pack(side='left')
 
-    txt_orig = tk.Text(frame, width=40, height=10)
-    txt_conv = tk.Text(frame, width=40, height=10)
-    txt_q = tk.Text(frame, width=80, height=10)
-    txt_orig.grid(row=8, column=0, columnspan=2)
-    txt_conv.grid(row=8, column=2, columnspan=2)
-    txt_q.grid(row=9, column=0, columnspan=4)
+    # --- 2. Напрямок конвертації ---
+    lf2 = ttk.LabelFrame(left, text=' 2. Конвертувати ', padding=6)
+    lf2.grid(row=1, column=0, sticky='ew', pady=(0, 4))
+
+    direction_var = tk.StringVar(value='adj2inc')
+    ttk.Radiobutton(
+        lf2, text='Суміжності  →  Інцидентності',
+        variable=direction_var, value='adj2inc',
+    ).pack(anchor='w')
+    ttk.Radiobutton(
+        lf2, text='Інцидентності  →  Суміжності',
+        variable=direction_var, value='inc2adj',
+    ).pack(anchor='w')
+
+    # --- 3. Генератор ---
+    lf3 = ttk.LabelFrame(left, text=' 3. Випадковий граф ', padding=6)
+    lf3.grid(row=2, column=0, sticky='ew', pady=(0, 4))
+
+    rng_row = ttk.Frame(lf3)
+    rng_row.pack(fill='x')
+    ttk.Label(rng_row, text='n вершин =').pack(side='left')
+    n_var = tk.StringVar(value='4')
+    ttk.Entry(rng_row, textvariable=n_var, width=3).pack(side='left', padx=4)
+    btn_rand = ttk.Button(rng_row, text='Генерувати')
+    btn_rand.pack(side='left', padx=6)
+
+    # --- 4. Введення матриці ---
+    lf4 = ttk.LabelFrame(left, text=' 4. Введіть матрицю вручну ', padding=4)
+    lf4.grid(row=3, column=0, sticky='nsew', pady=(0, 4))
+    lf4.columnconfigure(0, weight=1)
+    lf4.rowconfigure(0, weight=1)
+    left.rowconfigure(3, weight=1)
+
+    txt_in = tk.Text(lf4, width=30, height=10, font=('Courier New', 10))
+    scr_in = ttk.Scrollbar(lf4, command=txt_in.yview)
+    txt_in.configure(yscrollcommand=scr_in.set)
+    txt_in.grid(row=0, column=0, sticky='nsew')
+    scr_in.grid(row=0, column=1, sticky='ns')
+
+    tk.Label(
+        lf4,
+        text='Кожен рядок матриці — з нового рядка.\nЧисла розділяти пробілами.',
+        font=('Arial', 8), fg='gray', justify='left',
+    ).grid(row=1, column=0, sticky='w', pady=(2, 0))
+
+    # --- Кнопка Конвертувати ---
+    btn_convert = ttk.Button(left, text='  ▶  Конвертувати  ')
+    btn_convert.grid(row=4, column=0, pady=6, sticky='ew')
+
+    # ── ПРАВА ПАНЕЛЬ: вивід ──────────────────────────────────────────────────
+    right = ttk.Frame(tab_conv)
+    right.grid(row=0, column=1, rowspan=3, sticky='nsew')
+    right.columnconfigure(0, weight=1)
+    right.rowconfigure(1, weight=2)
+    right.rowconfigure(3, weight=1)
+
+    ttk.Label(right, text='Результат конвертації:', font=('Arial', 9, 'bold')).grid(
+        row=0, column=0, sticky='w', pady=(0, 2))
+
+    txt_out = tk.Text(right, width=42, height=14, font=('Courier New', 10),
+                      state='disabled', bg='#f8f9fa')
+    scr_out = ttk.Scrollbar(right, command=txt_out.yview)
+    txt_out.configure(yscrollcommand=scr_out.set)
+    txt_out.grid(row=1, column=0, sticky='nsew')
+    scr_out.grid(row=1, column=1, sticky='ns')
+
+    ttk.Label(right, text='Аналіз графа:', font=('Arial', 9, 'bold')).grid(
+        row=2, column=0, sticky='w', pady=(6, 2))
+
+    txt_stats = tk.Text(right, width=42, height=8, font=('Courier New', 9),
+                        state='disabled', bg='#eef2f7')
+    scr_st = ttk.Scrollbar(right, command=txt_stats.yview)
+    txt_stats.configure(yscrollcommand=scr_st.set)
+    txt_stats.grid(row=3, column=0, sticky='nsew')
+    scr_st.grid(row=3, column=1, sticky='ns')
+
+    # --- Легенда ---
+    tk.Label(
+        tab_conv,
+        text=(
+            'Матриця суміжності: 0/1  |  '
+            'Матриця інцидентності: +1=початок, -1=кінець, 0=немає  |  '
+            '+2=петля (неорієнт.)  |  одиночний +1=петля (орієнт.)'
+        ),
+        font=('Arial', 8), fg='#555', anchor='w',
+    ).grid(row=3, column=0, columnspan=2, sticky='ew', padx=2, pady=(2, 0))
+
+    # ── Функції ──────────────────────────────────────────────────────────────
+
+    def _set(widget, text):
+        widget.configure(state='normal')
+        widget.delete('1.0', tk.END)
+        widget.insert(tk.END, text)
+        widget.configure(state='disabled')
+
+    def adj_rows_to_text(adj):
+        return '\n'.join(' '.join(str(v) for v in row) for row in adj)
+
+    def gen_random():
+        try:
+            n = int(n_var.get())
+            if not (2 <= n <= 15):
+                raise ValueError
+        except ValueError:
+            messagebox.showerror('Помилка', 'n — ціле від 2 до 15')
+            return
+        directed = (gtype_var.get() != 'undirected')
+        adj = random_adj(n, directed, density=0.4)
+        if direction_var.get() == 'adj2inc':
+            data = adj_rows_to_text(adj)
+        else:
+            inc  = adj_to_inc(adj, gtype_var.get())
+            data = adj_rows_to_text(inc) if inc and inc[0] else ''
+        txt_in.delete('1.0', tk.END)
+        txt_in.insert(tk.END, data)
 
     def do_convert():
-        it = input_type.get()
-        txt_orig.delete('1.0', tk.END)
-        txt_conv.delete('1.0', tk.END)
-        if it == 'adj':
-            key = var_choice.get()
-            if key.startswith('adj_'):
-                adj = variants[key]
-            else:
-                n = int(n_entry.get())
-                dens = float(dens_entry.get())
-                adj = random_adjacency(n, directed=directed_var.get(), loops=False, density=dens)
-            inc = adjacency_to_incidence(adj, 'directed' if directed_var.get() else 'undirected')
-            txt_orig.insert(tk.END, format_matrix_str(adj))
-            txt_conv.insert(tk.END, format_matrix_str(inc))
-            txt_q.delete('1.0', tk.END)
-            txt_q.insert(tk.END, control_questions(adj, inc))
-        else:
-            key = var_choice.get()
-            if key.startswith('inc_'):
-                inc = variants[key]
-            else:
-                n = int(n_entry.get())
-                dens = float(dens_entry.get())
-                adj = random_adjacency(n, directed=directed_var.get(), loops=False, density=dens)
-                inc = adjacency_to_incidence(adj, 'directed' if directed_var.get() else 'undirected')
-            adj = incidence_to_adjacency(inc)
-            txt_orig.insert(tk.END, format_matrix_str(inc))
-            txt_conv.insert(tk.END, format_matrix_str(adj))
-            txt_q.delete('1.0', tk.END)
-            txt_q.insert(tk.END, control_questions(adj, inc))
+        raw = txt_in.get('1.0', tk.END)
+        try:
+            mat = parse_matrix(raw)
+        except ValueError as e:
+            messagebox.showerror('Помилка вводу', str(e))
+            return
 
-    btn = ttk.Button(frame, text='Перетворити', command=do_convert)
-    btn.grid(row=10, column=0)
+        gtype     = gtype_var.get()
+        direction = direction_var.get()
+
+        try:
+            if direction == 'adj2inc':
+                n = len(mat)
+                if any(len(r) != n for r in mat):
+                    raise ValueError('Матриця суміжності має бути квадратною (n×n)')
+                result   = adj_to_inc(mat, gtype)
+                in_lbl   = 'Матриця суміжності'
+                out_lbl  = 'Матриця інцидентності'
+                adj_for_stats = mat
+                in_str  = mat_to_str(mat, rpfx='x', cpfx='x')
+                out_str = mat_to_str(result, rpfx='x', cpfx='a')
+            else:
+                result   = inc_to_adj(mat)
+                in_lbl   = 'Матриця інцидентності'
+                out_lbl  = 'Матриця суміжності'
+                adj_for_stats = result
+                in_str  = mat_to_str(mat, rpfx='x', cpfx='a')
+                out_str = mat_to_str(result, rpfx='x', cpfx='x')
+        except Exception as e:
+            messagebox.showerror('Помилка конвертації', str(e))
+            return
+
+        nr, nc = len(mat), (len(mat[0]) if mat else 0)
+        rr, rc = len(result), (len(result[0]) if result and result[0] else 0)
+
+        in_block  = f'── {in_lbl} ({nr}×{nc}) ──\n{in_str}'
+        if result and result[0]:
+            out_block = f'\n\n── {out_lbl} ({rr}×{rc}) ──\n{out_str}'
+        else:
+            out_block = f'\n\n── {out_lbl} ──\n(порожня — немає ребер)'
+
+        _set(txt_out, in_block + out_block)
+        _set(txt_stats, graph_stats(adj_for_stats, gtype))
+
+    btn_convert.configure(command=do_convert)
+    btn_rand.configure(command=gen_random)
 
     root.mainloop()
 
 
-def main_gui():
-    gui_main()
-
-
 if __name__ == '__main__':
-    main_gui()
+    build_gui()

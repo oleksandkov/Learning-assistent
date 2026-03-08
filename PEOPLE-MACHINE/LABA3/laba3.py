@@ -3,25 +3,25 @@ import tkinter as tk
 from tkinter import ttk, simpledialog, messagebox
 
 # -- Default sample generating -------------------------------------------------------------------
-groups   = [u'КН-11', u'КН-12', u'ІПЗ-21']
+groups   = [u'2ПІ-25Б', u'3ПІ-25Б', u'1ПІ-25Б']
 teachers = [u'Іваненко І.І.',
             u'Петренко О.В.',
             u'Коваль М.С.']
 lessons  = [
     (u'Математика',
-     u'Пн 08:30', '201', u'КН-11', '1',
+     u'Пн 08:30', '201', u'2ПІ-25Б', '1',
      u'Іваненко І.І.',
      u'Лекція'),
     (u'Програмування',
-     u'Вт 10:15', '302', u'КН-11', u'Обидва',
+     u'Вт 10:15', '302', u'2ПІ-25Б', u'Обидва',
      u'Петренко О.В.',
      u'Практика'),
     (u'Фізика',
-     u'Ср 13:45', '105', u'КН-12', '2',
+     u'Ср 13:45', '105', u'3ПІ-25Б', '2',
      u'Коваль М.С.',
      u'Лабораторна'),
     (u'Алгоритми',
-     u'Чт 08:30', '210', u'ІПЗ-21', '1',
+     u'Чт 08:30', '210', u'1ПІ-25Б', '1',
      u'Іваненко І.І.',
      u'Лекція'),
 ]
@@ -269,9 +269,6 @@ def main():
     tk.Button(bar, text=u'Видалити',
               bg='#fdecea', **BTN,
               command=lambda: delete_lesson(root, tree, fvars, status)).pack(side='left', padx=3)
-    tk.Label(bar,
-             text=u'Дв.клік / кнопка = редагувати  |  клік заголовка = сорт',
-             fg='#777', bg='#e8e8e8', font=('Segoe UI', 8)).pack(side='right', padx=10)
 
     tk.Label(root, textvariable=status, anchor='w', relief='sunken',
              bg='#e0e0e0', font=('Segoe UI', 8), padx=6).pack(side='bottom', fill='x')
