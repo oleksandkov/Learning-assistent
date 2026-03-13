@@ -1,19 +1,10 @@
-# Лабораторна робота №6 — Матричні способи представлення графів
-# Конвертер між матрицею суміжності та матрицею інцидентності
+
 
 from typing import List
 import random
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-
-# ── Конвенція матриці інцидентності (за підручником) ────────────────────────
-#   bij = +1  — xi є ПОЧАТКОВОЮ вершиною дуги aj  (орієнт.)
-#   bij = -1  — xi є КІНЦЕВОЮ   вершиною дуги aj  (орієнт.)
-#   bij = +1  — xi є кінцевою вершиною ребра aj   (неорієнт., обидві)
-#   bij = +2  — петля у xi                         (неорієнт.)
-#   bij = +1  — петля у xi                         (орієнт., 1 елемент)
-#   bij =  0  — xi не інцидентна aj
 
 
 def adj_to_inc(adj: List[List[int]], gtype: str) -> List[List[int]]:
@@ -24,18 +15,18 @@ def adj_to_inc(adj: List[List[int]], gtype: str) -> List[List[int]]:
     if gtype == 'directed':
         for i in range(n):
             for j in range(n):
-                if i == j and adj[i][j]:            # петля
+                if i == j and adj[i][j]:
                     col = [0]*n; col[i] = 1; cols.append(col)
-                elif i != j and adj[i][j]:          # дуга i→j
+                elif i != j and adj[i][j]:
                     col = [0]*n; col[i] = 1; col[j] = -1; cols.append(col)
 
     elif gtype == 'undirected':
         for i in range(n):
-            if adj[i][i]:                           # петля
+            if adj[i][i]:
                 col = [0]*n; col[i] = 2; cols.append(col)
         for i in range(n):
             for j in range(i+1, n):
-                if adj[i][j]:                       # ребро
+                if adj[i][j]:
                     col = [0]*n; col[i] = 1; col[j] = 1; cols.append(col)
 
     elif gtype == 'mixed':
@@ -45,11 +36,11 @@ def adj_to_inc(adj: List[List[int]], gtype: str) -> List[List[int]]:
         for i in range(n):
             for j in range(i+1, n):
                 a, b = adj[i][j], adj[j][i]
-                if a and b:                         # ребро (обидва напрямки)
+                if a and b:
                     col = [0]*n; col[i] = 1; col[j] = 1; cols.append(col)
-                elif a:                             # дуга i→j
+                elif a:
                     col = [0]*n; col[i] = 1; col[j] = -1; cols.append(col)
-                elif b:                             # дуга j→i
+                elif b:
                     col = [0]*n; col[j] = 1; col[i] = -1; cols.append(col)
     else:
         raise ValueError(f'Невідомий тип графа: {gtype}')
@@ -75,17 +66,17 @@ def inc_to_adj(inc: List[List[int]]) -> List[List[int]]:
     for j in range(m):
         col = [inc[i][j] for i in range(n)]
         nz = [(i, v) for i, v in enumerate(col) if v != 0]
-        if len(nz) == 1:                            # петля
+        if len(nz) == 1:
             adj[nz[0][0]][nz[0][0]] = 1
         elif len(nz) == 2:
             (i1, v1), (i2, v2) = nz
-            if v1 == 1 and v2 == 1:                # неорієнт. ребро
+            if v1 == 1 and v2 == 1:
                 adj[i1][i2] = adj[i2][i1] = 1
-            elif v1 == 1 and v2 == -1:             # дуга i1→i2
+            elif v1 == 1 and v2 == -1:
                 adj[i1][i2] = 1
-            elif v1 == -1 and v2 == 1:             # дуга i2→i1
+            elif v1 == -1 and v2 == 1:
                 adj[i2][i1] = 1
-            else:                                   # запасний варіант
+            else:
                 adj[i1][i2] = adj[i2][i1] = 1
     return adj
 
@@ -117,7 +108,6 @@ def mat_to_str(mat: List[List[int]], rpfx: str = 'x', cpfx: str = 'a') -> str:
     if not mat or not mat[0]:
         return '(порожня матриця)'
     n, m = len(mat), len(mat[0])
-    # column width: fit both values and header labels
     val_w   = max((len(str(v)) for row in mat for v in row), default=1)
     label_w = max(len(f'{cpfx}{j+1}') for j in range(m))
     w = max(val_w, label_w) + 1
@@ -221,7 +211,7 @@ EXAMPLES = {
 
 def build_gui():
     root = tk.Tk()
-    root.title('Лабораторна робота №6 — Матричні способи представлення графів')
+    root.title('Лабораторна №6 — Матричні представлення графів')
     root.minsize(760, 520)
 
     tab_conv = ttk.Frame(root, padding=6)
@@ -236,22 +226,19 @@ def build_gui():
     left.columnconfigure(0, weight=1)
 
     # --- 1. Тип графа ---
-    lf1 = ttk.LabelFrame(left, text=' 1. Тип графа ', padding=6)
+    lf1 = ttk.LabelFrame(left, text=' Тип графа ', padding=6)
     lf1.grid(row=0, column=0, sticky='ew', pady=(0, 4))
 
     gtype_var = tk.StringVar(value='directed')
-    for val, lbl, hint in [
-        ('directed',   'Орієнтований',   '  (дуги зі стрілками)'),
-        ('undirected', 'Неорієнтований', '  (ребра без напряму)'),
-        ('mixed',      'Змішаний',       '  (є і дуги, і ребра)'),
+    for val, lbl in [
+        ('directed',   'Орієнтований'),
+        ('undirected', 'Неорієнтований'),
+        ('mixed',      'Змішаний'),
     ]:
-        row_f = ttk.Frame(lf1)
-        row_f.pack(fill='x')
-        ttk.Radiobutton(row_f, text=lbl, variable=gtype_var, value=val).pack(side='left')
-        tk.Label(row_f, text=hint, font=('Arial', 8), fg='gray').pack(side='left')
+        ttk.Radiobutton(lf1, text=lbl, variable=gtype_var, value=val).pack(anchor='w')
 
     # --- 2. Напрямок конвертації ---
-    lf2 = ttk.LabelFrame(left, text=' 2. Конвертувати ', padding=6)
+    lf2 = ttk.LabelFrame(left, text=' Конвертувати ', padding=6)
     lf2.grid(row=1, column=0, sticky='ew', pady=(0, 4))
 
     direction_var = tk.StringVar(value='adj2inc')
@@ -265,7 +252,7 @@ def build_gui():
     ).pack(anchor='w')
 
     # --- 3. Генератор ---
-    lf3 = ttk.LabelFrame(left, text=' 3. Випадковий граф ', padding=6)
+    lf3 = ttk.LabelFrame(left, text=' Випадковий граф ', padding=6)
     lf3.grid(row=2, column=0, sticky='ew', pady=(0, 4))
 
     rng_row = ttk.Frame(lf3)
@@ -277,7 +264,7 @@ def build_gui():
     btn_rand.pack(side='left', padx=6)
 
     # --- 4. Введення матриці ---
-    lf4 = ttk.LabelFrame(left, text=' 4. Введіть матрицю вручну ', padding=4)
+    lf4 = ttk.LabelFrame(left, text=' Матриця ', padding=4)
     lf4.grid(row=3, column=0, sticky='nsew', pady=(0, 4))
     lf4.columnconfigure(0, weight=1)
     lf4.rowconfigure(0, weight=1)
@@ -288,12 +275,6 @@ def build_gui():
     txt_in.configure(yscrollcommand=scr_in.set)
     txt_in.grid(row=0, column=0, sticky='nsew')
     scr_in.grid(row=0, column=1, sticky='ns')
-
-    tk.Label(
-        lf4,
-        text='Кожен рядок матриці — з нового рядка.\nЧисла розділяти пробілами.',
-        font=('Arial', 8), fg='gray', justify='left',
-    ).grid(row=1, column=0, sticky='w', pady=(2, 0))
 
     # --- Кнопка Конвертувати ---
     btn_convert = ttk.Button(left, text='  ▶  Конвертувати  ')
@@ -326,16 +307,6 @@ def build_gui():
     txt_stats.grid(row=3, column=0, sticky='nsew')
     scr_st.grid(row=3, column=1, sticky='ns')
 
-    # --- Легенда ---
-    tk.Label(
-        tab_conv,
-        text=(
-            'Матриця суміжності: 0/1  |  '
-            'Матриця інцидентності: +1=початок, -1=кінець, 0=немає  |  '
-            '+2=петля (неорієнт.)  |  одиночний +1=петля (орієнт.)'
-        ),
-        font=('Arial', 8), fg='#555', anchor='w',
-    ).grid(row=3, column=0, columnspan=2, sticky='ew', padx=2, pady=(2, 0))
 
     # ── Функції ──────────────────────────────────────────────────────────────
 

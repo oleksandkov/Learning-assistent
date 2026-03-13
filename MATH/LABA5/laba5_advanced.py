@@ -8,9 +8,9 @@ INF = float("inf")
 class DirectedGraph:
     def __init__(self, matrix: List[List[float]], is_weighted: bool = True):
         if not is_weighted:
-            self.weights = adjacency_to_weight_simple(matrix)  # type: ignore[arg-type]
+            self.weights = adjacency_to_weight_simple(matrix)  
         else:
-            self.weights = matrix  # type: ignore[assignment]
+            self.weights = matrix 
         self.n = len(self.weights)
 
     @classmethod
