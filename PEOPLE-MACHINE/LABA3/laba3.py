@@ -7,6 +7,7 @@ groups   = [u'2ПІ-25Б', u'3ПІ-25Б', u'1ПІ-25Б']
 teachers = [u'Іваненко І.І.',
             u'Петренко О.В.',
             u'Коваль М.С.']
+subjects = [u'Вища Математика', u'ООП', u'Фізика', u'Людино-машинна взаємодія']
 lessons  = [
     (u'Математика',
      u'Пн 08:30', '201', u'2ПІ-25Б', '1',
@@ -41,6 +42,13 @@ TYPES  = ['', LEK, PRAK, LAB]
 WEEKS  = ['', '1', '2', u'Обидва']
 
 
+def sync_subjects_from_lessons():
+    for r in lessons:
+        subj = r[0]
+        if subj and subj not in subjects:
+            subjects.append(subj)
+
+
 # -- Filter ------------------------------------------------------------------
 def apply_filter(tree, fvars, status):
     subj, day, grp, week, tchr, typ = (v.get() for v in fvars)
@@ -61,7 +69,7 @@ def reset_filter(fvars, tree, status):
 
 # -- Lesson dialog (add / edit) ----------------------------------------------
 def lesson_dialog(root, title, initial=None):
-    init = initial or ('', '', '', groups[0] if groups else '', '1',
+    init = initial or (subjects[0] if subjects else '', '', '', groups[0] if groups else '', '1',
                        teachers[0] if teachers else '', LEK)
     dlg = tk.Toplevel(root)
     dlg.title(title)
@@ -73,7 +81,7 @@ def lesson_dialog(root, title, initial=None):
             u'Аудиторія:',
             u'Група:', u'Тиждень:',
             u'Викладач:', u'Тип:']
-    OPTS = [None, None, None,
+    OPTS = [[''] + subjects, None, None,
             [''] + groups, WEEKS, [''] + teachers, [LEK, PRAK, LAB]]
     dvars = []
     for i, (lbl, opt, val) in enumerate(zip(LBLS, OPTS, init)):
@@ -100,6 +108,9 @@ def lesson_dialog(root, title, initial=None):
     dlg.wait_window()
 
     if not saved[0]: return None
+    if not dvars[0].get():
+        messagebox.showwarning('!', u'Вкажіть предмет',
+                               parent=root); return None
     if not dvars[3].get():
         messagebox.showwarning('!', u'Вкажіть групу',
                                parent=root); return None
@@ -159,9 +170,18 @@ def delete_lesson(root, tree, fvars, status):
     if idx is not None: lessons.pop(idx)
     apply_filter(tree, fvars, status)
 
-
+def add_subject(root, subj_combos):
+    name = simpledialog.askstring(
+        u'Новий предмет',
+        u'Назва предмету:', parent=root) or ''
+    if not name: return
+    if name in subjects: messagebox.showwarning('!', name + ' already exists', parent=root); return
+    subjects.append(name)
+    for c in subj_combos: c['values'] = [''] + subjects
 # -- Main --------------------------------------------------------------------
 def main():
+    sync_subjects_from_lessons()
+
     root = tk.Tk()
     root.title(u'Розклад занять')
     root.geometry('1180x620')
@@ -182,10 +202,10 @@ def main():
         c = ttk.Combobox(fp, textvariable=v, values=values, width=width, state='normal')
         return c, v
 
-    v_subj = tk.StringVar()
     tk.Label(fp, text=u'Предмет:', anchor='w',
              font=('Segoe UI', 9)).grid(row=0, column=0, sticky='w', pady=3)
-    tk.Entry(fp, textvariable=v_subj, width=20).grid(row=0, column=1, padx=6, pady=3, sticky='ew')
+    c_subj, v_subj = mk_combo([''] + subjects)
+    c_subj.grid(row=0, column=1, padx=6, pady=3, sticky='ew')
     fvars.append(v_subj)
 
     filter_cfg = [
@@ -202,6 +222,7 @@ def main():
         c, v = mk_combo(opts); c.grid(row=r, column=1, padx=6, pady=3, sticky='ew')
         fvars.append(v); created[r] = c
 
+    subj_combos = [c_subj]
     grp_combos  = [created[2]]
     tchr_combos = [created[4]]
     tree_ref    = [None]
@@ -257,6 +278,8 @@ def main():
 
     # Toolbar
     BTN = dict(padx=9, pady=5, relief='groove', font=('Segoe UI', 9))
+    tk.Button(bar, text=u'+ Предмет', bg='#d9edf7', **BTN,
+              command=lambda: add_subject(root, subj_combos)).pack(side='left', padx=3)
     tk.Button(bar, text=u'+ Група', bg='#f0f0f0', **BTN,
               command=lambda: add_group(root, grp_combos)).pack(side='left', padx=3)
     tk.Button(bar, text=u'+ Викладач', bg='#f0f0f0', **BTN,
