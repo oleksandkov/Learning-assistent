@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws CloneNotSupportedException {
@@ -35,40 +33,82 @@ public class Main {
             if (choice == 1) {
                 world.printUnits();
             } else if (choice == 2) {
+                while (true) {
+
                 System.out.println("Який обє'кт вивести?");
                 int idx = scanner.nextInt();
                 scanner.nextLine();
-                if (idx >= 0 && idx <= world.getUnits().size()) {
+                if (idx >= 0 && idx <= world.getUnits().size() - 1) {
                     System.out.println("OBJECT " + idx + ":");
                     System.out.println(units.get(idx));
+                    break;
                 } else {
                     System.out.println("Невірний індекс.");
+                    }
                 }
             } else if (choice == 3) {
                 System.out.println("На яку позицію помістити обє'кт?");
                 int idx = scanner.nextInt();
-                Unit unit = new Unit();
-                unit.runSetters();
                 if (idx >= 0 && idx <= world.getUnits().size()) {
+                    Unit unit = new Unit();
+                    unit.runSetters();
                     world.insertUnit(idx, unit);
                     System.out.println("Об'єкт додано.");
+                    System.out.println("HERE ALL OBJECTS: ");
+                    world.printUnits();
                 } else {
                     System.out.println("Невірний індекс.");
-                }
-                world.printUnits();
+                    }
             } else if (choice == 4) {
+                while (true) {
                 System.out.println("Який обє'кт видалити?");
                 int idx = scanner.nextInt();
                 scanner.nextLine();
-                if (idx >= 0 && idx <= world.getUnits().size()) {
+                if (idx >= 0 && idx <= world.getUnits().size() - 1) {
                     units.remove(idx);
+                    System.out.println("Here all objects: ");
+                    world.printUnits();
+                    break;
                 } else {
                     System.out.println("Невірний індекс");
+                 }
                 }
-                world.printUnits();
             } else if (choice == 5 ) {
+                if (units.size() < 2) {
+                    System.out.println("Потрібно щонайменше 2 об'єкти для порівняння/сортування.");
+                    continue;
+                }
+                while (true) {
 
-            } else if (choice == 6) {
+                System.out.println("How you want to sort the masive?");
+                System.out.println("1. By damage");
+                System.out.println("2. By health");
+                int choice5 = scanner.nextInt();
+                if (choice5 == 1) {
+                    ArrayList<Unit> units5copy = new ArrayList<>();
+                    for (int i = 0; i < units.size(); i++) {
+                        units5copy.add(units.get(i).clone());
+                    }
+                    Collections.sort(units5copy, Collections.<Unit>reverseOrder(new Unit.DamageComparator()));
+                    System.out.println("HERE THE SORTED MASSIVE:");
+                    for  (int i = 0; i < units5copy.size(); i++) {
+                        System.out.println("HEre the UNIT: " + i);
+                        System.out.println(units5copy.get(i));
+                    }
+                    break;
+                } else  if (choice5 == 2) {
+
+                    break;
+                } else {
+                    System.out.println("Choose the correct option!");
+                }
+
+                }
+
+
+            } else if (choice == 6) { 
+                while (true) {
+
                 System.out.println("Який обє'кт копіювати?");
                 int idx = scanner.nextInt();
                 scanner.nextLine();
@@ -81,9 +121,12 @@ public class Main {
                     System.out.println(units.get(idx));
                     System.out.println("COPY");
                     System.out.println(units.get(units.size() - 1));
+                    System.out.println("HERE ALL BOJECTS: ");
                     world.printUnits();
+                    break;
                 } else {
                     System.out.println(" Невірний індекс");
+                }
                 }
             } else if (choice == 7) {
 

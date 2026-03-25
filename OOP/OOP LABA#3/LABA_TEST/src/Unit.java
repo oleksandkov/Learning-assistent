@@ -1,6 +1,7 @@
 import static java.lang.Math.max;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -76,6 +77,20 @@ public class Unit implements Cloneable{
 
     public static int getnumObjects() {
         return numObjects;
+    }
+    // Nested classes for comparators
+    public static class HealthComparator implements Comparator<Unit> {
+    @Override
+    public int compare(Unit a, Unit b) {
+        return Integer.compare(a.getHealth(), b.getHealth());
+    }
+    }
+
+    public static class DamageComparator implements Comparator<Unit> {
+        @Override
+        public int compare(Unit a, Unit b) {
+            return Integer.compare(a.getDamage(), b.getDamage());
+        }
     }
 
     // Setters
