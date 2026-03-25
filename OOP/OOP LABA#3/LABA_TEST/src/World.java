@@ -25,6 +25,8 @@ public class World {
         this.units = units;
     }
 
+    // Delete a unit at a specific position
+
 
     // Print all units
     public void printUnits() {

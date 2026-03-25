@@ -41,14 +41,17 @@ public class Unit implements Cloneable{
     }
 
     public  Unit() {
-        this(100, false, "ally", 5, true, new ArrayList<>());
+        this(100, false, "ally", 5, true, new ArrayList<>(Arrays.asList("sword")));
     }
 
     
     public static int getNumObjects() {
         return numObjects;
     }
-    
+
+    public static void setNumObjects(int num) {
+        numObjects = num;
+    }
 
     // Getters
     public Integer getHealth() {
@@ -86,10 +89,10 @@ public class Unit implements Cloneable{
     }
     }
 
-    public static class DamageComparator implements Comparator<Unit> {
+    public static class TeamComparator implements Comparator<Unit> {
         @Override
         public int compare(Unit a, Unit b) {
-            return Integer.compare(a.getDamage(), b.getDamage());
+            return a.getTeam().compareTo(b.getTeam());
         }
     }
 
@@ -164,6 +167,10 @@ public class Unit implements Cloneable{
     }
 
     // Additional functions
+    public static void removeUnit() {
+        numObjects--;
+        System.out.println("Object removed. Total objects: " + numObjects);
+    }
     public void addHealth() {
        this.health += 10;
     }
