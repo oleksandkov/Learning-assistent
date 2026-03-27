@@ -1,4 +1,3 @@
-import static java.lang.Math.max;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -96,6 +95,33 @@ public class Unit implements Cloneable{
         }
     }
 
+    // CompareTo4.7
+    
+        public int compareTo47(Unit x) {
+        int cmp = Integer.compare(this.health, x.health);
+        if (cmp != 0) return cmp;
+        cmp = this.Team.compareTo(x.Team);
+        if (cmp != 0) return cmp;
+        cmp = this.damage.compareTo(x.damage);
+        if (cmp != 0) return cmp;
+        cmp = this.isSpawned.compareTo(x.isSpawned);
+        if (cmp != 0) return cmp;
+        cmp = this.isDead.compareTo(x.isDead);
+        if (cmp != 0) return cmp;
+        cmp = this.health.compareTo(x.health);
+        if (cmp != 0) return cmp;
+        ArrayList<String> sortedInventor1 = new ArrayList<>(this.inventor);
+        ArrayList<String> sortedInventor2 = new ArrayList<>(x.inventor);
+        sortedInventor1.sort(String::compareTo);
+        sortedInventor2.sort(String::compareTo);
+        cmp = sortedInventor1.toString().compareTo(sortedInventor2.toString());
+        if (cmp != 0) return cmp;
+        return 0;
+        }
+
+
+
+
     // Setters
 
 
@@ -178,7 +204,17 @@ public class Unit implements Cloneable{
         this.damage += 5;
     }
     public void changeTeam() {
-        this.Team = "enemy";
+        if (this.Team.equals("ally")) {
+            this.Team = "enemy";
+        } else {
+            this.Team = "ally";
+        }
+    }
+    public boolean isAlly() {
+        return "ally".equals(this.Team);
+    }
+    public boolean isAlly(Unit x) {
+        return this.Team != null && this.Team.equals(x.Team);
     }
     public void takeDamage() {
         this.health -= 10;
@@ -187,7 +223,7 @@ public class Unit implements Cloneable{
         }
     }
     public void showTheStrongest(Unit unit) {
-        int maxhealth = max(this.health, unit.health);
+        Unit maxhealth = (this.health > unit.health) ? this : unit;
         System.out.println("The strongest unit have " + maxhealth);
     }
     public void runSetters() {
@@ -206,11 +242,11 @@ public class Unit implements Cloneable{
         System.out.println("Set spawn state: ");
         spawnState = scanner.nextBoolean();
         this.setSpawned(spawnState);
+        scanner.nextLine();
         System.out.println("Set team: ");
         String team;
-        team = scanner.nextLine();
+        team = scanner.nextLine().trim();
         this.setTeam(team);
-        scanner.nextLine();
         System.out.println("Set damage: ");
         int damage;
         damage = scanner.nextInt();

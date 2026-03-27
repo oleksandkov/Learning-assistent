@@ -5,6 +5,7 @@ public class Main {
         System.out.println("The program started");
         System.out.println("How many objects do you want to create?");
         int numUnits = new Scanner(System.in).nextInt();
+        Random random = new Random();
         ArrayList<Unit> units = new ArrayList<>();
         for (int i = 0; i < numUnits; i++) {
             Unit unit = new Unit();
@@ -15,6 +16,7 @@ public class Main {
                 unit.setTeam("ally");
                 units.add(unit);
             }
+            unit.setHealth(random.nextInt(100) + 10);
         }
         Scanner scanner = new Scanner(System.in);
 
@@ -31,8 +33,8 @@ public class Main {
             System.out.println("4. Видалити i-й об’єкт поточного масиву.");
             System.out.println("5. Відсортувати за певною ознакою об’єкти поточного масиву об’єктів ");
             System.out.println("6. Реалізувати глибоке копіювання для класу мікрооб’єкта");
-            System.out.println("7. Реалізувати пошук об’єкта у поточному масиві з допомогою функції 'Arrays.binarySearch' --------- SKKIPED");
-            System.out.println("8. Додати в меню дві команди, кожна з яких виконує один пункт з Таблиці ---------- SKKIPED");
+            System.out.println("7. Реалізувати пошук об’єкта у поточному масиві з допомогою функції 'Arrays.binarySearch' ");
+            System.out.println("8. Додати в меню дві команди, кожна з яких виконує один пункт з Таблиці ");
             System.out.println("9. End Program");
 
             choice = scanner.nextInt();
@@ -191,9 +193,114 @@ public class Main {
                 }
                 }
             } else if (choice == 7) {
+                System.out.println("What characteristics we need to find?");
+                Unit copy7Unit = new Unit();
+                System.out.println("Set the characteristics of the object you want to find: ");
+                System.out.println("Health: ");
+                copy7Unit.setHealth(scanner.nextInt());
+                scanner.nextLine();
+                System.out.println("Team: ");
+                copy7Unit.setTeam(scanner.nextLine());
+                System.out.println("Damage: ");
+                copy7Unit.setDamage(scanner.nextInt());
+                scanner.nextLine();
+                System.out.print("Inventor: ");
+                String inventoryInput = scanner.nextLine().trim();
+                copy7Unit.setInventor(new ArrayList<>(Arrays.asList(inventoryInput)));
+                System.out.println("Dead status: ");
+                copy7Unit.setDead(scanner.nextBoolean());
+                scanner.nextLine();
+                System.out.println("Spawned status: ");
+                copy7Unit.setSpawned(scanner.nextBoolean());
+                scanner.nextLine();
+                System.out.println("Here the object you want to find: ");
+                System.out.println(copy7Unit);
+                Comparator<Unit> compareTo47Comparator = Unit::compareTo47;
+                ArrayList<Unit> units7copy = new ArrayList<>();
+                for (Unit u : units) units7copy.add(u.clone());
+                Collections.sort(units7copy, compareTo47Comparator);
 
+
+                int foundIndex = Collections.binarySearch(units7copy, copy7Unit, compareTo47Comparator);
+                if (foundIndex < 0) {
+                    System.out.println("Object not found.");
+                } else {
+                    int left = foundIndex;
+                    while (left > 0 && compareTo47Comparator.compare(units7copy.get(left-1), copy7Unit) == 0) left--;
+                    int right = foundIndex;
+                    while (right < units7copy.size()-1 && compareTo47Comparator.compare(units7copy.get(right+1), copy7Unit) == 0) right++;
+                    System.out.println("Found " + (right-left+1) + " matching object(s) in sorted copy. Indexes: ");
+                    for (int i = left; i <= right; i++) {
+                        System.out.println("Index " + i + ": " + units7copy.get(i));
+                        
+                    }
+                }
+                
+                Unit.removeUnit();
+
+                
             } else if (choice == 8) {
+                System.out.println("Choose the option: ");
+                System.out.println("1.  INterection with the units");
+                System.out.println("2. Competiontion...");
+                int Choice8 = scanner.nextInt();
+                if (Choice8 == 1) {
+                
+                    Unit unit8Copy = new Unit();
+                    unit8Copy.runSetters();
+                    while (true) {
 
+                        System.out.println("Here the result of intercation with the each object: ");
+                        System.out.println("1. Show the strongest unit");
+                        System.out.println("2. Show if the unit is ally or enemy");
+                        System.out.println("3. Exit");
+                        int choice8;
+                        choice8 = scanner.nextInt();
+                        if (choice8 == 1) {
+                            for (Unit u : units) {
+                                unit8Copy.showTheStrongest(u);
+                            }
+                        } else if (choice8 == 2) {
+                            for (Unit u : units) {
+                                if (unit8Copy.isAlly(u)) {
+                                    System.out.println("The unit is ally");
+                                } else {
+                                    System.out.println("The unit is enemy");
+                                }
+                            }
+                        } else if (choice8 == 3) {
+                        break;
+                        } else {
+                            System.out.println("Choose the correct option!");
+                        }
+                    }
+                    Unit.removeUnit();
+                } else if (Choice8 == 2) {
+                    ArrayList<Unit> units81 = new ArrayList<>();
+                    ArrayList<Unit> units82 = new ArrayList<>();
+                    for (Unit u : units) {
+                        if (u.getTeam().equals("ally")) {
+                            units81.add(u);
+                        } else {
+                            units82.add(u);
+                        }
+                    }
+                    Collections.sort(units81, Comparator.comparing(Unit::getHealth).reversed());
+                    Collections.sort(units82, Comparator.comparing(Unit::getHealth).reversed());
+                    System.out.println("Here the ally team: ");
+                    for (Unit u : units81) {
+                        System.out.println(u);
+                    }
+                    System.out.println("Here the enemy team: ");
+                    for (Unit u : units82) {
+                        System.out.println(u);
+                    }
+                    System.out.println("Here the result of competition: ");
+                    units81.get(0).showTheStrongest(units82.get(0));
+                    
+                } else {
+                    System.out.println("Choose the correct option!");
+                }
             } else if (choice == 9) {
                 break;
             }
