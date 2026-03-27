@@ -241,7 +241,7 @@ public class Main {
                 
             } else if (choice == 8) {
                 System.out.println("Choose the option: ");
-                System.out.println("1.  INterection with the units");
+                System.out.println("1. INterection with the units");
                 System.out.println("2. Competiontion...");
                 int Choice8 = scanner.nextInt();
                 if (Choice8 == 1) {
