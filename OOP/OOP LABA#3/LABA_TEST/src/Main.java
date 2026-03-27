@@ -19,12 +19,29 @@ public class Main {
             unit.setHealth(random.nextInt(100) + 10);
         }
         Scanner scanner = new Scanner(System.in);
+        
 
+
+        // Initialization 
+        // The uni class
         World world = new World();
         world.setUnits(units);
 
-        int choice;
 
+        // The base macroobject
+        Base base = new Base();
+        ArrayList<Unit> baseUnits = new ArrayList<>();
+        base.setUnits(baseUnits);
+
+        // The tower macroobject
+        Tower tower = new Tower();
+        ArrayList<Unit> towerUnits = new ArrayList<>();
+        tower.setUnits(towerUnits);
+
+
+
+        
+        int choice;
         while (true) {
             System.out.println("Enter choice (): ");
             System.out.println("1. Вивести всі обє'кти поточоного масиву");
@@ -35,7 +52,8 @@ public class Main {
             System.out.println("6. Реалізувати глибоке копіювання для класу мікрооб’єкта");
             System.out.println("7. Реалізувати пошук об’єкта у поточному масиві з допомогою функції 'Arrays.binarySearch' ");
             System.out.println("8. Додати в меню дві команди, кожна з яких виконує один пункт з Таблиці ");
-            System.out.println("9. End Program");
+            System.out.println("9. Взаємодія з макрооб'єктами");
+            System.out.println("10. End Program");
 
             choice = scanner.nextInt();
 
@@ -302,6 +320,139 @@ public class Main {
                     System.out.println("Choose the correct option!");
                 }
             } else if (choice == 9) {
+                while (true) { 
+                    int idx;
+                    System.out.println("Обери дію: ");
+                    System.out.println("1. Додати об'єкт");
+                    System.out.println("2. Вивести на екран вміст універсального об’єкта та всіх макрооб’єктів.: ");
+                    System.out.println("3. Взаємодія мікрооб’єктів. ");
+                    System.out.println("4. Взаємодія двох макрооб’єктів. ");
+                    System.out.println("5. Підрахунок мікрооб’єктів.  ");
+                    System.out.println("6. Видалити мікрооб’єкт.");
+                    System.out.println("7. Повернутися до головного меню.");
+                    idx = scanner.nextInt();
+                    if (idx == 1) {
+                            Unit unit9Copy = new Unit();
+                            unit9Copy.runSetters();
+                            System.out.println("Where do you want to add the object?");
+                            System.out.println("1. Tower");
+                            System.out.println("2. Base");
+                            System.out.println("2. World");
+                            int choice9 = scanner.nextInt();
+                            if (choice9 == 1) {
+                                tower.getUnits().add(unit9Copy);
+                            } else if (choice9 == 2) {
+                                base.getUnits().add(unit9Copy);
+                            } else if (choice9 == 3) {
+                                world.insertUnit(world.getUnits().size(), unit9Copy);
+                                System.out.println("Object added to the world.");
+                            } else {
+                                System.out.println("Choose the correct option!");
+                            } 
+
+                    } else if (idx == 2) {
+                        System.out.println("Here the content of the world: ");
+                        for (Unit u : world.getUnits()) {
+                            System.out.println(u);
+                        }
+                        System.out.println("Here the content of the base: ");
+                        for (Unit u : base.getUnits()) {
+                            if (base.getUnits().size() == 0) {
+                                System.out.println("The base is empty.");
+                                break;
+                            }
+                            System.out.println(u);
+                        }
+                        System.out.println("Here the content of the tower: ");
+                        for (Unit u : tower.getUnits()) {
+                            if (tower.getUnits().size() == 0) {
+                                System.out.println("The tower is empty.");
+                                break;
+                            }
+                            System.out.println(u);
+                        }
+                    } else if (idx == 4) {
+                        
+                    } else if (idx == 3) {
+                        Unit unit94Copy = new Unit();
+                        scanner.nextLine(); 
+                        System.out.println("Set the characteristics you want to specify (comma-separated, e.g. health,team,damage): ");
+                        ArrayList<String> list = new ArrayList<>();
+                        String input = scanner.nextLine().trim();
+                        list.addAll(Arrays.asList(input.split("\\s*,\\s*")));
+                        unit94Copy.runSettersToComparing(list);
+                        System.out.println("Where to get microobjects:");
+                        System.out.println("1. Base");
+                        System.out.println("2. Tower");
+                        System.out.println("3. World");
+                        int choice94 = scanner.nextInt();
+                        Comparator<Unit> comparatorTo94 = Unit.comparatorFromTemplate(unit94Copy);
+                        ArrayList<Unit> units94copy = new ArrayList<>();
+                        if (choice94 == 1) {
+                            base.getUnits().sort(comparatorTo94);   
+                            for (int i = 0; i < base.getUnits().size(); i++) {
+                                if (comparatorTo94.compare(base.getUnits().get(i), unit94Copy) == 0) 
+                                {
+                                    units94copy.add(base.getUnits().get(i).clone());
+                                }
+                            } 
+                        } else if (choice94 == 2) {
+                            tower.getUnits().sort(comparatorTo94);
+                            for (int i = 0; i < tower.getUnits().size(); i++) {
+                                if (comparatorTo94.compare(tower.getUnits().get(i), unit94Copy) == 0) 
+                                {
+                                    units94copy.add(tower.getUnits().get(i).clone());
+                                }
+                            }
+                            
+                        } else if (choice94 == 3) {
+                            world.getUnits().sort(comparatorTo94);
+                            for (int i = 0; i < world.getUnits().size(); i++) {
+                                if (comparatorTo94.compare(world.getUnits().get(i), unit94Copy) == 0) 
+                                {
+                                    units94copy.add(world.getUnits().get(i).clone());
+                                }
+                            }
+                            
+                        } else {
+                            System.out.println("Choose the correct option!");
+                        }
+                        if (units94copy.size() == 0) {
+                            System.out.println("No matching objects found.");
+                        } else if (units94copy.size() <= 1) {
+                            System.out.println("We do not have enought units");
+                        } else {
+                            System.out.println("Here the units that match the template: ");
+                            for (Unit u : units94copy) {
+                                System.out.println(u);
+                            }
+                            System.out.println("Here the result of interaction: ");
+                            for (int i = 0; i < units94copy.size() - 1; i++) {
+                                units94copy.get(i).showTheStrongest(units94copy.get(i+1));
+                            }
+                            System.out.println("Here the second interaction: ");
+                            for (int i = 0; i < units94copy.size() - 1; i++) {
+                                if (units94copy.get(i).isAlly()) {
+                                    System.out.println("The units are allies");
+                                } else {
+                                    System.out.println("The units are enemies");
+                                }
+                            }
+
+                        }
+                    } else if (idx == 5) {
+                        
+                    } else if (idx == 6) {
+                        
+                    } else if (idx == 7) {
+                        break;
+                        
+                    } else {
+                        System.out.println("Choose the correct option!");
+                    }
+
+                }
+            } else if (choice == 10) {
                 break;
             }
         }

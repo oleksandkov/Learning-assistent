@@ -119,7 +119,44 @@ public class Unit implements Cloneable{
         return 0;
         }
 
-
+        // comporator from template
+    public static Comparator<Unit> comparatorFromTemplate(Unit template) {
+        return (u1, u2) -> {
+            if (template == null) {
+                throw new IllegalArgumentException("Template cannot be null");
+            }
+            int cmp;
+            if (template.getHealth() != null) {
+                cmp = Integer.compare(u1.getHealth(), u2.getHealth());
+                if (cmp != 0) return cmp;
+            }
+            if (template.getTeam() != null) {
+                cmp = u1.getTeam().compareTo(u2.getTeam());
+                if (cmp != 0) return cmp;
+            }
+            if (template.getDamage() != null) {
+                cmp = u1.getDamage().compareTo(u2.getDamage());
+                if (cmp != 0) return cmp;
+            }
+            if (template.getSpawned() != null) {
+                cmp = u1.getSpawned().compareTo(u2.getSpawned());
+                if (cmp != 0) return cmp;
+            }
+            if (template.getDead() != null) {
+                cmp = u1.getDead().compareTo(u2.getDead());
+                if (cmp != 0) return cmp;
+            }
+            if (template.getInventor() != null) {
+                ArrayList<String> sortedInventor1 = new ArrayList<>(u1.getInventor());
+                ArrayList<String> sortedInventor2 = new ArrayList<>(u2.getInventor());
+                sortedInventor1.sort(String::compareTo);
+                sortedInventor2.sort(String::compareTo);
+                cmp = sortedInventor1.toString().compareTo(sortedInventor2.toString());
+                if (cmp != 0) return cmp;
+            }
+            return 0;
+        };
+    }
 
 
     // Setters
@@ -227,40 +264,138 @@ public class Unit implements Cloneable{
         System.out.println("The strongest unit have " + maxhealth);
     }
     public void runSetters() {
-        System.out.println("Set dead state: ");
+        System.out.println("Choose the option:");
+        System.out.println("1. Run Pipeline");
+        System.out.println("2. By default");
         Scanner scanner = new Scanner(System.in);
-        boolean isdead;
-        isdead = scanner.nextBoolean();
-        this.setDead(isdead);
-        scanner.nextLine();
-        System.out.println("Set health bar: ");
-        int numHealth;
-        numHealth = scanner.nextInt();
-        this.setHealth(numHealth);
-        scanner.nextLine();
-        boolean spawnState;
-        System.out.println("Set spawn state: ");
-        spawnState = scanner.nextBoolean();
-        this.setSpawned(spawnState);
-        scanner.nextLine();
-        System.out.println("Set team: ");
-        String team;
-        team = scanner.nextLine().trim();
-        this.setTeam(team);
-        System.out.println("Set damage: ");
-        int damage;
-        damage = scanner.nextInt();
-        this.setDamage(damage);
-        scanner.nextLine();
-        System.out.println("Set inventor: ");
-        String inventoryInput = scanner.nextLine().trim();
-        if (inventoryInput.isEmpty()) {
-            this.setInventor(new ArrayList<>());
+        int idx = scanner.nextInt();
+            if  (idx == 1) {
+                System.out.println("Set dead state: ");
+                scanner = new Scanner(System.in);
+                boolean isdead;
+                isdead = scanner.nextBoolean();
+                this.setDead(isdead);
+                scanner.nextLine();
+                System.out.println("Set health bar: ");
+                int numHealth;
+                numHealth = scanner.nextInt();
+                this.setHealth(numHealth);
+                scanner.nextLine();
+                boolean spawnState;
+                System.out.println("Set spawn state: ");
+                spawnState = scanner.nextBoolean();
+                this.setSpawned(spawnState);
+                scanner.nextLine();
+                System.out.println("Set team: ");
+                String team;
+                team = scanner.nextLine().trim();
+                this.setTeam(team);
+                System.out.println("Set damage: ");
+                int damage;
+                damage = scanner.nextInt();
+                this.setDamage(damage);
+                scanner.nextLine();
+                System.out.println("Set inventor: ");
+                String inventoryInput = scanner.nextLine().trim();
+                if (inventoryInput.isEmpty()) {
+                    this.setInventor(new ArrayList<>());
+                } else {
+                    this.setInventor(new ArrayList<>(Arrays.asList(inventoryInput.split("\\\\s+"))));
+                }
+                scanner.nextLine();
+        } else if (idx == 2) {
+            this.setHealth(100);
+            this.setSpawned(false);
+            this.setTeam("ally");
+            this.setDamage(5);
+            this.setDead(true);
+            this.setInventor(new ArrayList<>(Arrays.asList("sword")));
+        
         } else {
-            this.setInventor(new ArrayList<>(Arrays.asList(inventoryInput.split("\\\\s+"))));
+            System.out.println("Invalid option. Please try again.");
         }
-        scanner.nextLine();
     }
+    // Comparing
+    public void runSettersToComparing(ArrayList<String> list) {
+        if (list.isEmpty()) {
+            System.out.println("The list is empty. Please provide some values.");
+            return;
+        } 
+        this.setHealth(null);
+        this.setDamage(null);
+        this.setTeam(null);
+        this.setDead(null);
+        this.setSpawned(null);
+        this.setInventor(null);
+        Scanner scanner = new Scanner(System.in);
+        for (String field : list) {
+            String normalized = field.toLowerCase().trim();
+            if (normalized.equals("health")) {
+                System.out.print("Enter health: ");
+                this.setHealth(scanner.nextInt());
+                scanner.nextLine();
+            } else if (normalized.equals("spawned")) {
+                System.out.print("Enter spawned (true/false): ");
+                this.setSpawned(scanner.nextBoolean());
+                scanner.nextLine();
+            } else if (normalized.equals("team")) {
+                System.out.print("Enter team: ");
+                this.setTeam(scanner.nextLine().trim());
+            } else if (normalized.equals("damage")) {
+                System.out.print("Enter damage: ");
+                this.setDamage(scanner.nextInt());
+                scanner.nextLine();
+            } else if (normalized.equals("dead")) {
+                System.out.print("Enter dead (true/false): ");
+                this.setDead(scanner.nextBoolean());
+                scanner.nextLine();
+            } else if (normalized.equals("inventor")) {
+                System.out.print("Enter inventor items (comma separated): ");
+                String inventoryInput = scanner.nextLine().trim();
+                if (inventoryInput.isEmpty()) {
+                    this.setInventor(new ArrayList<>());
+                } else {
+                    // permit comma-separated values
+                    String[] parts = inventoryInput.split("\\s*,\\s*");
+                    this.setInventor(new ArrayList<>(Arrays.asList(parts)));
+                }
+            } else {
+                System.out.println("Unknown characteristic: " + field + "; skipped.");
+            }
+        }
+    }
+
+    public int compareTo(Unit other) {
+        int cmp = 0;
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot compare to null");
+            
+        }
+        if (other.getHealth() != null) {
+             cmp = Integer.compare(this.health, other.health);
+        }
+        if (other.getTeam() != null) {
+             cmp = this.Team.compareTo(other.Team);
+        }
+        if (other.getDamage() != null) {
+             cmp = this.damage.compareTo(other.damage);
+        }
+        if (other.getSpawned() != null) {
+             cmp = this.isSpawned.compareTo(other.isSpawned);
+        }
+        if (other.getDead() != null) {
+             cmp = this.isDead.compareTo(other.isDead);
+        }
+        if (other.getInventor() != null) {
+             ArrayList<String> sortedInventor1 = new ArrayList<>(this.inventor);
+            ArrayList<String> sortedInventor2 = new ArrayList<>(other.inventor);
+            sortedInventor1.sort(String::compareTo);
+            sortedInventor2.sort(String::compareTo);
+            cmp = sortedInventor1.toString().compareTo(sortedInventor2.toString());
+        }
+        return cmp;
+    }
+    
     // Print
     public void print() {
         System.out.println("THE HEALTH: " + health);
