@@ -1,25 +1,12 @@
 import java.util.ArrayList;
 
-public class Tower {
-    ArrayList<Unit> units;
-    
-    
+public class Tower extends World {
     // Constructor
     public Tower(ArrayList<Unit> units) {
-        this.units = units;
+        super(units);
     }
+
     public Tower() {
-        this.units = new ArrayList<>();
+        super();
     }
-
-    // Setters
-    public void setUnits(ArrayList<Unit> units) {
-        this.units = units;
-    }
-    
-    // Getters
-    public ArrayList<Unit> getUnits() {
-        return this.units;
-    }
-
 }

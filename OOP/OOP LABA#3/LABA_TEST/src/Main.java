@@ -17,6 +17,7 @@ public class Main {
                 units.add(unit);
             }
             unit.setHealth(random.nextInt(100) + 10);
+            unit.setDamage(random.nextInt(10) + 5);
         }
         Scanner scanner = new Scanner(System.in);
         
@@ -31,11 +32,25 @@ public class Main {
         // The base macroobject
         Base base = new Base();
         ArrayList<Unit> baseUnits = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            Unit unit = new Unit();
+            unit.setTeam("baseUnits");
+            unit.setHealth(random.nextInt(100) + 10);
+            unit.setDamage(random.nextInt(10) + 5);
+            baseUnits.add(unit);
+        }
         base.setUnits(baseUnits);
 
         // The tower macroobject
         Tower tower = new Tower();
         ArrayList<Unit> towerUnits = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            Unit unit = new Unit();
+            unit.setTeam("towerUnits");
+            unit.setHealth(random.nextInt(100) + 10);
+            unit.setDamage(random.nextInt(10) + 5);
+            towerUnits.add(unit);
+        }
         tower.setUnits(towerUnits);
 
 
@@ -372,7 +387,64 @@ public class Main {
                             System.out.println(u);
                         }
                     } else if (idx == 4) {
-                        
+                        System.out.println("Here the result of interaction between base and tower maccroobjects: ");
+                        System.out.println("THE BASE UNITS: ");
+                        for (Unit u : base.getUnits()) {
+                            System.out.println(u);
+                        }
+                        System.out.println("THE TOWER UNITS: ");
+                        for (Unit u : tower.getUnits()) {
+                            System.out.println(u);
+                        }
+                        Unit baseStronghest = null;
+                        Unit towerStronghest = null;
+                        int strong = 0;
+                        for (Unit u : base.getUnits()) {
+                            if (u.getHealth() != null && u.getDamage() != null) {
+                                int strength = u.getHealth() + u.getDamage();
+                                if (strength > strong) {
+                                    strong = strength;
+                                    baseStronghest = u;
+                                }
+                            }
+                        }
+                        strong = 0;
+                        for (Unit u : tower.getUnits()) {
+                            if (u.getHealth() != null && u.getDamage() != null) {
+                                int strength = u.getHealth() + u.getDamage();
+                                if (strength > strong) {
+                                    strong = strength;
+                                    towerStronghest = u;
+                                }
+                            }
+                        }
+                        System.out.println("The strongest unit in the base: ");
+                        System.out.println(baseStronghest);
+                        System.out.println("The strongest unit in the tower: ");
+                        System.out.println(towerStronghest);
+                        int i = 1;
+                        while (baseStronghest != null && towerStronghest != null && !Boolean.TRUE.equals(baseStronghest.getDead()) && !Boolean.TRUE.equals(towerStronghest.getDead())) {
+                            baseStronghest.attack(towerStronghest);
+                            towerStronghest.attack(baseStronghest);
+                            System.out.println("After the attack: ");
+                            System.out.println("The strongest unit in the base: ");
+                            System.out.println(baseStronghest);
+                            System.out.println("The strongest unit in the tower: ");
+                            System.out.println(towerStronghest);
+                            System.out.println("Step " + i);
+                            i++;
+                        }
+                        World.updateAll(world, base, tower);
+                        System.out.println("After the interaction: ");
+                        System.out.println("THE BASE UNITS: ");
+                        for (Unit u : base.getUnits()) {
+                            System.out.println(u);
+                        }
+                        System.out.println("THE TOWER UNITS: ");
+                        for (Unit u : tower.getUnits()) {
+                            System.out.println(u);
+                        }
+
                     } else if (idx == 3) {
                         Unit unit94Copy = new Unit();
                         scanner.nextLine(); 
@@ -441,9 +513,178 @@ public class Main {
 
                         }
                     } else if (idx == 5) {
-                        
-                    } else if (idx == 6) {
-                        
+                        System.out.println("Here the count of microobjects: ");
+                        System.out.println("In the world: " + world.getUnits().size());
+                        System.out.println("In the base: " + base.getUnits().size());
+                        System.out.println("In the tower: " + tower.getUnits().size());
+
+                        System.out.println("Choose the option to find the count of microobjects with some characteristics: ");
+                        System.out.println("1. By health");
+                        System.out.println("2. By damage");
+                        System.out.println("3. By Team");
+                        int choice95 = scanner.nextInt();
+                        if (choice95 == 1) {
+                            System.out.println("Put the minimum health: ");
+                            int minHealth = scanner.nextInt();
+                            System.out.println("Put the maximum health: ");
+                            int maxHealth = scanner.nextInt();
+                            int countWorld = 0;
+                            int countBase = 0;
+                            int countTower = 0;
+                            for (Unit u : world.getUnits()) {
+                                if (u.getHealth() != null && u.getHealth() >= minHealth && u.getHealth() <= maxHealth) {
+                                    countWorld++;
+                                }
+                            }
+                            for (Unit u : base.getUnits()) {
+                                if (u.getHealth() != null && u.getHealth() >= minHealth && u.getHealth() <= maxHealth) {
+                                    countBase++;
+                                }
+                            }
+                            for (Unit u : tower.getUnits()) {
+                                if (u.getHealth() != null && u.getHealth() >= minHealth && u.getHealth() <= maxHealth) {
+                                    countTower++;
+                                }
+                            }
+                            System.out.println("Count of microobjects with health between " + minHealth + " and " + maxHealth + ":");
+                            System.out.println("In the world: " + countWorld);
+                            System.out.println("In the base: " + countBase);
+                            System.out.println("In the tower: " + countTower);
+
+
+                        } else if (choice95 == 2) {
+                            System.out.println("Put the minimum damage: ");
+                            int minDamage = scanner.nextInt();
+                            System.out.println("Put the maximum damage: ");
+                            int maxDamage = scanner.nextInt();
+                            int countWorld = 0;
+                            int countBase = 0;
+                            int countTower = 0;
+                            for (Unit u : world.getUnits()) {
+                                if (u.getDamage() != null && u.getDamage() >= minDamage && u.getDamage() <= maxDamage) {
+                                    countWorld++;
+                                }
+                            }
+                            for (Unit u : base.getUnits()) {
+                                if (u.getDamage() != null && u.getDamage() >= minDamage && u.getDamage() <= maxDamage) {
+                                    countBase++;
+                                }
+                            }
+                            for (Unit u : tower.getUnits()) {
+                                if (u.getDamage() != null && u.getDamage() >= minDamage && u.getDamage() <= maxDamage) {
+                                    countTower++;
+                                }
+                            }
+                            System.out.println("Count of microobjects with damage between " + minDamage + " and " + maxDamage + ":");
+                            System.out.println("In the world: " + countWorld);
+                            System.out.println("In the base: " + countBase);
+                            System.out.println("In the tower: " + countTower);
+
+                        } else if (choice95 == 3) {
+                            System.out.println("Put the team (ally, enemy, baseUnits, towerUnits): ");
+                            scanner.nextLine();
+                            String team = scanner.nextLine();
+                            int countWorld = 0;
+                            int countBase = 0;
+                            int countTower = 0;
+                            for (Unit u : world.getUnits()) {
+                                if (u.getTeam() != null && u.getTeam().equals(team)) {
+                                    countWorld++;
+                                }
+                            }
+                            for (Unit u : base.getUnits()) {
+                                if (u.getTeam() != null && u.getTeam().equals(team)) {
+                                    countBase++;
+                                }
+                            }
+                            for (Unit u : tower.getUnits()) {
+                                if (u.getTeam() != null && u.getTeam().equals(team)) {
+                                    countTower++;
+                                }
+                            }
+                            System.out.println("Count of microobjects with team " + team + ":");
+                            System.out.println("In the world: " + countWorld);
+                            System.out.println("In the base: " + countBase);
+                            System.out.println("In the tower: " + countTower);
+                        } else {
+                            System.out.println("Choose the correct option!");
+                        }
+                    }  else if (idx == 6) {
+                        System.out.println("Which microobject do you want to delete?");
+                        Unit unit96Copy = new Unit();
+                        System.out.println("Set the characteristics of the object you want to delete: ");
+                        ArrayList<String> list = new ArrayList<>();
+                        scanner.nextLine();
+                        String input = scanner.nextLine().trim();
+                        list.addAll(Arrays.asList(input.split("\\s*,\\s*")));
+                        unit96Copy.runSettersToComparing(list);
+                        Comparator<Unit> comparatorTo96 = Unit.comparatorFromTemplate(unit96Copy);
+                        ArrayList<Unit> units96copy = new ArrayList<>();
+                        System.out.println("Where to get microobjects:");
+                        System.out.println("1. Base");
+                        System.out.println("2. Tower");
+                        System.out.println("3. World");
+                        int choice96 = scanner.nextInt();
+                        if (choice96 == 1) {
+                            base.getUnits().sort(comparatorTo96);   
+                            for (int i = 0; i < base.getUnits().size(); i++) {
+                                if (comparatorTo96.compare(base.getUnits().get(i), unit96Copy) == 0) 
+                                {
+                                    units96copy.add(base.getUnits().get(i));
+                                }
+                            } 
+                            
+                        } else if (choice96 == 2) {
+                            tower.getUnits().sort(comparatorTo96);
+                            for (int i = 0; i < tower.getUnits().size(); i++) {
+                                if (comparatorTo96.compare(tower.getUnits().get(i), unit96Copy) == 0) 
+                                {
+                                    units96copy.add(tower.getUnits().get(i));
+                                }
+                            }
+                            
+                        } else if (choice96 == 3) {
+                            world.getUnits().sort(comparatorTo96);
+                            for (int i = 0; i < world.getUnits().size(); i++) {
+                                if (comparatorTo96.compare(world.getUnits().get(i), unit96Copy) == 0) 
+                                {
+                                    units96copy.add(world.getUnits().get(i));
+                                }
+                            }
+                            
+                        } else {
+                            System.out.println("Choose the correct option!");
+                        }
+                        System.out.println("HEre the objects that match the template: ");
+                        for (Unit u : units96copy) {
+                            System.out.println("THE UNIT:" + units96copy.indexOf(u));
+                            System.out.println(u);
+                        }
+                        if (units96copy.size() != 0) {
+                            System.out.println("Which of these objects do you want to delete? (enter the index)");
+                            int deleteIdx = scanner.nextInt();  
+                            if (deleteIdx >= 0 && deleteIdx < units96copy.size()) {
+                                Unit toDelete = units96copy.get(deleteIdx);
+                                if (base.getUnits().remove(toDelete)) {
+                                    System.out.println("Object removed from the base.");
+                                } else if (tower.getUnits().remove(toDelete)) {
+                                    System.out.println("Object removed from the tower.");
+                                } else if (world.getUnits().remove(toDelete)) {
+                                    System.out.println("Object removed from the world.");
+                                } else {
+                                    System.out.println("Object not found in any container.");
+                                }
+                            }  else {
+                                System.out.println("Invalid index.");
+                                System.out.println("Here the remaining objects: ");
+                                for (Unit u : units96copy) {
+                                    System.out.println(u);
+                                }
+                            } 
+                         } else {
+                            System.out.println("No matching objects found.");
+                         }
+                         Unit.removeUnit();
                     } else if (idx == 7) {
                         break;
                         

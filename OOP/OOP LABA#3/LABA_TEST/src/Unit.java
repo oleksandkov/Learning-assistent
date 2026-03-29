@@ -40,7 +40,7 @@ public class Unit implements Cloneable{
     }
 
     public  Unit() {
-        this(100, false, "ally", 5, true, new ArrayList<>(Arrays.asList("sword")));
+        this(100, false, "ally", 5, false, new ArrayList<>(Arrays.asList("sword")));
     }
 
     
@@ -230,6 +230,39 @@ public class Unit implements Cloneable{
     }
 
     // Additional functions
+    public void attack(Unit target) {
+        if (target == null) {
+            System.out.println("No target to attack.");
+            return;
+        }
+        if (Boolean.TRUE.equals(this.isDead)) {
+            System.out.println("Cannot attack: attacker is dead.");
+            return;
+        }
+        if (Boolean.TRUE.equals(target.getDead())) {
+            System.out.println("Cannot attack: target is already dead.");
+            return;
+        }
+
+        if (this.damage == null || this.damage <= 0) {
+            System.out.println("No damage to deal (damage is null or zero).");
+            return;
+        }
+
+        int targetHealth = target.getHealth() == null ? 0 : target.getHealth();
+        int newHealth = targetHealth - this.damage;
+        target.setHealth(newHealth);
+
+        if (newHealth <= 0) {
+            target.setHealth(0);
+            target.setDead(true);
+            objectedKilled++;
+            Unit.removeUnit();
+            System.out.println("Target unit has been killed. Total killed: " + objectedKilled);
+        } else {
+            System.out.println("Target unit took " + this.damage + " damage, remaining health: " + newHealth);
+        }
+    }
     public static void removeUnit() {
         numObjects--;
         System.out.println("Object removed. Total objects: " + numObjects);
@@ -331,25 +364,27 @@ public class Unit implements Cloneable{
         for (String field : list) {
             String normalized = field.toLowerCase().trim();
             if (normalized.equals("health")) {
+                scanner.nextLine();
                 System.out.print("Enter health: ");
                 this.setHealth(scanner.nextInt());
-                scanner.nextLine();
             } else if (normalized.equals("spawned")) {
+                scanner.nextLine();
                 System.out.print("Enter spawned (true/false): ");
                 this.setSpawned(scanner.nextBoolean());
-                scanner.nextLine();
             } else if (normalized.equals("team")) {
+                scanner.nextLine();
                 System.out.print("Enter team: ");
                 this.setTeam(scanner.nextLine().trim());
             } else if (normalized.equals("damage")) {
+                scanner.nextLine();
                 System.out.print("Enter damage: ");
                 this.setDamage(scanner.nextInt());
-                scanner.nextLine();
             } else if (normalized.equals("dead")) {
+                scanner.nextLine();
                 System.out.print("Enter dead (true/false): ");
                 this.setDead(scanner.nextBoolean());
-                scanner.nextLine();
             } else if (normalized.equals("inventor")) {
+                scanner.nextLine();
                 System.out.print("Enter inventor items (comma separated): ");
                 String inventoryInput = scanner.nextLine().trim();
                 if (inventoryInput.isEmpty()) {

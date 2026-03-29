@@ -1,26 +1,12 @@
 import java.util.ArrayList;
 
-public class Base {
-    ArrayList<Unit> units;
-
-    // Constructor
+public class Base extends World {
+    // Constructors
     public Base(ArrayList<Unit> units) {
-        this.units = units;
-    }
-    public Base () {
-        this.units = new ArrayList<>();
+        super(units);
     }
 
-    // Setters
-
-    public void setUnits(ArrayList<Unit> units) {
-        this.units = units;
+    public Base() {
+        super();
     }
-
-    // Getters
-
-    public ArrayList<Unit> getUnits() {
-        return this.units;
-    }
-
 }
