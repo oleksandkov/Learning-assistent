@@ -198,7 +198,7 @@ public class Main {
                         } else {
                             System.out.println("Choose the correct option!");
                         }
-                    } 
+                    }
             } else {
                 System.err.println("Choose the correct option!");
                 System.out.println("Try again!");

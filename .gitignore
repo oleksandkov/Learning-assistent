@@ -47,7 +47,7 @@
 .vscode/
 !.vscode/launch.json
 !.vscode/tasks.json
-*keybindings*.json
+!.vscode/keybindings.json
 
 # IntelliJ IDEA project files
 OOP/Laba1/.idea/*.xml
