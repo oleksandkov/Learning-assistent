@@ -1,0 +1,6 @@
+version: 2
+updates:
+  - package-ecosystem: "npm" # Set to your specific package manager (e.g., pip, maven, npm)
+    directory: "/"
+    schedule:
+      interval: "weekly"
