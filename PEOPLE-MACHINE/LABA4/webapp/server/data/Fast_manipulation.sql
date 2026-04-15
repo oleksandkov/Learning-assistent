@@ -10,7 +10,7 @@ WHERE type = 'table'
 ORDER BY name;
 
 -- 1) Users: view all
-SELECT id, username, created_at
+SELECT id, username, status, created_at
 FROM users
 ORDER BY id;
 
@@ -25,7 +25,7 @@ ORDER BY id;
 -- WHERE username = 'username_here';
 
 -- 4) Users: delete ALL users (danger)
--- DELETE FROM users;
+DELETE FROM users;
 
 
 -- ====Tables=========================================================

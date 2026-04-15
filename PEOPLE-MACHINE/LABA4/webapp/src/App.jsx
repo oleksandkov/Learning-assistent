@@ -1,16 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 
-const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
-const WEEKS = ['1', '2', 'Обидва'];
-const TYPES = ['Лекція', 'Практика', 'Лабораторна'];
+const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
+const WEEKS = ["1", "2", "Обидва"];
+const TYPES = ["Лекція", "Практика", "Лабораторна"];
 
 function buildTimeOptions(startHour = 8, endHour = 18, intervalMinutes = 15) {
   const result = [];
   for (let hour = startHour; hour <= endHour; hour += 1) {
     for (let minute = 0; minute < 60; minute += intervalMinutes) {
       if (hour === endHour && minute > 0) break;
-      const hh = String(hour).padStart(2, '0');
-      const mm = String(minute).padStart(2, '0');
+      const hh = String(hour).padStart(2, "0");
+      const mm = String(minute).padStart(2, "0");
       result.push(`${hh}:${mm}`);
     }
   }
@@ -20,30 +20,30 @@ function buildTimeOptions(startHour = 8, endHour = 18, intervalMinutes = 15) {
 const TIMES = buildTimeOptions(8, 18, 15);
 
 function isValidOptionValue(value) {
-  const text = String(value || '').trim();
+  const text = String(value || "").trim();
   return (
     Boolean(text) &&
-    !text.includes('?') &&
-    !text.includes('�') &&
+    !text.includes("?") &&
+    !text.includes("�") &&
     !/^webtest(updated)?$/i.test(text)
   );
 }
 
 function normalizeOptions(values = []) {
-  const unique = [...new Set(values.map((x) => String(x || '').trim()))];
+  const unique = [...new Set(values.map((x) => String(x || "").trim()))];
   return unique.filter(isValidOptionValue);
 }
 
-function api(path, options = {}, token = '') {
+function api(path, options = {}, token = "") {
   const headers = {
-    'Content-Type': 'application/json',
-    ...(options.headers || {})
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
   };
   if (token) headers.Authorization = `Bearer ${token}`;
   return fetch(path, { ...options, headers }).then(async (res) => {
     const payload = await res.json().catch(() => ({}));
     if (!res.ok) {
-      throw new Error(payload.error || 'Request failed');
+      throw new Error(payload.error || "Request failed");
     }
     return payload;
   });
@@ -51,36 +51,46 @@ function api(path, options = {}, token = '') {
 
 function EmptyForm() {
   return {
-    subject: '',
-    day: '',
-    time: '',
-    room: '',
-    group: '',
-    week: '',
-    teacher: '',
-    type: ''
+    subject: "",
+    day: "",
+    time: "",
+    room: "",
+    group: "",
+    week: "",
+    teacher: "",
+    type: "",
   };
 }
 
 function LessonModal({ open, initial, lookups, onClose, onSave }) {
   const [form, setForm] = useState(initial || EmptyForm());
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     setForm(initial || EmptyForm());
-    setError('');
+    setError("");
   }, [initial, open]);
 
   if (!open) return null;
 
-  const set = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
+  const set = (field, value) =>
+    setForm((prev) => ({ ...prev, [field]: value }));
 
   const submit = (e) => {
     e.preventDefault();
-    const required = ['subject', 'day', 'time', 'room', 'group', 'week', 'teacher', 'type'];
+    const required = [
+      "subject",
+      "day",
+      "time",
+      "room",
+      "group",
+      "week",
+      "teacher",
+      "type",
+    ];
     for (const key of required) {
-      if (!String(form[key] || '').trim()) {
-        setError('Заповніть усі обовʼязкові поля.');
+      if (!String(form[key] || "").trim()) {
+        setError("Заповніть усі обовʼязкові поля.");
         return;
       }
     }
@@ -90,12 +100,16 @@ function LessonModal({ open, initial, lookups, onClose, onSave }) {
   return (
     <div className="overlay" role="presentation">
       <form className="modal" onSubmit={submit}>
-        <h3>{initial?.id ? 'Редагувати заняття' : 'Додати заняття'}</h3>
+        <h3>{initial?.id ? "Редагувати заняття" : "Додати заняття"}</h3>
         {error ? <p className="error">{error}</p> : null}
 
         <label>
           Предмет
-          <input value={form.subject} onChange={(e) => set('subject', e.target.value)} list="subjects" />
+          <input
+            value={form.subject}
+            onChange={(e) => set("subject", e.target.value)}
+            list="subjects"
+          />
           <datalist id="subjects">
             {lookups.subjects.map((x) => (
               <option key={x} value={x} />
@@ -106,7 +120,11 @@ function LessonModal({ open, initial, lookups, onClose, onSave }) {
         <div className="grid2">
           <label>
             День
-            <input value={form.day} onChange={(e) => set('day', e.target.value)} list="days" />
+            <input
+              value={form.day}
+              onChange={(e) => set("day", e.target.value)}
+              list="days"
+            />
             <datalist id="days">
               {lookups.days.map((x) => (
                 <option key={x} value={x} />
@@ -116,7 +134,11 @@ function LessonModal({ open, initial, lookups, onClose, onSave }) {
 
           <label>
             Час
-            <input value={form.time} onChange={(e) => set('time', e.target.value)} list="times" />
+            <input
+              value={form.time}
+              onChange={(e) => set("time", e.target.value)}
+              list="times"
+            />
             <datalist id="times">
               {lookups.times.map((x) => (
                 <option key={x} value={x} />
@@ -128,12 +150,19 @@ function LessonModal({ open, initial, lookups, onClose, onSave }) {
         <div className="grid2">
           <label>
             Аудиторія
-            <input value={form.room} onChange={(e) => set('room', e.target.value)} />
+            <input
+              value={form.room}
+              onChange={(e) => set("room", e.target.value)}
+            />
           </label>
 
           <label>
             Група
-            <input value={form.group} onChange={(e) => set('group', e.target.value)} list="groups" />
+            <input
+              value={form.group}
+              onChange={(e) => set("group", e.target.value)}
+              list="groups"
+            />
             <datalist id="groups">
               {lookups.groups.map((x) => (
                 <option key={x} value={x} />
@@ -145,7 +174,11 @@ function LessonModal({ open, initial, lookups, onClose, onSave }) {
         <div className="grid2">
           <label>
             Тиждень
-            <input value={form.week} onChange={(e) => set('week', e.target.value)} list="weeks" />
+            <input
+              value={form.week}
+              onChange={(e) => set("week", e.target.value)}
+              list="weeks"
+            />
             <datalist id="weeks">
               {lookups.weeks.map((x) => (
                 <option key={x} value={x} />
@@ -155,7 +188,11 @@ function LessonModal({ open, initial, lookups, onClose, onSave }) {
 
           <label>
             Викладач
-            <input value={form.teacher} onChange={(e) => set('teacher', e.target.value)} list="teachers" />
+            <input
+              value={form.teacher}
+              onChange={(e) => set("teacher", e.target.value)}
+              list="teachers"
+            />
             <datalist id="teachers">
               {lookups.teachers.map((x) => (
                 <option key={x} value={x} />
@@ -166,7 +203,10 @@ function LessonModal({ open, initial, lookups, onClose, onSave }) {
 
         <label>
           Тип
-          <select value={form.type} onChange={(e) => set('type', e.target.value)}>
+          <select
+            value={form.type}
+            onChange={(e) => set("type", e.target.value)}
+          >
             <option value="">Оберіть</option>
             {TYPES.map((x) => (
               <option key={x} value={x}>
@@ -188,11 +228,18 @@ function LessonModal({ open, initial, lookups, onClose, onSave }) {
 }
 
 function App() {
-  const [token, setToken] = useState(() => localStorage.getItem('authToken') || '');
-  const [user, setUser] = useState(() => localStorage.getItem('authUser') || '');
-  const [authMode, setAuthMode] = useState('login');
-  const [authForm, setAuthForm] = useState({ username: '', password: '' });
-  const [authError, setAuthError] = useState('');
+  const [token, setToken] = useState(
+    () => localStorage.getItem("authToken") || "",
+  );
+  const [user, setUser] = useState(
+    () => localStorage.getItem("authUser") || "",
+  );
+  const [isAdmin, setIsAdmin] = useState(
+    () => localStorage.getItem("authIsAdmin") === "1",
+  );
+  const [authMode, setAuthMode] = useState("login");
+  const [authForm, setAuthForm] = useState({ username: "", password: "" });
+  const [authError, setAuthError] = useState("");
 
   const [lookups, setLookups] = useState({
     subjects: [],
@@ -202,40 +249,42 @@ function App() {
     rooms: [],
     days: DAYS,
     weeks: WEEKS,
-    types: TYPES
+    types: TYPES,
   });
   const [lessons, setLessons] = useState([]);
   const [filters, setFilters] = useState(EmptyForm());
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState("");
   const [selectedId, setSelectedId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
 
   const selectedLesson = useMemo(
     () => lessons.find((x) => x.id === selectedId) || null,
-    [lessons, selectedId]
+    [lessons, selectedId],
   );
 
   const authSubmit = async (e) => {
     e.preventDefault();
-    setAuthError('');
+    setAuthError("");
     try {
       const data = await api(`/api/auth/${authMode}`, {
-        method: 'POST',
-        body: JSON.stringify(authForm)
+        method: "POST",
+        body: JSON.stringify(authForm),
       });
-      localStorage.setItem('authToken', data.token);
-      localStorage.setItem('authUser', data.user.username);
+      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("authUser", data.user.username);
+      localStorage.setItem("authIsAdmin", data.user.isAdmin ? "1" : "0");
       setToken(data.token);
       setUser(data.user.username);
-      setAuthForm({ username: '', password: '' });
+      setIsAdmin(Boolean(data.user.isAdmin));
+      setAuthForm({ username: "", password: "" });
     } catch (error) {
       setAuthError(error.message);
     }
   };
 
   const loadLookups = async () => {
-    const data = await api('/api/lookups', {}, token);
+    const data = await api("/api/lookups", {}, token);
     setLookups({
       subjects: normalizeOptions(data.subjects),
       groups: normalizeOptions(data.groups),
@@ -244,7 +293,7 @@ function App() {
       rooms: normalizeOptions(data.rooms),
       days: normalizeOptions(data.days?.length ? data.days : DAYS),
       weeks: normalizeOptions(data.weeks?.length ? data.weeks : WEEKS),
-      types: normalizeOptions(data.types?.length ? data.types : TYPES)
+      types: normalizeOptions(data.types?.length ? data.types : TYPES),
     });
   };
 
@@ -254,7 +303,11 @@ function App() {
       if (value) params.set(key, value);
     });
     const query = params.toString();
-    const data = await api(`/api/lessons${query ? `?${query}` : ''}`, {}, token);
+    const data = await api(
+      `/api/lessons${query ? `?${query}` : ""}`,
+      {},
+      token,
+    );
     setLessons(data);
     setSelectedId((prev) => (data.some((x) => x.id === prev) ? prev : null));
     setStatus(`Показано: ${data.length}`);
@@ -268,11 +321,34 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
+  useEffect(() => {
+    if (!token) return;
+
+    api("/api/auth/me", {}, token)
+      .then((data) => {
+        localStorage.setItem("authUser", data.user.username);
+        localStorage.setItem("authIsAdmin", data.user.isAdmin ? "1" : "0");
+        setUser(data.user.username);
+        setIsAdmin(Boolean(data.user.isAdmin));
+      })
+      .catch(() => {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("authUser");
+        localStorage.removeItem("authIsAdmin");
+        setToken("");
+        setUser("");
+        setIsAdmin(false);
+        setLessons([]);
+      });
+  }, [token]);
+
   const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('authUser');
-    setToken('');
-    setUser('');
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("authUser");
+    localStorage.removeItem("authIsAdmin");
+    setToken("");
+    setUser("");
+    setIsAdmin(false);
     setLessons([]);
   };
 
@@ -282,10 +358,10 @@ function App() {
     await api(
       `/api/lookups/${entity}`,
       {
-        method: 'POST',
-        body: JSON.stringify({ name: name.trim() })
+        method: "POST",
+        body: JSON.stringify({ name: name.trim() }),
       },
-      token
+      token,
     );
     await loadLookups();
   };
@@ -295,19 +371,19 @@ function App() {
       await api(
         `/api/lessons/${editData.id}`,
         {
-          method: 'PUT',
-          body: JSON.stringify(form)
+          method: "PUT",
+          body: JSON.stringify(form),
         },
-        token
+        token,
       );
     } else {
       await api(
-        '/api/lessons',
+        "/api/lessons",
         {
-          method: 'POST',
-          body: JSON.stringify(form)
+          method: "POST",
+          body: JSON.stringify(form),
         },
-        token
+        token,
       );
     }
     setModalOpen(false);
@@ -317,8 +393,8 @@ function App() {
 
   const removeLesson = async () => {
     if (!selectedLesson) return;
-    if (!window.confirm('Видалити вибраний рядок?')) return;
-    await api(`/api/lessons/${selectedLesson.id}`, { method: 'DELETE' }, token);
+    if (!window.confirm("Видалити вибраний рядок?")) return;
+    await api(`/api/lessons/${selectedLesson.id}`, { method: "DELETE" }, token);
     await loadLessons();
   };
 
@@ -332,15 +408,15 @@ function App() {
           <div className="segmented">
             <button
               type="button"
-              className={authMode === 'login' ? 'active' : ''}
-              onClick={() => setAuthMode('login')}
+              className={authMode === "login" ? "active" : ""}
+              onClick={() => setAuthMode("login")}
             >
               Вхід
             </button>
             <button
               type="button"
-              className={authMode === 'register' ? 'active' : ''}
-              onClick={() => setAuthMode('register')}
+              className={authMode === "register" ? "active" : ""}
+              onClick={() => setAuthMode("register")}
             >
               Реєстрація
             </button>
@@ -352,7 +428,9 @@ function App() {
             Логін
             <input
               value={authForm.username}
-              onChange={(e) => setAuthForm((prev) => ({ ...prev, username: e.target.value }))}
+              onChange={(e) =>
+                setAuthForm((prev) => ({ ...prev, username: e.target.value }))
+              }
             />
           </label>
           <label>
@@ -360,11 +438,15 @@ function App() {
             <input
               type="password"
               value={authForm.password}
-              onChange={(e) => setAuthForm((prev) => ({ ...prev, password: e.target.value }))}
+              onChange={(e) =>
+                setAuthForm((prev) => ({ ...prev, password: e.target.value }))
+              }
             />
           </label>
 
-          <button type="submit">{authMode === 'login' ? 'Увійти' : 'Зареєструватися'}</button>
+          <button type="submit">
+            {authMode === "login" ? "Увійти" : "Зареєструватися"}
+          </button>
         </form>
       </main>
     );
@@ -376,6 +458,9 @@ function App() {
         <h1>Розклад занять</h1>
         <div className="actions">
           <span className="badge">Користувач: {user}</span>
+          <span className="badge">
+            Роль: {isAdmin ? "Адміністратор" : "Лише перегляд"}
+          </span>
           <button className="secondary" onClick={logout}>
             Вийти
           </button>
@@ -389,7 +474,9 @@ function App() {
             Предмет
             <input
               value={filters.subject}
-              onChange={(e) => setFilters((prev) => ({ ...prev, subject: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, subject: e.target.value }))
+              }
               list="subjectFilter"
             />
             <datalist id="subjectFilter">
@@ -402,7 +489,9 @@ function App() {
             День
             <input
               value={filters.day}
-              onChange={(e) => setFilters((prev) => ({ ...prev, day: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, day: e.target.value }))
+              }
               list="dayFilter"
             />
             <datalist id="dayFilter">
@@ -415,7 +504,9 @@ function App() {
             Час
             <input
               value={filters.time}
-              onChange={(e) => setFilters((prev) => ({ ...prev, time: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, time: e.target.value }))
+              }
               list="timeFilter"
             />
             <datalist id="timeFilter">
@@ -428,7 +519,9 @@ function App() {
             Аудиторія
             <input
               value={filters.room}
-              onChange={(e) => setFilters((prev) => ({ ...prev, room: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, room: e.target.value }))
+              }
               placeholder="Введіть аудиторію"
             />
           </label>
@@ -436,7 +529,9 @@ function App() {
             Група
             <input
               value={filters.group}
-              onChange={(e) => setFilters((prev) => ({ ...prev, group: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, group: e.target.value }))
+              }
               list="groupFilter"
             />
             <datalist id="groupFilter">
@@ -449,7 +544,9 @@ function App() {
             Тиждень
             <input
               value={filters.week}
-              onChange={(e) => setFilters((prev) => ({ ...prev, week: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, week: e.target.value }))
+              }
               list="weekFilter"
             />
             <datalist id="weekFilter">
@@ -462,7 +559,9 @@ function App() {
             Викладач
             <input
               value={filters.teacher}
-              onChange={(e) => setFilters((prev) => ({ ...prev, teacher: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, teacher: e.target.value }))
+              }
               list="teacherFilter"
             />
             <datalist id="teacherFilter">
@@ -486,44 +585,63 @@ function App() {
             </button>
           </div>
 
-          <h4>Довідники</h4>
-          <div className="actions stacked">
-            <button className="secondary" onClick={() => addLookup('subjects', 'Новий предмет')}>
-              + Предмет
-            </button>
-            <button className="secondary" onClick={() => addLookup('groups', 'Нова група')}>
-              + Група
-            </button>
-            <button className="secondary" onClick={() => addLookup('teachers', 'Новий викладач')}>
-              + Викладач
-            </button>
-          </div>
+          {isAdmin ? (
+            <>
+              <h4>Довідники</h4>
+              <div className="actions stacked">
+                <button
+                  className="secondary"
+                  onClick={() => addLookup("subjects", "Новий предмет")}
+                >
+                  + Предмет
+                </button>
+                <button
+                  className="secondary"
+                  onClick={() => addLookup("groups", "Нова група")}
+                >
+                  + Група
+                </button>
+                <button
+                  className="secondary"
+                  onClick={() => addLookup("teachers", "Новий викладач")}
+                >
+                  + Викладач
+                </button>
+              </div>
+            </>
+          ) : null}
         </aside>
 
         <section className="tablePanel">
-          <div className="actions">
-            <button
-              onClick={() => {
-                setEditData(null);
-                setModalOpen(true);
-              }}
-            >
-              + Заняття
-            </button>
-            <button
-              className="secondary"
-              disabled={!selectedLesson}
-              onClick={() => {
-                setEditData(selectedLesson);
-                setModalOpen(true);
-              }}
-            >
-              Редагувати
-            </button>
-            <button className="danger" disabled={!selectedLesson} onClick={removeLesson}>
-              Видалити
-            </button>
-          </div>
+          {isAdmin ? (
+            <div className="actions">
+              <button
+                onClick={() => {
+                  setEditData(null);
+                  setModalOpen(true);
+                }}
+              >
+                + Заняття
+              </button>
+              <button
+                className="secondary"
+                disabled={!selectedLesson}
+                onClick={() => {
+                  setEditData(selectedLesson);
+                  setModalOpen(true);
+                }}
+              >
+                Редагувати
+              </button>
+              <button
+                className="danger"
+                disabled={!selectedLesson}
+                onClick={removeLesson}
+              >
+                Видалити
+              </button>
+            </div>
+          ) : null}
 
           <div className="tableWrap">
             <table>
@@ -545,10 +663,11 @@ function App() {
                     key={row.id}
                     onClick={() => setSelectedId(row.id)}
                     onDoubleClick={() => {
+                      if (!isAdmin) return;
                       setEditData(row);
                       setModalOpen(true);
                     }}
-                    className={row.id === selectedId ? 'selected' : ''}
+                    className={row.id === selectedId ? "selected" : ""}
                   >
                     <td>{row.subject}</td>
                     <td>{row.day}</td>
