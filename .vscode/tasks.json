@@ -261,22 +261,6 @@
       }
     },
     {
-      "label": "Run JavaFX PROJECT (MAIN, JDK21 quieter)",
-      "type": "shell",
-      "command": "$currentDir = '${fileDirname}'; $projectRoot = $currentDir; while ($projectRoot -and !(Test-Path (Join-Path $projectRoot 'pom.xml'))) { $parent = Split-Path -Parent $projectRoot; if ($parent -eq $projectRoot) { break }; $projectRoot = $parent }; if (!(Test-Path (Join-Path $projectRoot 'pom.xml'))) { Write-Error 'No pom.xml found from active file upward.'; exit 1 }; Set-Location -LiteralPath $projectRoot; if (Test-Path '.\\mvnw.cmd') { $mvn = '.\\mvnw.cmd' } else { $mvn = 'mvn' }; if (Test-Path 'C:\\Program Files\\Java\\jdk-21') { $env:JAVA_HOME = 'C:\\Program Files\\Java\\jdk-21'; $env:Path = ((Join-Path $env:JAVA_HOME 'bin') + ';' + $env:Path) } elseif (-not $env:JAVA_HOME) { $candidates = @('C:\\Program Files\\Java\\jdk-24'); foreach ($candidate in $candidates) { if (Test-Path $candidate) { $env:JAVA_HOME = $candidate; $env:Path = ((Join-Path $env:JAVA_HOME 'bin') + ';' + $env:Path); break } } }; $env:MAVEN_OPTS = '--enable-native-access=javafx.graphics'; chcp 65001 >$null; & $mvn -DskipTests javafx:run",
-      "problemMatcher": [],
-      "group": {
-        "kind": "build",
-        "isDefault": false
-      },
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "shared"
-      }
-    },
-    {
       "type": "cppbuild",
       "label": "C/C++: gcc.exe build active file",
       "command": "C:/msys64/ucrt64/bin/gcc.exe",
