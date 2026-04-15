@@ -23,13 +23,10 @@ public class Main {
         
 
 
-        // Initialization 
-        // The uni class
         World world = new World();
         world.setUnits(units);
 
 
-        // The base macroobject
         Base base = new Base();
         ArrayList<Unit> baseUnits = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
@@ -41,7 +38,6 @@ public class Main {
         }
         base.setUnits(baseUnits);
 
-        // The tower macroobject
         Tower tower = new Tower();
         ArrayList<Unit> towerUnits = new ArrayList<>();
         for (int i = 0; i < 5; i++) {

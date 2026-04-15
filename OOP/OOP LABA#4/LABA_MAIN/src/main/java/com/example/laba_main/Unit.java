@@ -1,3 +1,5 @@
+package com.example.laba_main;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -8,20 +10,20 @@ public class Unit implements Cloneable{
     private Integer health;
     private Boolean isSpawned;
     private String Team;
-    private Integer damage; 
+    private Integer damage;
     private Boolean isDead;
     private ArrayList<String> inventor;
-    
+
     private static int numObjects = 0;
     private static int objectedKilled = 0;
-    
+
     static {
         System.out.println("STATIC BLOCK IS RUNT");
         System.out.println("Unit class loaded. Objects count: " + numObjects);
     }
-    
+
     {
-        numObjects++;  
+        numObjects++;
         System.out.println("INIT BLOCK IS RUNT");
         System.out.println("Object #" + numObjects + " is being initialized");
     }
@@ -40,7 +42,7 @@ public class Unit implements Cloneable{
         this(100, false, "ally", 5, false, new ArrayList<>(Arrays.asList("sword")));
     }
 
-    
+
     public static int getNumObjects() {
         return numObjects;
     }
@@ -77,10 +79,10 @@ public class Unit implements Cloneable{
         return numObjects;
     }
     public static class HealthComparator implements Comparator<Unit> {
-    @Override
-    public int compare(Unit a, Unit b) {
-        return Integer.compare(a.getHealth(), b.getHealth());
-    }
+        @Override
+        public int compare(Unit a, Unit b) {
+            return Integer.compare(a.getHealth(), b.getHealth());
+        }
     }
 
     public static class TeamComparator implements Comparator<Unit> {
@@ -90,7 +92,7 @@ public class Unit implements Cloneable{
         }
     }
 
-        public int compareTo47(Unit x) {
+    public int compareTo47(Unit x) {
         int cmp = Integer.compare(this.health, x.health);
         if (cmp != 0) return cmp;
         cmp = this.Team.compareTo(x.Team);
@@ -110,7 +112,7 @@ public class Unit implements Cloneable{
         cmp = sortedInventor1.toString().compareTo(sortedInventor2.toString());
         if (cmp != 0) return cmp;
         return 0;
-        }
+    }
 
     public static Comparator<Unit> comparatorFromTemplate(Unit template) {
         return (u1, u2) -> {
@@ -249,7 +251,7 @@ public class Unit implements Cloneable{
         System.out.println("Object removed. Total objects: " + numObjects);
     }
     public void addHealth() {
-       this.health += 10;
+        this.health += 10;
     }
     public  void addDamage() {
         this.damage += 5;
@@ -283,40 +285,40 @@ public class Unit implements Cloneable{
         System.out.println("2. By default");
         Scanner scanner = new Scanner(System.in);
         int idx = scanner.nextInt();
-            if  (idx == 1) {
-                System.out.println("Set dead state: ");
-                scanner = new Scanner(System.in);
-                boolean isdead;
-                isdead = scanner.nextBoolean();
-                this.setDead(isdead);
-                scanner.nextLine();
-                System.out.println("Set health bar: ");
-                int numHealth;
-                numHealth = scanner.nextInt();
-                this.setHealth(numHealth);
-                scanner.nextLine();
-                boolean spawnState;
-                System.out.println("Set spawn state: ");
-                spawnState = scanner.nextBoolean();
-                this.setSpawned(spawnState);
-                scanner.nextLine();
-                System.out.println("Set team: ");
-                String team;
-                team = scanner.nextLine().trim();
-                this.setTeam(team);
-                System.out.println("Set damage: ");
-                int damage;
-                damage = scanner.nextInt();
-                this.setDamage(damage);
-                scanner.nextLine();
-                System.out.println("Set inventor: ");
-                String inventoryInput = scanner.nextLine().trim();
-                if (inventoryInput.isEmpty()) {
-                    this.setInventor(new ArrayList<>());
-                } else {
-                    this.setInventor(new ArrayList<>(Arrays.asList(inventoryInput.split("\\\\s+"))));
-                }
-                scanner.nextLine();
+        if  (idx == 1) {
+            System.out.println("Set dead state: ");
+            scanner = new Scanner(System.in);
+            boolean isdead;
+            isdead = scanner.nextBoolean();
+            this.setDead(isdead);
+            scanner.nextLine();
+            System.out.println("Set health bar: ");
+            int numHealth;
+            numHealth = scanner.nextInt();
+            this.setHealth(numHealth);
+            scanner.nextLine();
+            boolean spawnState;
+            System.out.println("Set spawn state: ");
+            spawnState = scanner.nextBoolean();
+            this.setSpawned(spawnState);
+            scanner.nextLine();
+            System.out.println("Set team: ");
+            String team;
+            team = scanner.nextLine().trim();
+            this.setTeam(team);
+            System.out.println("Set damage: ");
+            int damage;
+            damage = scanner.nextInt();
+            this.setDamage(damage);
+            scanner.nextLine();
+            System.out.println("Set inventor: ");
+            String inventoryInput = scanner.nextLine().trim();
+            if (inventoryInput.isEmpty()) {
+                this.setInventor(new ArrayList<>());
+            } else {
+                this.setInventor(new ArrayList<>(Arrays.asList(inventoryInput.split("\\\\s+"))));
+            }
+            scanner.nextLine();
         } else if (idx == 2) {
             this.setHealth(100);
             this.setSpawned(false);
@@ -324,7 +326,7 @@ public class Unit implements Cloneable{
             this.setDamage(5);
             this.setDead(true);
             this.setInventor(new ArrayList<>(Arrays.asList("sword")));
-        
+
         } else {
             System.out.println("Invalid option. Please try again.");
         }
@@ -333,7 +335,7 @@ public class Unit implements Cloneable{
         if (list.isEmpty()) {
             System.out.println("The list is empty. Please provide some values.");
             return;
-        } 
+        }
         this.setHealth(null);
         this.setDamage(null);
         this.setTeam(null);
@@ -383,25 +385,25 @@ public class Unit implements Cloneable{
         int cmp = 0;
         if (other == null) {
             throw new IllegalArgumentException("Cannot compare to null");
-            
+
         }
         if (other.getHealth() != null) {
-             cmp = Integer.compare(this.health, other.health);
+            cmp = Integer.compare(this.health, other.health);
         }
         if (other.getTeam() != null) {
-             cmp = this.Team.compareTo(other.Team);
+            cmp = this.Team.compareTo(other.Team);
         }
         if (other.getDamage() != null) {
-             cmp = this.damage.compareTo(other.damage);
+            cmp = this.damage.compareTo(other.damage);
         }
         if (other.getSpawned() != null) {
-             cmp = this.isSpawned.compareTo(other.isSpawned);
+            cmp = this.isSpawned.compareTo(other.isSpawned);
         }
         if (other.getDead() != null) {
-             cmp = this.isDead.compareTo(other.isDead);
+            cmp = this.isDead.compareTo(other.isDead);
         }
         if (other.getInventor() != null) {
-             ArrayList<String> sortedInventor1 = new ArrayList<>(this.inventor);
+            ArrayList<String> sortedInventor1 = new ArrayList<>(this.inventor);
             ArrayList<String> sortedInventor2 = new ArrayList<>(other.inventor);
             sortedInventor1.sort(String::compareTo);
             sortedInventor2.sort(String::compareTo);
@@ -409,7 +411,7 @@ public class Unit implements Cloneable{
         }
         return cmp;
     }
-    
+
     public void print() {
         System.out.println("THE HEALTH: " + health);
         System.out.println("IF UNIT IS SPAWNED: " + isSpawned);

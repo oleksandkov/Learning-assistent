@@ -1,3 +1,4 @@
+package com.example.laba_main;
 import java.util.ArrayList;
 
 public class Tower extends World {
@@ -9,3 +10,4 @@ public class Tower extends World {
         super();
     }
 }
+

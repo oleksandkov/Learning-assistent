@@ -1,3 +1,4 @@
+package com.example.laba_main;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -40,7 +41,7 @@ public class World {
         units.add(index, unit);
     }
 
-    
+
 
     public void update() {
         if (units != null) {
@@ -63,3 +64,4 @@ public class World {
 
 
 }
+
