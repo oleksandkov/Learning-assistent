@@ -84,12 +84,35 @@
     {
       "label": "Start All MCP Servers",
       "type": "shell",
-      "command": "npx -y @upstash/context7-mcp@latest & npx -y @modelcontextprotocol/server-sequential-thinking & npx -y @modelcontextprotocol/server-memory & npx -y @modelcontextprotocol/server-filesystem C:/Users/muaro/Documents/GitHub/Learning-assistent & npx -y qodo-mcp-server",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File ${workspaceFolder}/MyAgent/.agent-config/MyAgent/hooks/ensure_mcp_servers.ps1",
       "problemMatcher": [],
-      "isBackground": true,
+      "isBackground": false,
       "presentation": {
         "reveal": "always",
         "panel": "shared"
+      }
+    },
+    {
+      "label": "MCP Watchdog (Auto)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/mcp_watchdog.ps1",
+        "-IntervalSeconds",
+        "20"
+      ],
+      "isBackground": true,
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated"
       }
     },
     {
@@ -118,14 +141,14 @@
         "Start MCP: sequentialthinking",
         "Start MCP: memory",
         "Start MCP: filesystem",
-        "Start MCP: qodo"
+        "Start MCP: markitdown"
       ],
       "dependsOrder": "parallel"
     },
     {
       "label": "Start MCP: context7",
       "type": "shell",
-      "command": "npx -y @upstash/context7-mcp@latest",
+      "command": "npx -y \"@upstash/context7-mcp@latest\"",
       "isBackground": true,
       "presentation": {
         "reveal": "always",
@@ -135,7 +158,7 @@
     {
       "label": "Start MCP: sequentialthinking",
       "type": "shell",
-      "command": "npx -y @modelcontextprotocol/server-sequential-thinking",
+      "command": "npx -y \"@modelcontextprotocol/server-sequential-thinking\"",
       "isBackground": true,
       "presentation": {
         "reveal": "always",
@@ -145,7 +168,7 @@
     {
       "label": "Start MCP: memory",
       "type": "shell",
-      "command": "npx -y @modelcontextprotocol/server-memory",
+      "command": "npx -y \"@modelcontextprotocol/server-memory\"",
       "isBackground": true,
       "presentation": {
         "reveal": "always",
@@ -155,7 +178,7 @@
     {
       "label": "Start MCP: filesystem",
       "type": "shell",
-      "command": "npx -y @modelcontextprotocol/server-filesystem C:/Users/muaro/Documents/GitHub/Learning-assistent",
+      "command": "npx -y \"@modelcontextprotocol/server-filesystem\" \"C:/Users/muaro/Documents/GitHub/Learning-assistent\"",
       "isBackground": true,
       "presentation": {
         "reveal": "always",
@@ -163,9 +186,9 @@
       }
     },
     {
-      "label": "Start MCP: qodo",
+      "label": "Start MCP: markitdown",
       "type": "shell",
-      "command": "npx -y qodo-mcp-server",
+      "command": "& 'C:\\Users\\muaro\\AppData\\Roaming\\Python\\Python313\\Scripts\\uvx.exe' markitdown-mcp",
       "isBackground": true,
       "presentation": {
         "reveal": "always",
