@@ -5,6 +5,13 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Scanner;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Line;
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+
+
+
 
 public class Unit implements Cloneable{
     private Integer health;
@@ -16,6 +23,15 @@ public class Unit implements Cloneable{
 
     private static int numObjects = 0;
     private static int objectedKilled = 0;
+
+    // Graphical arguments
+    protected Label labelName;
+    protected Line life;
+    protected ImageView image;
+    protected double x, y; // coordinates
+    protected boolean isActive;
+    protected Rectangle rectActive;
+    private static double MAX_HEALTH;
 
     static {
         System.out.println("STATIC BLOCK IS RUNT");
@@ -39,7 +55,7 @@ public class Unit implements Cloneable{
     }
 
     public  Unit() {
-        this(100, false, "ally", 5, false, new ArrayList<>(Arrays.asList("sword")));
+        this(100, false, "ally", 5, false, new ArrayList<String>(Arrays.asList("sword")));
     }
 
 
@@ -155,6 +171,9 @@ public class Unit implements Cloneable{
 
     public void setHealth(Integer health) {
         this.health = health;
+        if (life != null) {
+            setCoordinates();
+        }
     }
 
     public void setSpawned(Boolean spawned) {
@@ -420,6 +439,81 @@ public class Unit implements Cloneable{
         System.out.println("IF THE ENEMY ALIVE: " + isDead);
         System.out.println("THE INVENTORY: " + inventor);
 
+    }
+
+
+    // Grapphical methods
+    protected double imageDeltaX() {
+        return 0.0;
+    }
+
+    protected double imageDeltaY() {
+        return 0.0;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void resurrect() {
+        if (HelloApplication.group == null || labelName == null || life == null || image == null) {
+            return;
+        }
+        HelloApplication.group.getChildren().addAll(labelName, life, image);
+        if (isActive) {
+            HelloApplication.group.getChildren().add(rectActive);
+        }
+    }
+    public void setCoordinates() {
+        if (labelName == null || life == null || image == null || rectActive == null) {
+            return;
+        }
+
+        labelName.setLayoutX(x);
+        labelName.setLayoutY(y);
+
+        double hp = getHealth() == null ? 0.0 : Math.max(0.0, getHealth());
+        life.setStartX(x);
+        life.setStartY(y + 15);
+        life.setEndX(x + (hp / MAX_HEALTH) * 100);
+        life.setEndY(y + 15);
+
+        image.setX(x + imageDeltaX());
+        image.setY(y + imageDeltaY());
+
+        rectActive.setX(x - 5);
+        rectActive.setY(y - 5);
+    }
+    public void move(double dx, double dy) {
+        x += dx;
+        y += dy;
+        setCoordinates();
+    }
+
+    public void setPosition(double newX, double newY) {
+        x = newX;
+        y = newY;
+        setCoordinates();
+    }
+
+    public boolean flipActivation() {
+        if (HelloApplication.group != null) {
+            if (isActive) {
+                HelloApplication.group.getChildren().remove(rectActive);
+            } else {
+                HelloApplication.group.getChildren().add(rectActive);
+            }
+        }
+        isActive = !isActive;
+        return isActive;
+    }
+
+    public boolean tryActivate(double mx, double my) {
+        if (image.getBoundsInParent().contains(mx, my)) {
+            flipActivation();
+            return true;
+        }
+        return false;
     }
 
 }

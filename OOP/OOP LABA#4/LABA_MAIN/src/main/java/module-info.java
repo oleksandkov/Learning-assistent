@@ -10,6 +10,7 @@ module com.example.laba_main {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.desktop;
 
     opens com.example.laba_main to javafx.fxml;
     exports com.example.laba_main;
