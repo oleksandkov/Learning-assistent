@@ -11,21 +11,33 @@ import javafx.scene.shape.Rectangle;
 
 
 public class Warrior extends Unit {
-    private static double MAX_HEALTH = 100.0;
+    private static String name = "Warrior";
+    static {
+        MAX_HEALTH = 100;
+    }
+
+
+
+    // Getters and Setters
+    public static String getName() {
+        return name;
+    }
 
     // Constructors
     public Warrior(Integer health, Boolean isSpawned, String team, Integer damage, Boolean isDead, ArrayList<String> inventor) {
         this(health, isSpawned, team, damage, isDead, inventor, 0.0, 0.0);
+        initGraphics(getName(), x, y);
     }
 
     public Warrior(Integer health, Boolean isSpawned, String team, Integer damage, Boolean isDead,
                    ArrayList<String> inventor, double startX, double startY) {
         super(health, isSpawned, team, damage, isDead, inventor);
-        initGraphics("Warrior", startX, startY);
+        initGraphics(getName(), startX, startY);
     }
 
     public Warrior() {
         this(100, true, "ally", 5, false, new ArrayList<>(Arrays.asList("Knife")), 0.0, 0.0);
+        initGraphics(getName(), x, y);
     }
 
     private void initGraphics(String name, double startX, double startY) {
@@ -47,16 +59,6 @@ public class Warrior extends Unit {
         rectActive.setStroke(Color.GREEN);
 
         setCoordinates();
-    }
-
-    @Override
-    protected double imageDeltaX() {
-        return 0.0;
-    }
-
-    @Override
-    protected double imageDeltaY() {
-        return 0.0;
     }
 
     

@@ -31,7 +31,12 @@ public class Unit implements Cloneable{
     protected double x, y; // coordinates
     protected boolean isActive;
     protected Rectangle rectActive;
-    private static double MAX_HEALTH;
+    protected  static double MAX_HEALTH;
+
+    protected  void setMaxHealth(double maxHealth) {
+        MAX_HEALTH = maxHealth;
+    }
+    
 
     static {
         System.out.println("STATIC BLOCK IS RUNT");
@@ -469,20 +474,20 @@ public class Unit implements Cloneable{
             return;
         }
 
-        labelName.setLayoutX(x);
-        labelName.setLayoutY(y);
+        labelName.setLayoutX(x + 10);
+        labelName.setLayoutY(y - 10);
 
         double hp = getHealth() == null ? 0.0 : Math.max(0.0, getHealth());
         life.setStartX(x);
-        life.setStartY(y + 15);
+        life.setStartY(y + 10);
         life.setEndX(x + (hp / MAX_HEALTH) * 100);
-        life.setEndY(y + 15);
+        life.setEndY(y + 10);
 
-        image.setX(x + imageDeltaX());
-        image.setY(y + imageDeltaY());
+        image.setX(x);
+        image.setY(y);
 
-        rectActive.setX(x - 5);
-        rectActive.setY(y - 5);
+        rectActive.setX(x - 9);
+        rectActive.setY(y - 9);
     }
     public void move(double dx, double dy) {
         x += dx;
