@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VoiceDesk AI</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="container">
+      <p class="kicker">VoiceDesk</p>
+      <h1>Voice AI Workspace</h1>
+      <p class="subtitle">Record. Review. Run.</p>
+    </header>
+
+    <main class="container layout" aria-label="Voice chat workspace">
+      <section class="panel" aria-labelledby="voice-controls-heading">
+        <h2 id="voice-controls-heading">Voice Controls</h2>
+
+        <div class="button-row">
+          <button id="recordBtn" type="button">Record</button>
+          <button id="stopBtn" type="button" disabled>Stop</button>
+          <button id="redoBtn" type="button" disabled>Redo</button>
+          <button id="pushBtn" type="button" disabled>Push</button>
+        </div>
+
+        <p id="status" role="status" aria-live="polite">Ready.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="input-devices-heading">
+        <h2 id="input-devices-heading">Input Devices</h2>
+
+        <div class="device-controls">
+          <label for="inputDeviceSelect">Microphone:</label>
+          <select id="inputDeviceSelect" aria-label="Select microphone input device">
+            <option value="default">Default microphone</option>
+          </select>
+          <button id="refreshDevicesBtn" type="button">Refresh devices</button>
+        </div>
+
+        <p id="devicesStatus" class="helper-text" aria-live="polite">Not loaded.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="draft-heading">
+        <h2 id="draft-heading">Prompt Draft</h2>
+        <div id="draft" class="draft" aria-live="polite">Draft appears here.</div>
+      </section>
+
+      <section class="panel" aria-labelledby="chat-heading">
+        <h2 id="chat-heading">Chat History</h2>
+        <ul id="chatList" class="chat-list" aria-label="Conversation messages"></ul>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
