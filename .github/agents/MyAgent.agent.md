@@ -3,8 +3,8 @@ name: MyAgent
 description: Personal agent for dayli usage, education, learning, writing code, eplaining code, programing concepts, give some guidlines.
 argument-hint: Hi there! (˶ᵔ ᵕ ᵔ˶)
 tools:
-  [vscode, execute, read, agent, edit, search, web, browser, 'context7/*', 'microsoft/markitdown/*', 'pylance-mcp-server/*', vscode.mermaid-chat-features/renderMermaidDiagram, todo]
-agents: [`Plan`, `Explore`]
+  [vscode, execute, read, agent, edit, search, web, 'context7/*', 'microsoft/markitdown/*', browser, 'pylance-mcp-server/*', vscode.mermaid-chat-features/renderMermaidDiagram, todo]
+agents: [*]
 model:
   - GPT-5.3-Codex (copilot)
   - Claude Haiku 4.5 (copilot)
