@@ -89,6 +89,27 @@ function sanitizeOptionList(values = []) {
   );
 }
 
+function splitMultiValues(value) {
+  return String(value || "")
+    .split(/[;,\n]+/)
+    .map((x) => x.trim())
+    .filter(Boolean);
+}
+
+function collectLessonGroups(payload = {}) {
+  const groupsFromArray = Array.isArray(payload.groups)
+    ? payload.groups.map((x) => String(x || "").trim())
+    : [];
+
+  const merged = [
+    String(payload.group || "").trim(),
+    ...groupsFromArray,
+    ...splitMultiValues(payload.groupsText),
+  ];
+
+  return sanitizeOptionList(merged);
+}
+
 function auth(req, res, next) {
   const isPublicAuthRoute =
     req.path === "/api/auth/register" || req.path === "/api/auth/login";
@@ -139,13 +160,12 @@ async function requireAdmin(req, res, next) {
     .json({ error: "Лише адміністратор може змінювати дані" });
 }
 
-function validateLesson(payload) {
+function validateLesson(payload, groups = []) {
   const required = [
     "subject",
     "day",
     "time",
     "room",
-    "group",
     "week",
     "teacher",
     "type",
@@ -155,14 +175,19 @@ function validateLesson(payload) {
       return `Поле \"${field}\" є обов'язковим`;
     }
   }
+
+  if (!groups.length) {
+    return 'Поле "group" є обов\'язковим';
+  }
+
   return null;
 }
 
 async function upsertLookupsFromLesson(lesson) {
   await run("INSERT OR IGNORE INTO subjects(name) VALUES(?)", [lesson.subject]);
-  await run("INSERT OR IGNORE INTO study_groups(name) VALUES(?)", [
-    lesson.group,
-  ]);
+  for (const group of lesson.groups || []) {
+    await run("INSERT OR IGNORE INTO study_groups(name) VALUES(?)", [group]);
+  }
   await run("INSERT OR IGNORE INTO teachers(name) VALUES(?)", [lesson.teacher]);
 }
 
@@ -333,12 +358,16 @@ app.post("/api/lookups/:entity", requireAdmin, async (req, res) => {
 });
 
 app.get("/api/lessons", async (req, res) => {
+  const groupFilters = sanitizeOptionList([
+    String(req.query.group || "").trim(),
+    ...splitMultiValues(req.query.groups),
+  ]);
+
   const filters = {
     subject: String(req.query.subject || "").trim(),
     day: String(req.query.day || "").trim(),
     time: String(req.query.time || "").trim(),
     room: String(req.query.room || "").trim(),
-    group: String(req.query.group || "").trim(),
     week: String(req.query.week || "").trim(),
     teacher: String(req.query.teacher || "").trim(),
     type: String(req.query.type || "").trim(),
@@ -351,11 +380,18 @@ app.get("/api/lessons", async (req, res) => {
     day: "day",
     time: "lesson_time",
     room: "room",
-    group: "group_name",
     week: "week",
     teacher: "teacher",
     type: "lesson_type",
   };
+
+  if (groupFilters.length) {
+    const groupClauses = groupFilters.map(
+      () => "LOWER(TRIM(group_name)) = LOWER(TRIM(?))",
+    );
+    clauses.push(`(${groupClauses.join(" OR ")})`);
+    groupFilters.forEach((value) => params.push(value));
+  }
 
   for (const [key, value] of Object.entries(filters)) {
     if (!value) continue;
@@ -388,54 +424,62 @@ app.get("/api/lessons", async (req, res) => {
 });
 
 app.post("/api/lessons", requireAdmin, async (req, res) => {
+  const groups = collectLessonGroups(req.body);
   const lesson = {
     subject: String(req.body.subject || "").trim(),
     day: String(req.body.day || "").trim(),
     time: String(req.body.time || "").trim(),
     room: String(req.body.room || "").trim(),
-    group: String(req.body.group || "").trim(),
+    group: groups[0] || "",
+    groups,
     week: String(req.body.week || "").trim(),
     teacher: String(req.body.teacher || "").trim(),
     type: String(req.body.type || "").trim(),
   };
 
-  const validationError = validateLesson(lesson);
+  const validationError = validateLesson(lesson, groups);
   if (validationError) {
     return res.status(400).json({ error: validationError });
   }
 
   await upsertLookupsFromLesson(lesson);
-  const result = await run(
-    `INSERT INTO lessons(subject, day, lesson_time, room, group_name, week, teacher, lesson_type)
-     VALUES(?, ?, ?, ?, ?, ?, ?, ?)`,
-    [
-      lesson.subject,
-      lesson.day,
-      lesson.time,
-      lesson.room,
-      lesson.group,
-      lesson.week,
-      lesson.teacher,
-      lesson.type,
-    ],
-  );
+  const ids = [];
+  for (const group of groups) {
+    const result = await run(
+      `INSERT INTO lessons(subject, day, lesson_time, room, group_name, week, teacher, lesson_type)
+       VALUES(?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        lesson.subject,
+        lesson.day,
+        lesson.time,
+        lesson.room,
+        group,
+        lesson.week,
+        lesson.teacher,
+        lesson.type,
+      ],
+    );
+    ids.push(result.lastID);
+  }
 
-  return res.status(201).json({ id: result.lastID });
+  return res.status(201).json({ ids, count: ids.length });
 });
 
 app.put("/api/lessons/:id", requireAdmin, async (req, res) => {
+  const groups = collectLessonGroups(req.body);
   const lesson = {
     subject: String(req.body.subject || "").trim(),
     day: String(req.body.day || "").trim(),
     time: String(req.body.time || "").trim(),
     room: String(req.body.room || "").trim(),
-    group: String(req.body.group || "").trim(),
+    group: groups[0] || "",
+    groups: groups[0] ? [groups[0]] : [],
     week: String(req.body.week || "").trim(),
     teacher: String(req.body.teacher || "").trim(),
     type: String(req.body.type || "").trim(),
   };
 
-  const validationError = validateLesson(lesson);
+  const validationError = validateLesson(lesson, lesson.groups);
   if (validationError) {
     return res.status(400).json({ error: validationError });
   }

@@ -34,6 +34,30 @@ function normalizeOptions(values = []) {
   return unique.filter(isValidOptionValue);
 }
 
+function appendUniqueOption(list = [], value = "") {
+  const nextValue = String(value || "").trim();
+  if (!nextValue) return normalizeOptions(list);
+  return normalizeOptions([...list, nextValue]);
+}
+
+function lessonGroupKey(lesson) {
+  return [
+    lesson.subject,
+    lesson.day,
+    lesson.time,
+    lesson.room,
+    lesson.week,
+    lesson.teacher,
+    lesson.type,
+  ]
+    .map((x) =>
+      String(x || "")
+        .trim()
+        .toLowerCase(),
+    )
+    .join("||");
+}
+
 function api(path, options = {}, token = "") {
   const headers = {
     "Content-Type": "application/json",
@@ -56,6 +80,8 @@ function EmptyForm() {
     time: "",
     room: "",
     group: "",
+    groups: [],
+    groupInput: "",
     week: "",
     teacher: "",
     type: "",
@@ -65,9 +91,20 @@ function EmptyForm() {
 function LessonModal({ open, initial, lookups, onClose, onSave }) {
   const [form, setForm] = useState(initial || EmptyForm());
   const [error, setError] = useState("");
+  const isEdit = Boolean(initial?.id);
 
   useEffect(() => {
-    setForm(initial || EmptyForm());
+    if (initial) {
+      setForm({
+        ...EmptyForm(),
+        ...initial,
+        groups: normalizeOptions(
+          initial.groups?.length ? initial.groups : [initial.group],
+        ),
+      });
+    } else {
+      setForm(EmptyForm());
+    }
     setError("");
   }, [initial, open]);
 
@@ -76,6 +113,27 @@ function LessonModal({ open, initial, lookups, onClose, onSave }) {
   const set = (field, value) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
+  const addCreateGroup = () => {
+    setForm((prev) => ({
+      ...prev,
+      groups: appendUniqueOption(prev.groups, prev.groupInput),
+      groupInput: "",
+    }));
+  };
+
+  const onCreateGroupKeyDown = (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    addCreateGroup();
+  };
+
+  const removeCreateGroup = (value) => {
+    setForm((prev) => ({
+      ...prev,
+      groups: (prev.groups || []).filter((x) => x !== value),
+    }));
+  };
+
   const submit = (e) => {
     e.preventDefault();
     const required = [
@@ -83,7 +141,6 @@ function LessonModal({ open, initial, lookups, onClose, onSave }) {
       "day",
       "time",
       "room",
-      "group",
       "week",
       "teacher",
       "type",
@@ -94,7 +151,22 @@ function LessonModal({ open, initial, lookups, onClose, onSave }) {
         return;
       }
     }
-    onSave(form);
+
+    const mergedGroups = normalizeOptions([
+      ...(form.groups || []),
+      form.groupInput,
+    ]);
+
+    if (!mergedGroups.length) {
+      setError("Додайте щонайменше одну групу.");
+      return;
+    }
+
+    onSave({
+      ...form,
+      group: mergedGroups[0],
+      groups: mergedGroups,
+    });
   };
 
   return (
@@ -147,28 +219,56 @@ function LessonModal({ open, initial, lookups, onClose, onSave }) {
           </label>
         </div>
 
-        <div className="grid2">
-          <label>
-            Аудиторія
-            <input
-              value={form.room}
-              onChange={(e) => set("room", e.target.value)}
-            />
-          </label>
+        <label>
+          Аудиторія
+          <input
+            value={form.room}
+            onChange={(e) => set("room", e.target.value)}
+          />
+        </label>
 
+        <div>
           <label>
             Група
             <input
-              value={form.group}
-              onChange={(e) => set("group", e.target.value)}
-              list="groups"
+              value={form.groupInput || ""}
+              onChange={(e) => set("groupInput", e.target.value)}
+              onKeyDown={onCreateGroupKeyDown}
+              list="groupsCreate"
+              placeholder="Введіть групу і натисніть Додати"
             />
-            <datalist id="groups">
+            <datalist id="groupsCreate">
               {lookups.groups.map((x) => (
                 <option key={x} value={x} />
               ))}
             </datalist>
           </label>
+          <div className="actions">
+            <button
+              type="button"
+              className="secondary"
+              onClick={addCreateGroup}
+            >
+              + Додати групу
+            </button>
+          </div>
+          {form.groups?.length ? (
+            <div className="chipList">
+              {form.groups.map((x) => (
+                <span key={x} className="chip">
+                  {x}
+                  <button
+                    type="button"
+                    onClick={() => removeCreateGroup(x)}
+                    aria-label={`Видалити групу ${x}`}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : null}
+          <small className="mutedSmall"></small>
         </div>
 
         <div className="grid2">
@@ -253,14 +353,61 @@ function App() {
   });
   const [lessons, setLessons] = useState([]);
   const [filters, setFilters] = useState(EmptyForm());
+  const [appliedFilters, setAppliedFilters] = useState(EmptyForm());
   const [status, setStatus] = useState("");
   const [selectedId, setSelectedId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editData, setEditData] = useState(null);
 
+  const groupedLessons = useMemo(() => {
+    const map = new Map();
+    for (const row of lessons) {
+      const key = lessonGroupKey(row);
+      if (!map.has(key)) {
+        map.set(key, {
+          ...row,
+          ids: [row.id],
+          groups: normalizeOptions([row.group]),
+        });
+        continue;
+      }
+
+      const current = map.get(key);
+      current.ids.push(row.id);
+      current.groups = normalizeOptions([...(current.groups || []), row.group]);
+      current.group = current.groups.join(", ");
+      map.set(key, current);
+    }
+
+    return [...map.values()];
+  }, [lessons]);
+
+  const activeGroupFilters = useMemo(
+    () => normalizeOptions(appliedFilters.groups || []),
+    [appliedFilters.groups],
+  );
+
+  const filteredGroupedLessons = useMemo(() => {
+    if (!activeGroupFilters.length) return groupedLessons;
+
+    return groupedLessons.filter((lesson) => {
+      const lessonGroups = normalizeOptions(lesson.groups || [lesson.group]);
+
+      if (activeGroupFilters.length === 1) {
+        return lessonGroups.includes(activeGroupFilters[0]);
+      }
+
+      if (lessonGroups.length !== activeGroupFilters.length) {
+        return false;
+      }
+
+      return activeGroupFilters.every((group) => lessonGroups.includes(group));
+    });
+  }, [groupedLessons, activeGroupFilters]);
+
   const selectedLesson = useMemo(
-    () => lessons.find((x) => x.id === selectedId) || null,
-    [lessons, selectedId],
+    () => filteredGroupedLessons.find((x) => x.id === selectedId) || null,
+    [filteredGroupedLessons, selectedId],
   );
 
   const authSubmit = async (e) => {
@@ -297,9 +444,18 @@ function App() {
     });
   };
 
-  const loadLessons = async (customFilters = filters) => {
+  const loadLessons = async (customFilters = appliedFilters) => {
     const params = new URLSearchParams();
-    Object.entries(customFilters).forEach(([key, value]) => {
+    const queryFilters = {
+      subject: customFilters.subject,
+      day: customFilters.day,
+      time: customFilters.time,
+      room: customFilters.room,
+      week: customFilters.week,
+      teacher: customFilters.teacher,
+      type: customFilters.type,
+    };
+    Object.entries(queryFilters).forEach(([key, value]) => {
       if (value) params.set(key, value);
     });
     const query = params.toString();
@@ -308,10 +464,19 @@ function App() {
       {},
       token,
     );
+
+    setAppliedFilters({
+      ...EmptyForm(),
+      ...customFilters,
+      groups: normalizeOptions(customFilters.groups || []),
+    });
     setLessons(data);
     setSelectedId((prev) => (data.some((x) => x.id === prev) ? prev : null));
-    setStatus(`Показано: ${data.length}`);
   };
+
+  useEffect(() => {
+    setStatus(`Показано: ${filteredGroupedLessons.length}`);
+  }, [filteredGroupedLessons]);
 
   useEffect(() => {
     if (!token) return;
@@ -367,12 +532,30 @@ function App() {
   };
 
   const saveLesson = async (form) => {
+    const payload = {
+      subject: String(form.subject || "").trim(),
+      day: String(form.day || "").trim(),
+      time: String(form.time || "").trim(),
+      room: String(form.room || "").trim(),
+      group: String(form.group || "").trim(),
+      groups: normalizeOptions(form.groups || []),
+      week: String(form.week || "").trim(),
+      teacher: String(form.teacher || "").trim(),
+      type: String(form.type || "").trim(),
+    };
+
     if (editData?.id) {
+      const idsToReplace = editData.ids?.length ? editData.ids : [editData.id];
+      await Promise.all(
+        idsToReplace.map((id) =>
+          api(`/api/lessons/${id}`, { method: "DELETE" }, token),
+        ),
+      );
       await api(
-        `/api/lessons/${editData.id}`,
+        "/api/lessons",
         {
-          method: "PUT",
-          body: JSON.stringify(form),
+          method: "POST",
+          body: JSON.stringify(payload),
         },
         token,
       );
@@ -381,7 +564,7 @@ function App() {
         "/api/lessons",
         {
           method: "POST",
-          body: JSON.stringify(form),
+          body: JSON.stringify(payload),
         },
         token,
       );
@@ -394,8 +577,36 @@ function App() {
   const removeLesson = async () => {
     if (!selectedLesson) return;
     if (!window.confirm("Видалити вибраний рядок?")) return;
-    await api(`/api/lessons/${selectedLesson.id}`, { method: "DELETE" }, token);
+    const idsToDelete = selectedLesson.ids?.length
+      ? selectedLesson.ids
+      : [selectedLesson.id];
+    await Promise.all(
+      idsToDelete.map((id) =>
+        api(`/api/lessons/${id}`, { method: "DELETE" }, token),
+      ),
+    );
     await loadLessons();
+  };
+
+  const addFilterGroup = () => {
+    setFilters((prev) => ({
+      ...prev,
+      groups: appendUniqueOption(prev.groups, prev.groupInput),
+      groupInput: "",
+    }));
+  };
+
+  const onFilterGroupKeyDown = (event) => {
+    if (event.key !== "Enter") return;
+    event.preventDefault();
+    addFilterGroup();
+  };
+
+  const removeFilterGroup = (value) => {
+    setFilters((prev) => ({
+      ...prev,
+      groups: (prev.groups || []).filter((x) => x !== value),
+    }));
   };
 
   if (!token) {
@@ -528,17 +739,47 @@ function App() {
           <label>
             Група
             <input
-              value={filters.group}
+              value={filters.groupInput || ""}
               onChange={(e) =>
-                setFilters((prev) => ({ ...prev, group: e.target.value }))
+                setFilters((prev) => ({ ...prev, groupInput: e.target.value }))
               }
+              onKeyDown={onFilterGroupKeyDown}
               list="groupFilter"
+              placeholder="Введіть групу і натисніть Додати"
             />
             <datalist id="groupFilter">
               {lookups.groups.map((x) => (
                 <option key={x} value={x} />
               ))}
             </datalist>
+          </label>
+          <div className="actions">
+            <button
+              type="button"
+              className="secondary"
+              onClick={addFilterGroup}
+            >
+              + Додати групу у фільтр
+            </button>
+          </div>
+          {filters.groups?.length ? (
+            <div className="chipList">
+              {filters.groups.map((x) => (
+                <span key={x} className="chip">
+                  {x}
+                  <button
+                    type="button"
+                    onClick={() => removeFilterGroup(x)}
+                    aria-label={`Видалити групу фільтра ${x}`}
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : null}
+          <label>
+            <small className="mutedSmall"></small>
           </label>
           <label>
             Тиждень
@@ -658,7 +899,7 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {lessons.map((row) => (
+                {filteredGroupedLessons.map((row) => (
                   <tr
                     key={row.id}
                     onClick={() => setSelectedId(row.id)}
