@@ -5,7 +5,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -23,17 +25,18 @@ public class HelloApplication extends Application {
     public static Image imgWarrior;
     public static ArrayList<Unit> warriors;
 
-    private Map<KeyCode, Double> keysPresses = new HashMap<>();
-    private Map<KeyCode, Boolean> keysPressed = new HashMap<>();
+    private final Map<KeyCode, Double> keysPresses = new HashMap<>();
+    private final Map<KeyCode, Boolean> keysPressed = new HashMap<>();
+    private final Set<KeyCode> handledActionKeys = new HashSet<>();
 
     // Speed
-    public static double keyStepX = 1.0;
-    public static double keyStepY = 1.0;
+    public static double keyStepX = 5.0;
+    public static double keyStepY = 5.0;
 
 
 
    
-
+    
 
 
     @Override
@@ -51,9 +54,21 @@ public class HelloApplication extends Application {
         keysPresses.put(KeyCode.LEFT, -keyStepX);
         keysPresses.put(KeyCode.RIGHT, keyStepX);
 
-        
-        scene.setOnKeyPressed(e -> keysPressed.put(e.getCode(), true));
-        scene.setOnKeyReleased(e -> keysPressed.remove(e.getCode()));
+        scene.setOnKeyPressed(e -> {
+            KeyCode code = e.getCode();
+            if (code == KeyCode.DELETE || code == KeyCode.INSERT) {
+                if (handledActionKeys.contains(code)) {
+                    return;
+                }
+                handledActionKeys.add(code);
+            }
+            keysPressed.put(code, true);
+        });
+        scene.setOnKeyReleased(e -> {
+            KeyCode code = e.getCode();
+            keysPressed.remove(code);
+            handledActionKeys.remove(code);
+        });
 
         URL warriorUrl = HelloApplication.class.getResource("/warrior_backup_before_transparency-removebg-preview.png");
         if (warriorUrl == null) {
@@ -62,6 +77,7 @@ public class HelloApplication extends Application {
         imgWarrior = new Image(warriorUrl.toExternalForm(), 100, 100, false, false);
 
         warriors = new ArrayList<>();
+        World world = new World(warriors);
 
         warriors.add(new Warrior(100, true, "ally", 7, false,
                 new ArrayList<>(Arrays.asList("Knife", "Shield")), 80, 80));
@@ -88,8 +104,8 @@ public class HelloApplication extends Application {
             @Override
             public void handle(long now) {
                 double dx = 0, dy = 0;
-                
-                for (KeyCode code : keysPressed.keySet()) {
+
+                for (KeyCode code : new ArrayList<>(keysPressed.keySet())) {
                     if (keysPresses.containsKey(code)) {
                         double step = keysPresses.get(code);
                         if (code == KeyCode.W || code == KeyCode.UP) {
@@ -101,10 +117,25 @@ public class HelloApplication extends Application {
                         } else if (code == KeyCode.D || code == KeyCode.RIGHT) {
                             dx += step;
                         }
+                    } else if (code == KeyCode.DELETE) {
+                        for (int i = warriors.size() - 1; i >= 0; i--) {
+                            for (Unit unit : warriors) {
+                                if (unit.isActive()) {
+                                    world.removeObject(unit);
+                                    break;
+                                }
+                            }
+                        }
+                        keysPressed.remove(KeyCode.DELETE);
+                    } else if (code == KeyCode.INSERT) {
+                        Unit newWarrior = new Warrior(100, true, "ally", 5, false,
+                                new ArrayList<>(Arrays.asList("Knife")), 100, 100);
+                        warriors.add(newWarrior);
+                        newWarrior.resurrect();
+                        keysPressed.remove(KeyCode.INSERT);
                     }
                 }
-                
-                
+
                 for (Unit warrior : warriors) {
                     if (warrior.isActive()) {
                         warrior.move(dx, dy);

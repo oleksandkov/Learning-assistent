@@ -63,7 +63,10 @@ public class Unit implements Cloneable{
         this(100, false, "ally", 5, false, new ArrayList<String>(Arrays.asList("sword")));
     }
 
+    public  boolean getActive() {
+    return isActive;
 
+    }
     public static int getNumObjects() {
         return numObjects;
     }
@@ -520,5 +523,7 @@ public class Unit implements Cloneable{
         }
         return false;
     }
+
+   
 
 }

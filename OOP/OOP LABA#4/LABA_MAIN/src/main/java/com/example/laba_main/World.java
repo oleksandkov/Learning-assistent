@@ -62,6 +62,35 @@ public class World {
         if (tower != null) tower.update();
     }
 
+    public void removeObject(Unit unit) {
+        if (unit == null || units == null) {
+            System.out.println("Cannot remove: unit or units list is null.");
+            return;
+        }
 
+        // Remove all graphical components from the scene
+            
+        if (HelloApplication.group != null) {
+            if (unit.labelName != null) {
+                HelloApplication.group.getChildren().remove(unit.labelName);
+            }
+            if (unit.life != null) {
+                HelloApplication.group.getChildren().remove(unit.life);
+            }
+            if (unit.image != null) {
+                HelloApplication.group.getChildren().remove(unit.image);
+            }
+            if (unit.rectActive != null) {
+                HelloApplication.group.getChildren().remove(unit.rectActive);
+            }
+        }
+
+        // Remove unit from the units list
+        units.remove(unit);
+        Unit.removeUnit();
+
+    
+        System.out.println("Unit removed. Remaining units: " + units.size());
+    }
 }
 
