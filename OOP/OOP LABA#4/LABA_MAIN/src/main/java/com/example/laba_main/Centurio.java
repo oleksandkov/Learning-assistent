@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
-public class Centurio extends Unit{
+public class Centurio extends Warrior{
     private static String name = "Centurio";
     private static final double MAX_HEALTH = 120.0;
 

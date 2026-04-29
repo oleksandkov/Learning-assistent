@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 
-public class Pretorio extends Unit{
+public class Pretorio extends Centurio {
     private static String name = "Pretorio";
     private static final double MAX_HEALTH = 150.0;
 
