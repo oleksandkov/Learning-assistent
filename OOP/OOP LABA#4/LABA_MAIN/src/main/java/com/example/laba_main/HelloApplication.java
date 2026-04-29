@@ -23,7 +23,12 @@ public class HelloApplication extends Application {
     public static Scene scene;
 
     public static Image imgWarrior;
-    public static ArrayList<Unit> warriors;
+    public static Image imgCenturio;
+    public static Image imgPretorio;
+    public static ArrayList<Warrior> warriors;
+    public static ArrayList<Centurio> centurios;
+    public static ArrayList<Pretorio> pretorios;
+    public static ArrayList<Unit> units;
 
     private final Map<KeyCode, Double> keysPresses = new HashMap<>();
     private final Map<KeyCode, Boolean> keysPressed = new HashMap<>();
@@ -56,7 +61,13 @@ public class HelloApplication extends Application {
 
         scene.setOnKeyPressed(e -> {
             KeyCode code = e.getCode();
-            if (code == KeyCode.DELETE || code == KeyCode.INSERT) {
+            if (code == KeyCode.DELETE || code == KeyCode.INSERT || code == KeyCode.ESCAPE) {
+                if (handledActionKeys.contains(code)) {
+                    return;
+                }
+                handledActionKeys.add(code);
+            }
+            if (code == KeyCode.V && e.isControlDown()) {
                 if (handledActionKeys.contains(code)) {
                     return;
                 }
@@ -70,14 +81,27 @@ public class HelloApplication extends Application {
             handledActionKeys.remove(code);
         });
 
+
         URL warriorUrl = HelloApplication.class.getResource("/warrior_backup_before_transparency-removebg-preview.png");
+        URL CenturioUrl = HelloApplication.class.getResource("/knife.png");
+        URL PretorioUrl = HelloApplication.class.getResource("/sword.png");
         if (warriorUrl == null) {
             throw new IllegalStateException("Resource not found: /warrior_backup_before_transparency-removebg-preview.png");
         }
+        if (CenturioUrl == null) {
+            throw new IllegalStateException("Resource not found: /knife.png");
+        }
+        if (PretorioUrl == null) {
+            throw new IllegalStateException("Resource not found: /sword.png");
+        }
+        
         imgWarrior = new Image(warriorUrl.toExternalForm(), 100, 100, false, false);
-
+        imgCenturio = new Image(CenturioUrl.toExternalForm(), 100, 100, false, false);
+        imgPretorio = new Image(PretorioUrl.toExternalForm(), 100, 100, false, false);
         warriors = new ArrayList<>();
-        World world = new World(warriors);
+        centurios = new ArrayList<>();
+        pretorios = new ArrayList<>();
+        units = new ArrayList<>();
 
         warriors.add(new Warrior(100, true, "ally", 7, false,
                 new ArrayList<>(Arrays.asList("Knife", "Shield")), 80, 80));
@@ -85,15 +109,38 @@ public class HelloApplication extends Application {
                 new ArrayList<>(Arrays.asList("Axe")), 260, 120));
         warriors.add(new Warrior(100, true, "ally", 6, false,
                 new ArrayList<>(Arrays.asList("Sword", "Potion")), 460, 220));
+        pretorios.add(new Pretorio(150, true, "ally", 11,false, new  ArrayList<>(Arrays.asList("Shield")), 120, 80));
+        centurios.add(new Centurio(120, true, "ally", 10,false, new  ArrayList<>(Arrays.asList("Shield")), 110, 110));
+        for (int i = 0; i < warriors.size(); i++) {
+            Unit u = warriors.get(i);
+            units.add(u);
+        }
 
         for (Unit warrior : warriors) {
             warrior.resurrect();
         }
+        for  (int i = 0; i < centurios.size(); i++) {
+            Unit c = centurios.get(i);
+            units.add(c);
+        }
+        for (Unit centurios  : centurios) {
+            centurios.resurrect();
+        }
+        for (int i  = 0; i < pretorios.size(); i++) {
+            Unit p =  pretorios.get(i);
+            units.add(p);
+        }
+        for (Unit p : pretorios) {
+            p.resurrect();
+        }
+        World world = new World(units);
+
+
 
         scene.setOnMouseClicked(event -> {
-            for (int i = warriors.size() - 1; i >= 0; i--) {
-                Unit warrior = warriors.get(i);
-                if (warrior.tryActivate(event.getX(), event.getY())) {
+            for (int i = units.size() - 1; i >= 0; i--) {
+                Unit unit = units.get(i);
+                if (unit.tryActivate(event.getX(), event.getY())) {
                     break;
                 }
             }
@@ -118,8 +165,8 @@ public class HelloApplication extends Application {
                             dx += step;
                         }
                     } else if (code == KeyCode.DELETE) {
-                        for (int i = warriors.size() - 1; i >= 0; i--) {
-                            for (Unit unit : warriors) {
+                        for (int i = units.size() - 1; i >= 0; i--) {
+                            for (Unit unit : units) {
                                 if (unit.isActive()) {
                                     world.removeObject(unit);
                                     break;
@@ -130,15 +177,46 @@ public class HelloApplication extends Application {
                     } else if (code == KeyCode.INSERT) {
                         Unit newWarrior = new Warrior(100, true, "ally", 5, false,
                                 new ArrayList<>(Arrays.asList("Knife")), 100, 100);
-                        warriors.add(newWarrior);
+                        units.add(newWarrior);
                         newWarrior.resurrect();
                         keysPressed.remove(KeyCode.INSERT);
+                    } else if (code == KeyCode.ESCAPE) {
+                        for (int i = 0; i < units.size(); i++) {
+                            for (Unit unit : units) {
+                                if (unit.isActive()) {
+                                    unit.flipActivation();
+                                }
+                            }
+                        }
+                        keysPressed.remove(KeyCode.ESCAPE);
+                    } else if (code == KeyCode.V) {
+                        ArrayList<Unit> clones = new ArrayList<>();
+                        int cloneIndex = 0;
+                        for (Unit unit : units) {
+                            if (unit.isActive()) {
+                                try {
+                                    Unit clonedUnit = (Unit) unit.clone();
+                                    int offset = 20 + (cloneIndex * 10);
+                                    clonedUnit.setPosition(unit.x + offset, unit.y + offset);
+                                    clones.add(clonedUnit);
+                                    cloneIndex++;
+                                } catch (CloneNotSupportedException e) {
+                                    System.err.println("Clone not supported: " + e.getMessage());
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        for (Unit clonedUnit : clones) {
+                            units.add(clonedUnit);
+                            clonedUnit.resurrect();
+                        }
+                        keysPressed.remove(KeyCode.V);
                     }
                 }
 
-                for (Unit warrior : warriors) {
-                    if (warrior.isActive()) {
-                        warrior.move(dx, dy);
+                for (Unit unit : units) {
+                    if (unit.isActive()) {
+                        unit.move(dx, dy);
                     }
                 }
             }

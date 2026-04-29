@@ -28,13 +28,13 @@ public class Unit implements Cloneable{
     protected Label labelName;
     protected Line life;
     protected ImageView image;
-    protected double x, y; // coordinates
+    protected double x, y;
     protected boolean isActive;
     protected Rectangle rectActive;
-    protected  static double MAX_HEALTH;
+    protected double maxHealth;
 
-    protected  void setMaxHealth(double maxHealth) {
-        MAX_HEALTH = maxHealth;
+    protected void setMaxHealth(double maxHealth) {
+        this.maxHealth = maxHealth;
     }
     
 
@@ -237,6 +237,37 @@ public class Unit implements Cloneable{
         ArrayList<String> clonedInventor = (ArrayList<String>) clonedUnit.inventor.clone();
 
         clonedUnit.setInventor(clonedInventor);
+
+        if (this.labelName != null) {
+            clonedUnit.labelName = new Label(this.labelName.getText());
+        }
+
+        if (this.life != null) {
+            clonedUnit.life = new Line();
+            clonedUnit.life.setStrokeWidth(this.life.getStrokeWidth());
+            clonedUnit.life.setStroke(this.life.getStroke());
+        }
+
+        if (this.image != null) {
+            clonedUnit.image = new ImageView(this.image.getImage());
+            clonedUnit.image.setFitWidth(this.image.getFitWidth());
+            clonedUnit.image.setFitHeight(this.image.getFitHeight());
+        }
+
+        if (this.rectActive != null) {
+            double rectWidth = this.rectActive.getWidth();
+            double rectHeight = this.rectActive.getHeight();
+            clonedUnit.rectActive = new Rectangle(rectWidth, rectHeight);
+            clonedUnit.rectActive.setFill(this.rectActive.getFill());
+            clonedUnit.rectActive.setStroke(this.rectActive.getStroke());
+            clonedUnit.rectActive.setStrokeWidth(this.rectActive.getStrokeWidth());
+        }
+
+        clonedUnit.isActive = false;
+        clonedUnit.maxHealth = this.maxHealth;
+        numObjects++;
+        System.out.println("CLONE: Unit cloned. Total objects: " + numObjects);
+        clonedUnit.setCoordinates();
         return clonedUnit;
     }
 
@@ -481,9 +512,10 @@ public class Unit implements Cloneable{
         labelName.setLayoutY(y - 10);
 
         double hp = getHealth() == null ? 0.0 : Math.max(0.0, getHealth());
+        double effectiveMaxHealth = maxHealth > 0.0 ? maxHealth : 100.0;
         life.setStartX(x);
         life.setStartY(y + 10);
-        life.setEndX(x + (hp / MAX_HEALTH) * 100);
+        life.setEndX(x + Math.min((hp / effectiveMaxHealth) * 100, 100));
         life.setEndY(y + 10);
 
         image.setX(x);
@@ -524,6 +556,5 @@ public class Unit implements Cloneable{
         return false;
     }
 
-   
 
 }
