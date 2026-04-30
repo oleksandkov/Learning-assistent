@@ -14,7 +14,45 @@ public class Warrior extends Unit {
     private static String name = "Warrior";
     private static final double MAX_HEALTH = 100.0;
 
+    @Override
+    protected double labelDeltaX() {
+        return 10.0;
+    }
 
+    @Override
+    protected double labelDeltaY() {
+        return -10.0;
+    }
+
+    @Override
+    protected double lifeDeltaX() {
+        return 0.0;
+    }
+
+    @Override
+    protected double lifeDeltaY() {
+        return 10.0;
+    }
+
+    @Override
+    protected double rectDeltaX() {
+        return -9.0;
+    }
+
+    @Override
+    protected double rectDeltaY() {
+        return -9.0;
+    }
+
+    @Override
+    protected double imageDeltaX() {
+        return 0.0;
+    }
+
+    @Override
+    protected double imageDeltaY() {
+        return 0.0;
+    }
 
     // Getters and Setters
     public static String getName() {
@@ -22,19 +60,19 @@ public class Warrior extends Unit {
     }
 
     // Constructors
-    public Warrior(Integer health, Boolean isSpawned, String team, Integer damage, Boolean isDead, ArrayList<String> inventor) {
+    public Warrior(Integer health, Boolean isSpawned, boolean team, Integer damage, Boolean isDead, ArrayList<String> inventor) {
         this(health, isSpawned, team, damage, isDead, inventor, 0.0, 0.0);
         initGraphics(getName(), x, y);
     }
 
-    public Warrior(Integer health, Boolean isSpawned, String team, Integer damage, Boolean isDead,
+    public Warrior(Integer health, Boolean isSpawned, boolean team, Integer damage, Boolean isDead,
                    ArrayList<String> inventor, double startX, double startY) {
         super(health, isSpawned, team, damage, isDead, inventor);
         initGraphics(getName(), startX, startY);
     }
 
     public Warrior() {
-        this(100, true, "ally", 5, false, new ArrayList<>(Arrays.asList("Knife")), 0.0, 0.0);
+        this(100, true, true, 5, false, new ArrayList<>(Arrays.asList("Knife")), 0.0, 0.0);
         initGraphics(getName(), x, y);
     }
 
@@ -50,6 +88,7 @@ public class Warrior extends Unit {
         life.setStroke(Color.LIGHTGREEN);
 
         image = new ImageView(HelloApplication.imgWarrior);
+        
 
         isActive = false;
         rectActive = new Rectangle(x - 5, y - 5, 110, 110);
@@ -60,14 +99,7 @@ public class Warrior extends Unit {
         setCoordinates();
     }
 
-    
-
-    
-
-    
-
-    
-
-    
+  
 
 }
+

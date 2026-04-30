@@ -10,6 +10,10 @@ import java.util.Map;
 import java.util.Set;
 
 import javafx.application.Application;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -25,6 +29,9 @@ public class HelloApplication extends Application {
     public static Image imgWarrior;
     public static Image imgCenturio;
     public static Image imgPretorio;
+    public static Image imgBase;
+    public static Image imgTower;
+    public static Image imgSource;
     public static ArrayList<Warrior> warriors;
     public static ArrayList<Centurio> centurios;
     public static ArrayList<Pretorio> pretorios;
@@ -82,19 +89,34 @@ public class HelloApplication extends Application {
         });
 
 
-        URL warriorUrl = HelloApplication.class.getResource("/warrior_backup_before_transparency-removebg-preview.png");
-        URL CenturioUrl = HelloApplication.class.getResource("/knife.png");
-        URL PretorioUrl = HelloApplication.class.getResource("/sword.png");
+        URL warriorUrl = HelloApplication.class.getResource("/warrior.png");
+        URL CenturioUrl = HelloApplication.class.getResource("/centurio.png");
+        URL PretorioUrl = HelloApplication.class.getResource("/pretorio.png");
+        URL baseUrl = HelloApplication.class.getResource("/base.png");
+        URL towerUrl = HelloApplication.class.getResource("/tower2.png");
+        URL sourceUrl = HelloApplication.class.getResource("/source.png");
         if (warriorUrl == null) {
-            throw new IllegalStateException("Resource not found: /warrior_backup_before_transparency-removebg-preview.png");
+            throw new IllegalStateException("Resource not found: /warrior.png");
         }
         if (CenturioUrl == null) {
-            throw new IllegalStateException("Resource not found: /knife.png");
+            throw new IllegalStateException("Resource not found: /centurio.png");
         }
         if (PretorioUrl == null) {
-            throw new IllegalStateException("Resource not found: /sword.png");
+            throw new IllegalStateException("Resource not found: /pretorio.png");
         }
-        
+        if (baseUrl == null) {
+            throw new IllegalStateException("Resource not found: /base.png");
+        }
+        if (towerUrl == null) {
+            throw new IllegalStateException("Resource not found: /tower.png");
+        }
+        if (sourceUrl == null) {
+            throw new IllegalStateException("Resource not found: /source.png");
+        }
+
+        imgBase = new Image(baseUrl.toExternalForm(), 150, 150, false, false);
+        imgTower = new Image(towerUrl.toExternalForm(), 200, 200, false, false);
+        imgSource = new Image(sourceUrl.toExternalForm(), 120, 120, false, false);
         imgWarrior = new Image(warriorUrl.toExternalForm(), 100, 100, false, false);
         imgCenturio = new Image(CenturioUrl.toExternalForm(), 100, 100, false, false);
         imgPretorio = new Image(PretorioUrl.toExternalForm(), 100, 100, false, false);
@@ -103,14 +125,14 @@ public class HelloApplication extends Application {
         pretorios = new ArrayList<>();
         units = new ArrayList<>();
 
-        warriors.add(new Warrior(100, true, "ally", 7, false,
+        warriors.add(new Warrior(100, true, true, 7, false,
                 new ArrayList<>(Arrays.asList("Knife", "Shield")), 80, 80));
-        warriors.add(new Warrior(100, true, "enemy", 9, false,
+        warriors.add(new Warrior(100, true, false, 9, false,
                 new ArrayList<>(Arrays.asList("Axe")), 260, 120));
-        warriors.add(new Warrior(100, true, "ally", 6, false,
+        warriors.add(new Warrior(100, true, true, 6, false,
                 new ArrayList<>(Arrays.asList("Sword", "Potion")), 460, 220));
-        pretorios.add(new Pretorio(150, true, "ally", 11,false, new  ArrayList<>(Arrays.asList("Shield")), 120, 80));
-        centurios.add(new Centurio(120, true, "ally", 10,false, new  ArrayList<>(Arrays.asList("Shield")), 110, 110));
+        pretorios.add(new Pretorio(150, true, true, 11,false, new  ArrayList<>(Arrays.asList("Shield")), 120, 80));
+        centurios.add(new Centurio(120, true, true, 10,false, new  ArrayList<>(Arrays.asList("Shield")), 110, 110));
         for (int i = 0; i < warriors.size(); i++) {
             Unit u = warriors.get(i);
             units.add(u);
@@ -134,6 +156,17 @@ public class HelloApplication extends Application {
             p.resurrect();
         }
         World world = new World(units);
+
+        Tower tower = new Tower();
+        tower.setTeam(true);
+        tower.initGraphics(imgTower, "Tower", 0, 100,100, 300.0, 300);
+        tower.resurrectWorld();
+        Timeline healTimer = new Timeline(
+            new KeyFrame(Duration.seconds(1), e -> tower.healUnits())
+        );
+        healTimer.setCycleCount(Animation.INDEFINITE);
+        healTimer.play();
+        
 
 
 
@@ -175,7 +208,7 @@ public class HelloApplication extends Application {
                         }
                         keysPressed.remove(KeyCode.DELETE);
                     } else if (code == KeyCode.INSERT) {
-                        Unit newWarrior = new Warrior(100, true, "ally", 5, false,
+                        Unit newWarrior = new Warrior(1, true, false, 5, false,
                                 new ArrayList<>(Arrays.asList("Knife")), 100, 100);
                         units.add(newWarrior);
                         newWarrior.resurrect();
@@ -219,6 +252,7 @@ public class HelloApplication extends Application {
                         unit.move(dx, dy);
                     }
                 }
+                tower.intersect();
             }
         };
         gameLoop.start();

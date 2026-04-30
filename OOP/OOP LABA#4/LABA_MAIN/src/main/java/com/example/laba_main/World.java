@@ -1,9 +1,62 @@
 package com.example.laba_main;
+import java.net.URL;
+import javafx.scene.image.Image;
+import javafx.scene.control.Label;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javafx.scene.shape.Line;
+
+
 public class World {
     private ArrayList<Unit> units;
+
+    protected int x;
+    protected int y;
+    protected Image image;
+    protected String name;
+    protected int numUnits;
+    protected Label labelName;
+    protected Label numUnitsLabel;
+    protected Line life;
+    protected double health;
+
+
+
+    
+
+    protected double maxHealth;
+
+    protected void setMaxHealth(double maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    protected void setHealth(double health) {
+        this.health = health;
+        updateLifeBar();
+    }
+
+    protected void updateLifeBar() {
+        if (life == null) {
+            return;
+        }
+
+        
+        double effectiveMaxHealth = maxHealth > 0.0 ? maxHealth : 100.0;
+        double currentHealth = Math.max(0.0, Math.min(health, effectiveMaxHealth));
+        double imageHeight = image != null && image.getHeight() > 0 ? image.getHeight() : 100.0;
+        double barWidth = (currentHealth / effectiveMaxHealth) * imageHeight;
+
+        double lifeBaseX = x - 5;
+        double lifeBaseY = y + 5;
+        life.setStartX(lifeBaseX);
+        life.setStartY(lifeBaseY);
+        life.setEndX(lifeBaseX );
+        life.setEndY(lifeBaseY + barWidth);
+    }
+
+
 
     public static int objects = Unit.getNumObjects();
 
@@ -69,7 +122,7 @@ public class World {
         }
 
         // Remove all graphical components from the scene
-            
+
         if (HelloApplication.group != null) {
             if (unit.labelName != null) {
                 HelloApplication.group.getChildren().remove(unit.labelName);
@@ -89,8 +142,48 @@ public class World {
         units.remove(unit);
         Unit.removeUnit();
 
-    
         System.out.println("Unit removed. Remaining units: " + units.size());
     }
+
+   
+
+    
+    protected void initGraphics(Image image, String name, int numUnits, double x, double y, double maxHealth, double health) {
+        this.image = image;
+        this.name = name;
+        this.numUnits = numUnits;
+        this.labelName = new Label(name);
+        this.numUnitsLabel = new Label(String.valueOf(numUnits));
+        this.life = new Line();
+        this.x = (int) x;
+        this.y = (int) y;
+
+        setMaxHealth(maxHealth);
+        setHealth(health);
+
+        life.setStrokeWidth(5);
+        life.setStroke(javafx.scene.paint.Color.GREEN);
+        updateLifeBar();
+
+        labelName.setLayoutX(x);
+        labelName.setLayoutY(y - 30);
+        labelName.setFont(javafx.scene.text.Font.font(20));
+
+        numUnitsLabel.setLayoutX(x + image.getWidth() + 7);
+        numUnitsLabel.setLayoutY(y);
+        numUnitsLabel.setFont(javafx.scene.text.Font.font(20));
+    }
+    protected void resurrectWorld() {
+        if (HelloApplication.group == null || labelName == null || life == null || image == null) {
+            return;
+        }
+        javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView(image);
+        imageView.setX(x);
+        imageView.setY(y);
+        HelloApplication.group.getChildren().addAll(labelName, life, imageView, numUnitsLabel);
+        
+    }
+
+    protected void intersect() {}
 }
 

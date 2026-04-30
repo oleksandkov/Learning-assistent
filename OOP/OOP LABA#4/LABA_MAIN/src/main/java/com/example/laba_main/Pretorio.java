@@ -13,6 +13,44 @@ public class Pretorio extends Centurio {
     private static String name = "Pretorio";
     private static final double MAX_HEALTH = 150.0;
 
+    @Override
+    protected double labelDeltaX() {
+        return 10.0;
+    }
+
+    @Override
+    protected double labelDeltaY() {
+        return -10.0;
+    }
+
+    @Override
+    protected double lifeDeltaX() {
+        return 0.0;
+    }
+
+    @Override
+    protected double lifeDeltaY() {
+        return 10.0;
+    }
+
+    @Override
+    protected double rectDeltaX() {
+        return -9.0;
+    }
+
+    @Override
+    protected double rectDeltaY() {
+        return -9.0;
+    }
+    @Override
+    protected double imageDeltaX() {
+        return 0.0;
+    }
+
+    @Override
+    protected double imageDeltaY() {
+        return 12.0;
+    }
 
     // Getters and Setters
     public static String getName() {
@@ -20,19 +58,19 @@ public class Pretorio extends Centurio {
     }
 
     // Constructors
-    public Pretorio(Integer health, Boolean isSpawned, String team, Integer damage, Boolean isDead, ArrayList<String> inventor) {
+    public Pretorio(Integer health, Boolean isSpawned, boolean team, Integer damage, Boolean isDead, ArrayList<String> inventor) {
         this(health, isSpawned, team, damage, isDead, inventor, 0.0, 0.0);
         initGraphics(getName(), x, y);
     }
 
-    public Pretorio(Integer health, Boolean isSpawned, String team, Integer damage, Boolean isDead,
+    public Pretorio(Integer health, Boolean isSpawned, boolean team, Integer damage, Boolean isDead,
                     ArrayList<String> inventor, double startX, double startY) {
         super(health, isSpawned, team, damage, isDead, inventor);
         initGraphics(getName(), startX, startY);
     }
 
     public Pretorio() {
-        this(100, true, "ally", 5, false, new ArrayList<>(Arrays.asList("Knife")), 0.0, 0.0);
+        this(100, true, true, 5, false, new ArrayList<>(Arrays.asList("Knife")), 0.0, 0.0);
         initGraphics(getName(), x, y);
     }
 
@@ -57,5 +95,7 @@ public class Pretorio extends Centurio {
 
         setCoordinates();
     }
+
+    
 }
 

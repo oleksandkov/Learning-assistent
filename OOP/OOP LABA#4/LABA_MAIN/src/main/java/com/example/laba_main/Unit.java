@@ -1,5 +1,6 @@
 package com.example.laba_main;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -8,6 +9,7 @@ import java.util.Scanner;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Line;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 
@@ -16,7 +18,7 @@ import javafx.scene.image.ImageView;
 public class Unit implements Cloneable{
     private Integer health;
     private Boolean isSpawned;
-    private String Team;
+    private boolean team;
     private Integer damage;
     private Boolean isDead;
     private ArrayList<String> inventor;
@@ -32,10 +34,51 @@ public class Unit implements Cloneable{
     protected boolean isActive;
     protected Rectangle rectActive;
     protected double maxHealth;
+    protected  Image contourRedImage;
+    protected  Image contourGreenImage;
+    protected  ImageView contourView;
+    protected  boolean contourLoaded;
 
     protected void setMaxHealth(double maxHealth) {
         this.maxHealth = maxHealth;
     }
+
+    protected double labelDeltaX() {
+        return 10.0;
+    }
+
+    protected double labelDeltaY() {
+        return -10.0;
+    }
+
+    protected double lifeDeltaX() {
+        return 0.0;
+    }
+
+    protected double lifeDeltaY() {
+        return 10.0;
+    }
+
+    protected double imageDeltaX() {
+        return 0.0;
+    }
+
+    protected double imageDeltaY() {
+        return 0.0;
+    }
+
+    protected double rectDeltaX() {
+        return -9.0;
+    }
+
+    protected double rectDeltaY() {
+        return -9.0;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
     
 
     static {
@@ -48,19 +91,19 @@ public class Unit implements Cloneable{
         System.out.println("INIT BLOCK IS RUNT");
         System.out.println("Object #" + numObjects + " is being initialized");
     }
-    public Unit(Integer health, Boolean isSpawned, String team, Integer damage, Boolean isDead, ArrayList<String> inventor) {
+    public Unit(Integer health, Boolean isSpawned, boolean team, Integer damage, Boolean isDead, ArrayList<String> inventor) {
         this.health = health;
         this.isSpawned = isSpawned;
-        Team = team;
+        this.team = team;
         this.damage = damage;
         this.isDead = isDead;
         this.inventor = inventor;
-        System.out.println("Constructor: Unit(Integer health, Boolean isSpawned, String team, Integer damage, Boolean isDead, ArrayList<String> inventor)");
+        System.out.println("Constructor: Unit(Integer health, Boolean isSpawned, boolean team, Integer damage, Boolean isDead, ArrayList<String> inventor)");
         System.out.println("Object created. Total objects: " + numObjects);
     }
 
     public  Unit() {
-        this(100, false, "ally", 5, false, new ArrayList<String>(Arrays.asList("sword")));
+        this(100, false, true, 5, false, new ArrayList<String>(Arrays.asList("sword")));
     }
 
     public  boolean getActive() {
@@ -83,8 +126,8 @@ public class Unit implements Cloneable{
         return isSpawned;
     }
 
-    public String getTeam() {
-        return Team;
+    public boolean getTeam() {
+        return team;
     }
 
     public Integer getDamage() {
@@ -112,14 +155,14 @@ public class Unit implements Cloneable{
     public static class TeamComparator implements Comparator<Unit> {
         @Override
         public int compare(Unit a, Unit b) {
-            return a.getTeam().compareTo(b.getTeam());
+            return Boolean.compare(a.getTeam(), b.getTeam());
         }
     }
 
     public int compareTo47(Unit x) {
         int cmp = Integer.compare(this.health, x.health);
         if (cmp != 0) return cmp;
-        cmp = this.Team.compareTo(x.Team);
+        cmp = Boolean.compare(this.team, x.team);
         if (cmp != 0) return cmp;
         cmp = this.damage.compareTo(x.damage);
         if (cmp != 0) return cmp;
@@ -148,8 +191,8 @@ public class Unit implements Cloneable{
                 cmp = Integer.compare(u1.getHealth(), u2.getHealth());
                 if (cmp != 0) return cmp;
             }
-            if (template.getTeam() != null) {
-                cmp = u1.getTeam().compareTo(u2.getTeam());
+            if (template != null) {
+                cmp = Boolean.compare(u1.getTeam(), u2.getTeam());
                 if (cmp != 0) return cmp;
             }
             if (template.getDamage() != null) {
@@ -188,8 +231,11 @@ public class Unit implements Cloneable{
         isSpawned = spawned;
     }
 
-    public void setTeam(String team) {
-        Team = team;
+    public void setTeam(boolean team) {
+        this.team = team;
+        if (HelloApplication.group != null && contourView != null) {
+            updateContourForTeam();
+        }
     }
 
     public void setDamage(Integer damage) {
@@ -208,12 +254,12 @@ public class Unit implements Cloneable{
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Unit unit = (Unit) o;
-        return Objects.equals(health, unit.health) && Objects.equals(isSpawned, unit.isSpawned) && Objects.equals(Team, unit.Team) && Objects.equals(damage, unit.damage) && Objects.equals(isDead, unit.isDead) && Objects.equals(inventor, unit.inventor);
+        return Objects.equals(health, unit.health) && Objects.equals(isSpawned, unit.isSpawned) && team == unit.team && Objects.equals(damage, unit.damage) && Objects.equals(isDead, unit.isDead) && Objects.equals(inventor, unit.inventor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(health, isSpawned, Team, damage, isDead, inventor);
+        return Objects.hash(health, isSpawned, team, damage, isDead, inventor);
     }
 
 
@@ -222,7 +268,7 @@ public class Unit implements Cloneable{
         return "Unit{" +
                 "health=" + health +
                 ", isSpawned=" + isSpawned +
-                ", Team='" + Team + '\'' +
+                ", Team='" + team + '\'' +
                 ", damage=" + damage +
                 ", isDead=" + isDead +
                 ", inventor=" + inventor +
@@ -315,17 +361,13 @@ public class Unit implements Cloneable{
         this.damage += 5;
     }
     public void changeTeam() {
-        if (this.Team.equals("ally")) {
-            this.Team = "enemy";
-        } else {
-            this.Team = "ally";
-        }
+        this.team = !this.team;
     }
     public boolean isAlly() {
-        return "ally".equals(this.Team);
+        return this.team;
     }
     public boolean isAlly(Unit x) {
-        return this.Team != null && this.Team.equals(x.Team);
+        return x != null && this.team == x.team;
     }
     public void takeDamage() {
         this.health -= 10;
@@ -361,9 +403,10 @@ public class Unit implements Cloneable{
             this.setSpawned(spawnState);
             scanner.nextLine();
             System.out.println("Set team: ");
-            String team;
-            team = scanner.nextLine().trim();
-            this.setTeam(team);
+            String teamInput;
+            teamInput = scanner.nextLine().trim().toLowerCase();
+            boolean teamValue = teamInput.equals("ally") || teamInput.equals("true") || teamInput.equals("t");
+            this.setTeam(teamValue);
             System.out.println("Set damage: ");
             int damage;
             damage = scanner.nextInt();
@@ -380,7 +423,7 @@ public class Unit implements Cloneable{
         } else if (idx == 2) {
             this.setHealth(100);
             this.setSpawned(false);
-            this.setTeam("ally");
+            this.setTeam(true);
             this.setDamage(5);
             this.setDead(true);
             this.setInventor(new ArrayList<>(Arrays.asList("sword")));
@@ -396,7 +439,6 @@ public class Unit implements Cloneable{
         }
         this.setHealth(null);
         this.setDamage(null);
-        this.setTeam(null);
         this.setDead(null);
         this.setSpawned(null);
         this.setInventor(null);
@@ -413,8 +455,10 @@ public class Unit implements Cloneable{
                 this.setSpawned(scanner.nextBoolean());
             } else if (normalized.equals("team")) {
                 scanner.nextLine();
-                System.out.print("Enter team: ");
-                this.setTeam(scanner.nextLine().trim());
+                System.out.print("Enter team (ally/enemy or true/false): ");
+                String teamInput = scanner.nextLine().trim().toLowerCase();
+                boolean teamValue = teamInput.equals("ally") || teamInput.equals("true") || teamInput.equals("t");
+                this.setTeam(teamValue);
             } else if (normalized.equals("damage")) {
                 scanner.nextLine();
                 System.out.print("Enter damage: ");
@@ -448,9 +492,7 @@ public class Unit implements Cloneable{
         if (other.getHealth() != null) {
             cmp = Integer.compare(this.health, other.health);
         }
-        if (other.getTeam() != null) {
-            cmp = this.Team.compareTo(other.Team);
-        }
+        cmp = Boolean.compare(this.team, other.team);
         if (other.getDamage() != null) {
             cmp = this.damage.compareTo(other.damage);
         }
@@ -474,26 +516,14 @@ public class Unit implements Cloneable{
         System.out.println("THE HEALTH: " + health);
         System.out.println("IF UNIT IS SPAWNED: " + isSpawned);
         System.out.println("THE DAMAGE OF THE UNIT: " + damage);
-        System.out.println("THE TEAM " + Team);
+        System.out.println("THE TEAM " + (team ? "ally" : "enemy"));
         System.out.println("IF THE ENEMY ALIVE: " + isDead);
         System.out.println("THE INVENTORY: " + inventor);
 
     }
 
 
-    // Grapphical methods
-    protected double imageDeltaX() {
-        return 0.0;
-    }
-
-    protected double imageDeltaY() {
-        return 0.0;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
+    
     public void resurrect() {
         if (HelloApplication.group == null || labelName == null || life == null || image == null) {
             return;
@@ -502,27 +532,35 @@ public class Unit implements Cloneable{
         if (isActive) {
             HelloApplication.group.getChildren().add(rectActive);
         }
+        updateContourForTeam();
     }
     public void setCoordinates() {
         if (labelName == null || life == null || image == null || rectActive == null) {
             return;
         }
 
-        labelName.setLayoutX(x + 10);
-        labelName.setLayoutY(y - 10);
+        labelName.setLayoutX(x + labelDeltaX());
+        labelName.setLayoutY(y + labelDeltaY());
 
         double hp = getHealth() == null ? 0.0 : Math.max(0.0, getHealth());
         double effectiveMaxHealth = maxHealth > 0.0 ? maxHealth : 100.0;
-        life.setStartX(x);
-        life.setStartY(y + 10);
-        life.setEndX(x + Math.min((hp / effectiveMaxHealth) * 100, 100));
-        life.setEndY(y + 10);
+        double lifeBaseX = x + lifeDeltaX();
+        double lifeBaseY = y + lifeDeltaY();
+        life.setStartX(lifeBaseX);
+        life.setStartY(lifeBaseY);
+        life.setEndX(lifeBaseX + Math.min((hp / effectiveMaxHealth) * 100, 100));
+        life.setEndY(lifeBaseY);
 
-        image.setX(x);
-        image.setY(y);
+        image.setX(x + imageDeltaX());
+        image.setY(y + imageDeltaY());
 
-        rectActive.setX(x - 9);
-        rectActive.setY(y - 9);
+        rectActive.setX(x + rectDeltaX());
+        rectActive.setY(y + rectDeltaY());
+
+        if (contourView != null) {
+            contourView.setX(x + imageDeltaX());
+            contourView.setY(y + imageDeltaY());
+        }
     }
     public void move(double dx, double dy) {
         x += dx;
@@ -554,6 +592,60 @@ public class Unit implements Cloneable{
             return true;
         }
         return false;
+    }
+
+    private void ensureContourImagesLoaded() {
+        if (contourLoaded) {
+            return;
+        }
+        contourLoaded = true;
+        String baseName = getClass().getSimpleName().toLowerCase();
+
+        if (baseName == "Centurio".toLowerCase()) {
+            URL redUrl = HelloApplication.class.getResource("/centurio_contour_red.png");
+            URL greenUrl = HelloApplication.class.getResource("/centurio_contour_green.png");
+            contourGreenImage = new Image(greenUrl.toExternalForm(), 100, 100, false, false);
+            contourRedImage = new Image(redUrl.toExternalForm(), 100, 100, false, false);
+        } 
+         if (baseName == "Pretorio".toLowerCase()) {
+            URL redUrl = HelloApplication.class.getResource("/pretorio_contour_red.png");
+            URL greenUrl = HelloApplication.class.getResource("/pretorio_contour_green.png");
+            contourGreenImage = new Image(greenUrl.toExternalForm(), 100, 100, false, false);
+            contourRedImage = new Image(redUrl.toExternalForm(), 100, 100, false, false);
+        } 
+         if (baseName == "Warrior".toLowerCase()) {
+            URL redUrl = HelloApplication.class.getResource("/warrior_contour_red.png");
+            URL greenUrl = HelloApplication.class.getResource("/warrior_contour_green.png") ;
+            contourGreenImage = new Image(greenUrl.toExternalForm(), 100, 100, false, false);
+            contourRedImage = new Image(redUrl.toExternalForm(), 100, 100, false, false);
+        } 
+        
+    }
+
+    private void updateContourForTeam() {
+        if (HelloApplication.group == null) {
+            return;
+        }
+        ensureContourImagesLoaded();
+        Image contour = team ? contourGreenImage : contourRedImage;
+        if (contour == null) {
+            return;
+        }
+        if (contourView == null) {
+            contourView = new ImageView(contour);
+        } else {
+            contourView.setImage(contour);
+        }
+        if (image != null && image.getImage() != null) {
+            contourView.setFitWidth(image.getImage().getWidth());
+            contourView.setFitHeight(image.getImage().getHeight());
+        }
+        contourView.setPreserveRatio(false);
+        contourView.setX(x + imageDeltaX());
+        contourView.setY(y + imageDeltaY());
+        if (!HelloApplication.group.getChildren().contains(contourView)) {
+            HelloApplication.group.getChildren().add(contourView);
+        }
     }
 
 
