@@ -87,6 +87,8 @@ public class Centurio extends Warrior{
         life.setStroke(Color.LIGHTGREEN);
 
         image = new ImageView(HelloApplication.imgCenturio);
+        image.setFitWidth(100);
+        image.setFitHeight(100);
 
         isActive = false;
         rectActive = new Rectangle(x - 5, y - 5, 110, 110);

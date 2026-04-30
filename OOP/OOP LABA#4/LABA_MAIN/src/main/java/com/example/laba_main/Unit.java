@@ -34,10 +34,10 @@ public class Unit implements Cloneable{
     protected boolean isActive;
     protected Rectangle rectActive;
     protected double maxHealth;
-    protected  Image contourRedImage;
-    protected  Image contourGreenImage;
-    protected  ImageView contourView;
-    protected  boolean contourLoaded;
+    protected ImageView imageMarkRed;
+    protected ImageView imageMarkGreen;
+    protected ImageView imageMark;
+
 
     protected void setMaxHealth(double maxHealth) {
         this.maxHealth = maxHealth;
@@ -145,6 +145,11 @@ public class Unit implements Cloneable{
     public static int getnumObjects() {
         return numObjects;
     }
+
+    public javafx.scene.image.ImageView getImage() {
+        return image;
+    }
+
     public static class HealthComparator implements Comparator<Unit> {
         @Override
         public int compare(Unit a, Unit b) {
@@ -222,9 +227,45 @@ public class Unit implements Cloneable{
 
     public void setHealth(Integer health) {
         this.health = health;
+        
+        if (this.health != null && this.health < 0) {
+            
+            removeUnitFromGame();
+            return;
+        }
+        
         if (life != null) {
             setCoordinates();
         }
+    }
+    
+    public void removeUnitFromGame() {
+        this.isDead = true;
+        
+        if (HelloApplication.group != null) {
+            if (this.labelName != null) {
+                HelloApplication.group.getChildren().remove(this.labelName);
+            }
+            if (this.life != null) {
+                HelloApplication.group.getChildren().remove(this.life);
+            }
+            if (this.image != null) {
+                HelloApplication.group.getChildren().remove(this.image);
+            }
+            if (this.rectActive != null) {
+                HelloApplication.group.getChildren().remove(this.rectActive);
+            }
+            if (this.imageMark != null) {
+                HelloApplication.group.getChildren().remove(this.imageMark);
+            }
+        }
+        
+        if (HelloApplication.units != null) {
+            HelloApplication.units.remove(this);
+        }
+        
+        removeUnit();
+        System.out.println("Unit removed from game completely.");
     }
 
     public void setSpawned(Boolean spawned) {
@@ -233,9 +274,7 @@ public class Unit implements Cloneable{
 
     public void setTeam(boolean team) {
         this.team = team;
-        if (HelloApplication.group != null && contourView != null) {
-            updateContourForTeam();
-        }
+        
     }
 
     public void setDamage(Integer damage) {
@@ -309,47 +348,86 @@ public class Unit implements Cloneable{
             clonedUnit.rectActive.setStrokeWidth(this.rectActive.getStrokeWidth());
         }
 
+        if (this.imageMarkRed != null) {
+            clonedUnit.imageMarkRed = new ImageView(this.imageMarkRed.getImage());
+            clonedUnit.imageMarkRed.setFitWidth(this.imageMarkRed.getFitWidth());
+            clonedUnit.imageMarkRed.setFitHeight(this.imageMarkRed.getFitHeight());
+        }
+
+        if (this.imageMarkGreen != null) {
+            clonedUnit.imageMarkGreen = new ImageView(this.imageMarkGreen.getImage());
+            clonedUnit.imageMarkGreen.setFitWidth(this.imageMarkGreen.getFitWidth());
+            clonedUnit.imageMarkGreen.setFitHeight(this.imageMarkGreen.getFitHeight());
+        }
+
         clonedUnit.isActive = false;
         clonedUnit.maxHealth = this.maxHealth;
         numObjects++;
         System.out.println("CLONE: Unit cloned. Total objects: " + numObjects);
+        clonedUnit.loadMarkImages();
         clonedUnit.setCoordinates();
         return clonedUnit;
     }
 
-    public void attack(Unit target) {
-        if (target == null) {
-            System.out.println("No target to attack.");
-            return;
-        }
-        if (Boolean.TRUE.equals(this.isDead)) {
-            System.out.println("Cannot attack: attacker is dead.");
-            return;
-        }
-        if (Boolean.TRUE.equals(target.getDead())) {
-            System.out.println("Cannot attack: target is already dead.");
-            return;
-        }
-
+    public void attack() {
+        boolean intersects = false;
+        
+        
         if (this.damage == null || this.damage <= 0) {
-            System.out.println("No damage to deal (damage is null or zero).");
+            return;
+        }
+        if (this.image == null) {
+            return;
+        }
+        
+
+        if (HelloApplication.units != null) {
+            for (Unit unit : HelloApplication.units) {
+                if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
+                    intersects = this.image.getBoundsInParent().intersects(unit.image.getBoundsInParent());
+                    if (intersects) {
+                        int targetHealth = unit.getHealth() == null ? 0 : unit.getHealth();
+                        int newHealth = targetHealth - this.damage;
+                        unit.setHealth(newHealth);
+        
+                        if (newHealth <= 0) {
+                            unit.setHealth(0);
+                            objectedKilled++;
+                            unit.removeUnitFromGame();
+                        }
+                        
+                        break;
+                    }
+                }
+            }
+        }
+        if (HelloApplication.buldings != null) {
+            for (World world : HelloApplication.buldings) {
+                if (world != null && world.getTeam() != this.team && world.image != null) {
+                    double unitWidth = this.image.getImage() != null ? this.image.getImage().getWidth() : 0;
+                    double unitHeight = this.image.getImage() != null ? this.image.getImage().getHeight() : 0;
+                    double worldWidth = world.image.getWidth();
+                    double worldHeight = world.image.getHeight();
+
+                    intersects = this.x < world.x + worldWidth &&
+                            this.x + unitWidth > world.x &&
+                            this.y < world.y + worldHeight &&
+                            this.y + unitHeight > world.y;
+                    if (intersects) {
+                        int targetHealth = world.getHealth() == 0 ? 0 : (int) world.getHealth();
+                        int newHealth = targetHealth - this.damage;
+                        world.setHealth(newHealth);
+                    }
+                }
+            }
+        }
+        if (!intersects) {
             return;
         }
 
-        int targetHealth = target.getHealth() == null ? 0 : target.getHealth();
-        int newHealth = targetHealth - this.damage;
-        target.setHealth(newHealth);
-
-        if (newHealth <= 0) {
-            target.setHealth(0);
-            target.setDead(true);
-            objectedKilled++;
-            Unit.removeUnit();
-            System.out.println("Target unit has been killed. Total killed: " + objectedKilled);
-        } else {
-            System.out.println("Target unit took " + this.damage + " damage, remaining health: " + newHealth);
-        }
     }
+
+  
     public static void removeUnit() {
         numObjects--;
         System.out.println("Object removed. Total objects: " + numObjects);
@@ -528,17 +606,51 @@ public class Unit implements Cloneable{
         if (HelloApplication.group == null || labelName == null || life == null || image == null) {
             return;
         }
+        loadMarkImages();
+        if (this.getTeam() == true) {
+            imageMark = imageMarkGreen;
+        } else {
+            imageMark = imageMarkRed;
+        }
         HelloApplication.group.getChildren().addAll(labelName, life, image);
+        if (imageMark != null) {
+            HelloApplication.group.getChildren().add(imageMark);
+        }
         if (isActive) {
             HelloApplication.group.getChildren().add(rectActive);
         }
-        updateContourForTeam();
+        setCoordinates();
+    }
+
+    public void loadMarkImages() {
+        if (imageMarkRed != null && imageMarkGreen != null) {
+            return;
+        }
+        try {
+            URL redUrl = getClass().getResource("/red.png");
+            URL greenUrl = getClass().getResource("/green.png");
+            if (redUrl != null) {
+                imageMarkRed = new ImageView(new Image(redUrl.toExternalForm()));
+                imageMarkRed.setFitWidth(20);
+                imageMarkRed.setFitHeight(20);
+            } else {
+                System.out.println("Warning: red_mark.png not found in resources");
+            }
+            if (greenUrl != null) {
+                imageMarkGreen = new ImageView(new Image(greenUrl.toExternalForm()));
+                imageMarkGreen.setFitWidth(20);
+                imageMarkGreen.setFitHeight(20);
+            } else {
+                System.out.println("Warning: green_mark.png not found in resources");
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading mark images: " + e.getMessage());
+        }
     }
     public void setCoordinates() {
         if (labelName == null || life == null || image == null || rectActive == null) {
             return;
         }
-
         labelName.setLayoutX(x + labelDeltaX());
         labelName.setLayoutY(y + labelDeltaY());
 
@@ -557,9 +669,9 @@ public class Unit implements Cloneable{
         rectActive.setX(x + rectDeltaX());
         rectActive.setY(y + rectDeltaY());
 
-        if (contourView != null) {
-            contourView.setX(x + imageDeltaX());
-            contourView.setY(y + imageDeltaY());
+        if (imageMark != null) {
+            imageMark.setX(x + image.getFitWidth() - 20);
+            imageMark.setY(y + image.getFitHeight() - 20);
         }
     }
     public void move(double dx, double dy) {
@@ -594,59 +706,27 @@ public class Unit implements Cloneable{
         return false;
     }
 
-    private void ensureContourImagesLoaded() {
-        if (contourLoaded) {
-            return;
+    
+    public void updateTeamMark() {
+        loadMarkImages();
+        if (imageMark != null && HelloApplication.group.getChildren().contains(imageMark)) {
+            HelloApplication.group.getChildren().remove(imageMark);
         }
-        contourLoaded = true;
-        String baseName = getClass().getSimpleName().toLowerCase();
-
-        if (baseName == "Centurio".toLowerCase()) {
-            URL redUrl = HelloApplication.class.getResource("/centurio_contour_red.png");
-            URL greenUrl = HelloApplication.class.getResource("/centurio_contour_green.png");
-            contourGreenImage = new Image(greenUrl.toExternalForm(), 100, 100, false, false);
-            contourRedImage = new Image(redUrl.toExternalForm(), 100, 100, false, false);
-        } 
-         if (baseName == "Pretorio".toLowerCase()) {
-            URL redUrl = HelloApplication.class.getResource("/pretorio_contour_red.png");
-            URL greenUrl = HelloApplication.class.getResource("/pretorio_contour_green.png");
-            contourGreenImage = new Image(greenUrl.toExternalForm(), 100, 100, false, false);
-            contourRedImage = new Image(redUrl.toExternalForm(), 100, 100, false, false);
-        } 
-         if (baseName == "Warrior".toLowerCase()) {
-            URL redUrl = HelloApplication.class.getResource("/warrior_contour_red.png");
-            URL greenUrl = HelloApplication.class.getResource("/warrior_contour_green.png") ;
-            contourGreenImage = new Image(greenUrl.toExternalForm(), 100, 100, false, false);
-            contourRedImage = new Image(redUrl.toExternalForm(), 100, 100, false, false);
-        } 
-        
+        if (this.team) {
+            imageMark = imageMarkGreen;  
+        } else {
+            imageMark = imageMarkRed;    
+        }
+        if (imageMark != null) {
+            HelloApplication.group.getChildren().add(imageMark);
+        }
+        setCoordinates();
     }
 
-    private void updateContourForTeam() {
-        if (HelloApplication.group == null) {
-            return;
-        }
-        ensureContourImagesLoaded();
-        Image contour = team ? contourGreenImage : contourRedImage;
-        if (contour == null) {
-            return;
-        }
-        if (contourView == null) {
-            contourView = new ImageView(contour);
-        } else {
-            contourView.setImage(contour);
-        }
-        if (image != null && image.getImage() != null) {
-            contourView.setFitWidth(image.getImage().getWidth());
-            contourView.setFitHeight(image.getImage().getHeight());
-        }
-        contourView.setPreserveRatio(false);
-        contourView.setX(x + imageDeltaX());
-        contourView.setY(y + imageDeltaY());
-        if (!HelloApplication.group.getChildren().contains(contourView)) {
-            HelloApplication.group.getChildren().add(contourView);
-        }
+    public void logic() {
+        
     }
 
 
 }
+

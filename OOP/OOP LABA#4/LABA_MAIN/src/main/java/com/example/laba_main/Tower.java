@@ -1,6 +1,7 @@
 package com.example.laba_main;
 import java.net.URL;
 import java.util.ArrayList;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -11,11 +12,10 @@ public class Tower extends World {
     private static final double MAX_HEALTH = 300.0;
     private final ArrayList<Unit> unitsInside = new ArrayList<>();
     private int healAmount = 5;
-    private Boolean team;
-    private Image conturImageRedImage;
-    private Image conturImageGreenImage;
-    private final URL conturUrlRed = HelloApplication.class.getResource("/tower2_contour_red.png");
-    private final URL conturUrlGreen = HelloApplication.class.getResource("/tower2_contour_green.png");
+    private final URL conturUrlRed = HelloApplication.class.getResource("/red.png");
+    private final URL conturUrlGreen = HelloApplication.class.getResource("/green.png");
+    // private final URL conturUrlRed = HelloApplication.class.getResource("/tower2_contour_red.png");
+    // private final URL conturUrlGreen = HelloApplication.class.getResource("/tower2_contour_green.png");
     
 
 
@@ -23,20 +23,22 @@ public class Tower extends World {
         super(units);
         this.team = team;
         loadContourImages();
+        
     }
 
     public Tower() {
         super();
-        this.team = null;
+        this.team = false;  
         loadContourImages();
+        
     }
 
     private void loadContourImages() {
         if (conturUrlRed != null) {
-            conturImageRedImage = new Image(conturUrlRed.toExternalForm(), 200, 200, false, false);
+            conturImageRedImage = new Image(conturUrlRed.toExternalForm(), 20, 20, false, false);
         }
         if (conturUrlGreen != null) {
-            conturImageGreenImage = new Image(conturUrlGreen.toExternalForm(), 200, 200, false, false);
+            conturImageGreenImage = new Image(conturUrlGreen.toExternalForm(), 20, 20, false, false);
         }
     }
 
@@ -54,7 +56,7 @@ public class Tower extends World {
         }
     }
 
-    public void setTeam(Boolean team) {
+    public void setTeam(boolean team) {
         this.team = team;
     }
 
@@ -73,16 +75,16 @@ public class Tower extends World {
         if (HelloApplication.group == null) {
             return;
         }
-        if (Boolean.TRUE.equals(this.team) && conturImageGreenImage != null) {
-            ImageView contourView = new ImageView(conturImageGreenImage);
-            contourView.setX(x);
-            contourView.setY(y);
-            HelloApplication.group.getChildren().add(contourView);
-        } else if (Boolean.FALSE.equals(this.team) && conturImageRedImage != null) {
-            ImageView contourView = new ImageView(conturImageRedImage);
-            contourView.setX(x);
-            contourView.setY(y);
-            HelloApplication.group.getChildren().add(contourView);
+        if (this.team && conturImageGreenImage != null) {
+            this.contourView = new ImageView(conturImageGreenImage);
+            this.contourView.setX(x);
+            this.contourView.setY(y);
+            HelloApplication.group.getChildren().add(this.contourView);
+        } else if (!this.team && conturImageRedImage != null) {
+            this.contourView = new ImageView(conturImageRedImage);
+            this.contourView.setX(x);
+            this.contourView.setY(y);
+            HelloApplication.group.getChildren().add(this.contourView);
         }
     }
 
@@ -96,8 +98,11 @@ public class Tower extends World {
             return;
         }
 
+        
+        unitsInside.removeIf(unit -> unit == null || Boolean.TRUE.equals(unit.getDead()));
+
         for (Unit unit : worldUnits) {
-            if (unit == null || Boolean.TRUE.equals(unit.getDead())) {
+            if (unit == null || Boolean.TRUE.equals(unit.getDead()) ) {
                 continue;
             }
             double unitX = unit.x;
@@ -131,20 +136,26 @@ public class Tower extends World {
     }
 
     public void healUnits() {
+        if (this.getHealth() <= 0) {
+            return;
+        }
         for (Unit unit : unitsInside) {
             if (unit == null || Boolean.TRUE.equals(unit.getDead())) {
                 continue;
             }
+
             if (unit.getTeam() == this.getTeam()) {
                 Integer currentHealth = unit.getHealth();
                 int newHealth = (currentHealth == null ? 0 : currentHealth) + healAmount;
                 unit.setHealth(newHealth);
+                
                 continue;
             }
-            if (unit.getTeam() == !this.getTeam()) {
+            if (unit.getTeam() != this.getTeam()) {
                 Integer currentHealth = unit.getHealth();
                 int newHealth = (currentHealth == null ? 0 : currentHealth) - healAmount;
                 unit.setHealth(newHealth);
+                
             }
         }
     }

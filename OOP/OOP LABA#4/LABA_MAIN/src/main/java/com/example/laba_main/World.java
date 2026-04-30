@@ -1,10 +1,12 @@
 package com.example.laba_main;
 import java.net.URL;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Label;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
 
 import javafx.scene.shape.Line;
 
@@ -21,11 +23,14 @@ public class World {
     protected Label numUnitsLabel;
     protected Line life;
     protected double health;
-
+    protected boolean team;
 
 
     
-
+    protected Image conturImageRedImage;
+    protected Image conturImageGreenImage;
+    protected ImageView contourView;
+    protected ImageView imageView;
     protected double maxHealth;
 
     protected void setMaxHealth(double maxHealth) {
@@ -35,6 +40,15 @@ public class World {
     protected void setHealth(double health) {
         this.health = health;
         updateLifeBar();
+    }
+    protected double getHealth() {
+        return health;
+    }
+    protected double getMaxHealth() {
+        return maxHealth;
+    }
+    protected boolean getTeam() {
+        return team;
     }
 
     protected void updateLifeBar() {
@@ -109,41 +123,40 @@ public class World {
         }
     }
 
-    public static void updateAll(World world, World base, World tower) {
-        if (world != null) world.update();
-        if (base != null) base.update();
-        if (tower != null) tower.update();
-    }
+    
 
-    public void removeObject(Unit unit) {
-        if (unit == null || units == null) {
-            System.out.println("Cannot remove: unit or units list is null.");
-            return;
-        }
+    // public void removeObject(Unit unit) {
+    //     if (unit == null || units == null) {
+    //         System.out.println("Cannot remove: unit or units list is null.");
+    //         return;
+    //     }
 
-        // Remove all graphical components from the scene
+    //     // Remove all graphical components from the scene
 
-        if (HelloApplication.group != null) {
-            if (unit.labelName != null) {
-                HelloApplication.group.getChildren().remove(unit.labelName);
-            }
-            if (unit.life != null) {
-                HelloApplication.group.getChildren().remove(unit.life);
-            }
-            if (unit.image != null) {
-                HelloApplication.group.getChildren().remove(unit.image);
-            }
-            if (unit.rectActive != null) {
-                HelloApplication.group.getChildren().remove(unit.rectActive);
-            }
-        }
+    //     if (HelloApplication.group != null) {
+    //         if (unit.labelName != null) {
+    //             HelloApplication.group.getChildren().remove(unit.labelName);
+    //         }
+    //         if (unit.life != null) {
+    //             HelloApplication.group.getChildren().remove(unit.life);
+    //         }
+    //         if (unit.image != null) {
+    //             HelloApplication.group.getChildren().remove(unit.image);
+    //         }
+    //         if (unit.rectActive != null) {
+    //             HelloApplication.group.getChildren().remove(unit.rectActive);
+    //         }
+            // if (unit.imageMark != null) {
+            //     HelloApplication.group.getChildren().remove(unit.imageMark);
+            // }
+    //     }
 
-        // Remove unit from the units list
-        units.remove(unit);
-        Unit.removeUnit();
+    //     // Remove unit from the units list
+    //     units.remove(unit);
+    //     Unit.removeUnit();
 
-        System.out.println("Unit removed. Remaining units: " + units.size());
-    }
+    //     System.out.println("Unit removed. Remaining units: " + units.size());
+    // }
 
    
 
@@ -177,12 +190,53 @@ public class World {
         if (HelloApplication.group == null || labelName == null || life == null || image == null) {
             return;
         }
-        javafx.scene.image.ImageView imageView = new javafx.scene.image.ImageView(image);
+        imageView = new javafx.scene.image.ImageView(image);
         imageView.setX(x);
         imageView.setY(y);
         HelloApplication.group.getChildren().addAll(labelName, life, imageView, numUnitsLabel);
         
     }
+    protected void removeBuildingFromGame() {
+        if (HelloApplication.group == null) {
+            return;
+        }
+        if (labelName != null) {
+            HelloApplication.group.getChildren().remove(labelName);
+        }
+        if (life != null) {
+            HelloApplication.group.getChildren().remove(life);
+        }
+        if (imageView != null) {
+            HelloApplication.group.getChildren().remove(imageView);
+        }
+        if (numUnitsLabel != null) {
+            HelloApplication.group.getChildren().remove(numUnitsLabel);
+        }
+        if (conturImageGreenImage != null && this.team) {
+            HelloApplication.group.getChildren().remove(contourView);
+        }
+        if (conturImageRedImage != null && !this.team) {
+            HelloApplication.group.getChildren().remove(contourView);
+        }
+        HelloApplication.buldings.remove(this);
+        if (this.getClass().getSimpleName().equals("Base") && this.getTeam()== true) {
+            HelloApplication.basesA.remove(this);
+        } else if (this.getClass().getSimpleName().equals("Base") && this.getTeam()== false) {
+            HelloApplication.basesB.remove(this);
+        } else if (this.getClass().getSimpleName().equals("Tower") && this.getTeam()== true) {
+            HelloApplication.towersA.remove(this);
+        } else if (this.getClass().getSimpleName().equals("Tower") && this.getTeam()== false) {
+            HelloApplication.towersB.remove(this);
+        } else if (this.getClass().getSimpleName().equals("Source") && this.getTeam()== true) {
+            HelloApplication.sourcesA.remove(this);
+        } else if (this.getClass().getSimpleName().equals("Source") && this.getTeam()== false) {
+            HelloApplication.sourcesB.remove(this);
+        }
+
+        System.out.println("Building removed. Remaining buildings: " + HelloApplication.buldings.size());
+
+    }
+
 
     protected void intersect() {}
 }

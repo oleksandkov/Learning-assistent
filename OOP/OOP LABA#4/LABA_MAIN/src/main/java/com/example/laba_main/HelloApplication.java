@@ -1,24 +1,25 @@
 package com.example.laba_main;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javafx.application.Application;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.util.Duration;
+import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 
 public class HelloApplication extends Application {
@@ -42,8 +43,19 @@ public class HelloApplication extends Application {
     private final Set<KeyCode> handledActionKeys = new HashSet<>();
 
     // Speed
-    public static double keyStepX = 5.0;
-    public static double keyStepY = 5.0;
+    public static double keyStepX = 3.0;
+    public static double keyStepY = 3.0;
+
+    // Number buildings 
+
+    public static ArrayList<Tower> towersA = new ArrayList<>();
+    public static ArrayList<Source> sourcesA = new ArrayList<>();
+    public static ArrayList<Base> basesA = new ArrayList<>();
+    public static ArrayList<Tower> towersB = new ArrayList<>();
+    public static ArrayList<Source> sourcesB = new ArrayList<>();
+    public static ArrayList<Base> basesB = new ArrayList<>();
+    
+    public static ArrayList<World> buldings = new ArrayList<>();
 
 
 
@@ -68,7 +80,7 @@ public class HelloApplication extends Application {
 
         scene.setOnKeyPressed(e -> {
             KeyCode code = e.getCode();
-            if (code == KeyCode.DELETE || code == KeyCode.INSERT || code == KeyCode.ESCAPE) {
+            if (code == KeyCode.DELETE || code == KeyCode.INSERT || code == KeyCode.ESCAPE || code == KeyCode.SPACE) {
                 if (handledActionKeys.contains(code)) {
                     return;
                 }
@@ -92,9 +104,9 @@ public class HelloApplication extends Application {
         URL warriorUrl = HelloApplication.class.getResource("/warrior.png");
         URL CenturioUrl = HelloApplication.class.getResource("/centurio.png");
         URL PretorioUrl = HelloApplication.class.getResource("/pretorio.png");
-        URL baseUrl = HelloApplication.class.getResource("/base.png");
+        URL baseUrl = HelloApplication.class.getResource("/base2.png");
         URL towerUrl = HelloApplication.class.getResource("/tower2.png");
-        URL sourceUrl = HelloApplication.class.getResource("/source.png");
+        URL sourceUrl = HelloApplication.class.getResource("/source2.png");
         if (warriorUrl == null) {
             throw new IllegalStateException("Resource not found: /warrior.png");
         }
@@ -114,9 +126,9 @@ public class HelloApplication extends Application {
             throw new IllegalStateException("Resource not found: /source.png");
         }
 
-        imgBase = new Image(baseUrl.toExternalForm(), 150, 150, false, false);
+        imgBase = new Image(baseUrl.toExternalForm(), 250, 250, false, false);
         imgTower = new Image(towerUrl.toExternalForm(), 200, 200, false, false);
-        imgSource = new Image(sourceUrl.toExternalForm(), 120, 120, false, false);
+        imgSource = new Image(sourceUrl.toExternalForm(),200, 200, false, false);
         imgWarrior = new Image(warriorUrl.toExternalForm(), 100, 100, false, false);
         imgCenturio = new Image(CenturioUrl.toExternalForm(), 100, 100, false, false);
         imgPretorio = new Image(PretorioUrl.toExternalForm(), 100, 100, false, false);
@@ -125,14 +137,14 @@ public class HelloApplication extends Application {
         pretorios = new ArrayList<>();
         units = new ArrayList<>();
 
-        warriors.add(new Warrior(100, true, true, 7, false,
-                new ArrayList<>(Arrays.asList("Knife", "Shield")), 80, 80));
-        warriors.add(new Warrior(100, true, false, 9, false,
-                new ArrayList<>(Arrays.asList("Axe")), 260, 120));
-        warriors.add(new Warrior(100, true, true, 6, false,
-                new ArrayList<>(Arrays.asList("Sword", "Potion")), 460, 220));
-        pretorios.add(new Pretorio(150, true, true, 11,false, new  ArrayList<>(Arrays.asList("Shield")), 120, 80));
-        centurios.add(new Centurio(120, true, true, 10,false, new  ArrayList<>(Arrays.asList("Shield")), 110, 110));
+        // warriors.add(new Warrior(100, true, true, 7, false,
+        //         new ArrayList<>(Arrays.asList("Knife", "Shield")), 80, 80));
+        // warriors.add(new Warrior(100, true, false, 9, false,
+        //         new ArrayList<>(Arrays.asList("Axe")), 260, 120));
+        // warriors.add(new Warrior(100, true, true, 6, false,
+        //         new ArrayList<>(Arrays.asList("Sword", "Potion")), 460, 220));
+        // pretorios.add(new Pretorio(150, true, true, 11,false, new  ArrayList<>(Arrays.asList("Shield")), 120, 80));
+        // centurios.add(new Centurio(120, true, true, 10,false, new  ArrayList<>(Arrays.asList("Shield")), 110, 110));
         for (int i = 0; i < warriors.size(); i++) {
             Unit u = warriors.get(i);
             units.add(u);
@@ -155,26 +167,89 @@ public class HelloApplication extends Application {
         for (Unit p : pretorios) {
             p.resurrect();
         }
-        World world = new World(units);
+       
 
-        Tower tower = new Tower();
-        tower.setTeam(true);
-        tower.initGraphics(imgTower, "Tower", 0, 100,100, 300.0, 300);
-        tower.resurrectWorld();
+
+
+        // Towers
+        Tower tower1 = new Tower();
+        tower1.setTeam(true);
+        tower1.initGraphics(imgTower, "Tower", 0, 100,100, 300.0, 50);
+        tower1.resurrectWorld();
         Timeline healTimer = new Timeline(
-            new KeyFrame(Duration.seconds(1), e -> tower.healUnits())
+            new KeyFrame(Duration.seconds(1), e -> tower1.healUnits())
         );
         healTimer.setCycleCount(Animation.INDEFINITE);
         healTimer.play();
-        
 
+        Tower tower2 = new Tower();
+        tower2.setTeam(false);
+        tower2.initGraphics(imgTower, "Tower", 0, 600,100, 300.0, 300);
+        tower2.resurrectWorld();
+        Timeline healTimer2 = new Timeline(
+            new KeyFrame(Duration.seconds(1), e -> tower2.healUnits())
+        );
+        healTimer2.setCycleCount(Animation.INDEFINITE);
+        healTimer2.play();
+
+        towersB.add(tower2);
+        towersA.add(tower1);
+        buldings.add(tower1);
+        buldings.add(tower2);
+
+        //Sources
+        Source source1 = new Source();
+        source1.setTeam(true);
+        source1.initGraphics(imgSource, "Source", 0, 100, 450, 200.0, 200);
+        source1.resurrectWorld();
+        Source source2 = new Source();
+        source2.setTeam(false);
+        source2.initGraphics(imgSource, "Source", 0, 600, 450, 200.0, 200);
+        source2.resurrectWorld();
+        sourcesB.add(source2);
+        sourcesA.add(source1);
+        buldings.add(source1);
+        buldings.add(source2);
+
+        // Bases
+        Base base1 = new Base();
+        base1.setTeam(true);
+        base1.initGraphics(imgBase, "Base", 0, 100, 900, 200.0, 200);
+        base1.resurrectWorld();
+        Base base2 = new Base();
+        base2.setTeam(false);
+        base2.initGraphics(imgBase, "Base", 0, 600, 900, 200.0, 200);
+        base2.resurrectWorld();
+        basesB.add(base2);
+        basesA.add(base1);
+        buldings.add(base1);
+        buldings.add(base2);
+
+
+        
+         World world = new World(units);
 
 
         scene.setOnMouseClicked(event -> {
-            for (int i = units.size() - 1; i >= 0; i--) {
-                Unit unit = units.get(i);
-                if (unit.tryActivate(event.getX(), event.getY())) {
-                    break;
+            if (event.getButton() == MouseButton.PRIMARY) {
+                
+                for (int i = units.size() - 1; i >= 0; i--) {
+                    Unit unit = units.get(i);
+                    if (unit.tryActivate(event.getX(), event.getY())) {
+                        break;
+                    }
+                }
+            } else if (event.getButton() == MouseButton.SECONDARY) {
+               
+                for (int i = units.size() - 1; i >= 0; i--) {
+                    Unit unit = units.get(i);
+                    if (unit.getImage().getBoundsInParent().contains(event.getX(), event.getY())) {
+                        javafx.application.Platform.runLater(() -> {
+                            UnitEditDialog editDialog = new UnitEditDialog(unit);
+                            editDialog.showAndWait();
+                        });
+                        break;
+                    }
                 }
             }
         });
@@ -201,17 +276,27 @@ public class HelloApplication extends Application {
                         for (int i = units.size() - 1; i >= 0; i--) {
                             for (Unit unit : units) {
                                 if (unit.isActive()) {
-                                    world.removeObject(unit);
+                                    unit.removeUnitFromGame();
                                     break;
                                 }
                             }
                         }
                         keysPressed.remove(KeyCode.DELETE);
                     } else if (code == KeyCode.INSERT) {
-                        Unit newWarrior = new Warrior(1, true, false, 5, false,
-                                new ArrayList<>(Arrays.asList("Knife")), 100, 100);
-                        units.add(newWarrior);
-                        newWarrior.resurrect();
+                        
+                        
+                        javafx.application.Platform.runLater(() -> {
+                              
+                                UnitCreationDialog dialog = new UnitCreationDialog();
+                                Unit newUnit = dialog.showAndWait();
+                                if (newUnit != null) {
+                                    units.add(newUnit);
+                                    newUnit.resurrect();
+                                } else {
+                                    System.out.println("Dialog was cancelled or null result");
+                                }
+                            
+                        });
                         keysPressed.remove(KeyCode.INSERT);
                     } else if (code == KeyCode.ESCAPE) {
                         for (int i = 0; i < units.size(); i++) {
@@ -244,6 +329,13 @@ public class HelloApplication extends Application {
                             clonedUnit.resurrect();
                         }
                         keysPressed.remove(KeyCode.V);
+                    } else if (code == KeyCode.SPACE) {
+                        for (Unit unit : units) {
+                            if (unit.isActive()) {
+                                unit.attack();
+                            }
+                        }
+                        keysPressed.remove(KeyCode.SPACE);
                     }
                 }
 
@@ -252,7 +344,16 @@ public class HelloApplication extends Application {
                         unit.move(dx, dy);
                     }
                 }
-                tower.intersect();
+                for (World world : buldings) {
+                    if (world.getHealth() <= 0) {
+                        world.removeBuildingFromGame();
+                    }
+                }
+
+                tower1.intersect();
+                tower2.intersect();
+                
+                
             }
         };
         gameLoop.start();

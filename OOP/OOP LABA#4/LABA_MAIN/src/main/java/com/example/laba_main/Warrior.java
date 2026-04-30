@@ -88,7 +88,8 @@ public class Warrior extends Unit {
         life.setStroke(Color.LIGHTGREEN);
 
         image = new ImageView(HelloApplication.imgWarrior);
-        
+        image.setFitWidth(100);
+        image.setFitHeight(100);
 
         isActive = false;
         rectActive = new Rectangle(x - 5, y - 5, 110, 110);
@@ -99,7 +100,20 @@ public class Warrior extends Unit {
         setCoordinates();
     }
 
-  
+    // @Override
+    // public void logic() {
+    //     World mainTarget = null;
+    //     Unit subTarget = null;
+
+    //         for (Unit unit : HelloApplication.units) {
+    //             if (unit != this && unit.getTeam() != this.team && !unit.getIsDead()) {
+    //                 mainTarget = unit;
+    //                 break;
+    //             }
+    //         }
+
+
+    // }
 
 }
 
