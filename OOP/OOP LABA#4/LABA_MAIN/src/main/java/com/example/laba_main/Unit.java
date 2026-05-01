@@ -276,6 +276,9 @@ public class Unit implements Cloneable{
             if (this.imageMark != null) {
                 HelloApplication.group.getChildren().remove(this.imageMark);
             }
+            if (this.mainWeaponImage != null) {
+                HelloApplication.group.getChildren().remove(this.mainWeaponImage);
+            }
         }
         
         if (HelloApplication.units != null) {
@@ -385,8 +388,6 @@ public class Unit implements Cloneable{
         clonedUnit.maxHealth = this.maxHealth;
         numObjects++;
         System.out.println("CLONE: Unit cloned. Total objects: " + numObjects);
-        clonedUnit.loadMarkImages();
-        clonedUnit.setCoordinates();
         return clonedUnit;
     }
 
@@ -424,16 +425,8 @@ public class Unit implements Cloneable{
         }
         if (HelloApplication.buldings != null) {
             for (World world : HelloApplication.buldings) {
-                if (world != null && world.getTeam() != this.team && world.image != null) {
-                    double unitWidth = this.image.getImage() != null ? this.image.getImage().getWidth() : 0;
-                    double unitHeight = this.image.getImage() != null ? this.image.getImage().getHeight() : 0;
-                    double worldWidth = world.image.getWidth();
-                    double worldHeight = world.image.getHeight();
-
-                    intersects = this.x < world.x + worldWidth &&
-                            this.x + unitWidth > world.x &&
-                            this.y < world.y + worldHeight &&
-                            this.y + unitHeight > world.y;
+                if (world != null && world.getTeam() != this.team && world.imageView != null) {
+                    intersects = this.image.getBoundsInParent().intersects(world.imageView.getBoundsInParent());
                     if (intersects) {
                         int targetHealth = world.getHealth() == 0 ? 0 : (int) world.getHealth();
                         int newHealth = targetHealth - this.damage;
@@ -620,6 +613,17 @@ public class Unit implements Cloneable{
         System.out.println("THE INVENTORY: " + inventor);
 
     }
+    private void spawnAtTeamBase() {
+    if (this.getTeam()) {
+        if (HelloApplication.basesA != null && !HelloApplication.basesA.isEmpty()) {
+            setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
+        }
+    } else {
+        if (HelloApplication.basesB != null && !HelloApplication.basesB.isEmpty()) {
+            setPosition(HelloApplication.basesB.get(0).x, HelloApplication.basesB.get(0).y);
+        }
+    }
+}
 
 
     
@@ -645,6 +649,7 @@ public class Unit implements Cloneable{
         }
         setCoordinates();
         inventoryLogic();
+        spawnAtTeamBase();
     }
     public void loadInventoryImages() {
         try {

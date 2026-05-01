@@ -84,7 +84,7 @@ public class Centurio extends Warrior{
     }
 
     public Centurio() {
-        this(100, true, true, 5, false, new ArrayList<>(Arrays.asList("Knife")), 0.0, 0.0);
+        this((int) MAX_HEALTH, true, true, 5, false, new ArrayList<>(Arrays.asList("Spear")), 0.0, 0.0);
         initGraphics(getName(), x, y);
     }
 

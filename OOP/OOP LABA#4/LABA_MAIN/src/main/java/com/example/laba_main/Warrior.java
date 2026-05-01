@@ -79,7 +79,7 @@ public class Warrior extends Unit {
     }
 
     public Warrior() {
-        this(100, true, true, 5, false, new ArrayList<>(Arrays.asList("Knife")), 0.0, 0.0);
+        this((int) MAX_HEALTH, true, true, 5, false, new ArrayList<>(Arrays.asList()), 0.0, 0.0);
         initGraphics(getName(), x, y);
     }
 

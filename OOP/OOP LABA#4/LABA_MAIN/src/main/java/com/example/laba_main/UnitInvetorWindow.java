@@ -24,7 +24,7 @@ public class UnitInvetorWindow {
 		initInventoryIcons();
 
 		inventoryStage = new Stage();
-		inventoryStage.setTitle("Active Unit Inventory");
+		inventoryStage.setTitle("Unit Inventory");
 
 		inventoryTitleLabel = new Label("No active unit");
 		inventoryItemsBox = new VBox(6);

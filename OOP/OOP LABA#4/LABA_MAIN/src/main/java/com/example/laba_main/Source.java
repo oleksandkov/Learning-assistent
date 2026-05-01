@@ -47,6 +47,19 @@ public class Source extends World {
         return this.team;
     }
 
+    private boolean containsByReference(Unit candidate) {
+        for (Unit u : unitsInside) {
+            if (u == candidate) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void removeByReference(Unit candidate) {
+        unitsInside.removeIf(u -> u == candidate);
+    }
+
 
     public void setTeam(boolean team) {
         this.team = team;
@@ -97,34 +110,25 @@ public class Source extends World {
             return;
         }
 
+        if (this.imageView == null) {
+            return;
+        }
+
         // Remove dead units from unitsInside
         unitsInside.removeIf(unit -> unit == null || Boolean.TRUE.equals(unit.getDead()));
 
         for (Unit unit : worldUnits) {
-            if (unit == null || Boolean.TRUE.equals(unit.getDead())) {
+            if (unit == null || Boolean.TRUE.equals(unit.getDead()) || unit.image == null) {
                 continue;
             }
-            double unitX = unit.x;
-            double unitY = unit.y;
-            double unitWidth = unit.image != null ? unit.image.getImage().getWidth() : 0;
-            double unitHeight = unit.image != null ? unit.image.getImage().getHeight() : 0;
-
-            double towerX = this.x;
-            double towerY = this.y;
-            double towerWidth = this.image != null ? this.image.getWidth() : 0;
-            double towerHeight = this.image != null ? this.image.getHeight() : 0;
-
-            boolean intersects = unitX < towerX + towerWidth &&
-                    unitX + unitWidth > towerX &&
-                    unitY < towerY + towerHeight &&
-                    unitY + unitHeight > towerY;
+            boolean intersects = unit.image.getBoundsInParent().intersects(this.imageView.getBoundsInParent());
 
             if (intersects) {
-                if (!unitsInside.contains(unit)) {
+                if (!containsByReference(unit)) {
                     unitsInside.add(unit);
                 }
             } else {
-                unitsInside.remove(unit);
+                removeByReference(unit);
             }
         }
 

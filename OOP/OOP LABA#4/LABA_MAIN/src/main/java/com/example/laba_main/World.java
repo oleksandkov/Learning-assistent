@@ -31,6 +31,17 @@ public class World {
     protected double maxHealth;
 
     protected double oreAmount = 0;
+    public static int allyUnits = 0;
+    public static int enemyUnits = 0;
+
+
+    public int warriorsTeamA = 0;
+    public int warriorsTeamB = 0;
+    public int centaursTeamA = 0;
+    public int centaursTeamB = 0;
+    public int pretionsTeamA = 0;
+    public int pretionsTeamB = 0;
+
 
     public double getOre() {
         return this.oreAmount;
@@ -128,6 +139,8 @@ public class World {
                 }
             }
         }
+        // Recalculate unit counts after removal
+        updateUnits();
     }
 
     
@@ -215,6 +228,117 @@ public class World {
 
 
     protected void intersect() {}
+
+
+    private void updateUnits() {
+       
+        warriorsTeamA = 0;
+        warriorsTeamB = 0;
+        centaursTeamA = 0;
+        centaursTeamB = 0;
+        pretionsTeamA = 0;
+        pretionsTeamB = 0;
+        allyUnits = 0;
+        enemyUnits = 0;
+        
+        
+        for (Unit unit : HelloApplication.units) {
+            if (unit != null && unit.image != null) {
+                String unitType = unit.getClass().getSimpleName();
+                boolean isAlly = unit.getTeam() == true;
+                
+                if (unitType.equals("Warrior")) {
+                    if (isAlly) {
+                        warriorsTeamA++;
+                        allyUnits++;
+                    } else {
+                        warriorsTeamB++;
+                        enemyUnits++;
+                    }
+                } else if (unitType.equals("Centurio")) {
+                    if (isAlly) {
+                        centaursTeamA++;
+                        allyUnits++;
+                    } else {
+                        centaursTeamB++;
+                        enemyUnits++;
+                    }
+                } else if (unitType.equals("Pretorio")) {
+                    if (isAlly) {
+                        pretionsTeamA++;
+                        allyUnits++;
+                    } else {
+                        pretionsTeamB++;
+                        enemyUnits++;
+                    }
+                }
+            }
+        }
+        
+        
+        HelloApplication.numUnitsTeamA.setText("Team A units: " + allyUnits);
+        HelloApplication.numUnitsTeamB.setText("Team B units: " + enemyUnits);
+    }
+
+    public  void worldLogic() {
+        objects = Unit.getNumObjects();
+        updateUnits();
+        
+        int oreTeamA = 0;
+        int oreTeamB = 0;
+
+        oreTeamA = (int) HelloApplication.basesA.get(0).getOre();
+        oreTeamB = (int) HelloApplication.basesB.get(0).getOre();
+
+        if (oreTeamA >= 50 && warriorsTeamA < 3) {
+            HelloApplication.basesA.get(0).setOre(oreTeamA - 50);
+            Unit newUnit = new Warrior();
+            newUnit.setTeam(true);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
+            newUnit.resurrect();
+        }
+        if (oreTeamB >= 50 && warriorsTeamB < 3) {
+            HelloApplication.basesB.get(0).setOre(oreTeamB - 50);
+            Unit newUnit = new Warrior();
+            newUnit.setTeam(false);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesB.get(0).x, HelloApplication.basesB.get(0).y);
+            newUnit.resurrect();
+        }
+        if (oreTeamA >= 100 && centaursTeamA < 2) {
+            HelloApplication.basesA.get(0).setOre(oreTeamA - 100);
+            Unit newUnit = new Centurio();
+            newUnit.setTeam(true);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
+            newUnit.resurrect();
+        }
+        if (oreTeamB >= 100 && centaursTeamB < 2) {
+            HelloApplication.basesB.get(0).setOre(oreTeamB - 100);
+            Unit newUnit = new Centurio();
+            newUnit.setTeam(false);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesB.get(0).x, HelloApplication.basesB.get(0).y);
+            newUnit.resurrect();
+        }
+        if (oreTeamA >= 150 && pretionsTeamA < 10) {
+            HelloApplication.basesA.get(0).setOre(oreTeamA - 150);
+            Unit newUnit = new Pretorio();
+            newUnit.setTeam(true);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
+            newUnit.resurrect();
+        }
+        if (oreTeamB >= 150 && pretionsTeamB < 10) {
+            HelloApplication.basesB.get(0).setOre(oreTeamB - 150);
+            Unit newUnit = new Pretorio();
+            newUnit.setTeam(false);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesB.get(0).x, HelloApplication.basesB.get(0).y);
+            newUnit.resurrect();
+        }
+    }
     
 }
 

@@ -60,6 +60,8 @@ public class HelloApplication extends Application {
     private Label oreLabelTeamA;
     private Label oreLabelTeamB;
     private UnitInvetorWindow unitInvetorWindow;
+    public static Label numUnitsTeamA;
+    public static Label numUnitsTeamB;
 
 
 
@@ -75,11 +77,19 @@ public class HelloApplication extends Application {
 
         oreLabelTeamA = new Label();
         oreLabelTeamB = new Label();
+        numUnitsTeamA = new Label();
+        numUnitsTeamB = new Label();
         oreLabelTeamA.setLayoutX(0);
         oreLabelTeamA.setLayoutY(0);
         oreLabelTeamB.setLayoutX(0);
         oreLabelTeamB.setLayoutY(20);
+        numUnitsTeamA.setLayoutX(0);
+        numUnitsTeamA.setLayoutY(40);
+        numUnitsTeamB.setLayoutX(0);
+        numUnitsTeamB.setLayoutY(60);
         group.getChildren().addAll(oreLabelTeamA, oreLabelTeamB);
+        group.getChildren().addAll(numUnitsTeamA, numUnitsTeamB);
+
 
         // Setup key maps
         keysPresses.put(KeyCode.W, -keyStepY);
@@ -93,13 +103,7 @@ public class HelloApplication extends Application {
 
         scene.setOnKeyPressed(e -> {
             KeyCode code = e.getCode();
-            if (code == KeyCode.DELETE || code == KeyCode.INSERT || code == KeyCode.ESCAPE || code == KeyCode.SPACE || code == KeyCode.I) {
-                if (handledActionKeys.contains(code)) {
-                    return;
-                }
-                handledActionKeys.add(code);
-            }
-            if (code == KeyCode.V && e.isControlDown()) {
+            if (code == KeyCode.DELETE || code == KeyCode.INSERT || code == KeyCode.ESCAPE || code == KeyCode.SPACE || code == KeyCode.I || code == KeyCode.V) {
                 if (handledActionKeys.contains(code)) {
                     return;
                 }
@@ -150,36 +154,35 @@ public class HelloApplication extends Application {
         pretorios = new ArrayList<>();
         units = new ArrayList<>();
 
-        // warriors.add(new Warrior(100, true, true, 7, false,
-        //         new ArrayList<>(Arrays.asList("Knife", "Shield")), 80, 80));
-        // warriors.add(new Warrior(100, true, false, 9, false,
-        //         new ArrayList<>(Arrays.asList("Axe")), 260, 120));
-        // warriors.add(new Warrior(100, true, true, 6, false,
-        //         new ArrayList<>(Arrays.asList("Sword", "Potion")), 460, 220));
-        // pretorios.add(new Pretorio(150, true, true, 11, false, new ArrayList<>(Arrays.asList("Shield")), 120, 80));
-        // centurios.add(new Centurio(120, true, true, 10, false, new ArrayList<>(Arrays.asList("Shield")), 110, 110));
+        Warrior warrior1 = new Warrior();
+        warrior1.setTeam(true);
+        warriors.add(warrior1);
+        Warrior warrior2 = new Warrior();
+        warrior2.setTeam(false);
+        warriors.add(warrior2);
+
         for (int i = 0; i < warriors.size(); i++) {
             Unit u = warriors.get(i);
             units.add(u);
         }
 
-        for (Unit warrior : warriors) {
-            warrior.resurrect();
-        }
+        // for (Unit warrior : warriors) {
+        //     warrior.resurrect();
+        // }
         for  (int i = 0; i < centurios.size(); i++) {
             Unit c = centurios.get(i);
             units.add(c);
         }
-        for (Unit centurios  : centurios) {
-            centurios.resurrect();
-        }
+        // for (Unit centurios  : centurios) {
+        //     centurios.resurrect();
+        // }
         for (int i  = 0; i < pretorios.size(); i++) {
             Unit p =  pretorios.get(i);
             units.add(p);
         }
-        for (Unit p : pretorios) {
-            p.resurrect();
-        }
+        // for (Unit p : pretorios) {
+        //     p.resurrect();
+        // }
        
 
 
@@ -187,7 +190,7 @@ public class HelloApplication extends Application {
         // Towers
         Tower tower1 = new Tower();
         tower1.setTeam(true);
-        tower1.initGraphics(imgTower, "Tower", 0, 100,0, 300.0, 50);
+        tower1.initGraphics(imgTower, "Tower", 0, 300,450, 300.0, 50);
         tower1.resurrectWorld();
         Timeline healTimer = new Timeline(
             new KeyFrame(Duration.seconds(1), e -> tower1.healUnits())
@@ -197,7 +200,7 @@ public class HelloApplication extends Application {
 
         Tower tower2 = new Tower();
         tower2.setTeam(false);
-        tower2.initGraphics(imgTower, "Tower", 0, 600,0, 300.0, 300);
+        tower2.initGraphics(imgTower, "Tower", 0, 700,450, 300.0, 300);
         tower2.resurrectWorld();
         Timeline healTimer2 = new Timeline(
             new KeyFrame(Duration.seconds(1), e -> tower2.healUnits())
@@ -213,11 +216,11 @@ public class HelloApplication extends Application {
         // Sources
         Source source1 = new Source();
         source1.setTeam(true);
-        source1.initGraphics(imgSource, "Source", 0, 100, 300, 200.0, 200);
+        source1.initGraphics(imgSource, "Source", 0, 750, 70, 200.0, 200);
         source1.resurrectWorld();
         Source source2 = new Source();
         source2.setTeam(false);
-        source2.initGraphics(imgSource, "Source", 0, 600, 300, 200.0, 200);
+        source2.initGraphics(imgSource, "Source", 0, 500, 850, 200.0, 200);
         source2.resurrectWorld();
         sourcesB.add(source2);
         sourcesA.add(source1);
@@ -227,16 +230,30 @@ public class HelloApplication extends Application {
         // Bases
         Base base1 = new Base();
         base1.setTeam(true);
-        base1.initGraphics(imgBase, "Base", 0, 100, 650, 200.0, 200);
+        base1.initGraphics(imgBase, "Base", 0, 250, 50, 200.0, 200);
         base1.resurrectWorld();
         Base base2 = new Base();
         base2.setTeam(false);
-        base2.initGraphics(imgBase, "Base", 0, 600, 650, 200.0, 200);
+        base2.initGraphics(imgBase, "Base", 0, 800, 800, 200.0, 200);
         base2.resurrectWorld();
         basesB.add(base2);
         basesA.add(base1);
         buldings.add(base1);
         buldings.add(base2);
+
+        
+        for (Unit unit : units) {
+            if (unit == null) {
+                continue;
+            }
+            if (unit.getTeam()) {
+                unit.resurrect();
+                unit.setPosition(basesA.get(0).x, basesA.get(0).y);
+            } else {
+                unit.resurrect();
+                unit.setPosition(basesB.get(0).x, basesB.get(0).y);
+            }
+        }
 
 
         
@@ -333,25 +350,25 @@ public class HelloApplication extends Application {
                         }
                         keysPressed.remove(KeyCode.ESCAPE);
                     } else if (code == KeyCode.V) {
-                        ArrayList<Unit> clones = new ArrayList<>();
-                        int cloneIndex = 0;
-                        for (Unit unit : units) {
-                            if (unit.isActive()) {
-                                try {
-                                    Unit clonedUnit = (Unit) unit.clone();
-                                    int offset = 20 + (cloneIndex * 10);
-                                    clonedUnit.setPosition(unit.x + offset, unit.y + offset);
-                                    clones.add(clonedUnit);
-                                    cloneIndex++;
-                                } catch (CloneNotSupportedException e) {
-                                    System.err.println("Clone not supported: " + e.getMessage());
-                                    e.printStackTrace();
-                                }
+                        Unit sourceUnit = null;
+                        for (int i = units.size() - 1; i >= 0; i--) {
+                            Unit candidate = units.get(i);
+                            if (candidate != null && candidate.isActive()) {
+                                sourceUnit = candidate;
+                                break;
                             }
                         }
-                        for (Unit clonedUnit : clones) {
-                            units.add(clonedUnit);
-                            clonedUnit.resurrect();
+
+                        if (sourceUnit != null) {
+                            try {
+                                Unit clonedUnit = (Unit) sourceUnit.clone();
+                                units.add(clonedUnit);
+                                clonedUnit.resurrect();
+                                clonedUnit.setPosition(sourceUnit.x + 20, sourceUnit.y + 20);
+                            } catch (CloneNotSupportedException e) {
+                                System.err.println("Clone not supported: " + e.getMessage());
+                                e.printStackTrace();
+                            }
                         }
                         keysPressed.remove(KeyCode.V);
                     } else if (code == KeyCode.SPACE) {
@@ -377,7 +394,8 @@ public class HelloApplication extends Application {
                     }
                 }
 
-                updateOreHud();
+                updateHud();
+                world.worldLogic();
 
                 tower1.intersect();
                 tower2.intersect();
@@ -408,7 +426,7 @@ public class HelloApplication extends Application {
         stage.show();
     }
 
-    private void updateOreHud() {
+    private void updateHud() {
         double teamAOre = 0;
         double teamBOre = 0;
 
@@ -425,7 +443,9 @@ public class HelloApplication extends Application {
         }
             oreLabelTeamA.setText("Team A ore: " + (int) teamAOre);
             oreLabelTeamB.setText("Team B ore: " + (int) teamBOre);
-        
+            
+
+           
     }
 
 }

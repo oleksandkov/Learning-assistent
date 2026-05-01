@@ -99,7 +99,6 @@ public class UnitCreationDialog {
         HBox inventorBox = new HBox(8);
         inventorBox.getChildren().add(new Label("Inventory:"));
         inventorField = new TextField();
-        inventorField.setText("Knife");
         inventorField.setPrefWidth(150);
         inventorBox.getChildren().add(inventorField);
 

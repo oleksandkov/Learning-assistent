@@ -78,7 +78,7 @@ public class Pretorio extends Centurio {
     }
 
     public Pretorio() {
-        this(100, true, true, 5, false, new ArrayList<>(Arrays.asList("Knife")), 0.0, 0.0);
+        this((int) MAX_HEALTH, true, true, 5, false, new ArrayList<>(Arrays.asList("Sword")), 0.0, 0.0);
         initGraphics(getName(), x, y);
     }
 
@@ -123,7 +123,9 @@ public class Pretorio extends Centurio {
             areaOfEffect.setVisible(this.isActive);
 
         }
-        mainWeaponImage.setY( y + 17);
+        if (mainWeaponImage != null) {
+            mainWeaponImage.setY(y + 17);
+        }
     }
 
     @Override
@@ -135,8 +137,10 @@ public class Pretorio extends Centurio {
             areaOfEffect.setCenterX(centerX);
             areaOfEffect.setCenterY(centerY);
         }
-        mainWeaponImage.setX(x);
-        mainWeaponImage.setY(y + 17);
+        if (mainWeaponImage != null) {
+            mainWeaponImage.setX(x);
+            mainWeaponImage.setY(y + 17);
+        }
     }
 
     @Override
