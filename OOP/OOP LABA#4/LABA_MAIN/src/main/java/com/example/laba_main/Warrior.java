@@ -13,6 +13,13 @@ import javafx.scene.shape.Rectangle;
 public class Warrior extends Unit {
     private static String name = "Warrior";
     private static final double MAX_HEALTH = 100.0;
+    private double oreAmount = 0;
+    private static final long ORE_COOLDOWN = 1000;
+    private long lastOreTime = 0;
+    private boolean collectingOre = false;
+    private boolean deliveringOre = false;
+    private static final double COMBAT_PRIORITY_RADIUS = 180.0;
+
 
     @Override
     protected double labelDeltaX() {
@@ -99,21 +106,157 @@ public class Warrior extends Unit {
 
         setCoordinates();
     }
+    
+    private void doOre() {
+        if (HelloApplication.buldings == null) {
+            return;
+        }
 
-    // @Override
-    // public void logic() {
-    //     World mainTarget = null;
-    //     Unit subTarget = null;
+        World sourceTarget = null;
+        World baseTarget = null;
+        for (World build : HelloApplication.buldings) {
+            if (build == null || build.getTeam() != this.team) {
+                continue;
+            }
+            if (sourceTarget == null && build instanceof Source) {
+                sourceTarget = build;
+            } else if (baseTarget == null && build instanceof Base) {
+                baseTarget = build;
+            }
+        }
 
-    //         for (Unit unit : HelloApplication.units) {
-    //             if (unit != this && unit.getTeam() != this.team && !unit.getIsDead()) {
-    //                 mainTarget = unit;
-    //                 break;
-    //             }
-    //         }
+        if (sourceTarget == null || baseTarget == null) {
+            return;
+        }
 
+        long currentTime = System.currentTimeMillis();
 
-    // }
+        if (!collectingOre && !deliveringOre) {
+            collectingOre = true;
+        }
 
+        if (collectingOre) {
+            moveTo(sourceTarget.x, sourceTarget.y);
+            if (currentTime - lastOreTime >= ORE_COOLDOWN) {
+                oreAmount += 1;
+                lastOreTime = currentTime;
+            }
+
+            if (oreAmount >= 10) {
+                oreAmount = 10;
+                collectingOre = false;
+                deliveringOre = true;
+            }
+            return;
+        }
+
+        if (deliveringOre) {
+            moveTo(baseTarget.x, baseTarget.y);
+            if (currentTime - lastOreTime >= ORE_COOLDOWN) {
+                if (oreAmount > 0) {
+                    oreAmount -= 1;
+                    baseTarget.setOre(baseTarget.getOre() + 1);
+                }
+                lastOreTime = currentTime;
+            }
+
+            if (oreAmount <= 0) {
+                oreAmount = 0;
+                deliveringOre = false;
+                collectingOre = true;
+            }
+           
+        }
+
+    
+    }
+
+    private Unit findNearbyEnemyUnit() {
+        if (HelloApplication.units == null || this.image == null) {
+            return null;
+        }
+
+        Unit nearest = null;
+        double nearestDistance = Double.MAX_VALUE;
+        double myCenterX = this.image.getBoundsInParent().getCenterX();
+        double myCenterY = this.image.getBoundsInParent().getCenterY();
+
+        for (Unit unit : HelloApplication.units) {
+            if (unit == null || unit == this || unit.getDead() || unit.getTeam() == this.team || unit.image == null) {
+                continue;
+            }
+
+            double unitCenterX = unit.image.getBoundsInParent().getCenterX();
+            double unitCenterY = unit.image.getBoundsInParent().getCenterY();
+            double dx = unitCenterX - myCenterX;
+            double dy = unitCenterY - myCenterY;
+            double distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < COMBAT_PRIORITY_RADIUS && distance < nearestDistance) {
+                nearestDistance = distance;
+                nearest = unit;
+            }
+        }
+
+        return nearest;
+    }
+
+    private World findNearbyEnemyBuilding() {
+        if (HelloApplication.buldings == null || this.image == null) {
+            return null;
+        }
+
+        World nearest = null;
+        double nearestDistance = Double.MAX_VALUE;
+        double myCenterX = this.image.getBoundsInParent().getCenterX();
+        double myCenterY = this.image.getBoundsInParent().getCenterY();
+
+        for (World world : HelloApplication.buldings) {
+            if (world == null || world.getTeam() == this.team || world.imageView == null) {
+                continue;
+            }
+
+            double worldCenterX = world.imageView.getBoundsInParent().getCenterX();
+            double worldCenterY = world.imageView.getBoundsInParent().getCenterY();
+            double dx = worldCenterX - myCenterX;
+            double dy = worldCenterY - myCenterY;
+            double distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < COMBAT_PRIORITY_RADIUS && distance < nearestDistance) {
+                nearestDistance = distance;
+                nearest = world;
+            }
+        }
+
+        return nearest;
+    }
+
+    @Override
+    public void logic() {
+        Unit nearbyEnemyUnit = findNearbyEnemyUnit();
+        World nearbyEnemyBuilding = findNearbyEnemyBuilding();
+
+        
+        if (!this.isActive() && (nearbyEnemyUnit != null || nearbyEnemyBuilding != null)) {
+            if (nearbyEnemyBuilding != null) {
+                this.moveTo(nearbyEnemyBuilding.x, nearbyEnemyBuilding.y);
+            } else {
+                this.moveTo(nearbyEnemyUnit.x, nearbyEnemyUnit.y);
+            }
+
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastAttackTime >= ATTACK_COOLDOWN) {
+                attack();
+                lastAttackTime = currentTime;
+            }
+            return;
+        }
+
+        if (!this.isActive() ) {
+            doOre();
+        }
+
+    
+    }
 }
 

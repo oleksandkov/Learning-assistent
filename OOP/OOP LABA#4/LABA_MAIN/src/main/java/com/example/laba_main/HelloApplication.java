@@ -3,6 +3,7 @@ package com.example.laba_main;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,6 +15,7 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -56,6 +58,9 @@ public class HelloApplication extends Application {
     
     public static ArrayList<World> buldings = new ArrayList<>();
 
+    private Label oreLabelTeamA;
+    private Label oreLabelTeamB;
+
 
 
    
@@ -66,6 +71,14 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
         group = new Group();
         scene = new Scene(group, 1080, 700);
+
+        oreLabelTeamA = new Label();
+        oreLabelTeamB = new Label();
+        oreLabelTeamA.setLayoutX(0);
+        oreLabelTeamA.setLayoutY(0);
+        oreLabelTeamB.setLayoutX(0);
+        oreLabelTeamB.setLayoutY(20);
+        group.getChildren().addAll(oreLabelTeamA, oreLabelTeamB);
 
         // Setup key maps
         keysPresses.put(KeyCode.W, -keyStepY);
@@ -142,8 +155,8 @@ public class HelloApplication extends Application {
         //         new ArrayList<>(Arrays.asList("Axe")), 260, 120));
         // warriors.add(new Warrior(100, true, true, 6, false,
         //         new ArrayList<>(Arrays.asList("Sword", "Potion")), 460, 220));
-        // pretorios.add(new Pretorio(150, true, true, 11,false, new  ArrayList<>(Arrays.asList("Shield")), 120, 80));
-        // centurios.add(new Centurio(120, true, true, 10,false, new  ArrayList<>(Arrays.asList("Shield")), 110, 110));
+        // pretorios.add(new Pretorio(150, true, true, 11, false, new ArrayList<>(Arrays.asList("Shield")), 120, 80));
+        // centurios.add(new Centurio(120, true, true, 10, false, new ArrayList<>(Arrays.asList("Shield")), 110, 110));
         for (int i = 0; i < warriors.size(); i++) {
             Unit u = warriors.get(i);
             units.add(u);
@@ -196,33 +209,33 @@ public class HelloApplication extends Application {
         buldings.add(tower1);
         buldings.add(tower2);
 
-        //Sources
-        // Source source1 = new Source();
-        // source1.setTeam(true);
-        // source1.initGraphics(imgSource, "Source", 0, 100, 450, 200.0, 200);
-        // source1.resurrectWorld();
-        // Source source2 = new Source();
-        // source2.setTeam(false);
-        // source2.initGraphics(imgSource, "Source", 0, 600, 450, 200.0, 200);
-        // source2.resurrectWorld();
-        // sourcesB.add(source2);
-        // sourcesA.add(source1);
-        // buldings.add(source1);
-        // buldings.add(source2);
+        // Sources
+        Source source1 = new Source();
+        source1.setTeam(true);
+        source1.initGraphics(imgSource, "Source", 0, 100, 450, 200.0, 200);
+        source1.resurrectWorld();
+        Source source2 = new Source();
+        source2.setTeam(false);
+        source2.initGraphics(imgSource, "Source", 0, 600, 450, 200.0, 200);
+        source2.resurrectWorld();
+        sourcesB.add(source2);
+        sourcesA.add(source1);
+        buldings.add(source1);
+        buldings.add(source2);
 
-        // // Bases
-        // Base base1 = new Base();
-        // base1.setTeam(true);
-        // base1.initGraphics(imgBase, "Base", 0, 100, 900, 200.0, 200);
-        // base1.resurrectWorld();
-        // Base base2 = new Base();
-        // base2.setTeam(false);
-        // base2.initGraphics(imgBase, "Base", 0, 600, 900, 200.0, 200);
-        // base2.resurrectWorld();
-        // basesB.add(base2);
-        // basesA.add(base1);
-        // buldings.add(base1);
-        // buldings.add(base2);
+        // Bases
+        Base base1 = new Base();
+        base1.setTeam(true);
+        base1.initGraphics(imgBase, "Base", 0, 100, 900, 200.0, 200);
+        base1.resurrectWorld();
+        Base base2 = new Base();
+        base2.setTeam(false);
+        base2.initGraphics(imgBase, "Base", 0, 600, 900, 200.0, 200);
+        base2.resurrectWorld();
+        basesB.add(base2);
+        basesA.add(base1);
+        buldings.add(base1);
+        buldings.add(base2);
 
 
         
@@ -288,8 +301,20 @@ public class HelloApplication extends Application {
                               
                                 UnitCreationDialog dialog = new UnitCreationDialog();
                                 Unit newUnit = dialog.showAndWait();
+                                double x;
+                                double y;
                                 if (newUnit != null) {
                                     units.add(newUnit);
+
+                                    boolean team = newUnit.getTeam();
+                                    if (team) {
+                                        x = basesA.get(0).x;
+                                        y = basesA.get(0).y;
+                                    } else {
+                                        x = basesB.get(0).x;
+                                        y = basesB.get(0).y;
+                                    }
+                                    newUnit.setPosition(x, y);
                                     newUnit.resurrect();
                                 } else {
                                     System.out.println("Dialog was cancelled or null result");
@@ -344,8 +369,14 @@ public class HelloApplication extends Application {
                     }
                 }
 
+                updateOreHud();
+
                 tower1.intersect();
                 tower2.intersect();
+                source1.intersect();
+                source2.intersect();
+                base1.intersect();
+                base2.intersect();
                 
                 for (Unit unit : units) {
                     if (unit.isActive()) {
@@ -365,5 +396,25 @@ public class HelloApplication extends Application {
        
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void updateOreHud() {
+        double teamAOre = 0;
+        double teamBOre = 0;
+
+        for (Base base : basesA) {
+            if (base != null) {
+                teamAOre += base.getOre();
+            }
+        }
+
+        for (Base base : basesB) {
+            if (base != null) {
+                teamBOre += base.getOre();
+            }
+        }
+            oreLabelTeamA.setText("Team A ore: " + (int) teamAOre);
+            oreLabelTeamB.setText("Team B ore: " + (int) teamBOre);
+        
     }
 }

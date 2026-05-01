@@ -1,13 +1,10 @@
 package com.example.laba_main;
-import java.net.URL;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.control.Label;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.shape.Line;
 
 
@@ -32,6 +29,16 @@ public class World {
     protected ImageView contourView;
     protected ImageView imageView;
     protected double maxHealth;
+
+    protected double oreAmount = 0;
+
+    public double getOre() {
+        return this.oreAmount;
+    }
+
+    public void setOre(double oreAmount) {
+        this.oreAmount = oreAmount;
+    }
 
     protected void setMaxHealth(double maxHealth) {
         this.maxHealth = maxHealth;
@@ -125,38 +132,7 @@ public class World {
 
     
 
-    // public void removeObject(Unit unit) {
-    //     if (unit == null || units == null) {
-    //         System.out.println("Cannot remove: unit or units list is null.");
-    //         return;
-    //     }
-
-    //     // Remove all graphical components from the scene
-
-    //     if (HelloApplication.group != null) {
-    //         if (unit.labelName != null) {
-    //             HelloApplication.group.getChildren().remove(unit.labelName);
-    //         }
-    //         if (unit.life != null) {
-    //             HelloApplication.group.getChildren().remove(unit.life);
-    //         }
-    //         if (unit.image != null) {
-    //             HelloApplication.group.getChildren().remove(unit.image);
-    //         }
-    //         if (unit.rectActive != null) {
-    //             HelloApplication.group.getChildren().remove(unit.rectActive);
-    //         }
-            // if (unit.imageMark != null) {
-            //     HelloApplication.group.getChildren().remove(unit.imageMark);
-            // }
-    //     }
-
-    //     // Remove unit from the units list
-    //     units.remove(unit);
-    //     Unit.removeUnit();
-
-    //     System.out.println("Unit removed. Remaining units: " + units.size());
-    // }
+  
 
    
 
@@ -239,5 +215,6 @@ public class World {
 
 
     protected void intersect() {}
+    
 }
 

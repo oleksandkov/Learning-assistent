@@ -21,6 +21,7 @@ public class Base extends World {
         this.team = team;
         loadContourImages();
     }
+    
 
     public Base() {
         super();
@@ -50,6 +51,8 @@ public class Base extends World {
     public void setTeam(boolean team) {
         this.team = team;
     }
+
+    
 
     
 

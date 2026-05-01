@@ -12,6 +12,9 @@ import javafx.scene.shape.Rectangle;
 public class Centurio extends Warrior{
     private static String name = "Centurio";
     private static final double MAX_HEALTH = 120.0;
+    private double healNum = 10.0;
+    private static final long HEAL_COOLDOWN = 2000; 
+    private long lastHealTime = 0;
 
      @Override
     protected double labelDeltaX() {
@@ -97,6 +100,121 @@ public class Centurio extends Warrior{
         rectActive.setStroke(Color.GREEN);
 
         setCoordinates();
+    }
+
+    private void heal(World target) {
+        if (target == null || target.imageView == null || this.image == null) {
+            return;
+        }
+        double myCenterX = this.image.getBoundsInParent().getCenterX();
+        double myCenterY = this.image.getBoundsInParent().getCenterY();
+        double targetCenterX = target.imageView.getBoundsInParent().getCenterX();
+        double targetCenterY = target.imageView.getBoundsInParent().getCenterY();
+        
+       boolean isIntersecting = Math.sqrt(Math.pow(targetCenterX - myCenterX, 2) + Math.pow(targetCenterY - myCenterY, 2)) < 100;
+
+        if (isIntersecting) {
+            double newHealth = Math.min(target.getHealth() + this.healNum, target.getMaxHealth());
+            target.setHealth(newHealth);
+        }
+    }
+
+    @Override
+    public void logic() {
+        World mainTarget = null;
+        Unit subTarget = null;
+        World healTarget = null;
+        boolean goToMain = false;
+        double distanceToMainTarget = Double.MAX_VALUE;
+        double distanceToSubTarget = Double.MAX_VALUE;
+        double distanceToHealTarget = Double.MAX_VALUE;
+
+     
+        if (HelloApplication.units != null && !this.isActive()) {
+            for (Unit unit : HelloApplication.units) {
+                if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
+                    double dx = (unit.x + unit.image.getFitWidth() / 2) - (this.x + this.image.getFitWidth() / 2);
+                    double dy = (unit.y + unit.image.getFitHeight() / 2) - (this.y + this.image.getFitHeight() / 2);
+                    double distancesub = Math.sqrt(dx * dx + dy * dy);
+                    if (distancesub < distanceToSubTarget) {
+                        distanceToSubTarget = distancesub;
+                        subTarget = unit;
+                    }
+                }
+            }
+        }
+
+        if (HelloApplication.buldings != null) {
+            for (World world : HelloApplication.buldings) {
+                if (world != null && world.getTeam() != this.team && world.imageView != null) {
+                    double dx = (world.x + world.imageView.getFitWidth() / 2) - (this.x + this.image.getFitWidth() / 2);
+                    double dy = (world.y + world.imageView.getFitHeight() / 2) - (this.y + this.image.getFitHeight() / 2);
+                    double distancemain = Math.sqrt(dx * dx + dy * dy);
+                    if (distancemain < distanceToMainTarget) {
+                        distanceToMainTarget = distancemain;
+                        mainTarget = world;
+                    }
+                }
+            }
+        }
+
+        if (HelloApplication.buldings != null) {
+            for (World world : HelloApplication.buldings) {
+                if (world != null && world.getTeam() == this.team && world.imageView != null && world.getHealth() < world.getMaxHealth()) {
+                    double myCenterX = this.image.getBoundsInParent().getCenterX();
+                    double myCenterY = this.image.getBoundsInParent().getCenterY();
+                    double worldCenterX = world.imageView.getBoundsInParent().getCenterX();
+                    double worldCenterY = world.imageView.getBoundsInParent().getCenterY();
+                    
+                    double dx = worldCenterX - myCenterX;
+                    double dy = worldCenterY - myCenterY;
+                    double distanceheal = Math.sqrt(dx * dx + dy * dy);
+                    if (distanceheal < distanceToHealTarget && world.team == this.team && world.getHealth() < world.getMaxHealth() / 2) {
+                        distanceToHealTarget = distanceheal;
+                        healTarget = world;
+                    }
+                }
+            }
+        }
+
+        // Healing first
+        if (!this.isActive()) {
+            if (healTarget != null) {
+                this.moveTo(healTarget.x + healTarget.imageView.getFitWidth() / 2, healTarget.y + healTarget.imageView.getFitHeight() / 2);
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - lastHealTime >= HEAL_COOLDOWN) {
+                    heal(healTarget);
+                    lastHealTime = currentTime;
+                }
+                if (healTarget.getHealth() >= healTarget.getMaxHealth()) {
+                    healTarget = null; 
+                }
+                return; 
+            }
+
+            // Then handle combat
+            if (mainTarget != null && subTarget != null) {
+                goToMain = distanceToMainTarget < distanceToSubTarget;
+            } else if (mainTarget != null) {
+                goToMain = true;
+            } else if (subTarget != null) {
+                goToMain = false;
+            } else {
+                return; 
+            }
+
+            if (goToMain) {
+                this.moveTo(mainTarget.x, mainTarget.y);
+            } else {
+                this.moveTo(subTarget.x, subTarget.y);
+            }
+        
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastAttackTime >= ATTACK_COOLDOWN) {
+                attack();
+                lastAttackTime = currentTime;
+            }
+        }
     }
 
    

@@ -18,7 +18,7 @@ import javafx.scene.image.ImageView;
 public class Unit implements Cloneable{
     private Integer health;
     private Boolean isSpawned;
-    private boolean team;
+    protected  boolean team;
     private Integer damage;
     private Boolean isDead;
     private ArrayList<String> inventor;
@@ -43,8 +43,8 @@ public class Unit implements Cloneable{
 
 
     // Attack and logic variables
-    private long lastAttackTime = 0; 
-    private final long ATTACK_COOLDOWN = 1000;
+    protected long lastAttackTime = 0; 
+    protected  final long ATTACK_COOLDOWN = 1000;
 
 
     protected void setMaxHealth(double maxHealth) {
@@ -233,7 +233,7 @@ public class Unit implements Cloneable{
     }
 
 
-    public void setHealth(Integer health) {
+     protected  void setHealth(Integer health) {
         this.health = health;
         
         if (this.health != null && this.health < 0) {
@@ -794,81 +794,7 @@ public class Unit implements Cloneable{
 
             
     //     }
-    public void logic() {
-    World mainTarget = null;
-    Unit subTarget = null;
-    boolean goToMain = false;
-    double distanceToMainTarget = Double.MAX_VALUE;
-    double distanceToSubTarget = Double.MAX_VALUE;
-
-    // 1. Find the closest enemy Unit
-    if (HelloApplication.units != null && !this.isActive()) {
-        for (Unit unit : HelloApplication.units) {
-            if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
-                double dx = (unit.x + unit.image.getFitWidth() / 2) - (this.x + this.image.getFitWidth() / 2);
-                double dy = (unit.y + unit.image.getFitHeight() / 2) - (this.y + this.image.getFitHeight() / 2);
-                double distancesub = Math.sqrt(dx * dx + dy * dy);
-
-                // FIX: Only update if this unit is closer than the current closest
-                if (distancesub < distanceToSubTarget) {
-                    distanceToSubTarget = distancesub;
-                    subTarget = unit;
-                }
-            }
-        }
-    }
-
-    // 2. Find the closest enemy Building (World)
-    if (HelloApplication.buldings != null) {
-        for (World world : HelloApplication.buldings) {
-            // FIX: Ensure consistency. You used world.image in the check, but world.imageView in the math.
-            if (world != null && world.getTeam() != this.team && world.imageView != null) {
-                double dx = (world.x + world.imageView.getFitWidth() / 2) - (this.x + this.image.getFitWidth() / 2);
-                double dy = (world.y + world.imageView.getFitHeight() / 2) - (this.y + this.image.getFitHeight() / 2);
-                double distancemain = Math.sqrt(dx * dx + dy * dy);
-
-                // FIX: Only update if this building is closer than the current closest
-                if (distancemain < distanceToMainTarget) {
-                    distanceToMainTarget = distancemain;
-                    mainTarget = world;
-                }
-            }
-        }
-    }
-    if (!this.isActive()) {
-        
-    
-
-        if (mainTarget != null && subTarget != null) {
-            if (distanceToMainTarget < distanceToSubTarget) {
-                goToMain = true;
-            }
-        } else if (mainTarget != null) {
-            goToMain = true;
-        } else if (subTarget != null) {
-            goToMain = false;
-        } else {
-            return; 
-        }
-
-        if (goToMain) {
-            if (mainTarget == null) {
-                return;
-            }
-            this.moveTo(mainTarget.x, mainTarget.y);
-        } else {
-            if (subTarget == null) {
-                return;
-            }
-            this.moveTo(subTarget.x, subTarget.y);
-        }
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastAttackTime >= ATTACK_COOLDOWN) {
-            attack();
-            lastAttackTime = currentTime; 
-        }
-    }
-    }
+        protected void logic() {}
     }
 
 
