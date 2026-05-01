@@ -56,6 +56,16 @@ public class Centurio extends Warrior{
         return 12.0;
     }
 
+    @Override
+    public void setCoordinates() {
+        super.setCoordinates();
+        // Centurio-specific weapon offset must be applied on every coordinate update.
+        if (mainWeaponImage != null) {
+            mainWeaponImage.setX(x);
+            mainWeaponImage.setY(y + 17);
+        }
+    }
+
     // Getters and Setters
     public static String getName() {
         return name;
@@ -101,6 +111,8 @@ public class Centurio extends Warrior{
 
         setCoordinates();
     }
+    
+    
 
     private void heal(World target) {
         if (target == null || target.imageView == null || this.image == null) {

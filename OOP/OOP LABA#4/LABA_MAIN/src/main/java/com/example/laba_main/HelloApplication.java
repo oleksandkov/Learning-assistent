@@ -3,7 +3,6 @@ package com.example.laba_main;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -60,6 +59,7 @@ public class HelloApplication extends Application {
 
     private Label oreLabelTeamA;
     private Label oreLabelTeamB;
+    private UnitInvetorWindow unitInvetorWindow;
 
 
 
@@ -71,6 +71,7 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
         group = new Group();
         scene = new Scene(group, 1080, 700);
+        unitInvetorWindow = new UnitInvetorWindow();
 
         oreLabelTeamA = new Label();
         oreLabelTeamB = new Label();
@@ -92,7 +93,7 @@ public class HelloApplication extends Application {
 
         scene.setOnKeyPressed(e -> {
             KeyCode code = e.getCode();
-            if (code == KeyCode.DELETE || code == KeyCode.INSERT || code == KeyCode.ESCAPE || code == KeyCode.SPACE) {
+            if (code == KeyCode.DELETE || code == KeyCode.INSERT || code == KeyCode.ESCAPE || code == KeyCode.SPACE || code == KeyCode.I) {
                 if (handledActionKeys.contains(code)) {
                     return;
                 }
@@ -186,7 +187,7 @@ public class HelloApplication extends Application {
         // Towers
         Tower tower1 = new Tower();
         tower1.setTeam(true);
-        tower1.initGraphics(imgTower, "Tower", 0, 100,100, 300.0, 50);
+        tower1.initGraphics(imgTower, "Tower", 0, 100,0, 300.0, 50);
         tower1.resurrectWorld();
         Timeline healTimer = new Timeline(
             new KeyFrame(Duration.seconds(1), e -> tower1.healUnits())
@@ -196,7 +197,7 @@ public class HelloApplication extends Application {
 
         Tower tower2 = new Tower();
         tower2.setTeam(false);
-        tower2.initGraphics(imgTower, "Tower", 0, 600,100, 300.0, 300);
+        tower2.initGraphics(imgTower, "Tower", 0, 600,0, 300.0, 300);
         tower2.resurrectWorld();
         Timeline healTimer2 = new Timeline(
             new KeyFrame(Duration.seconds(1), e -> tower2.healUnits())
@@ -212,11 +213,11 @@ public class HelloApplication extends Application {
         // Sources
         Source source1 = new Source();
         source1.setTeam(true);
-        source1.initGraphics(imgSource, "Source", 0, 100, 450, 200.0, 200);
+        source1.initGraphics(imgSource, "Source", 0, 100, 300, 200.0, 200);
         source1.resurrectWorld();
         Source source2 = new Source();
         source2.setTeam(false);
-        source2.initGraphics(imgSource, "Source", 0, 600, 450, 200.0, 200);
+        source2.initGraphics(imgSource, "Source", 0, 600, 300, 200.0, 200);
         source2.resurrectWorld();
         sourcesB.add(source2);
         sourcesA.add(source1);
@@ -226,11 +227,11 @@ public class HelloApplication extends Application {
         // Bases
         Base base1 = new Base();
         base1.setTeam(true);
-        base1.initGraphics(imgBase, "Base", 0, 100, 900, 200.0, 200);
+        base1.initGraphics(imgBase, "Base", 0, 100, 650, 200.0, 200);
         base1.resurrectWorld();
         Base base2 = new Base();
         base2.setTeam(false);
-        base2.initGraphics(imgBase, "Base", 0, 600, 900, 200.0, 200);
+        base2.initGraphics(imgBase, "Base", 0, 600, 650, 200.0, 200);
         base2.resurrectWorld();
         basesB.add(base2);
         basesA.add(base1);
@@ -360,6 +361,13 @@ public class HelloApplication extends Application {
                             }
                         }
                         keysPressed.remove(KeyCode.SPACE);
+                    } else if (code == KeyCode.I) {
+                        if (unitInvetorWindow.isVisible()) {
+                            unitInvetorWindow.setVisible(false);
+                        } else {
+                            unitInvetorWindow.showForActiveUnit(units);
+                        }
+                        keysPressed.remove(KeyCode.I);
                     }
                 }
 
@@ -384,6 +392,8 @@ public class HelloApplication extends Application {
                     }
                     unit.logic();
                 }
+
+                unitInvetorWindow.updateFromUnits(units);
                 
             }
         };
@@ -417,4 +427,5 @@ public class HelloApplication extends Application {
             oreLabelTeamB.setText("Team B ore: " + (int) teamBOre);
         
     }
+
 }

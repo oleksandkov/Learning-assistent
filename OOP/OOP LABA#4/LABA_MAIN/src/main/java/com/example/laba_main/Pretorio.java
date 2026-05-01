@@ -6,9 +6,9 @@ import java.util.Arrays;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Circle;
 
 public class Pretorio extends Centurio {
     private static String name = "Pretorio";
@@ -121,7 +121,9 @@ public class Pretorio extends Centurio {
             }
             areaOfEffect.toBack();
             areaOfEffect.setVisible(this.isActive);
+
         }
+        mainWeaponImage.setY( y + 17);
     }
 
     @Override
@@ -133,6 +135,8 @@ public class Pretorio extends Centurio {
             areaOfEffect.setCenterX(centerX);
             areaOfEffect.setCenterY(centerY);
         }
+        mainWeaponImage.setX(x);
+        mainWeaponImage.setY(y + 17);
     }
 
     @Override

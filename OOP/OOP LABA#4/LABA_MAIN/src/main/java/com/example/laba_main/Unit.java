@@ -37,6 +37,11 @@ public class Unit implements Cloneable{
     protected ImageView imageMarkRed;
     protected ImageView imageMarkGreen;
     protected ImageView imageMark;
+    protected ImageView swordImage;
+    protected ImageView knifeImage;
+    protected ImageView spearImage;
+    protected ImageView bowImage;
+    protected ImageView mainWeaponImage;
 
     // Movement and attack timing
     protected double moveSpeed = 0.005;
@@ -45,6 +50,11 @@ public class Unit implements Cloneable{
     // Attack and logic variables
     protected long lastAttackTime = 0; 
     protected  final long ATTACK_COOLDOWN = 1000;
+
+    URL swordUrl = getClass().getResource("/sword.png");
+    URL knifeUrl = getClass().getResource("/knife.png");
+    URL spearUrl = getClass().getResource("/spear.png");
+    URL bowUrl = getClass().getResource("/bow.png");
 
 
     protected void setMaxHealth(double maxHealth) {
@@ -295,7 +305,10 @@ public class Unit implements Cloneable{
 
     public void setInventor(ArrayList<String> inventor) {
         this.inventor = inventor;
+        inventoryLogic();
     }
+
+    
 
     @Override
     public boolean equals(Object o) {
@@ -624,10 +637,44 @@ public class Unit implements Cloneable{
         if (imageMark != null) {
             HelloApplication.group.getChildren().add(imageMark);
         }
+        if (mainWeaponImage != null) {
+            HelloApplication.group.getChildren().add(mainWeaponImage);
+         }
         if (isActive) {
             HelloApplication.group.getChildren().add(rectActive);
         }
         setCoordinates();
+        inventoryLogic();
+    }
+    public void loadInventoryImages() {
+        try {
+            if (swordImage == null && swordUrl != null) {
+                swordImage = new ImageView(new Image(swordUrl.toExternalForm()));
+                swordImage.setFitWidth(40);
+                swordImage.setFitHeight(40);
+                swordImage.setPreserveRatio(true);
+            }
+            if (knifeImage == null && knifeUrl != null) {
+                knifeImage = new ImageView(new Image(knifeUrl.toExternalForm()));
+                knifeImage.setFitWidth(40);
+                knifeImage.setFitHeight(40);
+                knifeImage.setPreserveRatio(true);
+            }
+            if (spearImage == null && spearUrl != null) {
+                spearImage = new ImageView(new Image(spearUrl.toExternalForm()));
+                spearImage.setFitWidth(40);
+                spearImage.setFitHeight(40);
+                spearImage.setPreserveRatio(true);
+            }
+            if (bowImage == null && bowUrl != null) {
+                bowImage = new ImageView(new Image(bowUrl.toExternalForm()));
+                bowImage.setFitWidth(40);
+                bowImage.setFitHeight(40);
+                bowImage.setPreserveRatio(true);
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading inventory images: " + e.getMessage());
+        }
     }
 
     public void loadMarkImages() {
@@ -656,7 +703,7 @@ public class Unit implements Cloneable{
         }
     }
     public void setCoordinates() {
-        if (labelName == null || life == null || image == null || rectActive == null) {
+        if (labelName == null || life == null || image == null) {
             return;
         }
         labelName.setLayoutX(x + labelDeltaX());
@@ -674,12 +721,18 @@ public class Unit implements Cloneable{
         image.setX(x + imageDeltaX());
         image.setY(y + imageDeltaY());
 
-        rectActive.setX(x + rectDeltaX());
-        rectActive.setY(y + rectDeltaY());
+        if (rectActive != null) {
+            rectActive.setX(x + rectDeltaX());
+            rectActive.setY(y + rectDeltaY());
+        }
 
         if (imageMark != null) {
             imageMark.setX(x + image.getFitWidth() - 20);
             imageMark.setY(y + image.getFitHeight() - 20);
+        }
+        if (mainWeaponImage != null) {
+            mainWeaponImage.setX(x );
+            mainWeaponImage.setY(y + 10);
         }
     }
     public void move(double dx, double dy) {
@@ -744,57 +797,69 @@ public class Unit implements Cloneable{
         }
         setCoordinates();
     }
+    
 
-    // public void logic() {
-    //     World mainTarget = null;
-    //     Unit subTarget = null;
-    //     boolean goToMain = false;
-    //     double distanceToMainTarget = Double.MAX_VALUE;
-    //     double distanceToSubTarget = Double.MAX_VALUE;
-    //     if (HelloApplication.units != null && this.isActive() == false) {
-    //             for (Unit unit : HelloApplication.units) {
-    //                 if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
-    //                     double dx = (unit.x + unit.image.getFitWidth() / 2) - (this.x + this.image.getFitWidth() / 2);
-    //                     double dy = (unit.y + unit.image.getFitHeight() / 2) - (this.y + this.image.getFitHeight() / 2);
-    //                     double distancesub = Math.sqrt(dx * dx + dy * dy);
-    //                         distanceToSubTarget = distancesub;
-    //                         subTarget = unit;
 
-    //                 }
-    //             }
-    //             for (World world : HelloApplication.buldings) {
-    //                 if (world != null && world.getTeam() != this.team && world.image != null) {
-    //                     double dx = (world.x + world.imageView.getFitWidth() / 2) - (this.x + this.image.getFitWidth() / 2);
-    //                     double dy = (world.y + world.imageView.getFitHeight() / 2) - (this.y + this.image.getFitHeight() / 2);
-    //                     double distancemain = Math.sqrt(dx * dx + dy * dy);
-    //                     distanceToMainTarget = distancemain;
-    //                     mainTarget = world;
-    //                     }
-    //                 }
-    //                 if (distanceToMainTarget > distanceToSubTarget) {
-    //                     goToMain = true;
-    //             }
-    //             }
-    //             if (goToMain) {
-    //                 this.move(mainTarget.x, mainTarget.y);
-    //                 long currentTime = System.currentTimeMillis();
-    //                 if (currentTime - lastAttackTime >= ATTACK_COOLDOWN) {
-    //                     attack();
-    //                     lastAttackTime = currentTime; 
-    //                 }
-    //             } else {
-    //                 this.move((subTarget.x - this.x) * 0.05, (subTarget.y - this.y) * 0.05);
-    //                 long currentTime = System.currentTimeMillis();
-    //                 if (currentTime - lastAttackTime >= ATTACK_COOLDOWN) {
-    //                     attack();
-    //                     lastAttackTime = currentTime; 
-    //                 }
-    //             }
-                
-
-            
-    //     }
         protected void logic() {}
-    }
 
+        protected void inventoryLogic() {
+            // Ensure inventory images/templates are available
+            loadInventoryImages();
 
+            // Remove existing main weapon from scene if present
+            if (HelloApplication.group != null && mainWeaponImage != null && HelloApplication.group.getChildren().contains(mainWeaponImage)) {
+                HelloApplication.group.getChildren().remove(mainWeaponImage);
+            }
+            mainWeaponImage = null;
+
+            if (this.inventor == null || this.inventor.isEmpty()) {
+                setCoordinates();
+                return;
+            }
+
+            String mainWeapon = this.inventor.get(0);
+            int currentDamage = this.getDamage() != null ? this.getDamage() : 0;
+
+            if (mainWeapon.equalsIgnoreCase("sword")) {
+                this.setDamage(currentDamage + 5);
+                if (swordImage != null && swordImage.getImage() != null) mainWeaponImage = new ImageView(swordImage.getImage());
+            } else if (mainWeapon.equalsIgnoreCase("knife")) {
+                this.setDamage(currentDamage + 3);
+                if (knifeImage != null && knifeImage.getImage() != null) mainWeaponImage = new ImageView(knifeImage.getImage());
+            } else if (mainWeapon.equalsIgnoreCase("spear")) {
+                this.setDamage(currentDamage + 4);
+                if (spearImage != null && spearImage.getImage() != null) mainWeaponImage = new ImageView(spearImage.getImage());
+            } else if (mainWeapon.equalsIgnoreCase("bow")) {
+                this.setDamage(currentDamage +2);
+                if (bowImage != null && bowImage.getImage() != null) mainWeaponImage = new ImageView(bowImage.getImage());
+            } else {
+                // unknown main weapon -> no damage change
+            }
+
+            if (mainWeaponImage != null) {
+                mainWeaponImage.setFitWidth(40);
+                mainWeaponImage.setFitHeight(40);
+                mainWeaponImage.setPreserveRatio(true);
+                if (HelloApplication.group != null) HelloApplication.group.getChildren().add(mainWeaponImage);
+            }
+
+            // Apply secondary inventory items
+            for (int i = 1; i < this.inventor.size(); i++) {
+                String item = this.inventor.get(i);
+                if (item == null) continue;
+                String it = item.trim().toLowerCase();
+                if (it.equals("health potion") || it.equals("health_potion") || it.equals("health")) {
+                    this.maxHealth += 20;
+                    Integer curHp = this.getHealth();
+                    this.setHealth(curHp == null ? 20 : curHp + 20);
+                } else if (it.equals("damage potion") || it.equals("damage_potion") || it.equals("damage")) {
+                    Integer curDmg = this.getDamage();
+                    this.setDamage((curDmg == null ? 0 : curDmg) + 5);
+                } else {
+                    // unknown supplementary item - no-op
+                }
+            }
+
+            setCoordinates();
+        }
+}
