@@ -38,6 +38,14 @@ public class Unit implements Cloneable{
     protected ImageView imageMarkGreen;
     protected ImageView imageMark;
 
+    // Movement and attack timing
+    protected double moveSpeed = 0.005;
+
+
+    // Attack and logic variables
+    private long lastAttackTime = 0; 
+    private final long ATTACK_COOLDOWN = 1000;
+
 
     protected void setMaxHealth(double maxHealth) {
         this.maxHealth = maxHealth;
@@ -679,6 +687,20 @@ public class Unit implements Cloneable{
         y += dy;
         setCoordinates();
     }
+    public void moveTo(double newX, double newY) {
+        double dx = newX - x;
+        double dy = newY - y;
+
+        if (Math.abs(dx) <= moveSpeed - 3 && Math.abs(dy) <= moveSpeed - 3) {
+            x = newX;
+            y = newY;
+        } else {
+            move(dx * moveSpeed, dy * moveSpeed);
+            return;
+        }
+
+        setCoordinates();
+    }
 
     public void setPosition(double newX, double newY) {
         x = newX;
@@ -723,10 +745,130 @@ public class Unit implements Cloneable{
         setCoordinates();
     }
 
+    // public void logic() {
+    //     World mainTarget = null;
+    //     Unit subTarget = null;
+    //     boolean goToMain = false;
+    //     double distanceToMainTarget = Double.MAX_VALUE;
+    //     double distanceToSubTarget = Double.MAX_VALUE;
+    //     if (HelloApplication.units != null && this.isActive() == false) {
+    //             for (Unit unit : HelloApplication.units) {
+    //                 if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
+    //                     double dx = (unit.x + unit.image.getFitWidth() / 2) - (this.x + this.image.getFitWidth() / 2);
+    //                     double dy = (unit.y + unit.image.getFitHeight() / 2) - (this.y + this.image.getFitHeight() / 2);
+    //                     double distancesub = Math.sqrt(dx * dx + dy * dy);
+    //                         distanceToSubTarget = distancesub;
+    //                         subTarget = unit;
+
+    //                 }
+    //             }
+    //             for (World world : HelloApplication.buldings) {
+    //                 if (world != null && world.getTeam() != this.team && world.image != null) {
+    //                     double dx = (world.x + world.imageView.getFitWidth() / 2) - (this.x + this.image.getFitWidth() / 2);
+    //                     double dy = (world.y + world.imageView.getFitHeight() / 2) - (this.y + this.image.getFitHeight() / 2);
+    //                     double distancemain = Math.sqrt(dx * dx + dy * dy);
+    //                     distanceToMainTarget = distancemain;
+    //                     mainTarget = world;
+    //                     }
+    //                 }
+    //                 if (distanceToMainTarget > distanceToSubTarget) {
+    //                     goToMain = true;
+    //             }
+    //             }
+    //             if (goToMain) {
+    //                 this.move(mainTarget.x, mainTarget.y);
+    //                 long currentTime = System.currentTimeMillis();
+    //                 if (currentTime - lastAttackTime >= ATTACK_COOLDOWN) {
+    //                     attack();
+    //                     lastAttackTime = currentTime; 
+    //                 }
+    //             } else {
+    //                 this.move((subTarget.x - this.x) * 0.05, (subTarget.y - this.y) * 0.05);
+    //                 long currentTime = System.currentTimeMillis();
+    //                 if (currentTime - lastAttackTime >= ATTACK_COOLDOWN) {
+    //                     attack();
+    //                     lastAttackTime = currentTime; 
+    //                 }
+    //             }
+                
+
+            
+    //     }
     public void logic() {
-        
+    World mainTarget = null;
+    Unit subTarget = null;
+    boolean goToMain = false;
+    double distanceToMainTarget = Double.MAX_VALUE;
+    double distanceToSubTarget = Double.MAX_VALUE;
+
+    // 1. Find the closest enemy Unit
+    if (HelloApplication.units != null && !this.isActive()) {
+        for (Unit unit : HelloApplication.units) {
+            if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
+                double dx = (unit.x + unit.image.getFitWidth() / 2) - (this.x + this.image.getFitWidth() / 2);
+                double dy = (unit.y + unit.image.getFitHeight() / 2) - (this.y + this.image.getFitHeight() / 2);
+                double distancesub = Math.sqrt(dx * dx + dy * dy);
+
+                // FIX: Only update if this unit is closer than the current closest
+                if (distancesub < distanceToSubTarget) {
+                    distanceToSubTarget = distancesub;
+                    subTarget = unit;
+                }
+            }
+        }
     }
 
+    // 2. Find the closest enemy Building (World)
+    if (HelloApplication.buldings != null) {
+        for (World world : HelloApplication.buldings) {
+            // FIX: Ensure consistency. You used world.image in the check, but world.imageView in the math.
+            if (world != null && world.getTeam() != this.team && world.imageView != null) {
+                double dx = (world.x + world.imageView.getFitWidth() / 2) - (this.x + this.image.getFitWidth() / 2);
+                double dy = (world.y + world.imageView.getFitHeight() / 2) - (this.y + this.image.getFitHeight() / 2);
+                double distancemain = Math.sqrt(dx * dx + dy * dy);
 
-}
+                // FIX: Only update if this building is closer than the current closest
+                if (distancemain < distanceToMainTarget) {
+                    distanceToMainTarget = distancemain;
+                    mainTarget = world;
+                }
+            }
+        }
+    }
+    if (!this.isActive()) {
+        
+    
+
+        if (mainTarget != null && subTarget != null) {
+            if (distanceToMainTarget < distanceToSubTarget) {
+                goToMain = true;
+            }
+        } else if (mainTarget != null) {
+            goToMain = true;
+        } else if (subTarget != null) {
+            goToMain = false;
+        } else {
+            return; 
+        }
+
+        if (goToMain) {
+            if (mainTarget == null) {
+                return;
+            }
+            this.moveTo(mainTarget.x, mainTarget.y);
+        } else {
+            if (subTarget == null) {
+                return;
+            }
+            this.moveTo(subTarget.x, subTarget.y);
+        }
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastAttackTime >= ATTACK_COOLDOWN) {
+            attack();
+            lastAttackTime = currentTime; 
+        }
+    }
+    }
+    }
+
 

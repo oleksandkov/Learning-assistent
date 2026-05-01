@@ -1,7 +1,6 @@
 package com.example.laba_main;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -198,32 +197,32 @@ public class HelloApplication extends Application {
         buldings.add(tower2);
 
         //Sources
-        Source source1 = new Source();
-        source1.setTeam(true);
-        source1.initGraphics(imgSource, "Source", 0, 100, 450, 200.0, 200);
-        source1.resurrectWorld();
-        Source source2 = new Source();
-        source2.setTeam(false);
-        source2.initGraphics(imgSource, "Source", 0, 600, 450, 200.0, 200);
-        source2.resurrectWorld();
-        sourcesB.add(source2);
-        sourcesA.add(source1);
-        buldings.add(source1);
-        buldings.add(source2);
+        // Source source1 = new Source();
+        // source1.setTeam(true);
+        // source1.initGraphics(imgSource, "Source", 0, 100, 450, 200.0, 200);
+        // source1.resurrectWorld();
+        // Source source2 = new Source();
+        // source2.setTeam(false);
+        // source2.initGraphics(imgSource, "Source", 0, 600, 450, 200.0, 200);
+        // source2.resurrectWorld();
+        // sourcesB.add(source2);
+        // sourcesA.add(source1);
+        // buldings.add(source1);
+        // buldings.add(source2);
 
-        // Bases
-        Base base1 = new Base();
-        base1.setTeam(true);
-        base1.initGraphics(imgBase, "Base", 0, 100, 900, 200.0, 200);
-        base1.resurrectWorld();
-        Base base2 = new Base();
-        base2.setTeam(false);
-        base2.initGraphics(imgBase, "Base", 0, 600, 900, 200.0, 200);
-        base2.resurrectWorld();
-        basesB.add(base2);
-        basesA.add(base1);
-        buldings.add(base1);
-        buldings.add(base2);
+        // // Bases
+        // Base base1 = new Base();
+        // base1.setTeam(true);
+        // base1.initGraphics(imgBase, "Base", 0, 100, 900, 200.0, 200);
+        // base1.resurrectWorld();
+        // Base base2 = new Base();
+        // base2.setTeam(false);
+        // base2.initGraphics(imgBase, "Base", 0, 600, 900, 200.0, 200);
+        // base2.resurrectWorld();
+        // basesB.add(base2);
+        // basesA.add(base1);
+        // buldings.add(base1);
+        // buldings.add(base2);
 
 
         
@@ -339,11 +338,6 @@ public class HelloApplication extends Application {
                     }
                 }
 
-                for (Unit unit : units) {
-                    if (unit.isActive()) {
-                        unit.move(dx, dy);
-                    }
-                }
                 for (World world : buldings) {
                     if (world.getHealth() <= 0) {
                         world.removeBuildingFromGame();
@@ -353,6 +347,12 @@ public class HelloApplication extends Application {
                 tower1.intersect();
                 tower2.intersect();
                 
+                for (Unit unit : units) {
+                    if (unit.isActive()) {
+                        unit.move(dx, dy);
+                    }
+                    unit.logic();
+                }
                 
             }
         };
