@@ -23,6 +23,10 @@ public class Unit implements Cloneable{
     private Boolean isDead;
     private ArrayList<String> inventor;
 
+    // Base stats (without inventory bonuses) - used for recalculation
+    private Integer baseHealth;
+    private Integer baseDamage;
+
     private static int numObjects = 0;
     private static int objectedKilled = 0;
 
@@ -77,11 +81,11 @@ public class Unit implements Cloneable{
         return 10.0;
     }
 
-    protected double imageDeltaX() {
+    protected  double imageDeltaX() {
         return 0.0;
     }
 
-    protected double imageDeltaY() {
+    protected  double imageDeltaY() {
         return 0.0;
     }
 
@@ -111,9 +115,11 @@ public class Unit implements Cloneable{
     }
     public Unit(Integer health, Boolean isSpawned, boolean team, Integer damage, Boolean isDead, ArrayList<String> inventor) {
         this.health = health;
+        this.baseHealth = health;  // Initialize base health
         this.isSpawned = isSpawned;
         this.team = team;
         this.damage = damage;
+        this.baseDamage = damage;  // Initialize base damage
         this.isDead = isDead;
         this.inventor = inventor;
         System.out.println("Constructor: Unit(Integer health, Boolean isSpawned, boolean team, Integer damage, Boolean isDead, ArrayList<String> inventor)");
@@ -302,6 +308,22 @@ public class Unit implements Cloneable{
         this.damage = damage;
     }
 
+    public void setBaseHealth(Integer baseHealth) {
+        this.baseHealth = baseHealth;
+    }
+
+    public void setBaseDamage(Integer baseDamage) {
+        this.baseDamage = baseDamage;
+    }
+
+    public Integer getBaseHealth() {
+        return baseHealth;
+    }
+
+    public Integer getBaseDamage() {
+        return baseDamage;
+    }
+
     public void setDead(Boolean dead) {
         isDead = dead;
     }
@@ -338,14 +360,14 @@ public class Unit implements Cloneable{
                 "}\n";
     }
 
+    
 
     @Override
     protected Unit clone() throws CloneNotSupportedException {
 
         Unit clonedUnit = (Unit) super.clone();
-        ArrayList<String> clonedInventor = (ArrayList<String>) clonedUnit.inventor.clone();
-
-        clonedUnit.setInventor(clonedInventor);
+        ArrayList<String> clonedInventor  = this.inventor;
+        
 
         if (this.labelName != null) {
             clonedUnit.labelName = new Label(this.labelName.getText());
@@ -384,6 +406,17 @@ public class Unit implements Cloneable{
             clonedUnit.imageMarkGreen.setFitHeight(this.imageMarkGreen.getFitHeight());
         }
 
+        if (this.mainWeaponImage != null) {
+            clonedUnit.mainWeaponImage = new ImageView(this.mainWeaponImage.getImage());
+            clonedUnit.mainWeaponImage.setFitWidth(this.mainWeaponImage.getFitWidth());
+            clonedUnit.mainWeaponImage.setFitHeight(this.mainWeaponImage.getFitHeight());
+        }
+        
+        // Copy base health and damage for inventory recalculation
+        clonedUnit.baseHealth = this.baseHealth;
+        clonedUnit.baseDamage = this.baseDamage;
+        
+        clonedUnit.setInventor(clonedInventor);
         clonedUnit.isActive = false;
         clonedUnit.maxHealth = this.maxHealth;
         numObjects++;
@@ -775,6 +808,11 @@ public class Unit implements Cloneable{
             }
         }
         isActive = !isActive;
+        if (isActive) {
+            System.out.println("UNIT: " + (labelName != null ? labelName.getText() : "Unknown") + " activated!");
+        } else {
+            System.out.println("UNIT: " + (labelName != null ? labelName.getText() : "Unknown") + " deactivated!");
+        }
         return isActive;
     }
 
@@ -808,14 +846,20 @@ public class Unit implements Cloneable{
         protected void logic() {}
 
         protected void inventoryLogic() {
-            // Ensure inventory images/templates are available
             loadInventoryImages();
 
-            // Remove existing main weapon from scene if present
             if (HelloApplication.group != null && mainWeaponImage != null && HelloApplication.group.getChildren().contains(mainWeaponImage)) {
                 HelloApplication.group.getChildren().remove(mainWeaponImage);
             }
             mainWeaponImage = null;
+
+            if (baseHealth != null) {
+                this.health = baseHealth;
+            }
+            if (baseDamage != null) {
+                this.damage = baseDamage;
+            }
+            this.maxHealth = baseHealth != null ? baseHealth : 100.0;
 
             if (this.inventor == null || this.inventor.isEmpty()) {
                 setCoordinates();
@@ -826,19 +870,18 @@ public class Unit implements Cloneable{
             int currentDamage = this.getDamage() != null ? this.getDamage() : 0;
 
             if (mainWeapon.equalsIgnoreCase("sword")) {
-                this.setDamage(currentDamage + 5);
+                this.damage = currentDamage + 5;
                 if (swordImage != null && swordImage.getImage() != null) mainWeaponImage = new ImageView(swordImage.getImage());
             } else if (mainWeapon.equalsIgnoreCase("knife")) {
-                this.setDamage(currentDamage + 3);
+                this.damage = currentDamage + 3;
                 if (knifeImage != null && knifeImage.getImage() != null) mainWeaponImage = new ImageView(knifeImage.getImage());
             } else if (mainWeapon.equalsIgnoreCase("spear")) {
-                this.setDamage(currentDamage + 4);
+                this.damage = currentDamage + 4;
                 if (spearImage != null && spearImage.getImage() != null) mainWeaponImage = new ImageView(spearImage.getImage());
             } else if (mainWeapon.equalsIgnoreCase("bow")) {
-                this.setDamage(currentDamage +2);
+                this.damage = currentDamage + 2;
                 if (bowImage != null && bowImage.getImage() != null) mainWeaponImage = new ImageView(bowImage.getImage());
             } else {
-                // unknown main weapon -> no damage change
             }
 
             if (mainWeaponImage != null) {
@@ -848,7 +891,6 @@ public class Unit implements Cloneable{
                 if (HelloApplication.group != null) HelloApplication.group.getChildren().add(mainWeaponImage);
             }
 
-            // Apply secondary inventory items
             for (int i = 1; i < this.inventor.size(); i++) {
                 String item = this.inventor.get(i);
                 if (item == null) continue;
@@ -856,15 +898,15 @@ public class Unit implements Cloneable{
                 if (it.equals("health potion") || it.equals("health_potion") || it.equals("health")) {
                     this.maxHealth += 20;
                     Integer curHp = this.getHealth();
-                    this.setHealth(curHp == null ? 20 : curHp + 20);
+                    this.health = (curHp == null ? 20 : curHp + 20);
                 } else if (it.equals("damage potion") || it.equals("damage_potion") || it.equals("damage")) {
                     Integer curDmg = this.getDamage();
-                    this.setDamage((curDmg == null ? 0 : curDmg) + 5);
+                    this.damage = (curDmg == null ? 0 : curDmg) + 5;
                 } else {
-                    // unknown supplementary item - no-op
                 }
             }
 
             setCoordinates();
         }
+
 }

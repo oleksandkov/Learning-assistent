@@ -134,17 +134,17 @@ public class UnitEditDialog {
 
             boolean oldTeam = unit.getTeam();
 
-
             if (!healthField.getText().trim().isEmpty()) {
                 int health = Integer.parseInt(healthField.getText().trim());
                 unit.setHealth(health);
+                unit.setBaseHealth(health); 
             }
 
             if (!damageField.getText().trim().isEmpty()) {
                 int damage = Integer.parseInt(damageField.getText().trim());
                 unit.setDamage(damage);
+                unit.setBaseDamage(damage);  
             }
-
 
             String inventorInput = inventorField.getText().trim();
             ArrayList<String> inventor;

@@ -56,7 +56,6 @@ public class HelloApplication extends Application {
     public static ArrayList<Base> basesB = new ArrayList<>();
     
     public static ArrayList<World> buldings = new ArrayList<>();
-
     private Label oreLabelTeamA;
     private Label oreLabelTeamB;
     private UnitInvetorWindow unitInvetorWindow;
@@ -190,7 +189,7 @@ public class HelloApplication extends Application {
         // Towers
         Tower tower1 = new Tower();
         tower1.setTeam(true);
-        tower1.initGraphics(imgTower, "Tower", 0, 300,450, 300.0, 50);
+        tower1.initGraphics(imgTower, "Tower", 0, 250,350, 300.0, 50);
         tower1.resurrectWorld();
         Timeline healTimer = new Timeline(
             new KeyFrame(Duration.seconds(1), e -> tower1.healUnits())
@@ -200,7 +199,7 @@ public class HelloApplication extends Application {
 
         Tower tower2 = new Tower();
         tower2.setTeam(false);
-        tower2.initGraphics(imgTower, "Tower", 0, 700,450, 300.0, 300);
+        tower2.initGraphics(imgTower, "Tower", 0, 700,350, 300.0, 300);
         tower2.resurrectWorld();
         Timeline healTimer2 = new Timeline(
             new KeyFrame(Duration.seconds(1), e -> tower2.healUnits())
@@ -216,11 +215,11 @@ public class HelloApplication extends Application {
         // Sources
         Source source1 = new Source();
         source1.setTeam(true);
-        source1.initGraphics(imgSource, "Source", 0, 750, 70, 200.0, 200);
+        source1.initGraphics(imgSource, "Source", 0, 650, 30, 200.0, 200);
         source1.resurrectWorld();
         Source source2 = new Source();
         source2.setTeam(false);
-        source2.initGraphics(imgSource, "Source", 0, 500, 850, 200.0, 200);
+        source2.initGraphics(imgSource, "Source", 0, 600, 620, 200.0, 200);
         source2.resurrectWorld();
         sourcesB.add(source2);
         sourcesA.add(source1);
@@ -230,11 +229,11 @@ public class HelloApplication extends Application {
         // Bases
         Base base1 = new Base();
         base1.setTeam(true);
-        base1.initGraphics(imgBase, "Base", 0, 250, 50, 200.0, 200);
+        base1.initGraphics(imgBase, "Base", 0, 200, 30, 200.0, 200);
         base1.resurrectWorld();
         Base base2 = new Base();
         base2.setTeam(false);
-        base2.initGraphics(imgBase, "Base", 0, 800, 800, 200.0, 200);
+        base2.initGraphics(imgBase, "Base", 0, 1000, 550, 200.0, 200);
         base2.resurrectWorld();
         basesB.add(base2);
         basesA.add(base1);
@@ -349,7 +348,7 @@ public class HelloApplication extends Application {
                             }
                         }
                         keysPressed.remove(KeyCode.ESCAPE);
-                    } else if (code == KeyCode.V) {
+                    } else if (code == KeyCode.V && keysPressed.containsKey(KeyCode.CONTROL) && handledActionKeys.contains(KeyCode.V)) {
                         Unit sourceUnit = null;
                         for (int i = units.size() - 1; i >= 0; i--) {
                             Unit candidate = units.get(i);
@@ -365,12 +364,13 @@ public class HelloApplication extends Application {
                                 units.add(clonedUnit);
                                 clonedUnit.resurrect();
                                 clonedUnit.setPosition(sourceUnit.x + 20, sourceUnit.y + 20);
+                                System.out.println("CLONE: Unit cloned successfully!");
                             } catch (CloneNotSupportedException e) {
                                 System.err.println("Clone not supported: " + e.getMessage());
                                 e.printStackTrace();
                             }
                         }
-                        keysPressed.remove(KeyCode.V);
+                        handledActionKeys.remove(KeyCode.V);
                     } else if (code == KeyCode.SPACE) {
                         for (Unit unit : units) {
                             if (unit.isActive()) {
