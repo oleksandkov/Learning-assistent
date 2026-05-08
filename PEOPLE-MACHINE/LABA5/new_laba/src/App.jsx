@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { VoiceAssistant } from "./VoiceAssistant";
+import { SpeechCommander } from "./SpeechCommander";
 
 const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"];
 const WEEKS = ["1", "2", "Обидва"];
@@ -66,9 +66,18 @@ function api(path, options = {}, token = "") {
   };
   if (token) headers.Authorization = `Bearer ${token}`;
   return fetch(path, { ...options, headers }).then(async (res) => {
-    const payload = await res.json().catch(() => ({}));
+    const contentType = res.headers.get('content-type');
+    let payload;
+    
+    if (contentType?.includes('application/json')) {
+      payload = await res.json().catch(() => ({}));
+    } else {
+      const text = await res.text();
+      payload = { error: text || 'Invalid response' };
+    }
+    
     if (!res.ok) {
-      throw new Error(payload.error || "Request failed");
+      throw new Error(payload.error || `Request failed: ${res.status}`);
     }
     return payload;
   });
@@ -855,13 +864,11 @@ function App() {
         </aside>
 
         <section className="tablePanel">
-          <VoiceAssistant
-            onCommand={(command, response) => {
-              console.log("Command:", command);
-              console.log("Response:", response);
-            }}
-            onTranscript={(text) => {
-              console.log("Transcript:", text);
+          <SpeechCommander 
+            token={token} 
+            onCommandExecuted={() => {
+              loadLessons();
+              loadLookups();
             }}
           />
 

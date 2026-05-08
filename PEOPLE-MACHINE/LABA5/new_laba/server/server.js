@@ -4,7 +4,7 @@ import cors from "cors";
 import express from "express";
 import jwt from "jsonwebtoken";
 import { all, get, initDb, run } from "./db.js";
-import { processVoiceCommand, speechToText, generateResponse } from "./ai.js";
+import { processVoiceCommand, speechToText, generateResponse, parseVoiceCommand } from "./ai.js";
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
@@ -32,7 +32,8 @@ const adminUsernames = new Set(
 );
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 function createToken(user) {
   return jwt.sign({ userId: user.id, username: user.username }, jwtSecret, {
@@ -109,6 +110,71 @@ function collectLessonGroups(payload = {}) {
   ];
 
   return sanitizeOptionList(merged);
+}
+
+// Map Ukrainian day names to English
+function normalizeDay(day) {
+  if (!day) return day;
+  const ukrainianToDays = {
+    понеділок: "Monday",
+    пн: "Monday",
+    вівторок: "Tuesday",
+    вт: "Tuesday",
+    середа: "Wednesday",
+    ср: "Wednesday",
+    чотири: "Thursday",
+    чт: "Thursday",
+    "п'ятниця": "Friday",
+    пт: "Friday",
+    субота: "Saturday",
+    сб: "Saturday",
+    неділя: "Sunday",
+    нд: "Sunday",
+  };
+  const lowerDay = String(day).toLowerCase();
+  return ukrainianToDays[lowerDay] || day;
+}
+
+// Map Ukrainian type names to English
+function normalizeType(type) {
+  if (!type) return type;
+  const ukrainianToTypes = {
+    лекція: "Лекція",
+    лекция: "Лекція",
+    лекц: "Лекція",
+    практика: "Практика",
+    практ: "Практика",
+    "практичне заняття": "Практика",
+    лабораторна: "Лабораторна",
+    лаба: "Лабораторна",
+    "лабораторне заняття": "Лабораторна",
+  };
+  const lowerType = String(type).toLowerCase();
+  return ukrainianToTypes[lowerType] || type;
+}
+
+// Normalize time to HH:MM format
+function normalizeTime(time) {
+  if (!time) return time;
+  let timeStr = String(time).toLowerCase().trim();
+
+  // Handle "9 am" -> "09:00", "14:30", etc.
+  const match = timeStr.match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)?/i);
+  if (match) {
+    let hours = parseInt(match[1]);
+    const minutes = match[2] ? parseInt(match[2]) : 0;
+    const period = match[3]?.toLowerCase();
+
+    if (period === "pm" && hours !== 12) hours += 12;
+    if (period === "am" && hours === 12) hours = 0;
+
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
+      2,
+      "0"
+    )}`;
+  }
+
+  return timeStr;
 }
 
 function auth(req, res, next) {
@@ -575,6 +641,148 @@ app.post("/api/ai/voice-command", async (req, res) => {
     return res.status(500).json({
       error: error.message,
       success: false,
+    });
+  }
+});
+
+// Transcribe audio - similar to LABA5 /api/stt
+app.post("/api/stt", async (req, res) => {
+  try {
+    if (!req.body.audio) {
+      return res.status(400).json({ error: "Audio data is required" });
+    }
+
+    const audioBuffer = Buffer.from(req.body.audio, "base64");
+    const transcript = await speechToText(audioBuffer);
+
+    return res.json({
+      transcript: transcript || "",
+    });
+  } catch (error) {
+    console.error("STT error:", error);
+    return res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
+// Execute command via chat
+app.post("/api/command", async (req, res) => {
+  try {
+    const prompt = typeof req.body?.prompt === "string" ? req.body.prompt.trim() : "";
+    if (!prompt) {
+      return res.status(400).json({ error: "Prompt is required" });
+    }
+
+    const commandData = await parseVoiceCommand(prompt);
+    console.log("Parsed command:", JSON.stringify(commandData));
+    
+    const action = commandData.action?.toLowerCase() || "unknown";
+
+    let result = commandData.natural_response;
+
+    if (action === "add_lesson") {
+      const p = commandData.parameters || {};
+      const missing = commandData.missing_fields || [];
+
+      // Check for required fields
+      const requiredFields = ["subject", "day", "time", "room", "teacher"];
+      const actualMissing = requiredFields.filter(
+        (field) => !p[field] || (field === "room" && !p.room)
+      );
+
+      if (actualMissing.length > 0 || missing.length > 0) {
+        const allMissing = [...new Set([...actualMissing, ...missing])];
+        return res.json({
+          answer: `To add a lesson, I need more information:\n${allMissing
+            .map((f) => `• ${f}`)
+            .join(
+              "\n"
+            )}\n\nPlease provide these details and I'll add the lesson.`,
+          status: "incomplete",
+        });
+      }
+
+      const groups = p.group ? [p.group] : p.groups || [];
+      if (!groups.length) {
+        return res.json({
+          answer: "I need to know which group(s) this lesson is for.",
+          status: "incomplete",
+        });
+      }
+
+      try {
+        const lesson = {
+          subject: p.subject,
+          day: normalizeDay(p.day),
+          time: normalizeTime(p.time),
+          room: p.room,
+          week: p.week || "1",
+          teacher: p.teacher,
+          type: normalizeType(p.type) || "Лекція",
+          groups,
+        };
+
+        await run(
+          `INSERT INTO lessons(subject, day, lesson_time, room, group_name, week, teacher, lesson_type)
+           VALUES(?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            lesson.subject,
+            lesson.day,
+            lesson.time,
+            lesson.room,
+            lesson.groups.join(", "),
+            lesson.week,
+            lesson.teacher,
+            lesson.type,
+          ]
+        );
+
+        result = `✅ Added lesson: ${lesson.subject} on ${lesson.day} at ${lesson.time} in room ${lesson.room}`;
+      } catch (err) {
+        result = `Error adding lesson: ${err.message}`;
+      }
+    } else if (action === "delete_lesson") {
+      const p = commandData.parameters || {};
+      if (p.id) {
+        try {
+          await run("DELETE FROM lessons WHERE id = ?", [p.id]);
+          result = `✅ Deleted lesson with ID ${p.id}`;
+        } catch (err) {
+          result = `Error deleting lesson: ${err.message}`;
+        }
+      } else {
+        result = "I need the lesson ID to delete it.";
+      }
+    } else if (action === "list_lessons" || action === "view_schedule") {
+      try {
+        const lessons = await all("SELECT * FROM lessons LIMIT 10");
+        result = `Found ${lessons.length} lessons:\n${lessons
+          .map(
+            (l) =>
+              `- ${l.subject} (${l.day} ${l.lesson_time}) in ${l.room} - ${l.group_name}`
+          )
+          .join("\n")}`;
+      } catch (err) {
+        result = `Error fetching lessons: ${err.message}`;
+      }
+    } else if (action === "help") {
+      result = `I can help you with:
+- Adding lessons: "Add Math on Monday at 9:00 in room 101 for group 1"
+- Deleting lessons: "Delete lesson with ID 5"
+- Viewing schedule: "Show me all lessons" or "List schedule"
+- Adding dropdowns: "Add new subject called Physics"`;
+    } else {
+      result = commandData.natural_response || "I didn't understand that command.";
+    }
+
+    return res.json({
+      answer: result,
+    });
+  } catch (error) {
+    console.error("Command error:", error);
+    return res.status(500).json({
+      error: error.message,
     });
   }
 });
