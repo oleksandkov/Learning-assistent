@@ -18,6 +18,8 @@ public class UnitInvetorWindow {
     private final Stage inventoryStage;
     private final Label inventoryTitleLabel;
     private final VBox inventoryItemsBox;
+	private HBox oreCountBox;
+	private Label oreCountField;
     private final Map<String, Image> inventoryIcons = new HashMap<>();
 
     public UnitInvetorWindow() {
@@ -37,6 +39,8 @@ public class UnitInvetorWindow {
 		inventoryStage.setX(1120);
 		inventoryStage.setY(120);
 		inventoryStage.hide();
+
+		
 	}
 
 	public void updateFromUnits(List<Unit> units) {
@@ -67,28 +71,47 @@ public class UnitInvetorWindow {
 		List<String> inventory = activeUnit.getInventor();
 		if (inventory == null || inventory.isEmpty()) {
 			inventoryItemsBox.getChildren().add(new Label("Inventory is empty"));
-			return;
-		}
+		} else {
+			for (String item : inventory) {
+				String itemName = item == null ? "Unknown" : item;
+				String iconKey = itemName.trim().toLowerCase();
+				Image icon = inventoryIcons.get(iconKey);
 
-		for (String item : inventory) {
-			String itemName = item == null ? "Unknown" : item;
-			String iconKey = itemName.trim().toLowerCase();
-			Image icon = inventoryIcons.get(iconKey);
-
-			HBox row = new HBox(8);
-			if (icon != null) {
-				ImageView itemIcon = new ImageView(icon);
-				itemIcon.setFitWidth(28);
-				itemIcon.setFitHeight(28);
-				row.getChildren().add(itemIcon);
+				HBox row = new HBox(8);
+				if (icon != null) {
+					ImageView itemIcon = new ImageView(icon);
+					itemIcon.setFitWidth(28);
+					itemIcon.setFitHeight(28);
+					row.getChildren().add(itemIcon);
+				}
+				row.getChildren().add(new Label(itemName));
+				inventoryItemsBox.getChildren().add(row);
 			}
-			row.getChildren().add(new Label(itemName));
-			inventoryItemsBox.getChildren().add(row);
 		}
+
+		if (activeUnit.getClass().getSimpleName().equals("Warrior")) {
+			Warrior warrior = (Warrior) activeUnit;
+			
+			if (oreCountBox == null) {
+				oreCountBox = new HBox(10);
+				oreCountBox.setPadding(new Insets(15, 0, 0, 0));
+				Label oreCountLabel = new Label("Ore count:");
+				oreCountLabel.setPrefWidth(80);
+				oreCountField = new Label();
+				oreCountBox.getChildren().addAll(oreCountLabel, oreCountField);
+			}
+			
+			oreCountField.setText(String.valueOf((int) warrior.getOre()));
+			inventoryItemsBox.getChildren().add(oreCountBox);
+		}
+
+		
+
+		
 	}
 
 	public boolean showForActiveUnit(List<Unit> units) {
-		updateFromUnits(units);
+		
 		if (!hasActiveUnit(units)) {
 			setVisible(false);
 			return false;

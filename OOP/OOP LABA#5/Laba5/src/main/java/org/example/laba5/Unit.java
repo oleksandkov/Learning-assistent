@@ -280,6 +280,9 @@ public class Unit implements Cloneable{
             if (this.mainWeaponImage != null) {
                 HelloApplication.group.getChildren().remove(this.mainWeaponImage);
             }
+            if( this.getOreCountLabel() != null) {
+                HelloApplication.group.getChildren().remove(this.getOreCountLabel());
+            }
         }
 
         if (HelloApplication.units != null) {
@@ -631,7 +634,7 @@ public class Unit implements Cloneable{
         System.out.println("THE INVENTORY: " + inventor);
 
     }
-    private void spawnAtTeamBase() {
+    public void spawnAtTeamBase() {
     if (this.getTeam()) {
         if (HelloApplication.basesA != null && !HelloApplication.basesA.isEmpty()) {
             setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
@@ -667,7 +670,7 @@ public class Unit implements Cloneable{
         }
         setCoordinates();
         inventoryLogic();
-        spawnAtTeamBase();
+        // spawnAtTeamBase();
     }
     public void loadInventoryImages() {
         try {
@@ -891,5 +894,12 @@ public class Unit implements Cloneable{
 
             setCoordinates();
         }
+
+        protected void promotion() {}
+        protected javafx.scene.control.Label getOreCountLabel() {
+            return null;
+        }
+        protected void setOreCount(int oreCount) {}
+
 
 }

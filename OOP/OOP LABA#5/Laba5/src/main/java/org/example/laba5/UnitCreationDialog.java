@@ -31,6 +31,10 @@ public class UnitCreationDialog {
     private CheckBox spawnedCheckBox;
     private RadioButton allyRadio;
     private TextField inventorField;
+    private HBox oreBoxRow;
+    private TextField oreField;
+    private HBox killsBox;
+    private TextField killsField;
 
     public UnitCreationDialog() {
         createDialog();
@@ -53,6 +57,7 @@ public class UnitCreationDialog {
         unitTypeCombo.getItems().addAll("Warrior", "Centurio", "Pretorio");
         unitTypeCombo.setValue("Warrior");
         unitTypeCombo.setPrefWidth(100);
+        unitTypeCombo.setOnAction(e -> updateOreVisibility());
         typeBox.getChildren().add(unitTypeCombo);
 
         HBox healthBox = new HBox(8);
@@ -96,6 +101,30 @@ public class UnitCreationDialog {
         inventorField.setPrefWidth(150);
         inventorBox.getChildren().add(inventorField);
 
+        oreBoxRow = new HBox(8);
+        oreBoxRow.getChildren().add(new Label("Ore:"));
+        oreField = new TextField();
+        oreField.setText("0");
+        oreField.setPrefWidth(100);
+        oreField.setTextFormatter(new TextFormatter<>(c -> {
+            if (c.getControlNewText().matches("\\d*")) return c;
+            return null;
+        }));
+        oreBoxRow.getChildren().add(oreField);
+
+        killsBox = new HBox(8);
+        killsBox.getChildren().add(new Label("Kills:"));
+        killsField = new TextField();
+        killsField.setText("0");
+        killsField.setPrefWidth(100);
+        killsField.setTextFormatter(new TextFormatter<>(c -> {
+            if (c.getControlNewText().matches("\\d*")) return c;
+            return null;
+        }));
+        killsBox.getChildren().add(killsField);
+
+
+
         HBox buttonBox = new HBox(10);
         buttonBox.setStyle("-fx-alignment: center;");
         Button okButton = new Button("OK");
@@ -116,8 +145,21 @@ public class UnitCreationDialog {
                 buttonBox
         );
 
+        updateOreVisibility();
+        root.getChildren().add(root.getChildren().indexOf(buttonBox), oreBoxRow);
+        root.getChildren().add(root.getChildren().indexOf(buttonBox), killsBox);
+
         Scene scene = new Scene(root);
         stage.setScene(scene);
+    }
+
+    private void updateOreVisibility() {
+        boolean warriorSelected = "Warrior".equals(unitTypeCombo.getValue());
+        boolean centurioSelected = "Centurio".equals(unitTypeCombo.getValue());
+        oreBoxRow.setManaged(warriorSelected);
+        oreBoxRow.setVisible(warriorSelected);
+        killsBox.setManaged(centurioSelected);
+        killsBox.setVisible(centurioSelected);
     }
 
     private void handleOK() {
@@ -136,13 +178,29 @@ public class UnitCreationDialog {
                 inventor = new ArrayList<>(Arrays.asList(inventorInput.split("\\s*,\\s*")));
             }
 
-            if (unitType.equals("Warrior")) {
-                result = new Warrior(health, isSpawned, team, damage, false, inventor, 100, 100);
-            } else if (unitType.equals("Centurio")) {
-                result = new Centurio(health, isSpawned, team, damage, false, inventor, 100, 100);
-            } else if (unitType.equals("Pretorio")) {
-                result = new Pretorio(health, isSpawned, team, damage, false, inventor, 100, 100);
+            int ore = 0;
+            if ("Warrior".equals(unitType)) {
+                ore = Integer.parseInt(oreField.getText().trim());
             }
+
+            int kills = 0;
+            if ("Centurio".equals(unitType)) {
+                kills = Integer.parseInt(killsField.getText().trim());
+            }
+
+            switch (unitType) {
+                case "Warrior":
+                    result = new Warrior(health, isSpawned, team, damage, false, inventor, 100, 100);
+                    ((Warrior) result).setOreCount(ore);
+                    break;
+                case "Centurio":
+                    result = new Centurio(health, isSpawned, team, damage, false, inventor, 100, 100);
+                    ((Centurio) result).setKillCount(kills);
+                    break;
+                case "Pretorio":
+                    result = new Pretorio(health, isSpawned, team, damage, false, inventor, 100, 100);
+                    break;
+            } 
 
             confirmed = true;
             stage.close();
@@ -151,7 +209,7 @@ public class UnitCreationDialog {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Invalid input");
-            alert.setContentText("Health and Damage must be numbers.");
+            alert.setContentText("Health, Damage, and Ore must be numbers.");
             alert.showAndWait();
         }
     }

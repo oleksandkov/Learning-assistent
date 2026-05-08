@@ -2,6 +2,7 @@ package org.example.laba5;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -16,6 +17,18 @@ public class Centurio extends Warrior{
     private static final long HEAL_COOLDOWN = 2000; 
     private long lastHealTime = 0;
 
+
+    protected Label killCountLabel;
+    protected int killCount = 0;
+    protected HashSet<Unit> countedKills = new HashSet<>();  
+
+    public int getKillCount() {
+        return killCount;
+    }
+
+    public void setKillCount(int killCount) {
+        this.killCount = killCount;
+    }
      @Override
     protected double labelDeltaX() {
         return 10.0;
@@ -63,6 +76,11 @@ public class Centurio extends Warrior{
             mainWeaponImage.setX(x);
             mainWeaponImage.setY(y + 17);
         }
+        if (this.getClass() == Centurio.class && killCountLabel != null) {
+            killCountLabel.setText("Kills : " + killCount);
+            killCountLabel.setLayoutX(x + 60);
+            killCountLabel.setLayoutY(y - 10);
+        }
     }
 
     public static String getName() {
@@ -106,6 +124,8 @@ public class Centurio extends Warrior{
         rectActive.setStrokeWidth(3);
         rectActive.setStroke(Color.GREEN);
 
+        killCountLabel = new Label("Kills : " + killCount);
+
         setCoordinates();
     }
 
@@ -123,6 +143,82 @@ public class Centurio extends Warrior{
         if (isIntersecting) {
             double newHealth = Math.min(target.getHealth() + this.healNum, target.getMaxHealth());
             target.setHealth(newHealth);
+        }
+    }
+
+    @Override
+    public void attack() {
+        if (HelloApplication.units != null) {
+            
+            ArrayList<Unit> aliveEnemies = new ArrayList<>();
+            for (Unit unit : HelloApplication.units) {
+                if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
+                    boolean intersects = this.image.getBoundsInParent().intersects(unit.image.getBoundsInParent());
+                    if (intersects) {
+                        aliveEnemies.add(unit);
+                        break;
+                    }
+                }
+            }
+            
+            super.attack();
+            
+            for (Unit enemy : aliveEnemies) {
+                if (enemy.getDead() && !countedKills.contains(enemy)) {
+                    killCount++;
+                    countedKills.add(enemy);
+                }
+            }
+        } else {
+            super.attack();
+        }
+    }
+
+    @Override
+    public void resurrect() {
+        super.resurrect();
+        if (this.getClass() == Centurio.class && killCountLabel != null && HelloApplication.group != null) {
+            if (!HelloApplication.group.getChildren().contains(killCountLabel)) {
+                HelloApplication.group.getChildren().add(killCountLabel);
+            }
+        }
+    }
+
+    @Override
+    public void removeUnitFromGame() {
+        if (HelloApplication.group != null && killCountLabel != null) {
+            HelloApplication.group.getChildren().remove(killCountLabel);
+        }
+        countedKills.clear();  // Clear kill tracking when this Centurio is removed
+        super.removeUnitFromGame();
+    }
+
+    
+
+    @Override
+    public void promotion() {
+        if (this.getKillCount() >= 5) {
+            
+            
+            int pretorioHealth = 150; 
+            int newDamage = this.getDamage() + 2; 
+            
+            Pretorio pretorio = new Pretorio(
+                pretorioHealth, 
+                true, 
+                this.team, 
+                newDamage, 
+                false, 
+                new ArrayList<>(this.getInventor()), 
+                this.x, 
+                this.y
+            );
+            
+            pretorio.setKillCount(this.getKillCount());
+            
+            HelloApplication.units.add(pretorio);
+            pretorio.resurrect();
+            this.removeUnitFromGame();
         }
     }
 
@@ -218,5 +314,7 @@ public class Centurio extends Warrior{
                 lastAttackTime = currentTime;
             }
         }
+        
+        promotion();
     }
 }

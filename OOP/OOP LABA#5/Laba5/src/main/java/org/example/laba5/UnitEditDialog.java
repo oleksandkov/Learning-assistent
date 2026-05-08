@@ -19,12 +19,16 @@ import javafx.stage.Stage;
 
 public class UnitEditDialog {
     private Stage stage;
-    private Unit unit;
+    private final Unit unit;
     private boolean confirmed = false;
 
     private TextField healthField;
     private TextField damageField;
     private TextField inventorField;
+    private TextField oreField;
+    private HBox oreBox;
+    private TextField killsField;
+    private HBox killsBox;
     private RadioButton teamButton;
 
     public UnitEditDialog(Unit unit) {
@@ -81,6 +85,42 @@ public class UnitEditDialog {
         inventorField.setPrefWidth(200);
         inventorBox.getChildren().addAll(inventorLabel, inventorField);
 
+        oreBox = new HBox(10);
+        Label oreLabel = new Label("Ore:");
+        oreLabel.setPrefWidth(80);
+        oreField = new TextField();
+        oreField.setPrefWidth(150);
+        oreField.setTextFormatter(new TextFormatter<>(c -> {
+            if (c.getControlNewText().matches("\\d*")) return c;
+            return null;
+        }));
+        if (unit.getClass() == Warrior.class) {
+            Warrior warrior = (Warrior) unit;
+            oreField.setText(String.valueOf((int) warrior.getOre()));
+        } else {
+            oreField.setText("N/A");
+            oreField.setEditable(false);
+        }
+        oreBox.getChildren().addAll(oreLabel, oreField);
+
+        killsBox = new HBox(10);
+        Label killsLabel = new Label("Kills:");
+        killsLabel.setPrefWidth(80);
+        killsField = new TextField();
+        killsField.setPrefWidth(150);
+        killsField.setTextFormatter(new TextFormatter<>(c -> {
+            if (c.getControlNewText().matches("\\d*")) return c;
+            return null;
+        }));
+        if (unit.getClass() == Centurio.class) {
+            Centurio centurio = (Centurio) unit;
+            killsField.setText(String.valueOf(centurio.getKillCount()));
+        } else {
+            killsField.setText("N/A");
+            killsField.setEditable(false);
+        }
+        killsBox.getChildren().addAll(killsLabel, killsField);
+
         HBox teamBox = new HBox(10);
         Label teamLabel = new Label("Team:");
         teamLabel.setPrefWidth(80);
@@ -113,6 +153,8 @@ public class UnitEditDialog {
                 healthBox,
                 damageBox,
                 inventorBox,
+                oreBox,
+                killsBox,
                 teamBox,
                 new Separator(),
                 buttonBox
@@ -146,6 +188,18 @@ public class UnitEditDialog {
                 inventor = new ArrayList<>(Arrays.asList(inventorInput.split("\\s*,\\s*")));
             }
             unit.setInventor(inventor);
+
+            if (unit.getClass() == Warrior.class) {
+                Warrior warrior = (Warrior) unit;
+                int ore = Integer.parseInt(oreField.getText().trim());
+                warrior.setOreCount(ore);
+            }
+
+            if (unit.getClass() == Centurio.class) {
+                Centurio centurio = (Centurio) unit;
+                int kills = Integer.parseInt(killsField.getText().trim());
+                centurio.setKillCount(kills);
+            }
 
 
             boolean newTeam = teamButton.isSelected();

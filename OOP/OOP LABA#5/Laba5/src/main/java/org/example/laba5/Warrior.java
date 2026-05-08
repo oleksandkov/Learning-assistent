@@ -14,15 +14,34 @@ public class Warrior extends Unit {
     private static String name = "Warrior";
     private static final double MAX_HEALTH = 100.0;
     private double oreAmount = 0;
+    private int activeOre = 0;
     private static final long ORE_COOLDOWN = 1000;
     private long lastOreTime = 0;
     private boolean collectingOre = false;
     private boolean deliveringOre = false;
     private static final double COMBAT_PRIORITY_RADIUS = 180.0;
 
+
+    private Label oreCountLabel;
+
+    @Override
+    public Label getOreCountLabel() {
+        return oreCountLabel;
+    }
+
+    @Override
+    protected void setOreCount(int oreCount) {
+        // if (oreCount != null) {
+            this.oreAmount = oreCount;
+        // }
+    }
     @Override
     protected double labelDeltaX() {
         return 10.0;
+    }
+
+    public double getOre() {
+        return oreAmount;
     }
 
     @Override
@@ -101,7 +120,31 @@ public class Warrior extends Unit {
         rectActive.setStrokeWidth(3);
         rectActive.setStroke(Color.GREEN);
 
+        oreCountLabel = new Label();
+        
+
         setCoordinates();
+    }
+
+    @Override
+    public void resurrect() {
+        super.resurrect();
+        if (this.getClass() == Warrior.class && oreCountLabel != null && HelloApplication.group != null) {
+            if (!HelloApplication.group.getChildren().contains(oreCountLabel)) {
+                HelloApplication.group.getChildren().add(oreCountLabel);
+            }
+        }
+
+    }
+
+    @Override
+    public void setCoordinates() {
+        super.setCoordinates();
+        if (this.getClass() == Warrior.class && oreCountLabel != null) {
+            oreCountLabel.setText("Ore: " + (int) activeOre);
+            oreCountLabel.setLayoutX(x + 65);
+            oreCountLabel.setLayoutY(y - 10 );
+        }
     }
 
     private void doOre() {
@@ -133,14 +176,18 @@ public class Warrior extends Unit {
         }
 
         if (collectingOre) {
-            moveTo(sourceTarget.x, sourceTarget.y);
-            if (currentTime - lastOreTime >= ORE_COOLDOWN) {
+            if (!this.isActive()) {
+                moveTo(sourceTarget.x, sourceTarget.y);
+            }
+            // moveTo(sourceTarget.x, sourceTarget.y);
+            if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(sourceTarget.imageView.getBoundsInParent()) ) {
+                activeOre += 1;
                 oreAmount += 1;
                 lastOreTime = currentTime;
             }
 
-            if (oreAmount >= 10) {
-                oreAmount = 10;
+            if (activeOre >= 10) {
+                activeOre = 10;
                 collectingOre = false;
                 deliveringOre = true;
             }
@@ -148,17 +195,21 @@ public class Warrior extends Unit {
         }
 
         if (deliveringOre) {
-            moveTo(baseTarget.x, baseTarget.y);
-            if (currentTime - lastOreTime >= ORE_COOLDOWN) {
-                if (oreAmount > 0) {
-                    oreAmount -= 1;
+            if (!this.isActive()) {
+                moveTo(baseTarget.x, baseTarget.y);
+            }
+            // moveTo(baseTarget.x, baseTarget.y);
+            if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(baseTarget.imageView.getBoundsInParent()) ) {
+                if (activeOre > 0) {
+                    // oreAmount -= 1;
                     baseTarget.setOre(baseTarget.getOre() + 1);
+                    activeOre -= 1;
                 }
                 lastOreTime = currentTime;
             }
 
-            if (oreAmount <= 0) {
-                oreAmount = 0;
+            if (activeOre <= 0) {
+                activeOre = 0;
                 deliveringOre = false;
                 collectingOre = true;
             }
@@ -226,6 +277,26 @@ public class Warrior extends Unit {
     }
 
     @Override
+    protected void promotion() {
+        if (HelloApplication.units == null) {
+            return;
+        }
+        if (this != null )  {
+            int ore = (int) this.getOre();
+            if (ore >= 50) {
+                this.setDead(true);
+                HelloApplication.group.getChildren().removeAll(this.image, this.labelName, this.life, this.rectActive, oreCountLabel);
+                this.removeUnitFromGame();
+                Centurio centurio = new Centurio((int) MAX_HEALTH, true, this.team, 10, false, new ArrayList<>(this.getInventor()), this.x, this.y);
+                HelloApplication.units.add(centurio);
+                centurio.resurrect();
+                
+            }   
+
+        }
+    }
+    
+    @Override
     public void logic() {
         Unit nearbyEnemyUnit = findNearbyEnemyUnit();
         World nearbyEnemyBuilding = findNearbyEnemyBuilding();
@@ -245,9 +316,10 @@ public class Warrior extends Unit {
             return;
         }
 
-        if (!this.isActive()) {
+        // if (!this.isActive()) {
             doOre();
-        }
+        // }
+        promotion();
     }
 }
 

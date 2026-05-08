@@ -90,6 +90,15 @@ public class HelloApplication extends Application {
 
         scene.setOnKeyPressed(e -> {
             KeyCode code = e.getCode();
+            if (code == KeyCode.V && e.isControlDown()) {
+                if (handledActionKeys.contains(KeyCode.V)) {
+                    return;
+                }
+                handledActionKeys.add(KeyCode.V);
+                cloneActiveUnit();
+                return;
+            }
+
             if (code == KeyCode.DELETE || code == KeyCode.INSERT || code == KeyCode.ESCAPE || code == KeyCode.SPACE || code == KeyCode.I || code == KeyCode.V) {
                 if (handledActionKeys.contains(code)) {
                     return;
@@ -298,6 +307,7 @@ public class HelloApplication extends Application {
                                 }
                                 newUnit.setPosition(x, y);
                                 newUnit.resurrect();
+                                newUnit.spawnAtTeamBase();
                             } else {
                                 System.out.println("Dialog was cancelled or null result");
                             }
@@ -312,29 +322,6 @@ public class HelloApplication extends Application {
                             }
                         }
                         keysPressed.remove(KeyCode.ESCAPE);
-                    } else if (code == KeyCode.V && keysPressed.containsKey(KeyCode.CONTROL) && handledActionKeys.contains(KeyCode.V)) {
-                        Unit sourceUnit = null;
-                        for (int i = units.size() - 1; i >= 0; i--) {
-                            Unit candidate = units.get(i);
-                            if (candidate != null && candidate.isActive()) {
-                                sourceUnit = candidate;
-                                break;
-                            }
-                        }
-
-                        if (sourceUnit != null) {
-                            try {
-                                Unit clonedUnit = (Unit) sourceUnit.clone();
-                                units.add(clonedUnit);
-                                clonedUnit.resurrect();
-                                clonedUnit.setPosition(sourceUnit.x + 20, sourceUnit.y + 20);
-                                System.out.println("CLONE: Unit cloned successfully!");
-                            } catch (CloneNotSupportedException e) {
-                                System.err.println("Clone not supported: " + e.getMessage());
-                                e.printStackTrace();
-                            }
-                        }
-                        handledActionKeys.remove(KeyCode.V);
                     } else if (code == KeyCode.SPACE) {
                         for (Unit unit : units) {
                             if (unit.isActive()) {
@@ -383,6 +370,33 @@ public class HelloApplication extends Application {
 
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void cloneActiveUnit() {
+        Unit sourceUnit = null;
+        for (int i = units.size() - 1; i >= 0; i--) {
+            Unit candidate = units.get(i);
+            if (candidate != null && candidate.isActive()) {
+                sourceUnit = candidate;
+                break;
+            }
+        }
+
+        if (sourceUnit == null) {
+            handledActionKeys.remove(KeyCode.V);
+            return;
+        }
+
+        try {
+            Unit clonedUnit = (Unit) sourceUnit.clone();
+            units.add(clonedUnit);
+            clonedUnit.setPosition(sourceUnit.x + 20, sourceUnit.y + 20);
+            clonedUnit.resurrect();
+            System.out.println("CLONE: Unit cloned successfully!");
+        } catch (CloneNotSupportedException ex) {
+            System.err.println("Clone not supported: " + ex.getMessage());
+            ex.printStackTrace();
+        }
     }
 
     private void updateHud() {
