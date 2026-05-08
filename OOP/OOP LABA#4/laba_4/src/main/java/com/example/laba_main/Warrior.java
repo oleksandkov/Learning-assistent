@@ -245,8 +245,9 @@ public class Warrior extends Unit {
             return;
         }
 
-        if (!this.isActive() ) {
+        if (!this.isActive()) {
             doOre();
         }
     }
+}
 

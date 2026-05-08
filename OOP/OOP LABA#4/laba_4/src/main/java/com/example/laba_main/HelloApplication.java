@@ -163,7 +163,6 @@ public class HelloApplication extends Application {
         }
 
         Tower tower1 = new Tower();
-        Tower tower1 = new Tower();
         tower1.setTeam(true);
         tower1.initGraphics(imgTower, "Tower", 0, 250,350, 300.0, 50);
         tower1.resurrectWorld();
@@ -188,7 +187,7 @@ public class HelloApplication extends Application {
         buldings.add(tower1);
         buldings.add(tower2);
 
-        Source source1 = new Source();
+
         Source source1 = new Source();
         source1.setTeam(true);
         source1.initGraphics(imgSource, "Source", 0, 650, 30, 200.0, 200);
@@ -202,7 +201,7 @@ public class HelloApplication extends Application {
         buldings.add(source1);
         buldings.add(source2);
 
-        Base base1 = new Base();
+        
         Base base1 = new Base();
         base1.setTeam(true);
         base1.initGraphics(imgBase, "Base", 0, 200, 30, 200.0, 200);
