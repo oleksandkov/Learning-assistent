@@ -18,12 +18,16 @@ public class Centurio extends Warrior{
     private long lastHealTime = 0;
 
 
-    protected Label killCountLabel;
-    protected int killCount = 0;
-    protected HashSet<Unit> countedKills = new HashSet<>();  
+    private Label killCountLabel;
+    private int killCount = 0;
+    private HashSet<Unit> countedKills = new HashSet<>();  
 
     public int getKillCount() {
         return killCount;
+    }
+    @Override
+    public Label getKillCountLabel() {
+        return killCountLabel;
     }
 
     public void setKillCount(int killCount) {

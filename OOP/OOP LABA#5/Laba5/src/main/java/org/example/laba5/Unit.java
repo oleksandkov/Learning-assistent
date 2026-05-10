@@ -283,6 +283,9 @@ public class Unit implements Cloneable{
             if( this.getOreCountLabel() != null) {
                 HelloApplication.group.getChildren().remove(this.getOreCountLabel());
             }
+            if (this.getKillCountLabel() != null) {
+                HelloApplication.group.getChildren().remove(this.getKillCountLabel());
+            }
         }
 
         if (HelloApplication.units != null) {
@@ -900,6 +903,9 @@ public class Unit implements Cloneable{
             return null;
         }
         protected void setOreCount(int oreCount) {}
+        protected javafx.scene.control.Label getKillCountLabel() {
+            return null;
+        }
 
 
 }
