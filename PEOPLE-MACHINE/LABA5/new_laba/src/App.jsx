@@ -906,6 +906,7 @@ function App() {
             <table>
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th>Предмет</th>
                   <th>День</th>
                   <th>Час</th>
@@ -928,6 +929,7 @@ function App() {
                     }}
                     className={row.id === selectedId ? "selected" : ""}
                   >
+                    <td><strong>{row.id}</strong></td>
                     <td>{row.subject}</td>
                     <td>{row.day}</td>
                     <td>{row.time}</td>

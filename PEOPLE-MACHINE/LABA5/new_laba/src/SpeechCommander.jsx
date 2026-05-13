@@ -169,31 +169,28 @@ export function SpeechCommander({ onCommandExecuted, token }) {
   const hasDraft = Boolean(draft.trim());
 
   return (
-    <div style={styles.container}>
-      <h3 style={styles.title}>🎤 Voice Command</h3>
+    <section className="voiceCard panel">
+      <div className="voiceHeader">
+        <h3>🎤 Voice Command</h3>
+        <span className={`voiceBadge ${isRecording ? "recording" : ""}`}>
+          {isRecording ? "Recording" : "Ready"}
+        </span>
+      </div>
 
-      <div style={styles.statusBox}>{status}</div>
+      <p className="voiceStatus">{status}</p>
 
-      <div style={styles.buttonGroup}>
+      <div className="voiceActions">
         <button
+          className="voiceBtn primary"
           onClick={startRecording}
           disabled={isRecording}
-          style={{
-            ...styles.button,
-            ...styles.recordBtn,
-            opacity: isRecording ? 0.5 : 1,
-          }}
         >
           {isRecording ? "🔴 Recording..." : "🎤 Record"}
         </button>
         <button
+          className="voiceBtn secondary"
           onClick={stopRecording}
           disabled={!isRecording}
-          style={{
-            ...styles.button,
-            ...styles.stopBtn,
-            opacity: !isRecording ? 0.5 : 1,
-          }}
         >
           ⏹ Stop
         </button>
@@ -201,30 +198,23 @@ export function SpeechCommander({ onCommandExecuted, token }) {
 
       {draft && (
         <>
-          <div style={styles.draftBox}>
-            <strong>Draft:</strong>
-            <p style={styles.draftText}>{draft}</p>
+          <div className="voiceBlock voiceDraft">
+            <div className="voiceBlockHeader">Draft</div>
+            <p>{draft}</p>
           </div>
 
-          <div style={styles.actionGroup}>
+          <div className="voiceActions split">
             <button
+              className="voiceBtn secondary"
               onClick={redoDraft}
               disabled={isRecording}
-              style={{
-                ...styles.button,
-                ...styles.redoBtn,
-              }}
             >
               🔄 Redo
             </button>
             <button
+              className="voiceBtn success"
               onClick={pushCommand}
               disabled={isExecuting || !hasDraft}
-              style={{
-                ...styles.button,
-                ...styles.pushBtn,
-                opacity: isExecuting || !hasDraft ? 0.5 : 1,
-              }}
             >
               {isExecuting ? "⏳ Pushing..." : "📤 Push"}
             </button>
@@ -233,112 +223,18 @@ export function SpeechCommander({ onCommandExecuted, token }) {
       )}
 
       {commandResult && (
-        <div style={styles.resultBox}>
-          <strong>Result:</strong>
-          <p style={styles.text}>{commandResult}</p>
+        <div className="voiceBlock voiceResult">
+          <div className="voiceBlockHeader">Result</div>
+          <p>{commandResult}</p>
         </div>
       )}
 
       {error && (
-        <div style={styles.errorBox}>
-          <strong>❌ Error:</strong>
-          <p style={styles.text}>{error}</p>
+        <div className="voiceBlock voiceError">
+          <div className="voiceBlockHeader">Error</div>
+          <p>{error}</p>
         </div>
       )}
-    </div>
+    </section>
   );
 }
-
-const styles = {
-  container: {
-    border: "2px solid #4CAF50",
-    borderRadius: "8px",
-    padding: "16px",
-    marginBottom: "20px",
-    backgroundColor: "#f9f9f9",
-    fontFamily: "system-ui, -apple-system, sans-serif",
-  },
-  title: {
-    margin: "0 0 12px 0",
-    color: "#2c3e50",
-    fontSize: "18px",
-    fontWeight: "bold",
-  },
-  statusBox: {
-    backgroundColor: "#e3f2fd",
-    padding: "10px 12px",
-    borderRadius: "4px",
-    marginBottom: "12px",
-    fontSize: "14px",
-    color: "#1565c0",
-    fontWeight: "500",
-  },
-  buttonGroup: {
-    display: "flex",
-    gap: "8px",
-    marginBottom: "12px",
-  },
-  actionGroup: {
-    display: "flex",
-    gap: "8px",
-    marginBottom: "12px",
-  },
-  button: {
-    padding: "10px 16px",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontWeight: "bold",
-    fontSize: "14px",
-    transition: "all 0.2s",
-  },
-  recordBtn: {
-    backgroundColor: "#FF6B6B",
-    color: "white",
-    flex: 1,
-  },
-  stopBtn: {
-    backgroundColor: "#FFA07A",
-    color: "white",
-    flex: 1,
-  },
-  redoBtn: {
-    backgroundColor: "#FFB74D",
-    color: "white",
-    flex: 1,
-  },
-  pushBtn: {
-    backgroundColor: "#4CAF50",
-    color: "white",
-    flex: 1,
-  },
-  draftBox: {
-    backgroundColor: "#e8f5e9",
-    padding: "12px",
-    borderRadius: "4px",
-    borderLeft: "4px solid #4CAF50",
-    marginBottom: "12px",
-  },
-  draftText: {
-    margin: "8px 0 0 0",
-    fontSize: "14px",
-    color: "#2e7d32",
-  },
-  resultBox: {
-    backgroundColor: "#c8e6c9",
-    padding: "12px",
-    borderRadius: "4px",
-    borderLeft: "4px solid #388E3C",
-    marginBottom: "12px",
-  },
-  errorBox: {
-    backgroundColor: "#ffebee",
-    padding: "12px",
-    borderRadius: "4px",
-    borderLeft: "4px solid #f44336",
-  },
-  text: {
-    margin: "8px 0 0 0",
-    fontSize: "14px",
-  },
-};
