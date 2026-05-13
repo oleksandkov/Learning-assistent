@@ -4,4 +4,3 @@ server/data/*.db
 server/data/schedule.db
 server/data/
 
-!.env

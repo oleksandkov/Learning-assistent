@@ -41,7 +41,8 @@ export function SpeechCommander({ onCommandExecuted, token }) {
     } catch (err) {
       let errorMsg = err.message;
       if (err.name === "NotAllowedError") {
-        errorMsg = "Microphone permission denied. Allow microphone in browser settings.";
+        errorMsg =
+          "Microphone permission denied. Allow microphone in browser settings.";
       } else if (err.name === "NotFoundError") {
         errorMsg = "No microphone found. Connect a microphone.";
       }
@@ -89,7 +90,7 @@ export function SpeechCommander({ onCommandExecuted, token }) {
             setStatus(
               data.transcript
                 ? "Draft ready. Use Push to send."
-                : "No text recognized. Try again."
+                : "No text recognized. Try again.",
             );
           } else {
             setError(data.error || `HTTP ${response.status}`);
@@ -145,7 +146,9 @@ export function SpeechCommander({ onCommandExecuted, token }) {
         data = await response.json();
       } else {
         const text = await response.text();
-        throw new Error(`Invalid response from server: ${text.substring(0, 100)}`);
+        throw new Error(
+          `Invalid response from server: ${text.substring(0, 100)}`,
+        );
       }
 
       if (response.ok) {
@@ -196,31 +199,33 @@ export function SpeechCommander({ onCommandExecuted, token }) {
         </button>
       </div>
 
-      {draft && (
-        <>
-          <div className="voiceBlock voiceDraft">
-            <div className="voiceBlockHeader">Draft</div>
-            <p>{draft}</p>
-          </div>
+      <div className="voiceBlock voiceDraft">
+        <div className="voiceBlockHeader">Chat prompt</div>
+        <textarea
+          className="voiceTextarea"
+          rows={3}
+          value={draft}
+          onChange={(event) => setDraft(event.target.value)}
+          placeholder="Type a question about the schedule or curriculum..."
+        />
+      </div>
 
-          <div className="voiceActions split">
-            <button
-              className="voiceBtn secondary"
-              onClick={redoDraft}
-              disabled={isRecording}
-            >
-              🔄 Redo
-            </button>
-            <button
-              className="voiceBtn success"
-              onClick={pushCommand}
-              disabled={isExecuting || !hasDraft}
-            >
-              {isExecuting ? "⏳ Pushing..." : "📤 Push"}
-            </button>
-          </div>
-        </>
-      )}
+      <div className="voiceActions split">
+        <button
+          className="voiceBtn secondary"
+          onClick={redoDraft}
+          disabled={isRecording || !hasDraft}
+        >
+          🔄 Clear
+        </button>
+        <button
+          className="voiceBtn success"
+          onClick={pushCommand}
+          disabled={isExecuting || !hasDraft}
+        >
+          {isExecuting ? "⏳ Sending..." : "💬 Ask"}
+        </button>
+      </div>
 
       {commandResult && (
         <div className="voiceBlock voiceResult">

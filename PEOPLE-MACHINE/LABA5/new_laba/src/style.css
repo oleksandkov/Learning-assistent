@@ -283,6 +283,18 @@ header h1 {
   font-size: 14px;
 }
 
+.voiceTextarea {
+  width: 100%;
+  border: 1px solid #cfe0ff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #1f2d49;
+  background: #fff;
+  resize: vertical;
+  min-height: 70px;
+}
+
 .voiceDraft {
   background: #f2f8ff;
   border-color: #cfe0ff;
@@ -427,7 +439,8 @@ tbody tr.selected {
 }
 
 @keyframes blink {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
