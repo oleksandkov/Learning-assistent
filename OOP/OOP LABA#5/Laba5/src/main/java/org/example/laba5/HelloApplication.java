@@ -156,6 +156,12 @@ public class HelloApplication extends Application {
         Warrior warrior2 = new Warrior();
         warrior2.setTeam(false);
         warriors.add(warrior2);
+        Warrior warrior3 = new Warrior();
+        warrior3.setTeam(true);
+        warriors.add(warrior3);
+        Warrior warrior4 = new Warrior();
+        warrior4.setTeam(false);
+        warriors.add(warrior4);
 
         for (int i = 0; i < warriors.size(); i++) {
             Unit u = warriors.get(i);
@@ -190,8 +196,18 @@ public class HelloApplication extends Application {
         );
         healTimer2.setCycleCount(Animation.INDEFINITE);
         healTimer2.play();
+        Tower tower4 = new Tower();
+        tower4.setTeam(false);
+        tower4.initGraphics(imgTower, "Tower", 0, 1000, 300, 300.0, 300);
+        tower4.resurrectWorld();
+        Timeline healTimer4 = new Timeline(
+            new KeyFrame(Duration.seconds(1), e -> tower4.healUnits())
+        );
+        healTimer4.setCycleCount(Animation.INDEFINITE);
+        healTimer4.play();
 
         towersB.add(tower2);
+        towersB.add(tower4);
         towersA.add(tower1);
         buldings.add(tower1);
         buldings.add(tower2);

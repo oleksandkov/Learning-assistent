@@ -11,6 +11,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import java.util.Random;
 
 
 
@@ -768,7 +769,91 @@ public class Unit implements Cloneable{
         x += dx;
         y += dy;
         setCoordinates();
+        loacateAndRotateF();
+        // locateAndRotateE();
     }
+
+    public void loacateAndRotateF() {
+        if (HelloApplication.units == null || image == null) {
+            return;
+        }
+
+        double selfCenterX = x + image.getFitWidth() / 2.0;
+        double selfCenterY = y + image.getFitHeight() / 2.0;
+        double minDistance = 30.0;        
+        double pushDistance = 50.0;       
+        for (Unit unit : HelloApplication.units) {
+            if (unit == this || unit.image == null) {
+                continue;
+            }
+            // if (unit.getTeam() != this.team) {
+            //     continue;
+            // }
+
+            double otherCenterX = unit.x + unit.image.getFitWidth() / 2.0;
+            double otherCenterY = unit.y + unit.image.getFitHeight() / 2.0;
+            double dx = otherCenterX - selfCenterX;
+            double dy = otherCenterY - selfCenterY;
+            double dist = Math.hypot(dx, dy);
+
+            if (dist < minDistance) {
+                if (dist < 0.001) {
+                    dx = 1.0;
+                    dy = 0.0;
+                    dist = 1.0;
+                }
+
+                double newX = selfCenterX + (dx / dist) * pushDistance;
+                double newY = selfCenterY + (dy / dist) * pushDistance;
+                unit.moveTo(newX, newY);
+            }
+        }
+    }
+    public void locateAndRotateE() {
+        if (HelloApplication.units == null || image == null) {
+            return;
+        }
+
+        boolean simularCoor = false;
+        double selfCenterX = x + image.getFitWidth() / 2.0;
+        double selfCenterY = y + image.getFitHeight() / 2.0;
+        double minDistance = 30.0;
+        double pushStep = 7.0;
+
+        for (Unit unit : HelloApplication.units) {
+            if (unit == this || unit.image == null) {
+                continue;
+            }
+            if (unit.getTeam() == this.team) {
+                continue;
+            }
+
+            double otherCenterX = unit.x + unit.image.getFitWidth() / 2.0;
+            double otherCenterY = unit.y + unit.image.getFitHeight() / 2.0;
+            double dx = selfCenterX - otherCenterX;
+            double dy = selfCenterY - otherCenterY;
+
+            if (Math.abs(dx) < minDistance && Math.abs(dy) < minDistance) {
+                simularCoor = true;
+                double dist = Math.hypot(dx, dy);
+                if (dist < 0.001) {
+                    dx = 1.0;
+                    dy = 0.0;
+                    dist = 1.0;
+                }
+
+                double px = -dy / dist;
+                double py = dx / dist;
+                x += px * pushStep;
+                y += py * pushStep;
+                selfCenterX = x + image.getFitWidth() / 2.0;
+                selfCenterY = y + image.getFitHeight() / 2.0;
+            }
+        }
+
+        return ;
+    }
+
     public void moveTo(double newX, double newY) {
         double dx = newX - x;
         double dy = newY - y;
@@ -781,12 +866,18 @@ public class Unit implements Cloneable{
             return;
         }
 
+        
+
+        // locateAndRotateE();
+        loacateAndRotateF();
         setCoordinates();
     }
 
     public void setPosition(double newX, double newY) {
         x = newX;
         y = newY;
+        // locateAndRotateE();
+        loacateAndRotateF();
         setCoordinates();
     }
 

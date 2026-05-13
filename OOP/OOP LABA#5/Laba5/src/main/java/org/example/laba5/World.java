@@ -271,48 +271,48 @@ public class World {
         oreTeamA = (int) HelloApplication.basesA.get(0).getOre();
         oreTeamB = (int) HelloApplication.basesB.get(0).getOre();
 
-        if (oreTeamA >= 50 && warriorsTeamA < 3) {
+        if (oreTeamA >= 20 && warriorsTeamA < 3) {
+            HelloApplication.basesA.get(0).setOre(oreTeamA - 20);
+            Unit newUnit = new Warrior();
+            newUnit.setTeam(true);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
+            newUnit.resurrect();
+        }
+        if (oreTeamB >= 20 && warriorsTeamB < 3) {
+            HelloApplication.basesB.get(0).setOre(oreTeamB - 20);
+            Unit newUnit = new Warrior();
+            newUnit.setTeam(false);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesB.get(0).x, HelloApplication.basesB.get(0).y);
+            newUnit.resurrect();
+        }
+        if (oreTeamA >= 50 && centaursTeamA < 2) {
             HelloApplication.basesA.get(0).setOre(oreTeamA - 50);
-            Unit newUnit = new Warrior();
+            Unit newUnit = new Centurio();
             newUnit.setTeam(true);
             HelloApplication.units.add(newUnit);
             newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
             newUnit.resurrect();
         }
-        if (oreTeamB >= 50 && warriorsTeamB < 3) {
+        if (oreTeamB >= 50 && centaursTeamB < 2) {
             HelloApplication.basesB.get(0).setOre(oreTeamB - 50);
-            Unit newUnit = new Warrior();
-            newUnit.setTeam(false);
-            HelloApplication.units.add(newUnit);
-            newUnit.setPosition(HelloApplication.basesB.get(0).x, HelloApplication.basesB.get(0).y);
-            newUnit.resurrect();
-        }
-        if (oreTeamA >= 100 && centaursTeamA < 2) {
-            HelloApplication.basesA.get(0).setOre(oreTeamA - 100);
-            Unit newUnit = new Centurio();
-            newUnit.setTeam(true);
-            HelloApplication.units.add(newUnit);
-            newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
-            newUnit.resurrect();
-        }
-        if (oreTeamB >= 100 && centaursTeamB < 2) {
-            HelloApplication.basesB.get(0).setOre(oreTeamB - 100);
             Unit newUnit = new Centurio();
             newUnit.setTeam(false);
             HelloApplication.units.add(newUnit);
             newUnit.setPosition(HelloApplication.basesB.get(0).x, HelloApplication.basesB.get(0).y);
             newUnit.resurrect();
         }
-        if (oreTeamA >= 150 && pretionsTeamA < 10) {
-            HelloApplication.basesA.get(0).setOre(oreTeamA - 150);
+        if (oreTeamA >= 70 && pretionsTeamA < 10) {
+            HelloApplication.basesA.get(0).setOre(oreTeamA - 70);
             Unit newUnit = new Pretorio();
             newUnit.setTeam(true);
             HelloApplication.units.add(newUnit);
             newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
             newUnit.resurrect();
         }
-        if (oreTeamB >= 150 && pretionsTeamB < 10) {
-            HelloApplication.basesB.get(0).setOre(oreTeamB - 150);
+        if (oreTeamB >= 70 && pretionsTeamB < 10) {
+            HelloApplication.basesB.get(0).setOre(oreTeamB - 70);
             Unit newUnit = new Pretorio();
             newUnit.setTeam(false);
             HelloApplication.units.add(newUnit);
