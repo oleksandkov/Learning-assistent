@@ -11,6 +11,14 @@ public class Base extends World {
     private final URL conturUrlRed = HelloApplication.class.getResource("/red.png");
     private final URL conturUrlGreen = HelloApplication.class.getResource("/green.png");
 
+    
+    
+
+
+
+    public ArrayList<Unit> getUnits() {
+        return this.unitsInside;
+    }
     public Base(ArrayList<Unit> units, boolean  team) {
         super(units);
         this.team = team;
@@ -118,5 +126,10 @@ public class Base extends World {
         if (numUnitsLabel != null) {
             numUnitsLabel.setText(String.valueOf(numUnits));
         }
+    }
+
+    @Override
+    protected boolean isUnitInside(Unit unit) {
+        return unitsInside.contains(unit);
     }
 }

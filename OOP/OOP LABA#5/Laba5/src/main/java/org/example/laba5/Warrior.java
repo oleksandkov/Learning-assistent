@@ -24,6 +24,13 @@ public class Warrior extends Unit {
 
     private Label oreCountLabel;
 
+
+    private Double maxHealth = MAX_HEALTH;
+    
+    @Override
+    public double getMaxHealth() {
+        return maxHealth;
+    }
     @Override
     public Label getOreCountLabel() {
         return oreCountLabel;

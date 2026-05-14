@@ -142,7 +142,7 @@ public class Tower extends World {
                 continue;
             }
 
-            if (unit.getTeam() == this.getTeam()) {
+            if (unit.getTeam() == this.getTeam() && unit.getHealth() != null && unit.getHealth() < unit.getMaxHealth()) {
                 Integer currentHealth = unit.getHealth();
                 int newHealth = (currentHealth == null ? 0 : currentHealth) + healAmount;
                 unit.setHealth(newHealth);
@@ -154,6 +154,11 @@ public class Tower extends World {
                 unit.setHealth(newHealth);
             }
         }
+    }
+
+    @Override
+    protected boolean isUnitInside(Unit unit) {
+        return unitsInside.contains(unit);
     }
 }
 

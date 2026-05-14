@@ -18,6 +18,13 @@ public class Pretorio extends Centurio {
     private static final long HEALAREA_COOLDOWN = 1000;
     private long lastHealAreaTime = 0;
 
+    private Double maxHealth = MAX_HEALTH;
+
+    @Override
+    public double getMaxHealth() {
+        return maxHealth;
+    }
+
     @Override
     protected double labelDeltaX() {
         return 10.0;

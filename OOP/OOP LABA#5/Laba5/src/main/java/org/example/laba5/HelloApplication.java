@@ -56,6 +56,7 @@ public class HelloApplication extends Application {
     private Label oreLabelTeamA;
     private Label oreLabelTeamB;
     private UnitInvetorWindow unitInvetorWindow;
+    private UnitSearchWindow unitSearchWindow;
     public static Label numUnitsTeamA;
     public static Label numUnitsTeamB;
 
@@ -64,6 +65,7 @@ public class HelloApplication extends Application {
         group = new Group();
         scene = new Scene(group, 1080, 700);
         unitInvetorWindow = new UnitInvetorWindow();
+        unitSearchWindow = new UnitSearchWindow();
 
         oreLabelTeamA = new Label();
         oreLabelTeamB = new Label();
@@ -99,7 +101,7 @@ public class HelloApplication extends Application {
                 return;
             }
 
-            if (code == KeyCode.DELETE || code == KeyCode.INSERT || code == KeyCode.ESCAPE || code == KeyCode.SPACE || code == KeyCode.I || code == KeyCode.V) {
+            if (code == KeyCode.DELETE || code == KeyCode.INSERT || code == KeyCode.ESCAPE || code == KeyCode.SPACE || code == KeyCode.I || code == KeyCode.V || code == KeyCode.F) {
                 if (handledActionKeys.contains(code)) {
                     return;
                 }
@@ -179,7 +181,7 @@ public class HelloApplication extends Application {
 
         Tower tower1 = new Tower();
         tower1.setTeam(true);
-        tower1.initGraphics(imgTower, "Tower", 0, 250,350, 300.0, 50);
+        tower1.initGraphics(imgTower, "tower1", 0, 250,350, 300.0, 50);
         tower1.resurrectWorld();
         Timeline healTimer = new Timeline(
             new KeyFrame(Duration.seconds(1), e -> tower1.healUnits())
@@ -189,7 +191,7 @@ public class HelloApplication extends Application {
 
         Tower tower2 = new Tower();
         tower2.setTeam(false);
-        tower2.initGraphics(imgTower, "Tower", 0, 700,350, 300.0, 300);
+        tower2.initGraphics(imgTower, "tower2", 0, 700,350, 300.0, 300);
         tower2.resurrectWorld();
         Timeline healTimer2 = new Timeline(
             new KeyFrame(Duration.seconds(1), e -> tower2.healUnits())
@@ -198,7 +200,7 @@ public class HelloApplication extends Application {
         healTimer2.play();
         Tower tower4 = new Tower();
         tower4.setTeam(false);
-        tower4.initGraphics(imgTower, "Tower", 0, 1000, 300, 300.0, 300);
+        tower4.initGraphics(imgTower, "tower4", 0, 1000, 300, 300.0, 300);
         tower4.resurrectWorld();
         Timeline healTimer4 = new Timeline(
             new KeyFrame(Duration.seconds(1), e -> tower4.healUnits())
@@ -211,15 +213,16 @@ public class HelloApplication extends Application {
         towersA.add(tower1);
         buldings.add(tower1);
         buldings.add(tower2);
+        buldings.add(tower4);
 
 
         Source source1 = new Source();
         source1.setTeam(true);
-        source1.initGraphics(imgSource, "Source", 0, 650, 30, 200.0, 200);
+        source1.initGraphics(imgSource, "source1", 0, 650, 30, 200.0, 200);
         source1.resurrectWorld();
         Source source2 = new Source();
         source2.setTeam(false);
-        source2.initGraphics(imgSource, "Source", 0, 600, 620, 200.0, 200);
+        source2.initGraphics(imgSource, "source2", 0, 600, 620, 200.0, 200);
         source2.resurrectWorld();
         sourcesB.add(source2);
         sourcesA.add(source1);
@@ -229,11 +232,11 @@ public class HelloApplication extends Application {
         
         Base base1 = new Base();
         base1.setTeam(true);
-        base1.initGraphics(imgBase, "Base", 0, 200, 30, 200.0, 200);
+        base1.initGraphics(imgBase, "base1", 0, 200, 30, 200.0, 200);
         base1.resurrectWorld();
         Base base2 = new Base();
         base2.setTeam(false);
-        base2.initGraphics(imgBase, "Base", 0, 1000, 550, 200.0, 200);
+        base2.initGraphics(imgBase, "base2", 0, 1000, 550, 200.0, 200);
         base2.resurrectWorld();
         basesB.add(base2);
         basesA.add(base1);
@@ -352,6 +355,13 @@ public class HelloApplication extends Application {
                             unitInvetorWindow.showForActiveUnit(units);
                         }
                         keysPressed.remove(KeyCode.I);
+                    } else if (code == KeyCode.F) {
+                        if (unitSearchWindow.isVisible()) {
+                            unitSearchWindow.setVisible(false);
+                        } else {
+                            unitSearchWindow.show();
+                        }
+                        keysPressed.remove(KeyCode.F);
                     }
                 }
 
@@ -366,6 +376,7 @@ public class HelloApplication extends Application {
 
                 tower1.intersect();
                 tower2.intersect();
+                tower4.intersect();
                 source1.intersect();
                 source2.intersect();
                 base1.intersect();

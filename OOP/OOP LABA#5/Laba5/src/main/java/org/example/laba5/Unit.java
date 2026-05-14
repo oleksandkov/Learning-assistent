@@ -60,6 +60,10 @@ public class Unit implements Cloneable{
     protected void setMaxHealth(double maxHealth) {
         this.maxHealth = maxHealth;
     }
+    
+    protected double getMaxHealth() {
+        return this.maxHealth;
+    }
 
     protected double labelDeltaX() {
         return 10.0;
@@ -770,7 +774,7 @@ public class Unit implements Cloneable{
         y += dy;
         setCoordinates();
         loacateAndRotateF();
-        // locateAndRotateE();
+        locateAndRotateE();
     }
 
     public void loacateAndRotateF() {
@@ -786,9 +790,9 @@ public class Unit implements Cloneable{
             if (unit == this || unit.image == null) {
                 continue;
             }
-            // if (unit.getTeam() != this.team) {
-            //     continue;
-            // }
+            if (unit.getTeam() != this.team) {
+                continue;
+            }
 
             double otherCenterX = unit.x + unit.image.getFitWidth() / 2.0;
             double otherCenterY = unit.y + unit.image.getFitHeight() / 2.0;
@@ -868,7 +872,7 @@ public class Unit implements Cloneable{
 
         
 
-        // locateAndRotateE();
+        locateAndRotateE();
         loacateAndRotateF();
         setCoordinates();
     }
@@ -876,7 +880,7 @@ public class Unit implements Cloneable{
     public void setPosition(double newX, double newY) {
         x = newX;
         y = newY;
-        // locateAndRotateE();
+        locateAndRotateE();
         loacateAndRotateF();
         setCoordinates();
     }

@@ -22,6 +22,13 @@ public class Centurio extends Warrior{
     private int killCount = 0;
     private HashSet<Unit> countedKills = new HashSet<>();  
 
+    private Double maxHealth = MAX_HEALTH;
+
+    @Override
+    public double getMaxHealth() {
+        return maxHealth;
+    }
+
     public int getKillCount() {
         return killCount;
     }

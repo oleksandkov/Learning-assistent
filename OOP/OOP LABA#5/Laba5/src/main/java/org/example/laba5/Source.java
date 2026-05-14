@@ -131,4 +131,8 @@ public class Source extends World {
             numUnitsLabel.setText(String.valueOf(numUnits));
         }
     }
+    @Override
+    protected boolean isUnitInside(Unit unit) {
+        return unitsInside.contains(unit);
+    }
 }

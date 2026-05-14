@@ -321,5 +321,33 @@ public class World {
         }
     }
     
+    protected  boolean isUnitInside(Unit unit) {
+        return false;
+    }
+
+    protected void sortUnitsList(ArrayList<Unit> units) {
+        if (units == null || units.isEmpty()) {
+            return;
+        }
+        units.sort((u1, u2) -> {
+            String class1 = u1 == null ? "" : u1.getClass().getSimpleName();
+            String class2 = u2 == null ? "" : u2.getClass().getSimpleName();
+            int classCmp = class2.compareTo(class1);
+            if (classCmp != 0) {
+                return classCmp;
+            }
+
+            Integer health1 = u1 == null ? null : u1.getHealth();
+            Integer health2 = u2 == null ? null : u2.getHealth();
+            int healthCmp = Integer.compare(health2 == null ? 0 : health2, health1 == null ? 0 : health1);
+            if (healthCmp != 0) {
+                return healthCmp;
+            }
+
+            Integer damage1 = u1 == null ? null : u1.getDamage();
+            Integer damage2 = u2 == null ? null : u2.getDamage();
+            return Integer.compare(damage2 == null ? 0 : damage2, damage1 == null ? 0 : damage1);
+        });
+    }
 }
 
