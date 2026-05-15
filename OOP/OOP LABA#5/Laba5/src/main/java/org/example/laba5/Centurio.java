@@ -328,4 +328,11 @@ public class Centurio extends Warrior{
         
         promotion();
     }
+
+    @Override
+    protected Unit clone() throws CloneNotSupportedException {
+        Centurio cloned = (Centurio) super.clone();
+        cloned.killCount = this.killCount;
+        return cloned;
+    }
 }

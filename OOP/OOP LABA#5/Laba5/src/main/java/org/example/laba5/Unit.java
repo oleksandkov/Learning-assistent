@@ -57,6 +57,11 @@ public class Unit implements Cloneable{
     URL bowUrl = getClass().getResource("/bow.png");
 
 
+    public static void plusObjectedKilled() {
+        objectedKilled++;
+    }
+
+
     protected void setMaxHealth(double maxHealth) {
         this.maxHealth = maxHealth;
     }
@@ -821,8 +826,8 @@ public class Unit implements Cloneable{
         boolean simularCoor = false;
         double selfCenterX = x + image.getFitWidth() / 2.0;
         double selfCenterY = y + image.getFitHeight() / 2.0;
-        double minDistance = 30.0;
-        double pushStep = 7.0;
+        double minDistance = 60.0;
+        double pushStep = 10.0;
 
         for (Unit unit : HelloApplication.units) {
             if (unit == this || unit.image == null) {
@@ -1001,6 +1006,8 @@ public class Unit implements Cloneable{
         protected javafx.scene.control.Label getKillCountLabel() {
             return null;
         }
+
+        protected void logicInverse() {}
 
 
 }

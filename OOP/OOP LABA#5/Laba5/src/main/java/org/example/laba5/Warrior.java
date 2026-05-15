@@ -24,6 +24,8 @@ public class Warrior extends Unit {
 
     private Label oreCountLabel;
 
+    // When true this warrior runs inverse logic
+    private boolean inverseMode = false;
 
     private Double maxHealth = MAX_HEALTH;
     
@@ -151,6 +153,83 @@ public class Warrior extends Unit {
             oreCountLabel.setText("Ore: " + (int) activeOre);
             oreCountLabel.setLayoutX(x + 65);
             oreCountLabel.setLayoutY(y - 10 );
+        }
+    }
+
+    public boolean isInverseMode() {
+        return inverseMode;
+    }
+
+    public void setInverseMode(boolean inverseMode) {
+        this.inverseMode = inverseMode;
+    }
+
+    private void doOreInverse() {
+        if (HelloApplication.buldings == null) {
+            return;
+        }
+
+        World sourceTarget = null;
+        World baseTarget = null;
+        for (World build : HelloApplication.buldings) {
+            if (build == null || build.getTeam() != this.team) {
+                continue;
+            }
+            if (sourceTarget == null && build instanceof Source) {
+                sourceTarget = build;
+            } else if (baseTarget == null && build instanceof Base) {
+                baseTarget = build;
+            }
+        }
+
+        if (sourceTarget == null || baseTarget == null) {
+            return;
+        }
+
+        long currentTime = System.currentTimeMillis();
+
+        if (!collectingOre && !deliveringOre) {
+            collectingOre = true;
+        }
+
+        if (collectingOre) {
+            if (!this.isActive()) {
+                moveTo(baseTarget.x, baseTarget.y);
+            }
+            // moveTo(sourceTarget.x, sourceTarget.y);
+            if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(baseTarget.imageView.getBoundsInParent()) ) {
+                activeOre += 1;
+                oreAmount += 1;
+                lastOreTime = currentTime;
+            }
+
+            if (activeOre >= 10) {
+                activeOre = 10;
+                collectingOre = false;
+                deliveringOre = true;
+            }
+            return;
+        }
+
+        if (deliveringOre) {
+            if (!this.isActive()) {
+                moveTo(sourceTarget.x, sourceTarget.y);
+            }
+            // moveTo(baseTarget.x, baseTarget.y);
+            if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(sourceTarget.imageView.getBoundsInParent()) ) {
+                if (activeOre > 0) {
+                    // oreAmount -= 1;
+                    sourceTarget.setOre(sourceTarget.getOre() + 1);
+                    activeOre -= 1;
+                }
+                lastOreTime = currentTime;
+            }
+
+            if (activeOre <= 0) {
+                activeOre = 0;
+                deliveringOre = false;
+                collectingOre = true;
+            }
         }
     }
 
@@ -303,6 +382,54 @@ public class Warrior extends Unit {
         }
     }
     
+    
+    public void attackInverse() {
+         boolean intersects = false;
+
+        if (this.getDamage() == null || this.getDamage() <= 0) {
+            return;
+        }
+        if (this.image == null) {
+            return;
+        }
+
+        if (HelloApplication.units != null) {
+            for (Unit unit : HelloApplication.units) {
+                if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
+                    intersects = this.image.getBoundsInParent().intersects(unit.image.getBoundsInParent());
+                    if (intersects) {
+                        int targetHealth = unit.getHealth() == null ? 0 : unit.getHealth();
+                        int newHealth = targetHealth + this.getDamage();
+                        unit.setHealth(newHealth);
+
+                        if (newHealth <= 0) {
+                            unit.setHealth(0);
+                            plusObjectedKilled();
+                            unit.removeUnitFromGame();
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+        if (HelloApplication.buldings != null) {
+            for (World world : HelloApplication.buldings) {
+                if (world != null && world.getTeam() != this.team && world.imageView != null) {
+                    intersects = this.image.getBoundsInParent().intersects(world.imageView.getBoundsInParent());
+                    if (intersects) {
+                        int targetHealth = world.getHealth() == 0 ? 0 : (int) world.getHealth();
+                        int newHealth = targetHealth + this.getDamage();
+                        world.setHealth(newHealth);
+                    }
+                }
+            }
+        }
+        if (!intersects) {
+            return;
+        }
+    }
+    
     @Override
     public void logic() {
         Unit nearbyEnemyUnit = findNearbyEnemyUnit();
@@ -327,6 +454,46 @@ public class Warrior extends Unit {
             doOre();
         // }
         promotion();
+    }
+
+    
+    @Override
+    public void logicInverse() {
+        Unit nearbyEnemyUnit = findNearbyEnemyUnit();
+        World nearbyEnemyBuilding = findNearbyEnemyBuilding();
+
+        if (!this.isActive() && (nearbyEnemyUnit != null || nearbyEnemyBuilding != null)) {
+            if (nearbyEnemyBuilding != null) {
+                this.moveTo(nearbyEnemyBuilding.x, nearbyEnemyBuilding.y);
+            } else {
+                this.moveTo(nearbyEnemyUnit.x, nearbyEnemyUnit.y);
+            }
+
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastAttackTime >= ATTACK_COOLDOWN) {
+                attackInverse();
+                lastAttackTime = currentTime;
+            }
+            return;
+        }
+
+        // if (!this.isActive()) {
+            doOreInverse();
+        // }
+        promotion();
+    }
+
+    @Override
+    protected Unit clone() throws CloneNotSupportedException {
+        Warrior cloned = (Warrior) super.clone();
+        cloned.oreAmount = this.oreAmount;
+        cloned.activeOre = this.activeOre;
+        cloned.collectingOre = this.collectingOre;
+        cloned.deliveringOre = this.deliveringOre;
+        cloned.lastOreTime = this.lastOreTime;
+        cloned.inverseMode = this.inverseMode;
+        if (this.oreCountLabel != null) cloned.oreCountLabel = new Label(this.oreCountLabel.getText());
+        return cloned;
     }
 }
 

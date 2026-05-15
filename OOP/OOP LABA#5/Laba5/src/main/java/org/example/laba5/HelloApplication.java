@@ -37,6 +37,8 @@ public class HelloApplication extends Application {
     public static ArrayList<Centurio> centurios;
     public static ArrayList<Pretorio> pretorios;
     public static ArrayList<Unit> units;
+    
+
 
     private final Map<KeyCode, Double> keysPresses = new HashMap<>();
     private final Map<KeyCode, Boolean> keysPressed = new HashMap<>();
@@ -362,6 +364,15 @@ public class HelloApplication extends Application {
                             unitSearchWindow.show();
                         }
                         keysPressed.remove(KeyCode.F);
+                    } else if (code == KeyCode.V) {
+                        // Toggle inverse mode for ALL active Warriors (per-instance flag)
+                        for (Unit unit : units) {
+                            if (unit.isActive() && unit.getClass() == Warrior.class) {
+                                Warrior w = (Warrior) unit;
+                                w.setInverseMode(!w.isInverseMode());
+                            }
+                        }
+                        keysPressed.remove(KeyCode.V);
                     }
                 }
 
@@ -386,7 +397,16 @@ public class HelloApplication extends Application {
                     if (unit.isActive()) {
                         unit.move(dx, dy);
                     }
-                    unit.logic();
+                    if (unit instanceof Warrior) {
+                        Warrior w = (Warrior) unit;
+                        if (w.isInverseMode()) {
+                            w.logicInverse();
+                        } else {
+                            w.logic();
+                        }
+                    } else {
+                        unit.logic();
+                    }
                 }
 
                 unitInvetorWindow.updateFromUnits(units);
