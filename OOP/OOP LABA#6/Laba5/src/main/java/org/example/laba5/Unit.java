@@ -1009,5 +1009,24 @@ public class Unit implements Cloneable{
 
         protected void logicInverse() {}
 
+        protected boolean moreThanHalf() {
+            if (this.health != null && this.maxHealth > 0 && this.health > this.maxHealth / 2) {
+                return true;
+            }
+            return false;
+        }
+
+        protected boolean haveSword() {
+            if (this.inventor != null) {
+                for (String item : this.inventor) {
+                    if (item != null && item.trim().equalsIgnoreCase("sword")) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+
+
+}
 
 }

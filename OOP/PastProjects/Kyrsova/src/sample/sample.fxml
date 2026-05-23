@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.RadioMenuItem?>
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Файл">
+            <items>
+                  <MenuItem fx:id="menuFileOpen" mnemonicParsing="false" text="Відкрити" />
+                  <MenuItem fx:id="menuFileSave" mnemonicParsing="false" text="Зберегти" />
+              <MenuItem fx:id="menuFileExit" mnemonicParsing="false" text="Вийти" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Редагувати">
+            <items>
+                  <RadioMenuItem fx:id="menuEditRadioFastRun" mnemonicParsing="false" text="Режим взаємодії з користувачем" />
+                  <MenuItem fx:id="menuEditInteract" mnemonicParsing="false" text="Взаємодіяти з будівлею" />
+                  <MenuItem fx:id="menuEditSell" mnemonicParsing="false" text="Продати (тільки магазин)" />
+                  <MenuItem fx:id="menuEditPlay" mnemonicParsing="false" text="Грати на інструменті" />
+                  <MenuItem fx:id="menuEditCreate" mnemonicParsing="false" text="Створити персонажа" />
+                  <MenuItem fx:id="menuEditClone" mnemonicParsing="false" text="Клонувати одного з вибраних" />
+                  <MenuItem fx:id="menuEditDelete" mnemonicParsing="false" text="Видалити персонажей" />
+              <MenuItem fx:id="menuEditCancel" mnemonicParsing="false" text="Відмінити вибір" />
+                  <MenuItem fx:id="menuEditProperties" mnemonicParsing="false" text="Налаштування" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="Вікна">
+              <items>
+                  <MenuItem fx:id="menuWindowsCreate" mnemonicParsing="false" text="Створення нового персонажа" />
+                  <MenuItem fx:id="menuWindowsProperties" mnemonicParsing="false" text="Вікно налаштувань" />
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Більше">
+            <items>
+              <MenuItem fx:id="menuMoreAbout" mnemonicParsing="false" text="Про програму" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+</BorderPane>

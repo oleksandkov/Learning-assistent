@@ -18,11 +18,19 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 
 public class HelloApplication extends Application {
+
+    private static final double WORLD_WIDTH = 3200.0;
+    private static final double WORLD_HEIGHT = 2400.0;
+    private static final double VIEWPORT_WIDTH = 1920.0;
+    private static final double VIEWPORT_HEIGHT = 1080.0;
 
     public static Group group;
     public static Scene scene;
@@ -55,17 +63,42 @@ public class HelloApplication extends Application {
     public static ArrayList<Base> basesB = new ArrayList<>();
     
     public static ArrayList<World> buldings = new ArrayList<>();
+    private Pane cameraViewport;
+    private Pane worldLayer;
+    private Pane overlayPane;
     private Label oreLabelTeamA;
     private Label oreLabelTeamB;
     private UnitInvetorWindow unitInvetorWindow;
     private UnitSearchWindow unitSearchWindow;
+    private MiniMapOverlay miniMapOverlay;
+    private double cameraX;
+    private double cameraY;
     public static Label numUnitsTeamA;
     public static Label numUnitsTeamB;
 
     @Override
     public void start(Stage stage) throws IOException {
         group = new Group();
-        scene = new Scene(group, 1080, 700);
+        worldLayer = new Pane();
+        worldLayer.setPrefSize(WORLD_WIDTH, WORLD_HEIGHT);
+        Rectangle worldBounds = new Rectangle(WORLD_WIDTH, WORLD_HEIGHT);
+        worldBounds.setFill(Color.TRANSPARENT);
+        worldLayer.getChildren().add(worldBounds);
+        group.getChildren().add(worldLayer);
+
+        cameraViewport = new Pane();
+        cameraViewport.setPrefSize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+        cameraViewport.setMinSize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+        cameraViewport.setMaxSize(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+        cameraViewport.setStyle("-fx-background-color: transparent;");
+        cameraViewport.setClip(new Rectangle(VIEWPORT_WIDTH, VIEWPORT_HEIGHT));
+        cameraViewport.getChildren().add(group);
+
+        overlayPane = new Pane();
+        overlayPane.setPickOnBounds(false);
+
+        Pane root = new Pane(cameraViewport, overlayPane);
+        scene = new Scene(root, 1920, 1080);
         unitInvetorWindow = new UnitInvetorWindow();
         unitSearchWindow = new UnitSearchWindow();
 
@@ -81,8 +114,7 @@ public class HelloApplication extends Application {
         numUnitsTeamA.setLayoutY(40);
         numUnitsTeamB.setLayoutX(0);
         numUnitsTeamB.setLayoutY(60);
-        group.getChildren().addAll(oreLabelTeamA, oreLabelTeamB);
-        group.getChildren().addAll(numUnitsTeamA, numUnitsTeamB);
+        overlayPane.getChildren().addAll(oreLabelTeamA, oreLabelTeamB, numUnitsTeamA, numUnitsTeamB);
         keysPresses.put(KeyCode.W, -keyStepY);
         keysPresses.put(KeyCode.S, keyStepY);
         keysPresses.put(KeyCode.A, -keyStepX);
@@ -92,8 +124,17 @@ public class HelloApplication extends Application {
         keysPresses.put(KeyCode.LEFT, -keyStepX);
         keysPresses.put(KeyCode.RIGHT, keyStepX);
 
+        cameraX = 0.0;
+        cameraY = 0.0;
+
         scene.setOnKeyPressed(e -> {
             KeyCode code = e.getCode();
+            if (code == KeyCode.M) {
+                if (miniMapOverlay != null) {
+                    miniMapOverlay.toggleVisible();
+                }
+                return;
+            }
             if (code == KeyCode.V && e.isControlDown()) {
                 if (handledActionKeys.contains(KeyCode.V)) {
                     return;
@@ -259,19 +300,37 @@ public class HelloApplication extends Application {
         }
 
         World world = new World(units);
+        miniMapOverlay = new MiniMapOverlay(WORLD_WIDTH, WORLD_HEIGHT, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, target -> {
+            updateCameraPosition(target[0] - VIEWPORT_WIDTH / 2.0, target[1] - VIEWPORT_HEIGHT / 2.0);
+        });
+        miniMapOverlay.bindToScene(scene);
+        overlayPane.getChildren().add(miniMapOverlay.getPane());
 
         scene.setOnMouseClicked(event -> {
+            if (miniMapOverlay != null) {
+                double miniMapX = miniMapOverlay.getPane().getLayoutX();
+                double miniMapY = miniMapOverlay.getPane().getLayoutY();
+                double miniMapWidth = miniMapOverlay.getPane().getPrefWidth();
+                double miniMapHeight = miniMapOverlay.getPane().getPrefHeight();
+                if (event.getX() >= miniMapX && event.getX() <= miniMapX + miniMapWidth && event.getY() >= miniMapY && event.getY() <= miniMapY + miniMapHeight) {
+                    return;
+                }
+            }
+
+            double worldMouseX = event.getX() + cameraX;
+            double worldMouseY = event.getY() + cameraY;
+
             if (event.getButton() == MouseButton.PRIMARY) {
                 for (int i = units.size() - 1; i >= 0; i--) {
                     Unit unit = units.get(i);
-                    if (unit.tryActivate(event.getX(), event.getY())) {
+                    if (unit.tryActivate(worldMouseX, worldMouseY)) {
                         break;
                     }
                 }
             } else if (event.getButton() == MouseButton.SECONDARY) {
                 for (int i = units.size() - 1; i >= 0; i--) {
                     Unit unit = units.get(i);
-                    if (unit.getImage().getBoundsInParent().contains(event.getX(), event.getY())) {
+                    if (unit.getImage().getBoundsInParent().contains(worldMouseX, worldMouseY)) {
                         javafx.application.Platform.runLater(() -> {
                             UnitEditDialog editDialog = new UnitEditDialog(unit);
                             editDialog.showAndWait();
@@ -286,18 +345,28 @@ public class HelloApplication extends Application {
             @Override
             public void handle(long now) {
                 double dx = 0, dy = 0;
+                double camDx = 0, camDy = 0;
+                double camSpeedMultiplier = 3.0;
 
                 for (KeyCode code : new ArrayList<>(keysPressed.keySet())) {
                     if (keysPresses.containsKey(code)) {
                         double step = keysPresses.get(code);
-                        if (code == KeyCode.W || code == KeyCode.UP) {
+                        if (code == KeyCode.W) {
                             dy += step;
-                        } else if (code == KeyCode.S || code == KeyCode.DOWN) {
+                        } else if (code == KeyCode.S) {
                             dy += step;
-                        } else if (code == KeyCode.A || code == KeyCode.LEFT) {
+                        } else if (code == KeyCode.A) {
                             dx += step;
-                        } else if (code == KeyCode.D || code == KeyCode.RIGHT) {
+                        } else if (code == KeyCode.D) {
                             dx += step;
+                        } else if (code == KeyCode.UP) {
+                            camDy += step * camSpeedMultiplier;
+                        } else if (code == KeyCode.DOWN) {
+                            camDy += step * camSpeedMultiplier;
+                        } else if (code == KeyCode.LEFT) {
+                            camDx += step * camSpeedMultiplier;
+                        } else if (code == KeyCode.RIGHT) {
+                            camDx += step * camSpeedMultiplier;
                         }
                     } else if (code == KeyCode.DELETE) {
                         for (int i = units.size() - 1; i >= 0; i--) {
@@ -376,6 +445,10 @@ public class HelloApplication extends Application {
                     }
                 }
 
+                if (camDx != 0 || camDy != 0) {
+                    updateCameraPosition(cameraX + camDx, cameraY + camDy);
+                }
+
                 for (World world : buldings) {
                     if (world.getHealth() <= 0) {
                         world.removeBuildingFromGame();
@@ -384,6 +457,7 @@ public class HelloApplication extends Application {
 
                 updateHud();
                 world.worldLogic();
+                miniMapOverlay.update(units, buldings);
 
                 tower1.intersect();
                 tower2.intersect();
@@ -463,6 +537,18 @@ public class HelloApplication extends Application {
         }
         oreLabelTeamA.setText("Team A ore: " + (int) teamAOre);
         oreLabelTeamB.setText("Team B ore: " + (int) teamBOre);
+    }
+
+    private void updateCameraPosition(double newCameraX, double newCameraY) {
+        double maxCameraX = Math.max(0.0, WORLD_WIDTH - VIEWPORT_WIDTH);
+        double maxCameraY = Math.max(0.0, WORLD_HEIGHT - VIEWPORT_HEIGHT);
+        cameraX = Math.max(0.0, Math.min(newCameraX, maxCameraX));
+        cameraY = Math.max(0.0, Math.min(newCameraY, maxCameraY));
+        group.setLayoutX(-cameraX);
+        group.setLayoutY(-cameraY);
+        if (miniMapOverlay != null) {
+            miniMapOverlay.setCameraPosition(cameraX, cameraY);
+        }
     }
 
 }

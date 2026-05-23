@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.*?>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" style="-fx-background-color: Azure;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.characterController">
+   <children>
+      <Button fx:id="closeButton" layoutX="14.0" layoutY="336.0" mnemonicParsing="false" onMouseClicked="#closeWindow" style="-fx-background-color: LIGHTBLUE; -fx-background-radius: 100; -fx-border-radius: 100; -fx-border-color: RED; -fx-border-width: 3;" text="CANCEL" textFill="#ff0c00">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Button>
+      <Button layoutX="168.0" layoutY="336.0" mnemonicParsing="false" onMouseClicked="#print" style="-fx-background-radius: 100; -fx-background-color: LIGHTBLUE; -fx-border-color: RED; -fx-border-radius: 100; -fx-border-width: 3;" text="OK" textFill="RED">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </Button>
+      <CheckBox fx:id="active" layoutX="471.0" layoutY="304.0" mnemonicParsing="false" text="Active " textFill="RED">
+         <font>
+            <Font name="Arial Bold" size="24.0" />
+         </font>
+      </CheckBox>
+      <Label layoutX="45.0" layoutY="78.0" text="Name" textFill="RED">
+         <font>
+            <Font name="Arial" size="24.0" />
+         </font>
+      </Label>
+      <TextField fx:id="textName" layoutX="141.0" layoutY="78.0" />
+      <TextField fx:id="posX" layoutX="549.0" layoutY="78.0" />
+      <Label layoutX="461.0" layoutY="78.0" text="PosX" textFill="RED">
+         <font>
+            <Font name="Arial" size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="461.0" layoutY="141.0" text="PosY" textFill="RED">
+         <font>
+            <Font name="Arial" size="24.0" />
+         </font>
+      </Label>
+      <TextField fx:id="posY" layoutX="549.0" layoutY="141.0" />
+      <RadioButton fx:id="sithSide" layoutX="472.0" layoutY="200.0" mnemonicParsing="false" text="Blue side">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </RadioButton>
+      <RadioButton fx:id="jediSide" layoutX="471.0" layoutY="250.0" mnemonicParsing="false" text="Red side">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </RadioButton>
+      <Label layoutX="209.0" style="-fx-background-color: LIGHTBLUE; -fx-border-radius: 100; -fx-background-radius: 100; -fx-border-color: RED; -fx-border-width: 3;" text="Character Creator" textFill="RED">
+         <font>
+            <Font size="50.0" />
+         </font>
+      </Label>
+      <TextField fx:id="count" layoutX="141.0" layoutY="141.0" />
+      <Label layoutX="45.0" layoutY="133.0" prefHeight="43.0" prefWidth="92.0" text="Number" textFill="RED">
+         <font>
+            <Font name="Arial" size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="25.0" layoutY="202.0" text="Ship level" textFill="RED">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="shipColor" layoutX="141.0" layoutY="203.0" prefHeight="27.0" prefWidth="160.0" />
+   </children>
+</Pane>

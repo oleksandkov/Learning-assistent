@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>bm.ico</file>
+        <file>Expirienced.png</file>
+        <file>Grass.jpg</file>
+        <file>Guru.png</file>
+        <file>Newbie.png</file>
+        <file>Stone1.png</file>
+        <file>Stone2.png</file>
+        <file>Stone3.png</file>
+    </qresource>
+</RCC>

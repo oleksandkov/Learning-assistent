@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="371.0" prefWidth="569.0" style="-fx-background-color: e5dcb8; -fx-border-color: #611d1d; -fx-border-width: 8;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.windows.createShopperWindow.CreateShopperWindowController">
+   <children>
+      <Label alignment="CENTER" layoutX="109.0" prefHeight="91.0" prefWidth="350.0" text="Створення нового покупця:" textFill="#611d1d">
+         <font>
+            <Font name="Segoe UI Black Italic" size="23.0" />
+         </font>
+      </Label>
+      <TextField fx:id="fieldName" layoutX="72.0" layoutY="95.0" prefHeight="34.0" prefWidth="191.0" promptText="Ім'я" style="-fx-background-radius: 10;" />
+      <TextField fx:id="fieldMoney" layoutX="72.0" layoutY="143.0" prefHeight="34.0" prefWidth="191.0" promptText="Кількість грошей" style="-fx-background-radius: 10;" />
+      <Button fx:id="yesButton" layoutX="365.0" layoutY="265.0" mnemonicParsing="false" prefHeight="55.0" prefWidth="150.0" style="-fx-background-radius: 10;" text="Створити" textAlignment="CENTER" textFill="#611d1d">
+         <font>
+            <Font name="Segoe UI Black" size="14.0" />
+         </font>
+      </Button>
+      <RadioButton fx:id="radioMan" layoutX="94.0" layoutY="196.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="98.0" text="Чоловік">
+         <font>
+            <Font name="Segoe UI Black" size="12.0" />
+         </font></RadioButton>
+      <RadioButton fx:id="radioWoman" layoutX="93.0" layoutY="224.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="98.0" text="Жінка" textFill="#c800ff">
+         <font>
+            <Font name="Segoe UI Black" size="12.0" />
+         </font></RadioButton>
+      <ListView fx:id="instrumentsList" layoutX="114.0" layoutY="252.0" prefHeight="82.0" prefWidth="200.0" style="-fx-background-radius: 10;" />
+      <Label layoutX="21.0" layoutY="102.0" prefHeight="18.0" prefWidth="50.0" text="Ім'я:">
+         <font>
+            <Font name="Segoe UI Black Italic" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="18.0" layoutY="150.0" prefHeight="18.0" prefWidth="50.0" text="Гроші:">
+         <font>
+            <Font name="Segoe UI Black Italic" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="10.0" layoutY="284.0" text="Інструмент:">
+         <font>
+            <Font name="Segoe UI Black Italic" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="19.0" layoutY="208.0" text="Стать:">
+         <font>
+            <Font name="Segoe UI Black Italic" size="14.0" />
+         </font>
+      </Label>
+      <RadioButton fx:id="radioShopper" layoutX="318.0" layoutY="86.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="200.0" text="Вуличний &quot;профі&quot;">
+         <font>
+            <Font name="Segoe UI Black" size="16.0" />
+         </font>
+      </RadioButton>
+      <RadioButton fx:id="radioMaster" layoutX="318.0" layoutY="126.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="229.0" text="Випускник муз. школи">
+         <font>
+            <Font name="Segoe UI Black" size="16.0" />
+         </font>
+      </RadioButton>
+      <RadioButton fx:id="orchestra" layoutX="318.0" layoutY="168.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="200.0" text="Дирижор оркестру">
+         <font>
+            <Font name="Segoe UI Black" size="16.0" />
+         </font>
+      </RadioButton>
+      <Label fx:id="labelUnderInstruments" layoutX="118.0" layoutY="262.0" prefHeight="63.0" prefWidth="191.0" text="Сурові початківці можуть&#10;бути музикантами навіть&#10;без інструменту!">
+         <font>
+            <Font name="Segoe UI Black" size="14.0" />
+         </font>
+      </Label>
+      <CheckBox fx:id="checkIsActive" layoutX="193.0" layoutY="208.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="97.0" text="Активувати">
+         <font>
+            <Font name="Segoe UI Black" size="12.0" />
+         </font>
+      </CheckBox>
+   </children>
+</AnchorPane>

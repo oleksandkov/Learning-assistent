@@ -30,8 +30,10 @@ public class UnitSearchWindow {
 	private final TextField inventorField;
 	private final TextField macroField;
 	private final ComboBox<String> sortCombo;
+	private final ComboBox<String> countParameterCombo;
 	private final ListView<Unit> resultsList;
 	private final Label statusLabel;
+	private final Label microobjectCountLabel;
 	private final Timeline refreshTimer;
 	private final World sortHelper = new World();
 
@@ -65,12 +67,18 @@ public class UnitSearchWindow {
 		sortCombo.getItems().addAll("Class", "Health", "Damage");
 		sortCombo.setValue("Class");
 
+		countParameterCombo = new ComboBox<>();
+		countParameterCombo.getItems().addAll("moreThanHalf", "haveSword", "team (ally)");
+		countParameterCombo.setValue("moreThanHalf");
+
 		HBox filtersRow1 = new HBox(8, new Label("Class:"), classCombo, new Label("Team:"), teamCombo);
 		HBox filtersRow2 = new HBox(8, new Label("Health:"), healthField, new Label("Damage:"), damageField);
 		HBox filtersRow3 = new HBox(8, new Label("Inventory:"), inventorField, new Label("Macro:"), macroField,
 				new Label("Sort:"), sortCombo);
 		Button removeAllButton = new Button("Remove all");
 		removeAllButton.setOnAction(e -> removeAllFiltered());
+		Button countMicroobjectsButton = new Button("Count microobjects");
+		countMicroobjectsButton.setOnAction(e -> countMicroobjectsBySelectedParameter());
 
 		resultsList = new ListView<>();
 		resultsList.setCellFactory(list -> new ListCell<>() {
@@ -99,8 +107,15 @@ public class UnitSearchWindow {
 		});
 
 		statusLabel = new Label("Matches: 0");
+		microobjectCountLabel = new Label("Microobjects count: 0");
 
-		VBox root = new VBox(10, filtersRow1, filtersRow2, filtersRow3, removeAllButton, statusLabel, resultsList);
+		HBox bottomRow = new HBox(8,
+				new Label("Parameter:"),
+				countParameterCombo,
+				countMicroobjectsButton,
+				microobjectCountLabel);
+
+		VBox root = new VBox(10, filtersRow1, filtersRow2, filtersRow3, removeAllButton, statusLabel, resultsList, bottomRow);
 		root.setPadding(new Insets(12));
 
 		Scene scene = new Scene(root, 720, 420);
@@ -413,5 +428,44 @@ public class UnitSearchWindow {
 			}
 		}
 		refreshList(true);
+	}
+
+	private void countMicroobjectsBySelectedParameter() {
+		if (HelloApplication.units == null || HelloApplication.units.isEmpty()) {
+			microobjectCountLabel.setText("Microobjects count: 0");
+			return;
+		}
+
+		String parameter = countParameterCombo.getValue();
+		int count = 0;
+
+		for (Unit unit : HelloApplication.units) {
+			if (unit == null || Boolean.TRUE.equals(unit.getDead())) {
+				continue;
+			}
+
+			if ("moreThanHalf".equals(parameter)) {
+				if (unit.moreThanHalf()) {
+					count++;
+				}
+				continue;
+			}
+
+			if ("haveSword".equals(parameter)) {
+				if (unit.haveSword()) {
+					count++;
+				}
+				continue;
+			}
+
+			if ("team (ally)".equals(parameter)) {
+				if (unit.getTeam()) {
+					count++;
+				}
+				continue;
+			}
+		}
+
+		microobjectCountLabel.setText("Microobjects count: " + count);
 	}
 }
