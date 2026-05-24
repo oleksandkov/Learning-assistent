@@ -194,7 +194,9 @@ public class Warrior extends Unit {
 
         if (collectingOre) {
             if (!this.isActive()) {
-                moveTo(baseTarget.x, baseTarget.y);
+                double targetCenterX = baseTarget.imageView.getBoundsInParent().getCenterX();
+                double targetCenterY = baseTarget.imageView.getBoundsInParent().getCenterY();
+                moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
             }
             // moveTo(sourceTarget.x, sourceTarget.y);
             if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(baseTarget.imageView.getBoundsInParent()) ) {
@@ -213,7 +215,9 @@ public class Warrior extends Unit {
 
         if (deliveringOre) {
             if (!this.isActive()) {
-                moveTo(sourceTarget.x, sourceTarget.y);
+                double targetCenterX = sourceTarget.imageView.getBoundsInParent().getCenterX();
+                double targetCenterY = sourceTarget.imageView.getBoundsInParent().getCenterY();
+                moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
             }
             // moveTo(baseTarget.x, baseTarget.y);
             if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(sourceTarget.imageView.getBoundsInParent()) ) {
@@ -263,7 +267,9 @@ public class Warrior extends Unit {
 
         if (collectingOre) {
             if (!this.isActive()) {
-                moveTo(sourceTarget.x, sourceTarget.y);
+                double targetCenterX = sourceTarget.imageView.getBoundsInParent().getCenterX();
+                double targetCenterY = sourceTarget.imageView.getBoundsInParent().getCenterY();
+                moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
             }
             // moveTo(sourceTarget.x, sourceTarget.y);
             if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(sourceTarget.imageView.getBoundsInParent()) ) {
@@ -282,7 +288,9 @@ public class Warrior extends Unit {
 
         if (deliveringOre) {
             if (!this.isActive()) {
-                moveTo(baseTarget.x, baseTarget.y);
+                double targetCenterX = baseTarget.imageView.getBoundsInParent().getCenterX();
+                double targetCenterY = baseTarget.imageView.getBoundsInParent().getCenterY();
+                moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
             }
             // moveTo(baseTarget.x, baseTarget.y);
             if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(baseTarget.imageView.getBoundsInParent()) ) {
@@ -402,6 +410,10 @@ public class Warrior extends Unit {
                         int newHealth = targetHealth + this.getDamage();
                         unit.setHealth(newHealth);
 
+                        System.out.println("[Combat Inverse] " + this.getClass().getSimpleName() + " (" + (this.team ? "Ally" : "Enemy") + 
+                                           ") healed " + unit.getClass().getSimpleName() + 
+                                           " (" + (unit.team ? "Ally" : "Enemy") + ") for " + this.getDamage() + " HP. Target HP: " + newHealth);
+
                         if (newHealth <= 0) {
                             unit.setHealth(0);
                             plusObjectedKilled();
@@ -421,6 +433,9 @@ public class Warrior extends Unit {
                         int targetHealth = world.getHealth() == 0 ? 0 : (int) world.getHealth();
                         int newHealth = targetHealth + this.getDamage();
                         world.setHealth(newHealth);
+                        System.out.println("[Combat Inverse] " + this.getClass().getSimpleName() + " (" + (this.team ? "Ally" : "Enemy") + 
+                                           ") healed Building " + world.name + 
+                                           " (" + (world.team ? "Ally" : "Enemy") + ") for " + this.getDamage() + " HP. Target HP: " + newHealth);
                     }
                 }
             }
@@ -437,9 +452,23 @@ public class Warrior extends Unit {
 
         if (!this.isActive() && (nearbyEnemyUnit != null || nearbyEnemyBuilding != null)) {
             if (nearbyEnemyBuilding != null) {
-                this.moveTo(nearbyEnemyBuilding.x, nearbyEnemyBuilding.y);
+                double bCenterX = nearbyEnemyBuilding.imageView.getBoundsInParent().getCenterX();
+                double bCenterY = nearbyEnemyBuilding.imageView.getBoundsInParent().getCenterY();
+                double myCenterX = this.image.getBoundsInParent().getCenterX();
+                double myCenterY = this.image.getBoundsInParent().getCenterY();
+                double dist = Math.hypot(bCenterX - myCenterX, bCenterY - myCenterY);
+                if (dist > 130.0) {
+                    this.moveTo(bCenterX - this.image.getFitWidth() / 2, bCenterY - this.image.getFitHeight() / 2);
+                }
             } else {
-                this.moveTo(nearbyEnemyUnit.x, nearbyEnemyUnit.y);
+                double uCenterX = nearbyEnemyUnit.image.getBoundsInParent().getCenterX();
+                double uCenterY = nearbyEnemyUnit.image.getBoundsInParent().getCenterY();
+                double myCenterX = this.image.getBoundsInParent().getCenterX();
+                double myCenterY = this.image.getBoundsInParent().getCenterY();
+                double dist = Math.hypot(uCenterX - myCenterX, uCenterY - myCenterY);
+                if (dist > 70.0) {
+                    this.moveTo(uCenterX - this.image.getFitWidth() / 2, uCenterY - this.image.getFitHeight() / 2);
+                }
             }
 
             long currentTime = System.currentTimeMillis();
@@ -464,9 +493,23 @@ public class Warrior extends Unit {
 
         if (!this.isActive() && (nearbyEnemyUnit != null || nearbyEnemyBuilding != null)) {
             if (nearbyEnemyBuilding != null) {
-                this.moveTo(nearbyEnemyBuilding.x, nearbyEnemyBuilding.y);
+                double bCenterX = nearbyEnemyBuilding.imageView.getBoundsInParent().getCenterX();
+                double bCenterY = nearbyEnemyBuilding.imageView.getBoundsInParent().getCenterY();
+                double myCenterX = this.image.getBoundsInParent().getCenterX();
+                double myCenterY = this.image.getBoundsInParent().getCenterY();
+                double dist = Math.hypot(bCenterX - myCenterX, bCenterY - myCenterY);
+                if (dist > 130.0) {
+                    this.moveTo(bCenterX - this.image.getFitWidth() / 2, bCenterY - this.image.getFitHeight() / 2);
+                }
             } else {
-                this.moveTo(nearbyEnemyUnit.x, nearbyEnemyUnit.y);
+                double uCenterX = nearbyEnemyUnit.image.getBoundsInParent().getCenterX();
+                double uCenterY = nearbyEnemyUnit.image.getBoundsInParent().getCenterY();
+                double myCenterX = this.image.getBoundsInParent().getCenterX();
+                double myCenterY = this.image.getBoundsInParent().getCenterY();
+                double dist = Math.hypot(uCenterX - myCenterX, uCenterY - myCenterY);
+                if (dist > 70.0) {
+                    this.moveTo(uCenterX - this.image.getFitWidth() / 2, uCenterY - this.image.getFitHeight() / 2);
+                }
             }
 
             long currentTime = System.currentTimeMillis();

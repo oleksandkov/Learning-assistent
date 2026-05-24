@@ -245,9 +245,17 @@ public class Pretorio extends Centurio {
             }
 
             if (goToMain && mainTarget != null) {
-                this.moveTo(mainTarget.x, mainTarget.y);
+                if (distanceToMainTarget > 130.0) {
+                    double targetCenterX = mainTarget.imageView.getBoundsInParent().getCenterX();
+                    double targetCenterY = mainTarget.imageView.getBoundsInParent().getCenterY();
+                    this.moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
+                }
             } else if (!goToMain && subTarget != null) {
-                this.moveTo(subTarget.x, subTarget.y);
+                if (distanceToSubTarget > 70.0) {
+                    double targetCenterX = subTarget.image.getBoundsInParent().getCenterX();
+                    double targetCenterY = subTarget.image.getBoundsInParent().getCenterY();
+                    this.moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
+                }
             }
 
             long currentTime = System.currentTimeMillis();

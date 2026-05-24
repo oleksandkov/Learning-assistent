@@ -2,6 +2,67 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "label": "TTS: Read Current File",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/Invoke-FileSpeech.ps1",
+        "-Path",
+        "${file}"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "TTS: Stop Current Speech",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/Stop-FileSpeech.ps1"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "TTS: List Installed Voices",
+      "type": "shell",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/Invoke-FileSpeech.ps1",
+        "-ListVoices"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "Compile and Run any .cpp file",
       "type": "shell",
       "command": "cd \"${fileDirname}\"; chcp 65001 >$null; g++ ${fileBasename} -o ${fileBasenameNoExtension}.exe; .\\${fileBasenameNoExtension}.exe",

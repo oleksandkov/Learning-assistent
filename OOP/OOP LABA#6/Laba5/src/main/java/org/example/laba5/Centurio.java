@@ -244,10 +244,14 @@ public class Centurio extends Warrior{
         double distanceToHealTarget = Double.MAX_VALUE;
 
         if (HelloApplication.units != null && !this.isActive()) {
+            double myCenterX = this.image.getBoundsInParent().getCenterX();
+            double myCenterY = this.image.getBoundsInParent().getCenterY();
             for (Unit unit : HelloApplication.units) {
                 if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
-                    double dx = (unit.x + unit.image.getFitWidth() / 2) - (this.x + this.image.getFitWidth() / 2);
-                    double dy = (unit.y + unit.image.getFitHeight() / 2) - (this.y + this.image.getFitHeight() / 2);
+                    double unitCenterX = unit.image.getBoundsInParent().getCenterX();
+                    double unitCenterY = unit.image.getBoundsInParent().getCenterY();
+                    double dx = unitCenterX - myCenterX;
+                    double dy = unitCenterY - myCenterY;
                     double distancesub = Math.sqrt(dx * dx + dy * dy);
                     if (distancesub < distanceToSubTarget) {
                         distanceToSubTarget = distancesub;
@@ -258,10 +262,14 @@ public class Centurio extends Warrior{
         }
 
         if (HelloApplication.buldings != null) {
+            double myCenterX = this.image.getBoundsInParent().getCenterX();
+            double myCenterY = this.image.getBoundsInParent().getCenterY();
             for (World world : HelloApplication.buldings) {
                 if (world != null && world.getTeam() != this.team && world.imageView != null) {
-                    double dx = (world.x + world.imageView.getFitWidth() / 2) - (this.x + this.image.getFitWidth() / 2);
-                    double dy = (world.y + world.imageView.getFitHeight() / 2) - (this.y + this.image.getFitHeight() / 2);
+                    double worldCenterX = world.imageView.getBoundsInParent().getCenterX();
+                    double worldCenterY = world.imageView.getBoundsInParent().getCenterY();
+                    double dx = worldCenterX - myCenterX;
+                    double dy = worldCenterY - myCenterY;
                     double distancemain = Math.sqrt(dx * dx + dy * dy);
                     if (distancemain < distanceToMainTarget) {
                         distanceToMainTarget = distancemain;
@@ -292,7 +300,11 @@ public class Centurio extends Warrior{
 
         if (!this.isActive()) {
             if (healTarget != null) {
-                this.moveTo(healTarget.x + healTarget.imageView.getFitWidth() / 2, healTarget.y + healTarget.imageView.getFitHeight() / 2);
+                if (distanceToHealTarget > 80.0) {
+                    double targetCenterX = healTarget.imageView.getBoundsInParent().getCenterX();
+                    double targetCenterY = healTarget.imageView.getBoundsInParent().getCenterY();
+                    this.moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
+                }
                 long currentTime = System.currentTimeMillis();
                 if (currentTime - lastHealTime >= HEAL_COOLDOWN) {
                     heal(healTarget);
@@ -314,9 +326,17 @@ public class Centurio extends Warrior{
             }
 
             if (goToMain) {
-                this.moveTo(mainTarget.x, mainTarget.y);
+                if (distanceToMainTarget > 130.0) {
+                    double targetCenterX = mainTarget.imageView.getBoundsInParent().getCenterX();
+                    double targetCenterY = mainTarget.imageView.getBoundsInParent().getCenterY();
+                    this.moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
+                }
             } else {
-                this.moveTo(subTarget.x, subTarget.y);
+                if (distanceToSubTarget > 70.0) {
+                    double targetCenterX = subTarget.image.getBoundsInParent().getCenterX();
+                    double targetCenterY = subTarget.image.getBoundsInParent().getCenterY();
+                    this.moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
+                }
             }
 
             long currentTime = System.currentTimeMillis();

@@ -27,8 +27,8 @@ import javafx.util.Duration;
 
 public class HelloApplication extends Application {
 
-    private static final double WORLD_WIDTH = 3200.0;
-    private static final double WORLD_HEIGHT = 2400.0;
+    public static final double WORLD_WIDTH = 6400.0;
+    public static final double WORLD_HEIGHT = 4800.0;
     private static final double VIEWPORT_WIDTH = 1920.0;
     private static final double VIEWPORT_HEIGHT = 1080.0;
 
@@ -222,69 +222,109 @@ public class HelloApplication extends Application {
             units.add(p);
         }
 
-        Tower tower1 = new Tower();
-        tower1.setTeam(true);
-        tower1.initGraphics(imgTower, "tower1", 0, 250,350, 300.0, 50);
-        tower1.resurrectWorld();
-        Timeline healTimer = new Timeline(
-            new KeyFrame(Duration.seconds(1), e -> tower1.healUnits())
-        );
-        healTimer.setCycleCount(Animation.INDEFINITE);
-        healTimer.play();
-
-        Tower tower2 = new Tower();
-        tower2.setTeam(false);
-        tower2.initGraphics(imgTower, "tower2", 0, 700,350, 300.0, 300);
-        tower2.resurrectWorld();
-        Timeline healTimer2 = new Timeline(
-            new KeyFrame(Duration.seconds(1), e -> tower2.healUnits())
-        );
-        healTimer2.setCycleCount(Animation.INDEFINITE);
-        healTimer2.play();
-        Tower tower4 = new Tower();
-        tower4.setTeam(false);
-        tower4.initGraphics(imgTower, "tower4", 0, 1000, 300, 300.0, 300);
-        tower4.resurrectWorld();
-        Timeline healTimer4 = new Timeline(
-            new KeyFrame(Duration.seconds(1), e -> tower4.healUnits())
-        );
-        healTimer4.setCycleCount(Animation.INDEFINITE);
-        healTimer4.play();
-
-        towersB.add(tower2);
-        towersB.add(tower4);
-        towersA.add(tower1);
-        buldings.add(tower1);
-        buldings.add(tower2);
-        buldings.add(tower4);
-
+        // Team A (Ally - True)
+        Base base1 = new Base();
+        base1.setTeam(true);
+        base1.initGraphics(imgBase, "base1", 0, 400, 400, 200.0, 200);
+        base1.resurrectWorld();
+        basesA.add(base1);
+        buldings.add(base1);
 
         Source source1 = new Source();
         source1.setTeam(true);
-        source1.initGraphics(imgSource, "source1", 0, 650, 30, 200.0, 200);
+        source1.initGraphics(imgSource, "source1", 0, 200, 1000, 200.0, 200);
         source1.resurrectWorld();
-        Source source2 = new Source();
-        source2.setTeam(false);
-        source2.initGraphics(imgSource, "source2", 0, 600, 620, 200.0, 200);
-        source2.resurrectWorld();
-        sourcesB.add(source2);
         sourcesA.add(source1);
         buldings.add(source1);
-        buldings.add(source2);
 
-        
-        Base base1 = new Base();
-        base1.setTeam(true);
-        base1.initGraphics(imgBase, "base1", 0, 200, 30, 200.0, 200);
-        base1.resurrectWorld();
+        Source source3 = new Source();
+        source3.setTeam(true);
+        source3.initGraphics(imgSource, "source3", 0, 1000, 200, 200.0, 200);
+        source3.resurrectWorld();
+        sourcesA.add(source3);
+        buldings.add(source3);
+
+        Tower tower1 = new Tower();
+        tower1.setTeam(true);
+        tower1.initGraphics(imgTower, "tower1", 0, 2500, 2000, 300.0, 300);
+        tower1.resurrectWorld();
+        towersA.add(tower1);
+        buldings.add(tower1);
+        Timeline healTimer1 = new Timeline(new KeyFrame(Duration.seconds(1), e -> tower1.healUnits()));
+        healTimer1.setCycleCount(Animation.INDEFINITE);
+        healTimer1.play();
+
+        Tower tower3 = new Tower();
+        tower3.setTeam(true);
+        tower3.initGraphics(imgTower, "tower3", 0, 1800, 2300, 300.0, 300);
+        tower3.resurrectWorld();
+        towersA.add(tower3);
+        buldings.add(tower3);
+        Timeline healTimer3 = new Timeline(new KeyFrame(Duration.seconds(1), e -> tower3.healUnits()));
+        healTimer3.setCycleCount(Animation.INDEFINITE);
+        healTimer3.play();
+
+        Tower tower5 = new Tower();
+        tower5.setTeam(true);
+        tower5.initGraphics(imgTower, "tower5", 0, 2700, 1300, 300.0, 300);
+        tower5.resurrectWorld();
+        towersA.add(tower5);
+        buldings.add(tower5);
+        Timeline healTimer5 = new Timeline(new KeyFrame(Duration.seconds(1), e -> tower5.healUnits()));
+        healTimer5.setCycleCount(Animation.INDEFINITE);
+        healTimer5.play();
+
+        // Team B (Enemy - False)
         Base base2 = new Base();
         base2.setTeam(false);
-        base2.initGraphics(imgBase, "base2", 0, 1000, 550, 200.0, 200);
+        base2.initGraphics(imgBase, "base2", 0, 5750, 4150, 200.0, 200);
         base2.resurrectWorld();
         basesB.add(base2);
-        basesA.add(base1);
-        buldings.add(base1);
         buldings.add(base2);
+
+        Source source2 = new Source();
+        source2.setTeam(false);
+        source2.initGraphics(imgSource, "source2", 0, 6000, 3600, 200.0, 200);
+        source2.resurrectWorld();
+        sourcesB.add(source2);
+        buldings.add(source2);
+
+        Source source4 = new Source();
+        source4.setTeam(false);
+        source4.initGraphics(imgSource, "source4", 0, 5200, 4400, 200.0, 200);
+        source4.resurrectWorld();
+        sourcesB.add(source4);
+        buldings.add(source4);
+
+        Tower tower2 = new Tower();
+        tower2.setTeam(false);
+        tower2.initGraphics(imgTower, "tower2", 0, 3700, 2600, 300.0, 300);
+        tower2.resurrectWorld();
+        towersB.add(tower2);
+        buldings.add(tower2);
+        Timeline healTimer2 = new Timeline(new KeyFrame(Duration.seconds(1), e -> tower2.healUnits()));
+        healTimer2.setCycleCount(Animation.INDEFINITE);
+        healTimer2.play();
+
+        Tower tower4 = new Tower();
+        tower4.setTeam(false);
+        tower4.initGraphics(imgTower, "tower4", 0, 4400, 2300, 300.0, 300);
+        tower4.resurrectWorld();
+        towersB.add(tower4);
+        buldings.add(tower4);
+        Timeline healTimer4 = new Timeline(new KeyFrame(Duration.seconds(1), e -> tower4.healUnits()));
+        healTimer4.setCycleCount(Animation.INDEFINITE);
+        healTimer4.play();
+
+        Tower tower6 = new Tower();
+        tower6.setTeam(false);
+        tower6.initGraphics(imgTower, "tower6", 0, 3500, 3300, 300.0, 300);
+        tower6.resurrectWorld();
+        towersB.add(tower6);
+        buldings.add(tower6);
+        Timeline healTimer6 = new Timeline(new KeyFrame(Duration.seconds(1), e -> tower6.healUnits()));
+        healTimer6.setCycleCount(Animation.INDEFINITE);
+        healTimer6.play();
 
         for (Unit unit : units) {
             if (unit == null) {
@@ -300,8 +340,12 @@ public class HelloApplication extends Application {
         }
 
         World world = new World(units);
-        miniMapOverlay = new MiniMapOverlay(WORLD_WIDTH, WORLD_HEIGHT, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, target -> {
-            updateCameraPosition(target[0] - VIEWPORT_WIDTH / 2.0, target[1] - VIEWPORT_HEIGHT / 2.0);
+        double initialW = scene != null && scene.getWidth() > 0 ? scene.getWidth() : VIEWPORT_WIDTH;
+        double initialH = scene != null && scene.getHeight() > 0 ? scene.getHeight() : VIEWPORT_HEIGHT;
+        miniMapOverlay = new MiniMapOverlay(WORLD_WIDTH, WORLD_HEIGHT, initialW, initialH, target -> {
+            double currentViewportWidth = scene != null && scene.getWidth() > 0 ? scene.getWidth() : VIEWPORT_WIDTH;
+            double currentViewportHeight = scene != null && scene.getHeight() > 0 ? scene.getHeight() : VIEWPORT_HEIGHT;
+            updateCameraPosition(target[0] - currentViewportWidth / 2.0, target[1] - currentViewportHeight / 2.0);
         });
         miniMapOverlay.bindToScene(scene);
         overlayPane.getChildren().add(miniMapOverlay.getPane());
@@ -449,7 +493,7 @@ public class HelloApplication extends Application {
                     updateCameraPosition(cameraX + camDx, cameraY + camDy);
                 }
 
-                for (World world : buldings) {
+                for (World world : new ArrayList<>(buldings)) {
                     if (world.getHealth() <= 0) {
                         world.removeBuildingFromGame();
                     }
@@ -459,13 +503,9 @@ public class HelloApplication extends Application {
                 world.worldLogic();
                 miniMapOverlay.update(units, buldings);
 
-                tower1.intersect();
-                tower2.intersect();
-                tower4.intersect();
-                source1.intersect();
-                source2.intersect();
-                base1.intersect();
-                base2.intersect();
+                for (World building : new ArrayList<>(buldings)) {
+                    building.intersect();
+                }
                 
                 for (Unit unit : units) {
                     if (unit.isActive()) {
@@ -491,6 +531,33 @@ public class HelloApplication extends Application {
 
         stage.setScene(scene);
         stage.show();
+
+        scene.widthProperty().addListener((obs, oldVal, newVal) -> {
+            double w = newVal.doubleValue();
+            cameraViewport.setPrefWidth(w);
+            cameraViewport.setMinWidth(w);
+            cameraViewport.setMaxWidth(w);
+            if (cameraViewport.getClip() instanceof Rectangle) {
+                ((Rectangle) cameraViewport.getClip()).setWidth(w);
+            }
+            if (miniMapOverlay != null) {
+                miniMapOverlay.setViewportSize(w, scene.getHeight());
+            }
+            updateCameraPosition(cameraX, cameraY);
+        });
+        scene.heightProperty().addListener((obs, oldVal, newVal) -> {
+            double h = newVal.doubleValue();
+            cameraViewport.setPrefHeight(h);
+            cameraViewport.setMinHeight(h);
+            cameraViewport.setMaxHeight(h);
+            if (cameraViewport.getClip() instanceof Rectangle) {
+                ((Rectangle) cameraViewport.getClip()).setHeight(h);
+            }
+            if (miniMapOverlay != null) {
+                miniMapOverlay.setViewportSize(scene.getWidth(), h);
+            }
+            updateCameraPosition(cameraX, cameraY);
+        });
     }
 
     private void cloneActiveUnit() {
@@ -540,8 +607,10 @@ public class HelloApplication extends Application {
     }
 
     private void updateCameraPosition(double newCameraX, double newCameraY) {
-        double maxCameraX = Math.max(0.0, WORLD_WIDTH - VIEWPORT_WIDTH);
-        double maxCameraY = Math.max(0.0, WORLD_HEIGHT - VIEWPORT_HEIGHT);
+        double currentViewportWidth = scene != null && scene.getWidth() > 0 ? scene.getWidth() : VIEWPORT_WIDTH;
+        double currentViewportHeight = scene != null && scene.getHeight() > 0 ? scene.getHeight() : VIEWPORT_HEIGHT;
+        double maxCameraX = Math.max(0.0, WORLD_WIDTH - currentViewportWidth);
+        double maxCameraY = Math.max(0.0, WORLD_HEIGHT - currentViewportHeight);
         cameraX = Math.max(0.0, Math.min(newCameraX, maxCameraX));
         cameraY = Math.max(0.0, Math.min(newCameraY, maxCameraY));
         group.setLayoutX(-cameraX);

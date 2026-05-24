@@ -19,7 +19,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 public class MiniMapOverlay {
-    private static final double SCALE = 0.16;
+    private static final double SCALE = 0.08;
     private static final double MARGIN = 12.0;
 
     private final Pane root;
@@ -132,6 +132,12 @@ public class MiniMapOverlay {
     public void setCameraPosition(double cameraX, double cameraY) {
         this.cameraX = cameraX;
         this.cameraY = cameraY;
+        updateViewportRect();
+    }
+
+    public void setViewportSize(double width, double height) {
+        this.viewportWidth = Math.max(1.0, width);
+        this.viewportHeight = Math.max(1.0, height);
         updateViewportRect();
     }
 

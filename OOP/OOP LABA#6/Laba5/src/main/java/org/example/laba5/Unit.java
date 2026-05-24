@@ -46,7 +46,8 @@ public class Unit implements Cloneable{
     protected ImageView bowImage;
     protected ImageView mainWeaponImage;
 
-    protected double moveSpeed = 0.005;
+    protected double moveSpeed = 0.5;
+    private static boolean isPushing = false;
 
     protected long lastAttackTime = 0;
     protected  final long ATTACK_COOLDOWN = 1000;
@@ -448,6 +449,10 @@ public class Unit implements Cloneable{
                         int newHealth = targetHealth - this.damage;
                         unit.setHealth(newHealth);
 
+                        System.out.println("[Combat] " + this.getClass().getSimpleName() + " (" + (this.team ? "Ally" : "Enemy") + 
+                                           ") dealt " + this.damage + " damage to " + unit.getClass().getSimpleName() + 
+                                           " (" + (unit.team ? "Ally" : "Enemy") + "). Target HP: " + newHealth);
+
                         if (newHealth <= 0) {
                             unit.setHealth(0);
                             objectedKilled++;
@@ -467,6 +472,9 @@ public class Unit implements Cloneable{
                         int targetHealth = world.getHealth() == 0 ? 0 : (int) world.getHealth();
                         int newHealth = targetHealth - this.damage;
                         world.setHealth(newHealth);
+                        System.out.println("[Combat] " + this.getClass().getSimpleName() + " (" + (this.team ? "Ally" : "Enemy") + 
+                                           ") dealt " + this.damage + " damage to Building " + world.name + 
+                                           " (" + (world.team ? "Ally" : "Enemy") + "). Target HP: " + newHealth);
                     }
                 }
             }
@@ -741,7 +749,20 @@ public class Unit implements Cloneable{
             System.out.println("Error loading mark images: " + e.getMessage());
         }
     }
+    public void clampBounds() {
+        double maxW = HelloApplication.WORLD_WIDTH;
+        double maxH = HelloApplication.WORLD_HEIGHT;
+        double fitW = image != null ? image.getFitWidth() : 100.0;
+        double fitH = image != null ? image.getFitHeight() : 100.0;
+
+        if (x < 0) x = 0;
+        if (x > maxW - fitW) x = maxW - fitW;
+        if (y < 0) y = 0;
+        if (y > maxH - fitH) y = maxH - fitH;
+    }
+
     public void setCoordinates() {
+        clampBounds();
         if (labelName == null || life == null || image == null) {
             return;
         }
@@ -777,106 +798,74 @@ public class Unit implements Cloneable{
     public void move(double dx, double dy) {
         x += dx;
         y += dy;
+        clampBounds();
         setCoordinates();
         loacateAndRotateF();
         locateAndRotateE();
     }
 
     public void loacateAndRotateF() {
+        if (isPushing) {
+            return;
+        }
         if (HelloApplication.units == null || image == null) {
             return;
         }
 
-        double selfCenterX = x + image.getFitWidth() / 2.0;
-        double selfCenterY = y + image.getFitHeight() / 2.0;
-        double minDistance = 30.0;        
-        double pushDistance = 50.0;       
-        for (Unit unit : HelloApplication.units) {
-            if (unit == this || unit.image == null) {
-                continue;
-            }
-            if (unit.getTeam() != this.team) {
-                continue;
-            }
-
-            double otherCenterX = unit.x + unit.image.getFitWidth() / 2.0;
-            double otherCenterY = unit.y + unit.image.getFitHeight() / 2.0;
-            double dx = otherCenterX - selfCenterX;
-            double dy = otherCenterY - selfCenterY;
-            double dist = Math.hypot(dx, dy);
-
-            if (dist < minDistance) {
-                if (dist < 0.001) {
-                    dx = 1.0;
-                    dy = 0.0;
-                    dist = 1.0;
+        try {
+            isPushing = true;
+            double selfCenterX = x + image.getFitWidth() / 2.0;
+            double selfCenterY = y + image.getFitHeight() / 2.0;
+            double minDistance = 30.0;        
+            double pushDistance = 50.0;       
+            for (Unit unit : HelloApplication.units) {
+                if (unit == this || unit.image == null) {
+                    continue;
+                }
+                if (unit.getTeam() != this.team) {
+                    continue;
                 }
 
-                double newX = selfCenterX + (dx / dist) * pushDistance;
-                double newY = selfCenterY + (dy / dist) * pushDistance;
-                unit.moveTo(newX, newY);
+                double otherCenterX = unit.x + unit.image.getFitWidth() / 2.0;
+                double otherCenterY = unit.y + unit.image.getFitHeight() / 2.0;
+                double dx = otherCenterX - selfCenterX;
+                double dy = otherCenterY - selfCenterY;
+                double dist = Math.hypot(dx, dy);
+
+                if (dist < minDistance) {
+                    if (dist < 0.001) {
+                        dx = 1.0;
+                        dy = 0.0;
+                        dist = 1.0;
+                    }
+
+                    double newX = selfCenterX + (dx / dist) * pushDistance;
+                    double newY = selfCenterY + (dy / dist) * pushDistance;
+                    unit.moveTo(newX - unit.image.getFitWidth() / 2.0, newY - unit.image.getFitHeight() / 2.0);
+                }
             }
+        } finally {
+            isPushing = false;
         }
     }
     public void locateAndRotateE() {
-        if (HelloApplication.units == null || image == null) {
-            return;
-        }
-
-        boolean simularCoor = false;
-        double selfCenterX = x + image.getFitWidth() / 2.0;
-        double selfCenterY = y + image.getFitHeight() / 2.0;
-        double minDistance = 60.0;
-        double pushStep = 10.0;
-
-        for (Unit unit : HelloApplication.units) {
-            if (unit == this || unit.image == null) {
-                continue;
-            }
-            if (unit.getTeam() == this.team) {
-                continue;
-            }
-
-            double otherCenterX = unit.x + unit.image.getFitWidth() / 2.0;
-            double otherCenterY = unit.y + unit.image.getFitHeight() / 2.0;
-            double dx = selfCenterX - otherCenterX;
-            double dy = selfCenterY - otherCenterY;
-
-            if (Math.abs(dx) < minDistance && Math.abs(dy) < minDistance) {
-                simularCoor = true;
-                double dist = Math.hypot(dx, dy);
-                if (dist < 0.001) {
-                    dx = 1.0;
-                    dy = 0.0;
-                    dist = 1.0;
-                }
-
-                double px = -dy / dist;
-                double py = dx / dist;
-                x += px * pushStep;
-                y += py * pushStep;
-                selfCenterX = x + image.getFitWidth() / 2.0;
-                selfCenterY = y + image.getFitHeight() / 2.0;
-            }
-        }
-
-        return ;
+        // no-op to prevent enemy unit pushing jitter
     }
 
     public void moveTo(double newX, double newY) {
         double dx = newX - x;
         double dy = newY - y;
+        double dist = Math.hypot(dx, dy);
 
-        if (Math.abs(dx) <= moveSpeed - 3 && Math.abs(dy) <= moveSpeed - 3) {
+        if (dist <= moveSpeed) {
             x = newX;
             y = newY;
         } else {
-            move(dx * moveSpeed, dy * moveSpeed);
+            move(dx / dist * moveSpeed, dy / dist * moveSpeed);
             return;
         }
 
-        
-
+        clampBounds();
         locateAndRotateE();
         loacateAndRotateF();
         setCoordinates();
@@ -885,6 +874,7 @@ public class Unit implements Cloneable{
     public void setPosition(double newX, double newY) {
         x = newX;
         y = newY;
+        clampBounds();
         locateAndRotateE();
         loacateAndRotateF();
         setCoordinates();
