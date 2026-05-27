@@ -223,39 +223,19 @@ public class World {
         pretionsTeamB = 0;
         allyUnits = 0;
         enemyUnits = 0;
+        if (HelloApplication.units == null) return;
 
-        for (Unit unit : HelloApplication.units) {
-            if (unit != null && unit.image != null) {
-                String unitType = unit.getClass().getSimpleName();
-                boolean isAlly = unit.getTeam() == true;
+        warriorsTeamA = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && "Warrior".equals(u.getClass().getSimpleName()) && u.getTeam()).count();
+        warriorsTeamB = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && "Warrior".equals(u.getClass().getSimpleName()) && !u.getTeam()).count();
 
-                if (unitType.equals("Warrior")) {
-                    if (isAlly) {
-                        warriorsTeamA++;
-                        allyUnits++;
-                    } else {
-                        warriorsTeamB++;
-                        enemyUnits++;
-                    }
-                } else if (unitType.equals("Centurio")) {
-                    if (isAlly) {
-                        centaursTeamA++;
-                        allyUnits++;
-                    } else {
-                        centaursTeamB++;
-                        enemyUnits++;
-                    }
-                } else if (unitType.equals("Pretorio")) {
-                    if (isAlly) {
-                        pretionsTeamA++;
-                        allyUnits++;
-                    } else {
-                        pretionsTeamB++;
-                        enemyUnits++;
-                    }
-                }
-            }
-        }
+        centaursTeamA = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && "Centurio".equals(u.getClass().getSimpleName()) && u.getTeam()).count();
+        centaursTeamB = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && "Centurio".equals(u.getClass().getSimpleName()) && !u.getTeam()).count();
+
+        pretionsTeamA = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && "Pretorio".equals(u.getClass().getSimpleName()) && u.getTeam()).count();
+        pretionsTeamB = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && "Pretorio".equals(u.getClass().getSimpleName()) && !u.getTeam()).count();
+
+        allyUnits = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && u.getTeam()).count();
+        enemyUnits = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && !u.getTeam()).count();
 
         HelloApplication.numUnitsTeamA.setText("Team A units: " + allyUnits);
         HelloApplication.numUnitsTeamB.setText("Team B units: " + enemyUnits);

@@ -48,13 +48,7 @@ public class UnitInvetorWindow {
 			return;
 		}
 
-		Unit activeUnit = null;
-		for (Unit unit : units) {
-			if (unit != null && unit.isActive()) {
-				activeUnit = unit;
-				break;
-			}
-		}
+		Unit activeUnit = units.stream().filter(u -> u != null && u.isActive()).findFirst().orElse(null);
 
 		inventoryItemsBox.getChildren().clear();
 
@@ -72,7 +66,7 @@ public class UnitInvetorWindow {
 		if (inventory == null || inventory.isEmpty()) {
 			inventoryItemsBox.getChildren().add(new Label("Inventory is empty"));
 		} else {
-			for (String item : inventory) {
+			inventory.forEach(item -> {
 				String itemName = item == null ? "Unknown" : item;
 				String iconKey = itemName.trim().toLowerCase();
 				Image icon = inventoryIcons.get(iconKey);
@@ -86,7 +80,7 @@ public class UnitInvetorWindow {
 				}
 				row.getChildren().add(new Label(itemName));
 				inventoryItemsBox.getChildren().add(row);
-			}
+			});
 		}
 
 		if (activeUnit.getClass().getSimpleName().equals("Warrior")) {
@@ -124,12 +118,7 @@ public class UnitInvetorWindow {
 		if (units == null) {
 			return false;
 		}
-		for (Unit unit : units) {
-			if (unit != null && unit.isActive()) {
-				return true;
-			}
-		}
-		return false;
+		return units.stream().anyMatch(u -> u != null && u.isActive());
 	}
 
 	public boolean isVisible() {

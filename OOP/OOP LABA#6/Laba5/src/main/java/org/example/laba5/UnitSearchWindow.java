@@ -175,12 +175,10 @@ public class UnitSearchWindow {
 	}
 
 	private ArrayList<Unit> filterUnits() {
-		ArrayList<Unit> matches = new ArrayList<>();
 		if (HelloApplication.units == null) {
-			return matches;
+			return new ArrayList<>();
 		}
 
-		List<Unit> snapshot = new ArrayList<>(HelloApplication.units);
 		String classFilter = classCombo.getValue();
 		String teamFilter = teamCombo.getValue();
 		Integer healthFilter = parseIntOrNull(healthField.getText());
@@ -188,73 +186,24 @@ public class UnitSearchWindow {
 		List<String> inventorFilter = parseInventory(inventorField.getText());
 		String macroFilter = normalizeMacroFilter(macroField.getText());
 
-		for (Unit unit : snapshot) {
-			if (unit == null || Boolean.TRUE.equals(unit.getDead())) {
-				continue;
-			}
-
-			if (!"Any".equals(classFilter) && !unit.getClass().getSimpleName().equals(classFilter)) {
-				continue;
-			}
-
-			if (!"Any".equals(teamFilter)) {
-				boolean isAlly = "Ally".equals(teamFilter);
-				if (unit.getTeam() != isAlly) {
-					continue;
-				}
-			}
-
-			if (healthFilter != null) {
-				Integer unitHealth = unit.getHealth();
-				if (unitHealth == null || !unitHealth.equals(healthFilter)) {
-					continue;
-				}
-			}
-
-			if (damageFilter != null) {
-				Integer unitDamage = unit.getDamage();
-				if (unitDamage == null || !unitDamage.equals(damageFilter)) {
-					continue;
-				}
-			}
-
-			if (!inventorFilter.isEmpty()) {
-				ArrayList<String> inv = unit.getInventor();
-				if (inv == null) {
-					continue;
-				}
-				List<String> invNormalized = new ArrayList<>();
-				for (String item : inv) {
-					if (item != null) {
-						invNormalized.add(item.trim().toLowerCase(Locale.ROOT));
-					}
-				}
-				boolean allPresent = true;
-				for (String filterItem : inventorFilter) {
-					if (!invNormalized.contains(filterItem)) {
-						allPresent = false;
-						break;
-					}
-				}
-				if (!allPresent) {
-					continue;
-				}
-			}
-
-			if (macroFilter != null) {
-				if (isNoneFilter(macroFilter)) {
-					if (hasMacroMembership(unit)) {
-						continue;
-					}
-				} else if (!isUnitInMacro(unit, macroFilter)) {
-					continue;
-				}
-			}
-
-			matches.add(unit);
-		}
-
-		return matches;
+		return HelloApplication.units.stream()
+				.filter(u -> u != null && !Boolean.TRUE.equals(u.getDead()))
+				.filter(u -> "Any".equals(classFilter) || u.getClass().getSimpleName().equals(classFilter))
+				.filter(u -> "Any".equals(teamFilter) || u.getTeam() == ("Ally".equals(teamFilter)))
+				.filter(u -> healthFilter == null || (u.getHealth() != null && u.getHealth().equals(healthFilter)))
+				.filter(u -> damageFilter == null || (u.getDamage() != null && u.getDamage().equals(damageFilter)))
+				.filter(u -> {
+					if (inventorFilter.isEmpty()) return true;
+					ArrayList<String> inv = u.getInventor();
+					if (inv == null) return false;
+					return inv.stream().filter(Objects::nonNull).map(s -> s.trim().toLowerCase(Locale.ROOT)).collect(Collectors.toSet()).containsAll(inventorFilter);
+				})
+				.filter(u -> {
+					if (macroFilter == null) return true;
+					if (isNoneFilter(macroFilter)) return !hasMacroMembership(u);
+					return isUnitInMacro(u, macroFilter);
+				})
+				.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	private String buildUnitDisplay(Unit unit) {
@@ -280,24 +229,15 @@ public class UnitSearchWindow {
 		if (HelloApplication.buldings == null || HelloApplication.buldings.isEmpty()) {
 			return "none";
 		}
-
-		ArrayList<String> memberships = new ArrayList<>();
-		for (World world : HelloApplication.buldings) {
-			if (world == null) {
-				continue;
-			}
-			if (world.isUnitInside(unit)) {
-				String team = world.getTeam() ? "Ally" : "Enemy";
-				String macroName = (world.name == null || world.name.isBlank())
-						? world.getClass().getSimpleName()
-						: world.name;
-				memberships.add(macroName + "(" + team + ")");
-			}
-		}
-
-		if (memberships.isEmpty()) {
-			return "none";
-		}
+		List<String> memberships = HelloApplication.buldings.stream()
+				.filter(w -> w != null && w.isUnitInside(unit))
+				.map(w -> {
+					String team = w.getTeam() ? "Ally" : "Enemy";
+					String macroName = (w.name == null || w.name.isBlank()) ? w.getClass().getSimpleName() : w.name;
+					return macroName + "(" + team + ")";
+				})
+				.collect(Collectors.toList());
+		if (memberships.isEmpty()) return "none";
 		return String.join(", ", memberships);
 	}
 
@@ -314,15 +254,8 @@ public class UnitSearchWindow {
 	}
 
 	private boolean hasMacroMembership(Unit unit) {
-		if (HelloApplication.buldings == null || HelloApplication.buldings.isEmpty()) {
-			return false;
-		}
-		for (World world : HelloApplication.buldings) {
-			if (world != null && world.isUnitInside(unit)) {
-				return true;
-			}
-		}
-		return false;
+		if (HelloApplication.buldings == null || HelloApplication.buldings.isEmpty()) return false;
+		return HelloApplication.buldings.stream().filter(Objects::nonNull).anyMatch(w -> w.isUnitInside(unit));
 	}
 
 	private void sortFilteredUnits(ArrayList<Unit> filtered) {
@@ -366,25 +299,13 @@ public class UnitSearchWindow {
 	}
 
 	private boolean isUnitInMacro(Unit unit, String macroFilter) {
-		if (HelloApplication.buldings == null || HelloApplication.buldings.isEmpty()) {
-			return false;
-		}
-		for (World world : HelloApplication.buldings) {
-			if (world == null) {
-				continue;
-			}
-			if (!world.isUnitInside(unit)) {
-				continue;
-			}
-			String macroName = (world.name == null || world.name.isBlank())
-					? world.getClass().getSimpleName()
-					: world.name;
-			String normalized = macroName.trim().toLowerCase(Locale.ROOT);
-			if (normalized.contains(macroFilter)) {
-				return true;
-			}
-		}
-		return false;
+		if (HelloApplication.buldings == null || HelloApplication.buldings.isEmpty()) return false;
+		return HelloApplication.buldings.stream()
+				.filter(Objects::nonNull)
+				.filter(w -> w.isUnitInside(unit))
+				.map(w -> (w.name == null || w.name.isBlank()) ? w.getClass().getSimpleName() : w.name)
+				.map(n -> n.trim().toLowerCase(Locale.ROOT))
+				.anyMatch(n -> n.contains(macroFilter));
 	}
 
 	private Integer parseIntOrNull(String value) {
@@ -403,30 +324,18 @@ public class UnitSearchWindow {
 	}
 
 	private List<String> parseInventory(String input) {
-		if (input == null || input.trim().isEmpty()) {
-			return new ArrayList<>();
-		}
-		ArrayList<String> items = new ArrayList<>();
-		String[] parts = input.split(",");
-		for (String part : parts) {
-			if (part == null) {
-				continue;
-			}
-			String trimmed = part.trim();
-			if (!trimmed.isEmpty()) {
-				items.add(trimmed.toLowerCase(Locale.ROOT));
-			}
-		}
-		return items;
+		if (input == null || input.trim().isEmpty()) return new ArrayList<>();
+		return Stream.of(input.split(","))
+				.filter(Objects::nonNull)
+				.map(String::trim)
+				.filter(s -> !s.isEmpty())
+				.map(s -> s.toLowerCase(Locale.ROOT))
+				.collect(Collectors.toList());
 	}
 
 	private void removeAllFiltered() {
 		ArrayList<Unit> filtered = filterUnits();
-		for (Unit unit : filtered) {
-			if (unit != null && !Boolean.TRUE.equals(unit.getDead())) {
-				unit.removeUnitFromGame();
-			}
-		}
+		filtered.stream().filter(u -> u != null && !Boolean.TRUE.equals(u.getDead())).forEach(Unit::removeUnitFromGame);
 		refreshList(true);
 	}
 
@@ -437,34 +346,18 @@ public class UnitSearchWindow {
 		}
 
 		String parameter = countParameterCombo.getValue();
-		int count = 0;
-
-		for (Unit unit : HelloApplication.units) {
-			if (unit == null || Boolean.TRUE.equals(unit.getDead())) {
-				continue;
+		long count = HelloApplication.units.stream().filter(u -> u != null && !Boolean.TRUE.equals(u.getDead())).filter(u -> {
+			switch (parameter) {
+				case "moreThanHalf":
+					return u.moreThanHalf();
+				case "haveSword":
+					return u.haveSword();
+				case "team (ally)":
+					return u.getTeam();
+				default:
+					return false;
 			}
-
-			if ("moreThanHalf".equals(parameter)) {
-				if (unit.moreThanHalf()) {
-					count++;
-				}
-				continue;
-			}
-
-			if ("haveSword".equals(parameter)) {
-				if (unit.haveSword()) {
-					count++;
-				}
-				continue;
-			}
-
-			if ("team (ally)".equals(parameter)) {
-				if (unit.getTeam()) {
-					count++;
-				}
-				continue;
-			}
-		}
+		}).count();
 
 		microobjectCountLabel.setText("Microobjects count: " + count);
 	}

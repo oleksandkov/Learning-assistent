@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -73,6 +76,7 @@ public class HelloApplication extends Application {
     private MiniMapOverlay miniMapOverlay;
     private double cameraX;
     private double cameraY;
+    private Stage primaryStage;
     public static Label numUnitsTeamA;
     public static Label numUnitsTeamB;
 
@@ -132,6 +136,17 @@ public class HelloApplication extends Application {
             if (code == KeyCode.M) {
                 if (miniMapOverlay != null) {
                     miniMapOverlay.toggleVisible();
+                }
+                return;
+            }
+            // Z — Open save / import dialog
+            if (code == KeyCode.Z && !e.isControlDown()) {
+                if (!handledActionKeys.contains(KeyCode.Z)) {
+                    handledActionKeys.add(KeyCode.Z);
+                    javafx.application.Platform.runLater(() -> {
+                        SerializationDialog.showDialog(primaryStage);
+                        handledActionKeys.remove(KeyCode.Z);
+                    });
                 }
                 return;
             }
@@ -208,19 +223,13 @@ public class HelloApplication extends Application {
         warrior4.setTeam(false);
         warriors.add(warrior4);
 
-        for (int i = 0; i < warriors.size(); i++) {
-            Unit u = warriors.get(i);
-            units.add(u);
-        }
+        // Assemble units from sublists using Streams
+        units = Stream.of(warriors, centurios, pretorios)
+                .filter(Objects::nonNull)
+                .flatMap(list -> list.stream())
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        for  (int i = 0; i < centurios.size(); i++) {
-            Unit c = centurios.get(i);
-            units.add(c);
-        }
-        for (int i  = 0; i < pretorios.size(); i++) {
-            Unit p =  pretorios.get(i);
-            units.add(p);
-        }
+        // (Streams integrated) — no demo prints here to keep startup clean
 
         // Team A (Ally - True)
         Base base1 = new Base();
@@ -326,10 +335,7 @@ public class HelloApplication extends Application {
         healTimer6.setCycleCount(Animation.INDEFINITE);
         healTimer6.play();
 
-        for (Unit unit : units) {
-            if (unit == null) {
-                continue;
-            }
+        units.stream().filter(Objects::nonNull).forEach(unit -> {
             if (unit.getTeam()) {
                 unit.resurrect();
                 unit.setPosition(basesA.get(0).x, basesA.get(0).y);
@@ -337,7 +343,7 @@ public class HelloApplication extends Application {
                 unit.resurrect();
                 unit.setPosition(basesB.get(0).x, basesB.get(0).y);
             }
-        }
+        });
 
         World world = new World(units);
         double initialW = scene != null && scene.getWidth() > 0 ? scene.getWidth() : VIEWPORT_WIDTH;
@@ -529,6 +535,7 @@ public class HelloApplication extends Application {
         };
         gameLoop.start();
 
+        primaryStage = stage;
         stage.setScene(scene);
         stage.show();
 
@@ -588,20 +595,8 @@ public class HelloApplication extends Application {
     }
 
     private void updateHud() {
-        double teamAOre = 0;
-        double teamBOre = 0;
-
-        for (Base base : basesA) {
-            if (base != null) {
-                teamAOre += base.getOre();
-            }
-        }
-
-        for (Base base : basesB) {
-            if (base != null) {
-                teamBOre += base.getOre();
-            }
-        }
+        double teamAOre = basesA.stream().filter(Objects::nonNull).mapToDouble(Base::getOre).sum();
+        double teamBOre = basesB.stream().filter(Objects::nonNull).mapToDouble(Base::getOre).sum();
         oreLabelTeamA.setText("Team A ore: " + (int) teamAOre);
         oreLabelTeamB.setText("Team B ore: " + (int) teamBOre);
     }
