@@ -52,8 +52,8 @@ public class HelloApplication extends Application {
     private final Map<KeyCode, Boolean> keysPressed = new HashMap<>();
     private final Set<KeyCode> handledActionKeys = new HashSet<>();
 
-    public static double keyStepX = 3.0;
-    public static double keyStepY = 3.0;
+    public static double keyStepX = 4.5;
+    public static double keyStepY = 4.5;
 
     public static ArrayList<Tower> towersA = new ArrayList<>();
     public static ArrayList<Source> sourcesA = new ArrayList<>();
@@ -390,7 +390,7 @@ public class HelloApplication extends Application {
             public void handle(long now) {
                 double dx = 0, dy = 0;
                 double camDx = 0, camDy = 0;
-                double camSpeedMultiplier = 3.0;
+                double camSpeedMultiplier = 4.5;
 
                 for (KeyCode code : new ArrayList<>(keysPressed.keySet())) {
                     if (keysPresses.containsKey(code)) {

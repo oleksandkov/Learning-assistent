@@ -169,18 +169,8 @@ public class Warrior extends Unit {
             return;
         }
 
-        World sourceTarget = null;
-        World baseTarget = null;
-        for (World build : HelloApplication.buldings) {
-            if (build == null || build.getTeam() != this.team) {
-                continue;
-            }
-            if (sourceTarget == null && build instanceof Source) {
-                sourceTarget = build;
-            } else if (baseTarget == null && build instanceof Base) {
-                baseTarget = build;
-            }
-        }
+        World sourceTarget = findBestSourceTarget();
+        World baseTarget = getTeamBase();
 
         if (sourceTarget == null || baseTarget == null) {
             return;
@@ -242,18 +232,8 @@ public class Warrior extends Unit {
             return;
         }
 
-        World sourceTarget = null;
-        World baseTarget = null;
-        for (World build : HelloApplication.buldings) {
-            if (build == null || build.getTeam() != this.team) {
-                continue;
-            }
-            if (sourceTarget == null && build instanceof Source) {
-                sourceTarget = build;
-            } else if (baseTarget == null && build instanceof Base) {
-                baseTarget = build;
-            }
-        }
+        World sourceTarget = findBestSourceTarget();
+        World baseTarget = getTeamBase();
 
         if (sourceTarget == null || baseTarget == null) {
             return;
@@ -370,6 +350,56 @@ public class Warrior extends Unit {
         return nearest;
     }
 
+    private World findBestSourceTarget() {
+        if (HelloApplication.buldings == null || this.image == null) {
+            return null;
+        }
+
+        World closest = null;
+        double closestDistance = Double.MAX_VALUE;
+        double myCenterX = this.image.getBoundsInParent().getCenterX();
+        double myCenterY = this.image.getBoundsInParent().getCenterY();
+
+        for (World build : HelloApplication.buldings) {
+            if (build == null || build.getTeam() != this.team || !(build instanceof Source) || build.imageView == null) {
+                continue;
+            }
+
+            if (this.image.getBoundsInParent().intersects(build.imageView.getBoundsInParent())) {
+                return build;
+            }
+
+            double targetCenterX = build.imageView.getBoundsInParent().getCenterX();
+            double targetCenterY = build.imageView.getBoundsInParent().getCenterY();
+            double distance = Math.hypot(targetCenterX - myCenterX, targetCenterY - myCenterY);
+
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closest = build;
+            }
+        }
+
+        return closest;
+    }
+
+    private World getTeamBase() {
+        if (HelloApplication.basesA == null || HelloApplication.basesB == null) {
+            return null;
+        }
+
+        ArrayList<Base> bases = this.team ? HelloApplication.basesA : HelloApplication.basesB;
+        if (bases == null || bases.isEmpty()) {
+            return null;
+        }
+
+        Base base = bases.get(0);
+        if (base == null || base.imageView == null) {
+            return null;
+        }
+
+        return base;
+    }
+
     @Override
     protected void promotion() {
         if (HelloApplication.units == null) {
@@ -377,7 +407,7 @@ public class Warrior extends Unit {
         }
         if (this != null )  {
             int ore = (int) this.getOre();
-            if (ore >= 50) {
+            if (ore >= 100) {
                 this.setDead(true);
                 HelloApplication.group.getChildren().removeAll(this.image, this.labelName, this.life, this.rectActive, oreCountLabel);
                 this.removeUnitFromGame();

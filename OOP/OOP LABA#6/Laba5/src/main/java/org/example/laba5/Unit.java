@@ -46,7 +46,7 @@ public class Unit implements Cloneable{
     protected ImageView bowImage;
     protected ImageView mainWeaponImage;
 
-    protected double moveSpeed = 0.5;
+    protected double moveSpeed = 1;
     private static boolean isPushing = false;
 
     protected long lastAttackTime = 0;

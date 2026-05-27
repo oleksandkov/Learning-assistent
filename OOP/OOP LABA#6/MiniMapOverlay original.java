@@ -9,12 +9,13 @@ import java.util.function.Consumer;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 public class MiniMapOverlay {
@@ -27,10 +28,11 @@ public class MiniMapOverlay {
     private final Rectangle background;
     private final Rectangle border;
     private final Rectangle viewportRect;
+    private final Label title;
     private final Consumer<double[]> onNavigate;
 
-    private final IdentityHashMap<Unit, Polygon> unitMarkers = new IdentityHashMap<>();
-    private final IdentityHashMap<World, Polygon> buildingMarkers = new IdentityHashMap<>();
+    private final IdentityHashMap<Unit, Circle> unitMarkers = new IdentityHashMap<>();
+    private final IdentityHashMap<World, Rectangle> buildingMarkers = new IdentityHashMap<>();
 
     private double worldWidth;
     private double worldHeight;
@@ -56,25 +58,28 @@ public class MiniMapOverlay {
         root.setBackground(new Background(new BackgroundFill(Color.TRANSPARENT, CornerRadii.EMPTY, Insets.EMPTY)));
 
         background = new Rectangle(0, 20, mapWidth, mapHeight);
-        background.setFill(Color.rgb(14, 22, 30, 0.85));
-        background.setArcWidth(12);
-        background.setArcHeight(12);
+        background.setFill(Color.rgb(23, 31, 40, 0.75));
+        background.setArcWidth(10);
+        background.setArcHeight(10);
 
         border = new Rectangle(0, 20, mapWidth, mapHeight);
         border.setFill(Color.TRANSPARENT);
-        border.setStroke(Color.rgb(120, 200, 255, 0.9));
-        border.setStrokeWidth(2.0);
-        border.setArcWidth(12);
-        border.setArcHeight(12);
+        border.setStroke(Color.rgb(186, 220, 255, 0.85));
+        border.setStrokeWidth(1.5);
+        border.setArcWidth(10);
+        border.setArcHeight(10);
 
         viewportRect = new Rectangle();
-        viewportRect.setFill(Color.color(0.2, 0.9, 1.0, 0.14));
-        viewportRect.setStroke(Color.web("#7ef0ff"));
-        viewportRect.setStrokeWidth(1.6);
-        viewportRect.setArcWidth(8);
-        viewportRect.setArcHeight(8);
+        viewportRect.setFill(Color.color(1.0, 1.0, 0.0, 0.12));
+        viewportRect.setStroke(Color.GOLD);
+        viewportRect.setStrokeWidth(1.8);
+        viewportRect.setArcWidth(6);
+        viewportRect.setArcHeight(6);
 
-        
+        title = new Label("MiniMap (M to toggle)");
+        title.setTextFill(Color.ALICEBLUE);
+        title.setLayoutX(4);
+        title.setLayoutY(0);
 
         buildingLayer = new Pane();
         buildingLayer.setLayoutY(20);
@@ -84,7 +89,7 @@ public class MiniMapOverlay {
         unitLayer.setLayoutY(20);
         unitLayer.setPickOnBounds(false);
 
-        root.getChildren().addAll(background, buildingLayer, unitLayer, viewportRect, border);
+        root.getChildren().addAll(background, buildingLayer, unitLayer, viewportRect, border, title);
 
         root.setOnMouseClicked(event -> {
             double mx = clamp(event.getX(), 0, background.getWidth());
@@ -186,28 +191,28 @@ public class MiniMapOverlay {
             }
             alive.add(world);
 
-            Polygon marker = buildingMarkers.get(world);
+            Rectangle marker = buildingMarkers.get(world);
             if (marker == null) {
-                marker = new Polygon();
+                marker = new Rectangle();
                 marker.setOpacity(0.8);
                 buildingMarkers.put(world, marker);
                 buildingLayer.getChildren().add(marker);
             }
 
-            double size = getBuildingMarkerSize(world);
-            updateBuildingMarkerShape(marker, world, size);
-            marker.setFill(world.getTeam() ? Color.web("#6fe3a4") : Color.web("#d46a6a"));
+            marker.setWidth(getBuildingMarkerSize(world));
+            marker.setHeight(getBuildingMarkerSize(world));
+            marker.setFill(world.getTeam() ? Color.LIMEGREEN : Color.INDIANRED);
             marker.setStroke(Color.color(0, 0, 0, 0.45));
             marker.setStrokeWidth(1.0);
-            marker.setLayoutX(worldToMiniX(world.x) + size * 0.5);
-            marker.setLayoutY(worldToMiniY(world.y) + size * 0.5);
+            marker.setX(worldToMiniX(world.x));
+            marker.setY(worldToMiniY(world.y));
         }
 
         Iterator<World> it = buildingMarkers.keySet().iterator();
         while (it.hasNext()) {
             World world = it.next();
             if (!alive.contains(world)) {
-                Polygon marker = buildingMarkers.get(world);
+                Rectangle marker = buildingMarkers.get(world);
                 buildingLayer.getChildren().remove(marker);
                 it.remove();
             }
@@ -223,20 +228,19 @@ public class MiniMapOverlay {
             }
             alive.add(unit);
 
-            Polygon marker = unitMarkers.get(unit);
+            Circle marker = unitMarkers.get(unit);
             if (marker == null) {
-                marker = new Polygon();
+                marker = new Circle();
                 unitMarkers.put(unit, marker);
                 unitLayer.getChildren().add(marker);
             }
 
-            double size = getUnitMarkerRadius(unit) * 2.0;
-            updateUnitMarkerShape(marker, size);
-            marker.setLayoutX(worldToMiniX(unit.x + 10));
-            marker.setLayoutY(worldToMiniY(unit.y + 10));
-            marker.setFill(unit.getTeam() ? Color.web("#5fe2b0") : Color.web("#ff7a7a"));
-            marker.setStroke(unit.isActive() ? Color.web("#ffd166") : Color.TRANSPARENT);
-            marker.setStrokeWidth(unit.isActive() ? 1.2 : 0.0);
+            marker.setRadius(getUnitMarkerRadius(unit));
+            marker.setCenterX(worldToMiniX(unit.x + 10));
+            marker.setCenterY(worldToMiniY(unit.y + 10));
+            marker.setFill(unit.getTeam() ? Color.web("#59e38f") : Color.web("#ff6b6b"));
+            marker.setStroke(unit.isActive() ? Color.GOLD : Color.TRANSPARENT);
+            marker.setStrokeWidth(unit.isActive() ? 1.4 : 0.0);
             marker.setOpacity(0.92);
         }
 
@@ -244,7 +248,7 @@ public class MiniMapOverlay {
         while (it.hasNext()) {
             Unit unit = it.next();
             if (!alive.contains(unit)) {
-                Polygon marker = unitMarkers.get(unit);
+                Circle marker = unitMarkers.get(unit);
                 unitLayer.getChildren().remove(marker);
                 it.remove();
             }
@@ -285,41 +289,6 @@ public class MiniMapOverlay {
             return 6.0;
         }
         return 5.6;
-    }
-
-    private void updateUnitMarkerShape(Polygon marker, double size) {
-        double half = size * 0.5;
-        marker.getPoints().setAll(
-            0.0, -half,
-            half, 0.0,
-            0.0, half,
-            -half, 0.0
-        );
-    }
-
-    private void updateBuildingMarkerShape(Polygon marker, World world, double size) {
-        double half = size * 0.5;
-        if (world instanceof Base) {
-            marker.getPoints().setAll(
-                -half, -half,
-                half, -half,
-                half, half,
-                -half, half
-            );
-        } else if (world instanceof Tower) {
-            marker.getPoints().setAll(
-                0.0, -half,
-                half, half,
-                -half, half
-            );
-        } else {
-            marker.getPoints().setAll(
-                0.0, -half,
-                half, 0.0,
-                0.0, half,
-                -half, 0.0
-            );
-        }
     }
 
     private void updateViewportRect() {

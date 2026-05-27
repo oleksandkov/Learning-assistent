@@ -271,7 +271,7 @@ public class World {
         oreTeamA = (int) HelloApplication.basesA.get(0).getOre();
         oreTeamB = (int) HelloApplication.basesB.get(0).getOre();
 
-        if (oreTeamA >= 20 && warriorsTeamA < 3) {
+        if (oreTeamA >= 20 && warriorsTeamA < 6) {
             HelloApplication.basesA.get(0).setOre(oreTeamA - 20);
             Unit newUnit = new Warrior();
             newUnit.setTeam(true);
@@ -279,7 +279,7 @@ public class World {
             newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
             newUnit.resurrect();
         }
-        if (oreTeamB >= 20 && warriorsTeamB < 3) {
+        if (oreTeamB >= 20 && warriorsTeamB < 6) {
             HelloApplication.basesB.get(0).setOre(oreTeamB - 20);
             Unit newUnit = new Warrior();
             newUnit.setTeam(false);
