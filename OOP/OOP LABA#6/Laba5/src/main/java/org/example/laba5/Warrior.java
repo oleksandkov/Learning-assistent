@@ -294,66 +294,92 @@ public class Warrior extends Unit {
         if (HelloApplication.units == null || this.image == null) {
             return null;
         }
+
+        Unit nearest = null;
+        double nearestDistance = Double.MAX_VALUE;
         double myCenterX = this.image.getBoundsInParent().getCenterX();
         double myCenterY = this.image.getBoundsInParent().getCenterY();
 
-        return HelloApplication.units.stream()
-                .filter(unit -> unit != null && unit != this && !unit.getDead() && unit.getTeam() != this.team && unit.image != null)
-                .min((u1, u2) -> {
-                    double d1x = u1.image.getBoundsInParent().getCenterX() - myCenterX;
-                    double d1y = u1.image.getBoundsInParent().getCenterY() - myCenterY;
-                    double dist1 = Math.hypot(d1x, d1y);
-                    double d2x = u2.image.getBoundsInParent().getCenterX() - myCenterX;
-                    double d2y = u2.image.getBoundsInParent().getCenterY() - myCenterY;
-                    double dist2 = Math.hypot(d2x, d2y);
-                    return Double.compare(dist1, dist2);
-                })
-                .filter(unit -> {
-                    double ux = unit.image.getBoundsInParent().getCenterX();
-                    double uy = unit.image.getBoundsInParent().getCenterY();
-                    double dist = Math.hypot(ux - myCenterX, uy - myCenterY);
-                    return dist < COMBAT_PRIORITY_RADIUS;
-                })
-                .orElse(null);
+        for (Unit unit : HelloApplication.units) {
+            if (unit == null || unit == this || unit.getDead() || unit.getTeam() == this.team || unit.image == null) {
+                continue;
+            }
+
+            double unitCenterX = unit.image.getBoundsInParent().getCenterX();
+            double unitCenterY = unit.image.getBoundsInParent().getCenterY();
+            double dx = unitCenterX - myCenterX;
+            double dy = unitCenterY - myCenterY;
+            double distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < COMBAT_PRIORITY_RADIUS && distance < nearestDistance) {
+                nearestDistance = distance;
+                nearest = unit;
+            }
+        }
+
+        return nearest;
     }
 
     private World findNearbyEnemyBuilding() {
         if (HelloApplication.buldings == null || this.image == null) {
             return null;
         }
+
+        World nearest = null;
+        double nearestDistance = Double.MAX_VALUE;
         double myCenterX = this.image.getBoundsInParent().getCenterX();
         double myCenterY = this.image.getBoundsInParent().getCenterY();
 
-        return HelloApplication.buldings.stream()
-                .filter(w -> w != null && w.getTeam() != this.team && w.imageView != null)
-                .min((w1, w2) -> {
-                    double d1 = Math.hypot(w1.imageView.getBoundsInParent().getCenterX() - myCenterX, w1.imageView.getBoundsInParent().getCenterY() - myCenterY);
-                    double d2 = Math.hypot(w2.imageView.getBoundsInParent().getCenterX() - myCenterX, w2.imageView.getBoundsInParent().getCenterY() - myCenterY);
-                    return Double.compare(d1, d2);
-                })
-                .filter(w -> Math.hypot(w.imageView.getBoundsInParent().getCenterX() - myCenterX, w.imageView.getBoundsInParent().getCenterY() - myCenterY) < COMBAT_PRIORITY_RADIUS)
-                .orElse(null);
+        for (World world : HelloApplication.buldings) {
+            if (world == null || world.getTeam() == this.team || world.imageView == null) {
+                continue;
+            }
+
+            double worldCenterX = world.imageView.getBoundsInParent().getCenterX();
+            double worldCenterY = world.imageView.getBoundsInParent().getCenterY();
+            double dx = worldCenterX - myCenterX;
+            double dy = worldCenterY - myCenterY;
+            double distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < COMBAT_PRIORITY_RADIUS && distance < nearestDistance) {
+                nearestDistance = distance;
+                nearest = world;
+            }
+        }
+
+        return nearest;
     }
 
     private World findBestSourceTarget() {
         if (HelloApplication.buldings == null || this.image == null) {
             return null;
         }
+
+        World closest = null;
+        double closestDistance = Double.MAX_VALUE;
         double myCenterX = this.image.getBoundsInParent().getCenterX();
         double myCenterY = this.image.getBoundsInParent().getCenterY();
 
-        // If any source intersects, return it immediately
-        return HelloApplication.buldings.stream()
-                .filter(b -> b != null && b.getTeam() == this.team && b instanceof Source && b.imageView != null)
-                .filter(b -> this.image.getBoundsInParent().intersects(b.imageView.getBoundsInParent()))
-                .findFirst()
-                .orElseGet(() -> HelloApplication.buldings.stream()
-                        .filter(b -> b != null && b.getTeam() == this.team && b instanceof Source && b.imageView != null)
-                        .min((b1, b2) -> {
-                            double d1 = Math.hypot(b1.imageView.getBoundsInParent().getCenterX() - myCenterX, b1.imageView.getBoundsInParent().getCenterY() - myCenterY);
-                            double d2 = Math.hypot(b2.imageView.getBoundsInParent().getCenterX() - myCenterX, b2.imageView.getBoundsInParent().getCenterY() - myCenterY);
-                            return Double.compare(d1, d2);
-                        }).orElse(null));
+        for (World build : HelloApplication.buldings) {
+            if (build == null || build.getTeam() != this.team || !(build instanceof Source) || build.imageView == null) {
+                continue;
+            }
+
+            if (this.image.getBoundsInParent().intersects(build.imageView.getBoundsInParent())) {
+                return build;
+            }
+
+            double targetCenterX = build.imageView.getBoundsInParent().getCenterX();
+            double targetCenterY = build.imageView.getBoundsInParent().getCenterY();
+            double distance = Math.hypot(targetCenterX - myCenterX, targetCenterY - myCenterY);
+
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closest = build;
+            }
+        }
+
+        return closest;
     }
 
     private World getTeamBase() {
@@ -406,40 +432,43 @@ public class Warrior extends Unit {
         }
 
         if (HelloApplication.units != null) {
-            Unit target = HelloApplication.units.stream()
-                    .filter(unit -> unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null)
-                    .filter(unit -> this.image.getBoundsInParent().intersects(unit.image.getBoundsInParent()))
-                    .findFirst().orElse(null);
-            if (target != null) {
-                intersects = true;
-                int targetHealth = target.getHealth() == null ? 0 : target.getHealth();
-                int newHealth = targetHealth + this.getDamage();
-                target.setHealth(newHealth);
+            for (Unit unit : HelloApplication.units) {
+                if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
+                    intersects = this.image.getBoundsInParent().intersects(unit.image.getBoundsInParent());
+                    if (intersects) {
+                        int targetHealth = unit.getHealth() == null ? 0 : unit.getHealth();
+                        int newHealth = targetHealth + this.getDamage();
+                        unit.setHealth(newHealth);
 
-                System.out.println("[Combat Inverse] " + this.getClass().getSimpleName() + " (" + (this.team ? "Ally" : "Enemy") + 
-                                   ") healed " + target.getClass().getSimpleName() + 
-                                   " (" + (target.team ? "Ally" : "Enemy") + ") for " + this.getDamage() + " HP. Target HP: " + newHealth);
+                        System.out.println("[Combat Inverse] " + this.getClass().getSimpleName() + " (" + (this.team ? "Ally" : "Enemy") + 
+                                           ") healed " + unit.getClass().getSimpleName() + 
+                                           " (" + (unit.team ? "Ally" : "Enemy") + ") for " + this.getDamage() + " HP. Target HP: " + newHealth);
 
-                if (newHealth <= 0) {
-                    target.setHealth(0);
-                    plusObjectedKilled();
-                    target.removeUnitFromGame();
+                        if (newHealth <= 0) {
+                            unit.setHealth(0);
+                            plusObjectedKilled();
+                            unit.removeUnitFromGame();
+                        }
+
+                        break;
+                    }
                 }
             }
         }
         if (HelloApplication.buldings != null) {
-            HelloApplication.buldings.stream()
-                    .filter(world -> world != null && world.getTeam() != this.team && world.imageView != null)
-                    .filter(world -> this.image.getBoundsInParent().intersects(world.imageView.getBoundsInParent()))
-                    .findFirst().ifPresent(world -> {
-                        intersects = true;
+            for (World world : HelloApplication.buldings) {
+                if (world != null && world.getTeam() != this.team && world.imageView != null) {
+                    intersects = this.image.getBoundsInParent().intersects(world.imageView.getBoundsInParent());
+                    if (intersects) {
                         int targetHealth = world.getHealth() == 0 ? 0 : (int) world.getHealth();
                         int newHealth = targetHealth + this.getDamage();
                         world.setHealth(newHealth);
                         System.out.println("[Combat Inverse] " + this.getClass().getSimpleName() + " (" + (this.team ? "Ally" : "Enemy") + 
                                            ") healed Building " + world.name + 
                                            " (" + (world.team ? "Ally" : "Enemy") + ") for " + this.getDamage() + " HP. Target HP: " + newHealth);
-                    });
+                    }
+                }
+            }
         }
         if (!intersects) {
             return;
