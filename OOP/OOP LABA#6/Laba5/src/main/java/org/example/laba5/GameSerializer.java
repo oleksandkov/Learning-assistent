@@ -1,9 +1,21 @@
 package org.example.laba5;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -11,12 +23,14 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 
 public class GameSerializer {
 
@@ -30,7 +44,7 @@ public class GameSerializer {
             }
             showInfo("Save successful", "Game saved to:\n" + file.getAbsolutePath());
         } catch (Exception e) {
-            showError("Save failed", e.getMessage());
+            showError("Save failed", e);
             e.printStackTrace();
         }
     }
@@ -47,7 +61,7 @@ public class GameSerializer {
             bringUnitsToFront();
             showInfo("Load successful", "Game loaded from:\n" + file.getAbsolutePath());
         } catch (Exception e) {
-            showError("Load failed", e.getMessage());
+            showError("Load failed", e);
             e.printStackTrace();
         }
     }
@@ -264,38 +278,71 @@ public class GameSerializer {
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(file);
         doc.getDocumentElement().normalize();
-
         NodeList unitNodes = doc.getElementsByTagName("Unit");
         for (int i = 0; i < unitNodes.getLength(); i++) {
-            Element el       = (Element) unitNodes.item(i);
-            String type      = el.getAttribute("type");
-            double x         = Double.parseDouble(el.getAttribute("x"));
-            double y         = Double.parseDouble(el.getAttribute("y"));
-            int health       = Integer.parseInt(el.getAttribute("health"));
-            int damage       = Integer.parseInt(el.getAttribute("damage"));
-            double maxHealth = Double.parseDouble(el.getAttribute("maxHealth"));
-            boolean team     = Boolean.parseBoolean(el.getAttribute("team"));
-            boolean isDead   = Boolean.parseBoolean(el.getAttribute("isDead"));
-            boolean spawned  = Boolean.parseBoolean(el.getAttribute("isSpawned"));
-            String invStr    = el.getAttribute("inventor");
-            ArrayList<String> inv = new ArrayList<>();
-            if (!invStr.isEmpty()) inv.addAll(Arrays.asList(invStr.split(",")));
-            spawnLoadedUnit(type, x, y, health, damage, (int) maxHealth, team, isDead, spawned, inv);
+            try {
+                Element el = (Element) unitNodes.item(i);
+                String type = getAttr(el, "type", "");
+                double x = parseDouble(el, "x", 0.0);
+                double y = parseDouble(el, "y", 0.0);
+                int health = parseInt(el, "health", 100);
+                int damage = parseInt(el, "damage", 5);
+                double maxHealth = parseDouble(el, "maxHealth", 100.0);
+                boolean team = parseBoolean(el, "team", true);
+                boolean isDead = parseBoolean(el, "isDead", false);
+                boolean spawned = parseBoolean(el, "isSpawned", false);
+                String invStr = getAttr(el, "inventor", "");
+                ArrayList<String> inv = new ArrayList<>();
+                if (!invStr.isEmpty()) inv.addAll(Arrays.asList(invStr.split(",")));
+                spawnLoadedUnit(type, x, y, health, damage, (int) maxHealth, team, isDead, spawned, inv);
+            } catch (Exception ex) {
+                System.err.println("GameSerializer: failed to parse a <Unit> node: " + ex);
+                ex.printStackTrace();
+            }
         }
 
         NodeList buildNodes = doc.getElementsByTagName("Building");
         for (int i = 0; i < buildNodes.getLength(); i++) {
-            Element el       = (Element) buildNodes.item(i);
-            String type      = el.getAttribute("type");
-            String name      = el.getAttribute("name");
-            double x         = Double.parseDouble(el.getAttribute("x"));
-            double y         = Double.parseDouble(el.getAttribute("y"));
-            double health    = Double.parseDouble(el.getAttribute("health"));
-            double maxHealth = Double.parseDouble(el.getAttribute("maxHealth"));
-            boolean team     = Boolean.parseBoolean(el.getAttribute("team"));
-            double ore       = Double.parseDouble(el.getAttribute("ore"));
-            spawnLoadedBuilding(type, name, x, y, maxHealth, health, team, ore);
+            try {
+                Element el = (Element) buildNodes.item(i);
+                String type = getAttr(el, "type", "");
+                String name = getAttr(el, "name", "");
+                double x = parseDouble(el, "x", 0.0);
+                double y = parseDouble(el, "y", 0.0);
+                double health = parseDouble(el, "health", 200.0);
+                double maxHealth = parseDouble(el, "maxHealth", 200.0);
+                boolean team = parseBoolean(el, "team", true);
+                double ore = parseDouble(el, "ore", 0.0);
+                spawnLoadedBuilding(type, name, x, y, maxHealth, health, team, ore);
+            } catch (Exception ex) {
+                System.err.println("GameSerializer: failed to parse a <Building> node: " + ex);
+                ex.printStackTrace();
+            }
         }
+    }
+
+    private static String getAttr(Element el, String name, String def) {
+        if (el == null) return def;
+        String v = el.getAttribute(name);
+        return v == null ? def : v;
+    }
+
+    private static double parseDouble(Element el, String name, double def) {
+        String v = getAttr(el, name, "");
+        if (v.isEmpty()) return def;
+        try { return Double.parseDouble(v); } catch (NumberFormatException ex) { return def; }
+    }
+
+    private static int parseInt(Element el, String name, int def) {
+        String v = getAttr(el, name, "");
+        if (v.isEmpty()) return def;
+        try { return Integer.parseInt(v); } catch (NumberFormatException ex) { return def; }
+    }
+
+    private static boolean parseBoolean(Element el, String name, boolean def) {
+        String v = getAttr(el, name, "");
+        if (v.isEmpty()) return def;
+        return Boolean.parseBoolean(v);
     }
 
     private static void spawnLoadedUnit(String type, double x, double y,
@@ -321,7 +368,6 @@ public class GameSerializer {
         unit.setMaxHealth(maxHealth);
         unit.setInventor(inventor);
         HelloApplication.units.add(unit);
-        unit.setPosition(x, y);
         unit.resurrect();
     }
 
@@ -337,19 +383,19 @@ public class GameSerializer {
             case "Base" -> {
                 Base b = new Base();
                 b.setTeam(team);
-                b.initGraphics(imgBase, name, 0, x, y, maxHealth, health);
+                b.initGraphics(imgBase, name, 0, Math.round(x), Math.round(y), maxHealth, health);
                 yield b;
             }
             case "Tower" -> {
                 Tower t = new Tower();
                 t.setTeam(team);
-                t.initGraphics(imgTower, name, 0, x, y, maxHealth, health);
+                t.initGraphics(imgTower, name, 0, Math.round(x), Math.round(y), maxHealth, health);
                 yield t;
             }
             case "Source" -> {
                 Source s = new Source();
                 s.setTeam(team);
-                s.initGraphics(imgSource, name, 0, x, y, maxHealth, health);
+                s.initGraphics(imgSource, name, 0, Math.round(x), Math.round(y), maxHealth, health);
                 yield s;
             }
             default -> {
@@ -420,6 +466,26 @@ public class GameSerializer {
             a.setTitle(title);
             a.setHeaderText(null);
             a.setContentText(msg != null ? msg : "Unknown error");
+            a.showAndWait();
+        });
+    }
+
+    private static void showError(String title, Throwable t) {
+        StringBuilder sb = new StringBuilder();
+        if (t == null) sb.append("Unknown error");
+        else {
+            sb.append(t.toString()).append("\n");
+            java.io.StringWriter sw = new java.io.StringWriter();
+            t.printStackTrace(new java.io.PrintWriter(sw));
+            sb.append(sw.toString());
+        }
+        final String content = sb.length() > 2000 ? sb.substring(0, 2000) + "\n...(truncated)" : sb.toString();
+        System.err.println(content);
+        Platform.runLater(() -> {
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setTitle(title);
+            a.setHeaderText(null);
+            a.setContentText(content);
             a.showAndWait();
         });
     }
