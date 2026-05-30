@@ -1,0 +1,358 @@
+package org.example.laba5;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+
+import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+
+public class Centurio extends Warrior{
+    private static String name = "Centurio";
+    private static final double MAX_HEALTH = 120.0;
+    private double healNum = 10.0;
+    private static final long HEAL_COOLDOWN = 2000; 
+    private long lastHealTime = 0;
+
+
+    private Label killCountLabel;
+    private int killCount = 0;
+    private HashSet<Unit> countedKills = new HashSet<>();  
+
+    private Double maxHealth = MAX_HEALTH;
+
+    @Override
+    public double getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getKillCount() {
+        return killCount;
+    }
+    @Override
+    public Label getKillCountLabel() {
+        return killCountLabel;
+    }
+
+    public void setKillCount(int killCount) {
+        this.killCount = killCount;
+    }
+     @Override
+    protected double labelDeltaX() {
+        return 10.0;
+    }
+
+    @Override
+    protected double labelDeltaY() {
+        return -10.0;
+    }
+
+    @Override
+    protected double lifeDeltaX() {
+        return 0.0;
+    }
+
+    @Override
+    protected double lifeDeltaY() {
+        return 10.0;
+    }
+
+    @Override
+    protected double rectDeltaX() {
+        return -9.0;
+    }
+
+    @Override
+    protected double rectDeltaY() {
+        return -9.0;
+    }
+
+    @Override
+    protected double imageDeltaX() {
+        return 0.0;
+    }
+
+    @Override
+    protected double imageDeltaY() {
+        return 12.0;
+    }
+
+    @Override
+    public void setCoordinates() {
+        super.setCoordinates();
+        if (mainWeaponImage != null) {
+            mainWeaponImage.setX(x);
+            mainWeaponImage.setY(y + 17);
+        }
+        if (this.getClass() == Centurio.class && killCountLabel != null) {
+            killCountLabel.setText("Kills : " + killCount);
+            killCountLabel.setLayoutX(x + 60);
+            killCountLabel.setLayoutY(y - 10);
+        }
+    }
+
+    public static String getName() {
+        return name;
+    }
+
+    public Centurio(Integer health, Boolean isSpawned, boolean team, Integer damage, Boolean isDead, ArrayList<String> inventor) {
+        this(health, isSpawned, team, damage, isDead, inventor, 0.0, 0.0);
+        initGraphics(getName(), x, y);
+    }
+
+    public Centurio(Integer health, Boolean isSpawned, boolean team, Integer damage, Boolean isDead,
+                   ArrayList<String> inventor, double startX, double startY) {
+        super(health, isSpawned, team, damage, isDead, inventor);
+        initGraphics(getName(), startX, startY);
+    }
+
+    public Centurio() {
+        this((int) MAX_HEALTH, true, true, 5, false, new ArrayList<>(Arrays.asList("Spear")), 0.0, 0.0);
+        initGraphics(getName(), x, y);
+    }
+
+    private void initGraphics(String name, double startX, double startY) {
+        this.x = startX;
+        this.y = startY;
+        setMaxHealth(MAX_HEALTH);
+
+        this.labelName = new Label(name);
+
+        life = new Line();
+        life.setStrokeWidth(5);
+        life.setStroke(Color.LIGHTGREEN);
+
+        image = new ImageView(HelloApplication.imgCenturio);
+        image.setFitWidth(100);
+        image.setFitHeight(100);
+
+        isActive = false;
+        rectActive = new Rectangle(x - 5, y - 5, 110, 110);
+        rectActive.setFill(Color.TRANSPARENT);
+        rectActive.setStrokeWidth(3);
+        rectActive.setStroke(Color.GREEN);
+
+        killCountLabel = new Label("Kills : " + killCount);
+
+        setCoordinates();
+    }
+
+    private void heal(World target) {
+        if (target == null || target.imageView == null || this.image == null) {
+            return;
+        }
+        double myCenterX = this.image.getBoundsInParent().getCenterX();
+        double myCenterY = this.image.getBoundsInParent().getCenterY();
+        double targetCenterX = target.imageView.getBoundsInParent().getCenterX();
+        double targetCenterY = target.imageView.getBoundsInParent().getCenterY();
+
+        boolean isIntersecting = Math.sqrt(Math.pow(targetCenterX - myCenterX, 2) + Math.pow(targetCenterY - myCenterY, 2)) < 100;
+
+        if (isIntersecting) {
+            double newHealth = Math.min(target.getHealth() + this.healNum, target.getMaxHealth());
+            target.setHealth(newHealth);
+        }
+    }
+
+    @Override
+    public void attack() {
+        if (HelloApplication.units != null) {
+            
+            ArrayList<Unit> aliveEnemies = new ArrayList<>();
+            for (Unit unit : HelloApplication.units) {
+                if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
+                    boolean intersects = this.image.getBoundsInParent().intersects(unit.image.getBoundsInParent());
+                    if (intersects) {
+                        aliveEnemies.add(unit);
+                        break;
+                    }
+                }
+            }
+            
+            super.attack();
+            
+            for (Unit enemy : aliveEnemies) {
+                if (enemy.getDead() && !countedKills.contains(enemy)) {
+                    killCount++;
+                    countedKills.add(enemy);
+                }
+            }
+        } else {
+            super.attack();
+        }
+    }
+
+    @Override
+    public void resurrect() {
+        super.resurrect();
+        if (this.getClass() == Centurio.class && killCountLabel != null && HelloApplication.group != null) {
+            if (!HelloApplication.group.getChildren().contains(killCountLabel)) {
+                HelloApplication.group.getChildren().add(killCountLabel);
+            }
+        }
+    }
+
+    @Override
+    public void removeUnitFromGame() {
+        if (HelloApplication.group != null && killCountLabel != null) {
+            HelloApplication.group.getChildren().remove(killCountLabel);
+        }
+        countedKills.clear();
+        super.removeUnitFromGame();
+    }
+
+    
+
+    @Override
+    public void promotion() {
+        if (this.getKillCount() >= 5) {
+            
+            
+            int pretorioHealth = 150; 
+            int newDamage = this.getDamage() + 2; 
+            
+            Pretorio pretorio = new Pretorio(
+                pretorioHealth, 
+                true, 
+                this.team, 
+                newDamage, 
+                false, 
+                new ArrayList<>(this.getInventor()), 
+                this.x, 
+                this.y
+            );
+            
+            pretorio.setKillCount(this.getKillCount());
+            
+            HelloApplication.units.add(pretorio);
+            pretorio.resurrect();
+            this.removeUnitFromGame();
+        }
+    }
+
+    @Override
+    public void logic() {
+        World mainTarget = null;
+        Unit subTarget = null;
+        World healTarget = null;
+        boolean goToMain = false;
+        double distanceToMainTarget = Double.MAX_VALUE;
+        double distanceToSubTarget = Double.MAX_VALUE;
+        double distanceToHealTarget = Double.MAX_VALUE;
+
+        if (HelloApplication.units != null && !this.isActive()) {
+            double myCenterX = this.image.getBoundsInParent().getCenterX();
+            double myCenterY = this.image.getBoundsInParent().getCenterY();
+            for (Unit unit : HelloApplication.units) {
+                if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
+                    double unitCenterX = unit.image.getBoundsInParent().getCenterX();
+                    double unitCenterY = unit.image.getBoundsInParent().getCenterY();
+                    double dx = unitCenterX - myCenterX;
+                    double dy = unitCenterY - myCenterY;
+                    double distancesub = Math.sqrt(dx * dx + dy * dy);
+                    if (distancesub < distanceToSubTarget) {
+                        distanceToSubTarget = distancesub;
+                        subTarget = unit;
+                    }
+                }
+            }
+        }
+
+        if (HelloApplication.buldings != null) {
+            double myCenterX = this.image.getBoundsInParent().getCenterX();
+            double myCenterY = this.image.getBoundsInParent().getCenterY();
+            for (World world : HelloApplication.buldings) {
+                if (world != null && world.getTeam() != this.team && world.imageView != null) {
+                    double worldCenterX = world.imageView.getBoundsInParent().getCenterX();
+                    double worldCenterY = world.imageView.getBoundsInParent().getCenterY();
+                    double dx = worldCenterX - myCenterX;
+                    double dy = worldCenterY - myCenterY;
+                    double distancemain = Math.sqrt(dx * dx + dy * dy);
+                    if (distancemain < distanceToMainTarget) {
+                        distanceToMainTarget = distancemain;
+                        mainTarget = world;
+                    }
+                }
+            }
+        }
+
+        if (HelloApplication.buldings != null) {
+            for (World world : HelloApplication.buldings) {
+                if (world != null && world.getTeam() == this.team && world.imageView != null && world.getHealth() < world.getMaxHealth()) {
+                    double myCenterX = this.image.getBoundsInParent().getCenterX();
+                    double myCenterY = this.image.getBoundsInParent().getCenterY();
+                    double worldCenterX = world.imageView.getBoundsInParent().getCenterX();
+                    double worldCenterY = world.imageView.getBoundsInParent().getCenterY();
+                    
+                    double dx = worldCenterX - myCenterX;
+                    double dy = worldCenterY - myCenterY;
+                    double distanceheal = Math.sqrt(dx * dx + dy * dy);
+                    if (distanceheal < distanceToHealTarget && world.team == this.team && world.getHealth() < world.getMaxHealth() / 2) {
+                        distanceToHealTarget = distanceheal;
+                        healTarget = world;
+                    }
+                }
+            }
+        }
+
+        if (!this.isActive()) {
+            if (healTarget != null) {
+                if (distanceToHealTarget > 80.0) {
+                    double targetCenterX = healTarget.imageView.getBoundsInParent().getCenterX();
+                    double targetCenterY = healTarget.imageView.getBoundsInParent().getCenterY();
+                    this.moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
+                }
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - lastHealTime >= HEAL_COOLDOWN) {
+                    heal(healTarget);
+                    lastHealTime = currentTime;
+                }
+                if (healTarget.getHealth() >= healTarget.getMaxHealth()) {
+                    healTarget = null;
+                }
+                return;
+            }
+            if (mainTarget != null && subTarget != null) {
+                goToMain = distanceToMainTarget < distanceToSubTarget;
+            } else if (mainTarget != null) {
+                goToMain = true;
+            } else if (subTarget != null) {
+                goToMain = false;
+            } else {
+                return;
+            }
+
+            if (goToMain) {
+                if (distanceToMainTarget > 130.0) {
+                    double targetCenterX = mainTarget.imageView.getBoundsInParent().getCenterX();
+                    double targetCenterY = mainTarget.imageView.getBoundsInParent().getCenterY();
+                    this.moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
+                }
+            } else {
+                if (distanceToSubTarget > 70.0) {
+                    double targetCenterX = subTarget.image.getBoundsInParent().getCenterX();
+                    double targetCenterY = subTarget.image.getBoundsInParent().getCenterY();
+                    this.moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
+                }
+            }
+
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - lastAttackTime >= ATTACK_COOLDOWN) {
+                attack();
+                lastAttackTime = currentTime;
+            }
+        }
+        
+        promotion();
+    }
+
+    @Override
+    protected Unit clone() throws CloneNotSupportedException {
+        Centurio cloned = (Centurio) super.clone();
+        cloned.killCount = this.killCount;
+        return cloned;
+    }
+}
