@@ -1,39 +1,32 @@
-package org.example.laba5;
+package org.example.laba5.Unit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import org.example.laba5.Unit.Unit;
-import org.example.laba5.Unit.Warrior;
+import org.example.laba5.Base;
+import org.example.laba5.HelloApplication;
+import org.example.laba5.World;
 
-public class Centurio extends Warrior{
+public class Centurio extends Warrior {
     private static String name = "Centurio";
     private static final double MAX_HEALTH = 120.0;
     private double healNum = 10.0;
     private static final long HEAL_COOLDOWN = 2000; 
     private long lastHealTime = 0;
 
-
     private Label killCountLabel;
     private int killCount = 0;
     private HashSet<Unit> countedKills = new HashSet<>();  
 
-    private Double maxHealth = MAX_HEALTH;
-
-    @Override
-    public double getMaxHealth() {
-        return maxHealth;
-    }
-
     public int getKillCount() {
         return killCount;
     }
+
     @Override
     public Label getKillCountLabel() {
         return killCountLabel;
@@ -42,7 +35,8 @@ public class Centurio extends Warrior{
     public void setKillCount(int killCount) {
         this.killCount = killCount;
     }
-     @Override
+
+    @Override
     protected double labelDeltaX() {
         return 10.0;
     }
@@ -106,14 +100,13 @@ public class Centurio extends Warrior{
     }
 
     public Centurio(Integer health, Boolean isSpawned, boolean team, Integer damage, Boolean isDead,
-                   ArrayList<String> inventor, double startX, double startY) {
+                    ArrayList<String> inventor, double startX, double startY) {
         super(health, isSpawned, team, damage, isDead, inventor);
         initGraphics(getName(), startX, startY);
     }
 
     public Centurio() {
         this((int) MAX_HEALTH, true, true, 5, false, new ArrayList<>(Arrays.asList("Spear")), 0.0, 0.0);
-        initGraphics(getName(), x, y);
     }
 
     private void initGraphics(String name, double startX, double startY) {
@@ -162,7 +155,6 @@ public class Centurio extends Warrior{
     @Override
     public void attack() {
         if (HelloApplication.units != null) {
-            
             ArrayList<Unit> aliveEnemies = new ArrayList<>();
             for (Unit unit : HelloApplication.units) {
                 if (unit != this && unit.getTeam() != this.team && !unit.getDead() && unit.image != null) {
@@ -202,17 +194,13 @@ public class Centurio extends Warrior{
         if (HelloApplication.group != null && killCountLabel != null) {
             HelloApplication.group.getChildren().remove(killCountLabel);
         }
-        countedKills.clear();  // Clear kill tracking when this Centurio is removed
+        countedKills.clear();
         super.removeUnitFromGame();
     }
-
-    
 
     @Override
     public void promotion() {
         if (this.getKillCount() >= 5) {
-            
-            
             int pretorioHealth = 150; 
             int newDamage = this.getDamage() + 2; 
             
@@ -228,7 +216,6 @@ public class Centurio extends Warrior{
             );
             
             pretorio.setKillCount(this.getKillCount());
-            
             HelloApplication.units.add(pretorio);
             pretorio.resurrect();
             this.removeUnitFromGame();
@@ -263,10 +250,10 @@ public class Centurio extends Warrior{
             }
         }
 
-        if (HelloApplication.buldings != null) {
+        if (HelloApplication.buildings != null) {
             double myCenterX = this.image.getBoundsInParent().getCenterX();
             double myCenterY = this.image.getBoundsInParent().getCenterY();
-            for (World world : HelloApplication.buldings) {
+            for (World world : HelloApplication.buildings) {
                 if (world != null && world.getTeam() != this.team && world.imageView != null) {
                     double worldCenterX = world.imageView.getBoundsInParent().getCenterX();
                     double worldCenterY = world.imageView.getBoundsInParent().getCenterY();
@@ -281,8 +268,8 @@ public class Centurio extends Warrior{
             }
         }
 
-        if (HelloApplication.buldings != null) {
-            for (World world : HelloApplication.buldings) {
+        if (HelloApplication.buildings != null) {
+            for (World world : HelloApplication.buildings) {
                 if (world != null && world.getTeam() == this.team && world.imageView != null && world.getHealth() < world.getMaxHealth()) {
                     double myCenterX = this.image.getBoundsInParent().getCenterX();
                     double myCenterY = this.image.getBoundsInParent().getCenterY();
@@ -347,7 +334,6 @@ public class Centurio extends Warrior{
                 lastAttackTime = currentTime;
             }
         }
-        
         promotion();
     }
 

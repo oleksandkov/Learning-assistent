@@ -6,7 +6,6 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
-
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.layout.Background;
@@ -17,6 +16,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import org.example.laba5.Unit.Unit;
+import org.example.laba5.Unit.Centurio;
+import org.example.laba5.Unit.Pretorio;
 
 public class MiniMapOverlay {
     private static final double SCALE = 0.08;
@@ -74,8 +75,6 @@ public class MiniMapOverlay {
         viewportRect.setStrokeWidth(1.6);
         viewportRect.setArcWidth(8);
         viewportRect.setArcHeight(8);
-
-        
 
         buildingLayer = new Pane();
         buildingLayer.setLayoutY(20);

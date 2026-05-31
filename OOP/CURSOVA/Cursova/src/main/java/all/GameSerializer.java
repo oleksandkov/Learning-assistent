@@ -14,8 +14,10 @@ import javax.xml.transform.stream.StreamResult;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
+import org.example.laba5.Unit.Centurio;
 import org.example.laba5.Unit.Unit;
 import org.example.laba5.Unit.Warrior;
+import org.example.laba5.Unit.Pretorio;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -71,7 +73,7 @@ public class GameSerializer {
                 pw.println("inventor="  + String.join(",", u.getInventor()));
                 pw.println("[/UNIT]");
             }
-            for (World w : HelloApplication.buldings) {
+            for (World w : HelloApplication.buildings) {
                 if (w == null) continue;
                 pw.println("[BUILDING]");
                 pw.println("type="      + w.getClass().getSimpleName());
@@ -161,8 +163,8 @@ public class GameSerializer {
                 dos.writeInt(inv == null ? 0 : inv.size());
                 if (inv != null) for (String s : inv) dos.writeUTF(s);
             }
-            dos.writeInt(HelloApplication.buldings.size());
-            for (World w : HelloApplication.buldings) {
+            dos.writeInt(HelloApplication.buildings.size());
+            for (World w : HelloApplication.buildings) {
                 if (w == null) { dos.writeUTF("null"); continue; }
                 dos.writeUTF(w.getClass().getSimpleName());
                 dos.writeUTF(w.name != null ? w.name : "");
@@ -241,7 +243,7 @@ public class GameSerializer {
 
         Element buildingsEl = doc.createElement("Buildings");
         root.appendChild(buildingsEl);
-        for (World w : HelloApplication.buldings) {
+        for (World w : HelloApplication.buildings) {
             if (w == null) continue;
             Element el = doc.createElement("Building");
             el.setAttribute("type",      w.getClass().getSimpleName());
@@ -362,7 +364,7 @@ public class GameSerializer {
         if (world == null) return;
         world.setOre(ore);
         world.resurrectWorld();
-        HelloApplication.buldings.add(world);
+        HelloApplication.buildings.add(world);
         if (world instanceof Base b) {
             if (team) HelloApplication.basesA.add(b);
             else HelloApplication.basesB.add(b);
@@ -394,10 +396,10 @@ public class GameSerializer {
             if (u != null) u.removeUnitFromGame();
         }
         HelloApplication.units.clear();
-        for (World w : new ArrayList<>(HelloApplication.buldings)) {
+        for (World w : new ArrayList<>(HelloApplication.buildings)) {
             if (w != null) w.removeBuildingFromGame();
         }
-        HelloApplication.buldings.clear();
+        HelloApplication.buildings.clear();
         HelloApplication.basesA.clear();
         HelloApplication.basesB.clear();
         HelloApplication.towersA.clear();

@@ -1,30 +1,23 @@
-package org.example.laba5;
+package org.example.laba5.Unit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import org.example.laba5.Unit.Unit;
+import org.example.laba5.HelloApplication;
+import org.example.laba5.World;
 
 public class Pretorio extends Centurio {
     private static String name = "Pretorio";
     private static final double MAX_HEALTH = 150.0;
-    private double  healNum = 5.0;
+    private double healNum = 5.0;
     private Circle areaOfEffect;
     private static final long HEALAREA_COOLDOWN = 1000;
     private long lastHealAreaTime = 0;
-
-    private Double maxHealth = MAX_HEALTH;
-
-    @Override
-    public double getMaxHealth() {
-        return maxHealth;
-    }
 
     @Override
     protected double labelDeltaX() {
@@ -83,7 +76,6 @@ public class Pretorio extends Centurio {
 
     public Pretorio() {
         this((int) MAX_HEALTH, true, true, 5, false, new ArrayList<>(Arrays.asList("Sword")), 0.0, 0.0);
-        initGraphics(getName(), x, y);
     }
 
     private void initGraphics(String name, double startX, double startY) {
@@ -125,7 +117,6 @@ public class Pretorio extends Centurio {
             }
             areaOfEffect.toBack();
             areaOfEffect.setVisible(this.isActive);
-
         }
         if (mainWeaponImage != null) {
             mainWeaponImage.setY(y + 17);
@@ -188,6 +179,7 @@ public class Pretorio extends Centurio {
             }
         }
     }
+
     @Override
     public void logic() {
         World mainTarget = null;
@@ -216,8 +208,8 @@ public class Pretorio extends Centurio {
                 }
             }
 
-            if (HelloApplication.buldings != null) {
-                for (World world : HelloApplication.buldings) {
+            if (HelloApplication.buildings != null) {
+                for (World world : HelloApplication.buildings) {
                     if (world != null && world.getTeam() != this.team && world.imageView != null) {
                         double myCenterX = this.image.getBoundsInParent().getCenterX();
                         double myCenterY = this.image.getBoundsInParent().getCenterY();
@@ -273,4 +265,3 @@ public class Pretorio extends Centurio {
         }
     }
 }
-

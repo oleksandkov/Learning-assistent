@@ -5,12 +5,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -28,9 +28,12 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.example.laba5.Unit.Unit;
 import org.example.laba5.Unit.Warrior;
-
+import org.example.laba5.Unit.Centurio;
+import org.example.laba5.Unit.Pretorio;
 
 public class HelloApplication extends Application {
+
+    private static final String APP_TITLE = "Roman Conquest";
 
     public static final double WORLD_WIDTH = 6400.0;
     public static final double WORLD_HEIGHT = 4800.0;
@@ -50,8 +53,6 @@ public class HelloApplication extends Application {
     public static ArrayList<Centurio> centurios;
     public static ArrayList<Pretorio> pretorios;
     public static ArrayList<Unit> units;
-    
-
 
     private final Map<KeyCode, Double> keysPresses = new HashMap<>();
     private final Map<KeyCode, Boolean> keysPressed = new HashMap<>();
@@ -67,13 +68,13 @@ public class HelloApplication extends Application {
     public static ArrayList<Source> sourcesB = new ArrayList<>();
     public static ArrayList<Base> basesB = new ArrayList<>();
     
-    public static ArrayList<World> buldings = new ArrayList<>();
+    public static ArrayList<World> buildings = new ArrayList<>();
     private Pane cameraViewport;
     private Pane worldLayer;
     private Pane overlayPane;
     private Label oreLabelTeamA;
     private Label oreLabelTeamB;
-    private UnitInvetorWindow unitInvetorWindow;
+    private UnitInventorWindow unitInventorWindow;
     private UnitSearchWindow unitSearchWindow;
     private MiniMapOverlay miniMapOverlay;
     private double cameraX;
@@ -105,7 +106,7 @@ public class HelloApplication extends Application {
 
         Pane root = new Pane(cameraViewport, overlayPane);
         scene = new Scene(root, 1920, 1080);
-        unitInvetorWindow = new UnitInvetorWindow();
+        unitInventorWindow = new UnitInventorWindow();
         unitSearchWindow = new UnitSearchWindow();
 
         oreLabelTeamA = new Label();
@@ -141,7 +142,6 @@ public class HelloApplication extends Application {
                 }
                 return;
             }
-            // Z — Open save / import dialog
             if (code == KeyCode.Z && !e.isControlDown()) {
                 if (!handledActionKeys.contains(KeyCode.Z)) {
                     handledActionKeys.add(KeyCode.Z);
@@ -175,7 +175,6 @@ public class HelloApplication extends Application {
             handledActionKeys.remove(code);
         });
 
-
         URL warriorUrl = HelloApplication.class.getResource("/warrior.png");
         URL CenturioUrl = HelloApplication.class.getResource("/centurio.png");
         URL PretorioUrl = HelloApplication.class.getResource("/pretorio.png");
@@ -203,7 +202,7 @@ public class HelloApplication extends Application {
 
         imgBase = new Image(baseUrl.toExternalForm(), 250, 250, false, false);
         imgTower = new Image(towerUrl.toExternalForm(), 200, 200, false, false);
-        imgSource = new Image(sourceUrl.toExternalForm(),200, 200, false, false);
+        imgSource = new Image(sourceUrl.toExternalForm(), 200, 200, false, false);
         imgWarrior = new Image(warriorUrl.toExternalForm(), 100, 100, false, false);
         imgCenturio = new Image(CenturioUrl.toExternalForm(), 100, 100, false, false);
         imgPretorio = new Image(PretorioUrl.toExternalForm(), 100, 100, false, false);
@@ -225,42 +224,38 @@ public class HelloApplication extends Application {
         warrior4.setTeam(false);
         warriors.add(warrior4);
 
-        // Assemble units from sublists using Streams
         units = Stream.of(warriors, centurios, pretorios)
                 .filter(Objects::nonNull)
                 .flatMap(list -> list.stream())
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        // (Streams integrated) — no demo prints here to keep startup clean
-
-        // Team A (Ally - True)
         Base base1 = new Base();
         base1.setTeam(true);
         base1.initGraphics(imgBase, "base1", 0, 400, 400, 200.0, 200);
         base1.resurrectWorld();
         basesA.add(base1);
-        buldings.add(base1);
+        buildings.add(base1);
 
         Source source1 = new Source();
         source1.setTeam(true);
         source1.initGraphics(imgSource, "source1", 0, 200, 1000, 200.0, 200);
         source1.resurrectWorld();
         sourcesA.add(source1);
-        buldings.add(source1);
+        buildings.add(source1);
 
         Source source3 = new Source();
         source3.setTeam(true);
         source3.initGraphics(imgSource, "source3", 0, 1000, 200, 200.0, 200);
         source3.resurrectWorld();
         sourcesA.add(source3);
-        buldings.add(source3);
+        buildings.add(source3);
 
         Tower tower1 = new Tower();
         tower1.setTeam(true);
         tower1.initGraphics(imgTower, "tower1", 0, 2500, 2000, 300.0, 300);
         tower1.resurrectWorld();
         towersA.add(tower1);
-        buldings.add(tower1);
+        buildings.add(tower1);
         Timeline healTimer1 = new Timeline(new KeyFrame(Duration.seconds(1), e -> tower1.healUnits()));
         healTimer1.setCycleCount(Animation.INDEFINITE);
         healTimer1.play();
@@ -270,7 +265,7 @@ public class HelloApplication extends Application {
         tower3.initGraphics(imgTower, "tower3", 0, 1800, 2300, 300.0, 300);
         tower3.resurrectWorld();
         towersA.add(tower3);
-        buldings.add(tower3);
+        buildings.add(tower3);
         Timeline healTimer3 = new Timeline(new KeyFrame(Duration.seconds(1), e -> tower3.healUnits()));
         healTimer3.setCycleCount(Animation.INDEFINITE);
         healTimer3.play();
@@ -280,39 +275,38 @@ public class HelloApplication extends Application {
         tower5.initGraphics(imgTower, "tower5", 0, 2700, 1300, 300.0, 300);
         tower5.resurrectWorld();
         towersA.add(tower5);
-        buldings.add(tower5);
+        buildings.add(tower5);
         Timeline healTimer5 = new Timeline(new KeyFrame(Duration.seconds(1), e -> tower5.healUnits()));
         healTimer5.setCycleCount(Animation.INDEFINITE);
         healTimer5.play();
 
-        // Team B (Enemy - False)
         Base base2 = new Base();
         base2.setTeam(false);
         base2.initGraphics(imgBase, "base2", 0, 5750, 4150, 200.0, 200);
         base2.resurrectWorld();
         basesB.add(base2);
-        buldings.add(base2);
+        buildings.add(base2);
 
         Source source2 = new Source();
         source2.setTeam(false);
         source2.initGraphics(imgSource, "source2", 0, 6000, 3600, 200.0, 200);
         source2.resurrectWorld();
         sourcesB.add(source2);
-        buldings.add(source2);
+        buildings.add(source2);
 
         Source source4 = new Source();
         source4.setTeam(false);
         source4.initGraphics(imgSource, "source4", 0, 5200, 4400, 200.0, 200);
         source4.resurrectWorld();
         sourcesB.add(source4);
-        buldings.add(source4);
+        buildings.add(source4);
 
         Tower tower2 = new Tower();
         tower2.setTeam(false);
         tower2.initGraphics(imgTower, "tower2", 0, 3700, 2600, 300.0, 300);
         tower2.resurrectWorld();
         towersB.add(tower2);
-        buldings.add(tower2);
+        buildings.add(tower2);
         Timeline healTimer2 = new Timeline(new KeyFrame(Duration.seconds(1), e -> tower2.healUnits()));
         healTimer2.setCycleCount(Animation.INDEFINITE);
         healTimer2.play();
@@ -322,7 +316,7 @@ public class HelloApplication extends Application {
         tower4.initGraphics(imgTower, "tower4", 0, 4400, 2300, 300.0, 300);
         tower4.resurrectWorld();
         towersB.add(tower4);
-        buldings.add(tower4);
+        buildings.add(tower4);
         Timeline healTimer4 = new Timeline(new KeyFrame(Duration.seconds(1), e -> tower4.healUnits()));
         healTimer4.setCycleCount(Animation.INDEFINITE);
         healTimer4.play();
@@ -332,7 +326,7 @@ public class HelloApplication extends Application {
         tower6.initGraphics(imgTower, "tower6", 0, 3500, 3300, 300.0, 300);
         tower6.resurrectWorld();
         towersB.add(tower6);
-        buldings.add(tower6);
+        buildings.add(tower6);
         Timeline healTimer6 = new Timeline(new KeyFrame(Duration.seconds(1), e -> tower6.healUnits()));
         healTimer6.setCycleCount(Animation.INDEFINITE);
         healTimer6.play();
@@ -421,14 +415,8 @@ public class HelloApplication extends Application {
                             camDx += step * camSpeedMultiplier;
                         }
                     } else if (code == KeyCode.DELETE) {
-                        for (int i = units.size() - 1; i >= 0; i--) {
-                            for (Unit unit : units) {
-                                if (unit.isActive()) {
-                                    unit.removeUnitFromGame();
-                                    break;
-                                }
-                            }
-                        }
+                        List<Unit> activeUnits = units.stream().filter(Unit::isActive).collect(Collectors.toList());
+                        activeUnits.forEach(Unit::removeUnitFromGame);
                         keysPressed.remove(KeyCode.DELETE);
                     } else if (code == KeyCode.INSERT) {
                         javafx.application.Platform.runLater(() -> {
@@ -438,7 +426,6 @@ public class HelloApplication extends Application {
                             double y;
                             if (newUnit != null) {
                                 units.add(newUnit);
-
                                 boolean team = newUnit.getTeam();
                                 if (team) {
                                     x = basesA.get(0).x;
@@ -450,17 +437,13 @@ public class HelloApplication extends Application {
                                 newUnit.setPosition(x, y);
                                 newUnit.resurrect();
                                 newUnit.spawnAtTeamBase();
-                            } else {
-                                System.out.println("Dialog was cancelled or null result");
                             }
                         });
                         keysPressed.remove(KeyCode.INSERT);
                     } else if (code == KeyCode.ESCAPE) {
-                        for (int i = 0; i < units.size(); i++) {
-                            for (Unit unit : units) {
-                                if (unit.isActive()) {
-                                    unit.flipActivation();
-                                }
+                        for (Unit unit : units) {
+                            if (unit.isActive()) {
+                                unit.flipActivation();
                             }
                         }
                         keysPressed.remove(KeyCode.ESCAPE);
@@ -472,10 +455,10 @@ public class HelloApplication extends Application {
                         }
                         keysPressed.remove(KeyCode.SPACE);
                     } else if (code == KeyCode.I) {
-                        if (unitInvetorWindow.isVisible()) {
-                            unitInvetorWindow.setVisible(false);
+                        if (unitInventorWindow.isVisible()) {
+                            unitInventorWindow.setVisible(false);
                         } else {
-                            unitInvetorWindow.showForActiveUnit(units);
+                            unitInventorWindow.showForActiveUnit(units);
                         }
                         keysPressed.remove(KeyCode.I);
                     } else if (code == KeyCode.F) {
@@ -486,7 +469,6 @@ public class HelloApplication extends Application {
                         }
                         keysPressed.remove(KeyCode.F);
                     } else if (code == KeyCode.V) {
-                        // Toggle inverse mode for ALL active Warriors (per-instance flag)
                         for (Unit unit : units) {
                             if (unit.isActive() && unit.getClass() == Warrior.class) {
                                 Warrior w = (Warrior) unit;
@@ -501,7 +483,7 @@ public class HelloApplication extends Application {
                     updateCameraPosition(cameraX + camDx, cameraY + camDy);
                 }
 
-                for (World world : new ArrayList<>(buldings)) {
+                for (World world : new ArrayList<>(buildings)) {
                     if (world.getHealth() <= 0) {
                         world.removeBuildingFromGame();
                     }
@@ -509,13 +491,13 @@ public class HelloApplication extends Application {
 
                 updateHud();
                 world.worldLogic();
-                miniMapOverlay.update(units, buldings);
+                miniMapOverlay.update(units, buildings);
 
-                for (World building : new ArrayList<>(buldings)) {
+                for (World building : new ArrayList<>(buildings)) {
                     building.intersect();
                 }
                 
-                for (Unit unit : units) {
+                for (Unit unit : new ArrayList<>(units)) {
                     if (unit.isActive()) {
                         unit.move(dx, dy);
                     }
@@ -531,13 +513,13 @@ public class HelloApplication extends Application {
                     }
                 }
 
-                unitInvetorWindow.updateFromUnits(units);
-                
+                unitInventorWindow.updateFromUnits(units);
             }
         };
         gameLoop.start();
 
         primaryStage = stage;
+        stage.setTitle(APP_TITLE);
         stage.setScene(scene);
         stage.show();
 
@@ -589,10 +571,7 @@ public class HelloApplication extends Application {
             units.add(clonedUnit);
             clonedUnit.setPosition(sourceUnit.x + 20, sourceUnit.y + 20);
             clonedUnit.resurrect();
-            System.out.println("CLONE: Unit cloned successfully!");
         } catch (CloneNotSupportedException ex) {
-            System.err.println("Clone not supported: " + ex.getMessage());
-            ex.printStackTrace();
         }
     }
 
@@ -616,5 +595,4 @@ public class HelloApplication extends Application {
             miniMapOverlay.setCameraPosition(cameraX, cameraY);
         }
     }
-
 }

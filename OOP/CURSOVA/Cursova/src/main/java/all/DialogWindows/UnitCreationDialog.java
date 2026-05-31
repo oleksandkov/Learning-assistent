@@ -2,7 +2,6 @@ package org.example.laba5;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -21,6 +20,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.laba5.Unit.Unit;
 import org.example.laba5.Unit.Warrior;
+import org.example.laba5.Unit.Centurio;
+import org.example.laba5.Unit.Pretorio;
 
 public class UnitCreationDialog {
     private Stage stage;
@@ -125,8 +126,6 @@ public class UnitCreationDialog {
         }));
         killsBox.getChildren().add(killsField);
 
-
-
         HBox buttonBox = new HBox(10);
         buttonBox.setStyle("-fx-alignment: center;");
         Button okButton = new Button("OK");
@@ -202,7 +201,7 @@ public class UnitCreationDialog {
                 case "Pretorio":
                     result = new Pretorio(health, isSpawned, team, damage, false, inventor, 100, 100);
                     break;
-            } 
+            }
 
             confirmed = true;
             stage.close();
@@ -224,13 +223,9 @@ public class UnitCreationDialog {
 
     public Unit showAndWait() {
         try {
-            System.out.println("DEBUG: Showing UnitCreationDialog...");
             stage.showAndWait();
-            System.out.println("DEBUG: Dialog closed. Confirmed: " + confirmed);
             return confirmed ? result : null;
         } catch (Exception e) {
-            System.err.println("ERROR in showAndWait: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }

@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 public class SerializationDialog {
 
     public static void showDialog(Stage owner) {
-        ButtonType btnSave   = new ButtonType("Save",   ButtonBar.ButtonData.LEFT);
+        ButtonType btnSave = new ButtonType("Save", ButtonBar.ButtonData.LEFT);
         ButtonType btnImport = new ButtonType("Import", ButtonBar.ButtonData.LEFT);
         ButtonType btnCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 

@@ -2,7 +2,6 @@ package org.example.laba5;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -17,7 +16,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.laba5.Unit.Unit;
 import org.example.laba5.Unit.Warrior;
-
+import org.example.laba5.Unit.Centurio;
 
 public class UnitEditDialog {
     private Stage stage;
@@ -37,7 +36,6 @@ public class UnitEditDialog {
         this.unit = unit;
         createDialog();
     }
-
 
     private void createDialog() {
         stage = new Stage();
@@ -132,7 +130,6 @@ public class UnitEditDialog {
         teamButton.setPrefWidth(150);
         teamBox.getChildren().addAll(teamLabel, teamButton);
 
-
         HBox buttonBox = new HBox(10);
         buttonBox.setStyle("-fx-alignment: center;");
 
@@ -147,7 +144,6 @@ public class UnitEditDialog {
         cancelButton.setOnAction(e -> handleCancel());
         
         buttonBox.getChildren().addAll(okButton, cancelButton);
-
 
         root.getChildren().addAll(
                 titleLabel,
@@ -203,22 +199,17 @@ public class UnitEditDialog {
                 centurio.setKillCount(kills);
             }
 
-
             boolean newTeam = teamButton.isSelected();
             unit.setTeam(newTeam);
 
-
             if (oldTeam != newTeam) {
                 unit.updateTeamMark();
-                System.out.println("Unit team changed and mark updated!");
             }
 
             confirmed = true;
-            System.out.println("Unit updated: " + unit.getClass().getSimpleName());
             unit.updateTeamMark();
             stage.close();
         } catch (NumberFormatException e) {
-            System.err.println("Invalid number format: " + e.getMessage());
         }
     }
 

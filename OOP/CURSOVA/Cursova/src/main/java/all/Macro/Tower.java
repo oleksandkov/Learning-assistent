@@ -1,13 +1,10 @@
 package org.example.laba5;
+
 import java.net.URL;
 import java.util.ArrayList;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.example.laba5.Unit.Unit;
-
-
-
 
 public class Tower extends World {
     private static final double MAX_HEALTH = 300.0;
@@ -16,11 +13,10 @@ public class Tower extends World {
     private final URL conturUrlRed = HelloApplication.class.getResource("/red.png");
     private final URL conturUrlGreen = HelloApplication.class.getResource("/green.png");
 
-    public Tower(ArrayList<Unit> units, boolean  team) {
+    public Tower(ArrayList<Unit> units, boolean team) {
         super(units);
         this.team = team;
         loadContourImages();
-        
     }
 
     public Tower() {
@@ -42,7 +38,7 @@ public class Tower extends World {
         return unitsInside;
     }
 
-    public boolean  getTeam() {
+    public boolean getTeam() {
         return this.team;
     }
 
@@ -68,8 +64,6 @@ public class Tower extends World {
     public void setTeam(boolean team) {
         this.team = team;
     }
-
-    
 
     @Override
     public void initGraphics(javafx.scene.image.Image image, String name, int numUnits, double x, double y, double maxHealth, double health) {
@@ -106,19 +100,17 @@ public class Tower extends World {
         if (worldUnits == null) {
             return;
         }
-
         if (this.imageView == null) {
             return;
         }
 
         unitsInside.removeIf(unit -> unit == null || Boolean.TRUE.equals(unit.getDead()));
 
-        for (Unit unit : worldUnits) {
+        for (Unit unit : new ArrayList<>(worldUnits)) {
             if (unit == null || Boolean.TRUE.equals(unit.getDead()) || unit.image == null) {
                 continue;
             }
             boolean intersects = unit.image.getBoundsInParent().intersects(this.imageView.getBoundsInParent());
-
             if (intersects) {
                 if (!containsByReference(unit)) {
                     unitsInside.add(unit);
@@ -142,7 +134,6 @@ public class Tower extends World {
             if (unit == null || Boolean.TRUE.equals(unit.getDead())) {
                 continue;
             }
-
             if (unit.getTeam() == this.getTeam() && unit.getHealth() != null && unit.getHealth() < unit.getMaxHealth()) {
                 Integer currentHealth = unit.getHealth();
                 int newHealth = (currentHealth == null ? 0 : currentHealth) + healAmount;
@@ -162,5 +153,3 @@ public class Tower extends World {
         return unitsInside.contains(unit);
     }
 }
-
-                    

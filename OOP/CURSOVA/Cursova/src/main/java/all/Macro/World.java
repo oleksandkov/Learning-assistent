@@ -1,14 +1,15 @@
 package org.example.laba5;
+
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.shape.Line;
 import org.example.laba5.Unit.Unit;
 import org.example.laba5.Unit.Warrior;
-import javafx.scene.shape.Line;
-
+import org.example.laba5.Unit.Centurio;
+import org.example.laba5.Unit.Pretorio;
 
 public class World {
     private ArrayList<Unit> units;
@@ -34,14 +35,12 @@ public class World {
     public static int allyUnits = 0;
     public static int enemyUnits = 0;
 
-
     public int warriorsTeamA = 0;
     public int warriorsTeamB = 0;
     public int centaursTeamA = 0;
     public int centaursTeamB = 0;
     public int pretionsTeamA = 0;
     public int pretionsTeamB = 0;
-
 
     public double getOre() {
         return this.oreAmount;
@@ -59,9 +58,11 @@ public class World {
         this.health = health;
         updateLifeBar();
     }
+
     public double getHealth() {
         return health;
     }
+
     public double getMaxHealth() {
         return maxHealth;
     }
@@ -100,11 +101,9 @@ public class World {
         double lifeBaseY = y + 5;
         life.setStartX(lifeBaseX);
         life.setStartY(lifeBaseY);
-        life.setEndX(lifeBaseX );
+        life.setEndX(lifeBaseX);
         life.setEndY(lifeBaseY + barWidth);
     }
-
-
 
     public static int objects = Unit.getNumObjects();
 
@@ -126,7 +125,6 @@ public class World {
 
     public void printUnits() {
         if (units == null || units.isEmpty()) {
-            System.out.println("No units in this object.");
             return;
         }
         for (int i = 0; i < units.size(); i++) {
@@ -155,6 +153,7 @@ public class World {
         }
         updateUnits();
     }
+
     protected void initGraphics(Image image, String name, int numUnits, double x, double y, double maxHealth, double health) {
         this.image = image;
         this.name = name;
@@ -180,6 +179,7 @@ public class World {
         numUnitsLabel.setLayoutY(y);
         numUnitsLabel.setFont(javafx.scene.text.Font.font(20));
     }
+
     protected void resurrectWorld() {
         if (HelloApplication.group == null || labelName == null || life == null || image == null) {
             return;
@@ -212,25 +212,24 @@ public class World {
         if (conturImageRedImage != null && !this.team) {
             HelloApplication.group.getChildren().remove(contourView);
         }
-        HelloApplication.buldings.remove(this);
-        if (this.getClass().getSimpleName().equals("Base") && this.getTeam()== true) {
+        HelloApplication.buildings.remove(this);
+        if (this.getClass().getSimpleName().equals("Base") && this.getTeam()) {
             HelloApplication.basesA.remove(this);
-        } else if (this.getClass().getSimpleName().equals("Base") && this.getTeam()== false) {
+        } else if (this.getClass().getSimpleName().equals("Base") && !this.getTeam()) {
             HelloApplication.basesB.remove(this);
-        } else if (this.getClass().getSimpleName().equals("Tower") && this.getTeam()== true) {
+        } else if (this.getClass().getSimpleName().equals("Tower") && this.getTeam()) {
             HelloApplication.towersA.remove(this);
-        } else if (this.getClass().getSimpleName().equals("Tower") && this.getTeam()== false) {
+        } else if (this.getClass().getSimpleName().equals("Tower") && !this.getTeam()) {
             HelloApplication.towersB.remove(this);
-        } else if (this.getClass().getSimpleName().equals("Source") && this.getTeam()== true) {
+        } else if (this.getClass().getSimpleName().equals("Source") && this.getTeam()) {
             HelloApplication.sourcesA.remove(this);
-        } else if (this.getClass().getSimpleName().equals("Source") && this.getTeam()== false) {
+        } else if (this.getClass().getSimpleName().equals("Source") && !this.getTeam()) {
             HelloApplication.sourcesB.remove(this);
         }
-
-        System.out.println("Building removed. Remaining buildings: " + HelloApplication.buldings.size());
     }
 
-    protected void intersect() {}
+    protected void intersect() {
+    }
 
     private void updateUnits() {
         warriorsTeamA = 0;
@@ -259,17 +258,21 @@ public class World {
         HelloApplication.numUnitsTeamB.setText("Team B units: " + enemyUnits);
     }
 
-    public  void worldLogic() {
+    public void worldLogic() {
         objects = Unit.getNumObjects();
         updateUnits();
         
         int oreTeamA = 0;
         int oreTeamB = 0;
 
-        oreTeamA = (int) HelloApplication.basesA.get(0).getOre();
-        oreTeamB = (int) HelloApplication.basesB.get(0).getOre();
+        if (HelloApplication.basesA != null && !HelloApplication.basesA.isEmpty()) {
+            oreTeamA = (int) HelloApplication.basesA.get(0).getOre();
+        }
+        if (HelloApplication.basesB != null && !HelloApplication.basesB.isEmpty()) {
+            oreTeamB = (int) HelloApplication.basesB.get(0).getOre();
+        }
 
-        if (oreTeamA >= 20 && warriorsTeamA < 6) {
+        if (oreTeamA >= 20 && warriorsTeamA < 6 && HelloApplication.basesA != null && !HelloApplication.basesA.isEmpty()) {
             HelloApplication.basesA.get(0).setOre(oreTeamA - 20);
             Unit newUnit = new Warrior();
             newUnit.setTeam(true);
@@ -277,7 +280,7 @@ public class World {
             newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
             newUnit.resurrect();
         }
-        if (oreTeamB >= 20 && warriorsTeamB < 6) {
+        if (oreTeamB >= 20 && warriorsTeamB < 6 && HelloApplication.basesB != null && !HelloApplication.basesB.isEmpty()) {
             HelloApplication.basesB.get(0).setOre(oreTeamB - 20);
             Unit newUnit = new Warrior();
             newUnit.setTeam(false);
@@ -285,7 +288,7 @@ public class World {
             newUnit.setPosition(HelloApplication.basesB.get(0).x, HelloApplication.basesB.get(0).y);
             newUnit.resurrect();
         }
-        if (oreTeamA >= 50 && centaursTeamA < 2) {
+        if (oreTeamA >= 50 && centaursTeamA < 2 && HelloApplication.basesA != null && !HelloApplication.basesA.isEmpty()) {
             HelloApplication.basesA.get(0).setOre(oreTeamA - 50);
             Unit newUnit = new Centurio();
             newUnit.setTeam(true);
@@ -293,7 +296,7 @@ public class World {
             newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
             newUnit.resurrect();
         }
-        if (oreTeamB >= 50 && centaursTeamB < 2) {
+        if (oreTeamB >= 50 && centaursTeamB < 2 && HelloApplication.basesB != null && !HelloApplication.basesB.isEmpty()) {
             HelloApplication.basesB.get(0).setOre(oreTeamB - 50);
             Unit newUnit = new Centurio();
             newUnit.setTeam(false);
@@ -301,7 +304,7 @@ public class World {
             newUnit.setPosition(HelloApplication.basesB.get(0).x, HelloApplication.basesB.get(0).y);
             newUnit.resurrect();
         }
-        if (oreTeamA >= 70 && pretionsTeamA < 10) {
+        if (oreTeamA >= 70 && pretionsTeamA < 10 && HelloApplication.basesA != null && !HelloApplication.basesA.isEmpty()) {
             HelloApplication.basesA.get(0).setOre(oreTeamA - 70);
             Unit newUnit = new Pretorio();
             newUnit.setTeam(true);
@@ -309,7 +312,7 @@ public class World {
             newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
             newUnit.resurrect();
         }
-        if (oreTeamB >= 70 && pretionsTeamB < 10) {
+        if (oreTeamB >= 70 && pretionsTeamB < 10 && HelloApplication.basesB != null && !HelloApplication.basesB.isEmpty()) {
             HelloApplication.basesB.get(0).setOre(oreTeamB - 70);
             Unit newUnit = new Pretorio();
             newUnit.setTeam(false);

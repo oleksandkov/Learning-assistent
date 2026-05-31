@@ -2,18 +2,15 @@ package org.example.laba5.Unit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import org.example.laba5.Centurio;
 import org.example.laba5.Base;
 import org.example.laba5.HelloApplication;
 import org.example.laba5.Source;
 import org.example.laba5.World;
-
 
 public class Warrior extends Unit {
     private static String name = "Warrior";
@@ -26,18 +23,9 @@ public class Warrior extends Unit {
     private boolean deliveringOre = false;
     private static final double COMBAT_PRIORITY_RADIUS = 180.0;
 
-
     private Label oreCountLabel;
-
-    // When true this warrior runs inverse logic
     private boolean inverseMode = false;
 
-    private Double maxHealth = MAX_HEALTH;
-    
-    @Override
-    public double getMaxHealth() {
-        return maxHealth;
-    }
     @Override
     public Label getOreCountLabel() {
         return oreCountLabel;
@@ -45,10 +33,9 @@ public class Warrior extends Unit {
 
     @Override
     public void setOreCount(int oreCount) {
-        // if (oreCount != null) {
-            this.oreAmount = oreCount;
-        // }
+        this.oreAmount = oreCount;
     }
+
     @Override
     protected double labelDeltaX() {
         return 10.0;
@@ -109,8 +96,7 @@ public class Warrior extends Unit {
     }
 
     public Warrior() {
-        this((int) MAX_HEALTH, true, true, 5, false, new ArrayList<>(Arrays.asList()), 0.0, 0.0);
-        initGraphics(getName(), x, y);
+        this((int) MAX_HEALTH, true, true, 5, false, new ArrayList<>(), 0.0, 0.0);
     }
 
     private void initGraphics(String name, double startX, double startY) {
@@ -135,8 +121,6 @@ public class Warrior extends Unit {
         rectActive.setStroke(Color.GREEN);
 
         oreCountLabel = new Label();
-        
-
         setCoordinates();
     }
 
@@ -148,7 +132,6 @@ public class Warrior extends Unit {
                 HelloApplication.group.getChildren().add(oreCountLabel);
             }
         }
-
     }
 
     @Override
@@ -157,7 +140,7 @@ public class Warrior extends Unit {
         if (this.getClass() == Warrior.class && oreCountLabel != null) {
             oreCountLabel.setText("Ore: " + (int) activeOre);
             oreCountLabel.setLayoutX(x + 65);
-            oreCountLabel.setLayoutY(y - 10 );
+            oreCountLabel.setLayoutY(y - 10);
         }
     }
 
@@ -170,7 +153,7 @@ public class Warrior extends Unit {
     }
 
     private void doOreInverse() {
-        if (HelloApplication.buldings == null) {
+        if (HelloApplication.buildings == null) {
             return;
         }
 
@@ -193,8 +176,7 @@ public class Warrior extends Unit {
                 double targetCenterY = baseTarget.imageView.getBoundsInParent().getCenterY();
                 moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
             }
-            // moveTo(sourceTarget.x, sourceTarget.y);
-            if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(baseTarget.imageView.getBoundsInParent()) ) {
+            if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(baseTarget.imageView.getBoundsInParent())) {
                 activeOre += 1;
                 oreAmount += 1;
                 lastOreTime = currentTime;
@@ -214,10 +196,8 @@ public class Warrior extends Unit {
                 double targetCenterY = sourceTarget.imageView.getBoundsInParent().getCenterY();
                 moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
             }
-            // moveTo(baseTarget.x, baseTarget.y);
-            if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(sourceTarget.imageView.getBoundsInParent()) ) {
+            if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(sourceTarget.imageView.getBoundsInParent())) {
                 if (activeOre > 0) {
-                    // oreAmount -= 1;
                     sourceTarget.setOre(sourceTarget.getOre() + 1);
                     activeOre -= 1;
                 }
@@ -233,7 +213,7 @@ public class Warrior extends Unit {
     }
 
     private void doOre() {
-        if (HelloApplication.buldings == null) {
+        if (HelloApplication.buildings == null) {
             return;
         }
 
@@ -256,8 +236,7 @@ public class Warrior extends Unit {
                 double targetCenterY = sourceTarget.imageView.getBoundsInParent().getCenterY();
                 moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
             }
-            // moveTo(sourceTarget.x, sourceTarget.y);
-            if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(sourceTarget.imageView.getBoundsInParent()) ) {
+            if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(sourceTarget.imageView.getBoundsInParent())) {
                 activeOre += 1;
                 oreAmount += 1;
                 lastOreTime = currentTime;
@@ -277,10 +256,8 @@ public class Warrior extends Unit {
                 double targetCenterY = baseTarget.imageView.getBoundsInParent().getCenterY();
                 moveTo(targetCenterX - this.image.getFitWidth() / 2, targetCenterY - this.image.getFitHeight() / 2);
             }
-            // moveTo(baseTarget.x, baseTarget.y);
-            if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(baseTarget.imageView.getBoundsInParent()) ) {
+            if (currentTime - lastOreTime >= ORE_COOLDOWN && this.image.getBoundsInParent().intersects(baseTarget.imageView.getBoundsInParent())) {
                 if (activeOre > 0) {
-                    // oreAmount -= 1;
                     baseTarget.setOre(baseTarget.getOre() + 1);
                     activeOre -= 1;
                 }
@@ -326,7 +303,7 @@ public class Warrior extends Unit {
     }
 
     private World findNearbyEnemyBuilding() {
-        if (HelloApplication.buldings == null || this.image == null) {
+        if (HelloApplication.buildings == null || this.image == null) {
             return null;
         }
 
@@ -335,7 +312,7 @@ public class Warrior extends Unit {
         double myCenterX = this.image.getBoundsInParent().getCenterX();
         double myCenterY = this.image.getBoundsInParent().getCenterY();
 
-        for (World world : HelloApplication.buldings) {
+        for (World world : HelloApplication.buildings) {
             if (world == null || world.getTeam() == this.team || world.imageView == null) {
                 continue;
             }
@@ -356,7 +333,7 @@ public class Warrior extends Unit {
     }
 
     private World findBestSourceTarget() {
-        if (HelloApplication.buldings == null || this.image == null) {
+        if (HelloApplication.buildings == null || this.image == null) {
             return null;
         }
 
@@ -365,7 +342,7 @@ public class Warrior extends Unit {
         double myCenterX = this.image.getBoundsInParent().getCenterX();
         double myCenterY = this.image.getBoundsInParent().getCenterY();
 
-        for (World build : HelloApplication.buldings) {
+        for (World build : HelloApplication.buildings) {
             if (build == null || build.getTeam() != this.team || !(build instanceof Source) || build.imageView == null) {
                 continue;
             }
@@ -410,24 +387,19 @@ public class Warrior extends Unit {
         if (HelloApplication.units == null) {
             return;
         }
-        if (this != null )  {
-            int ore = (int) this.getOre();
-            if (ore >= 100) {
-                this.setDead(true);
-                HelloApplication.group.getChildren().removeAll(this.image, this.labelName, this.life, this.rectActive, oreCountLabel);
-                this.removeUnitFromGame();
-                Centurio centurio = new Centurio((int) MAX_HEALTH, true, this.team, 10, false, new ArrayList<>(this.getInventor()), this.x, this.y);
-                HelloApplication.units.add(centurio);
-                centurio.resurrect();
-                
-            }   
-
+        int ore = (int) this.getOre();
+        if (ore >= 100) {
+            this.setDead(true);
+            HelloApplication.group.getChildren().removeAll(this.image, this.labelName, this.life, this.rectActive, oreCountLabel);
+            this.removeUnitFromGame();
+            Centurio centurio = new Centurio((int) MAX_HEALTH, true, this.team, 10, false, new ArrayList<>(this.getInventor()), this.x, this.y);
+            HelloApplication.units.add(centurio);
+            centurio.resurrect();
         }
     }
-    
-    
+
     public void attackInverse() {
-         boolean intersects = false;
+        boolean intersects = false;
 
         if (this.getDamage() == null || this.getDamage() <= 0) {
             return;
@@ -445,41 +417,30 @@ public class Warrior extends Unit {
                         int newHealth = targetHealth + this.getDamage();
                         unit.setHealth(newHealth);
 
-                        System.out.println("[Combat Inverse] " + this.getClass().getSimpleName() + " (" + (this.team ? "Ally" : "Enemy") + 
-                                           ") healed " + unit.getClass().getSimpleName() + 
-                                           " (" + (unit.team ? "Ally" : "Enemy") + ") for " + this.getDamage() + " HP. Target HP: " + newHealth);
-
                         if (newHealth <= 0) {
                             unit.setHealth(0);
                             plusObjectedKilled();
                             unit.removeUnitFromGame();
                         }
-
                         break;
                     }
                 }
             }
         }
-        if (HelloApplication.buldings != null) {
-            for (World world : HelloApplication.buldings) {
+        if (HelloApplication.buildings != null) {
+            for (World world : HelloApplication.buildings) {
                 if (world != null && world.getTeam() != this.team && world.imageView != null) {
                     intersects = this.image.getBoundsInParent().intersects(world.imageView.getBoundsInParent());
                     if (intersects) {
                         int targetHealth = world.getHealth() == 0 ? 0 : (int) world.getHealth();
                         int newHealth = targetHealth + this.getDamage();
                         world.setHealth(newHealth);
-                        System.out.println("[Combat Inverse] " + this.getClass().getSimpleName() + " (" + (this.team ? "Ally" : "Enemy") + 
-                                           ") healed Building " + world.name + 
-                                           " (" + (world.team ? "Ally" : "Enemy") + ") for " + this.getDamage() + " HP. Target HP: " + newHealth);
                     }
                 }
             }
         }
-        if (!intersects) {
-            return;
-        }
     }
-    
+
     @Override
     public void logic() {
         Unit nearbyEnemyUnit = findNearbyEnemyUnit();
@@ -514,13 +475,10 @@ public class Warrior extends Unit {
             return;
         }
 
-        // if (!this.isActive()) {
-            doOre();
-        // }
+        doOre();
         promotion();
     }
 
-    
     @Override
     public void logicInverse() {
         Unit nearbyEnemyUnit = findNearbyEnemyUnit();
@@ -555,9 +513,7 @@ public class Warrior extends Unit {
             return;
         }
 
-        // if (!this.isActive()) {
-            doOreInverse();
-        // }
+        doOreInverse();
         promotion();
     }
 

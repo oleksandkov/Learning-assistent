@@ -1,7 +1,7 @@
 package org.example.laba5;
+
 import java.net.URL;
 import java.util.ArrayList;
-
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.example.laba5.Unit.Unit;
@@ -12,15 +12,9 @@ public class Base extends World {
     private final URL conturUrlRed = HelloApplication.class.getResource("/red.png");
     private final URL conturUrlGreen = HelloApplication.class.getResource("/green.png");
 
-    
-    
 
 
-
-    public ArrayList<Unit> getUnits() {
-        return this.unitsInside;
-    }
-    public Base(ArrayList<Unit> units, boolean  team) {
+    public Base(ArrayList<Unit> units, boolean team) {
         super(units);
         this.team = team;
         loadContourImages();
@@ -45,7 +39,7 @@ public class Base extends World {
         return unitsInside;
     }
 
-    public boolean  getTeam() {
+    public boolean getTeam() {
         return this.team;
     }
 
@@ -61,8 +55,6 @@ public class Base extends World {
     private void removeByReference(Unit candidate) {
         unitsInside.removeIf(u -> u == candidate);
     }
-
-    
 
     public void setTeam(boolean team) {
         this.team = team;
@@ -103,17 +95,17 @@ public class Base extends World {
         if (worldUnits == null) {
             return;
         }
-
         if (this.imageView == null) {
             return;
         }
 
-        for (Unit unit : worldUnits) {
+        unitsInside.removeIf(unit -> unit == null || Boolean.TRUE.equals(unit.getDead()));
+
+        for (Unit unit : new ArrayList<>(worldUnits)) {
             if (unit == null || Boolean.TRUE.equals(unit.getDead()) || unit.image == null) {
                 continue;
             }
             boolean intersects = unit.image.getBoundsInParent().intersects(this.imageView.getBoundsInParent());
-
             if (intersects) {
                 if (!containsByReference(unit)) {
                     unitsInside.add(unit);
