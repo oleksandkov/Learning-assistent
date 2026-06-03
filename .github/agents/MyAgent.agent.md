@@ -23,6 +23,7 @@ handoffs:
     prompt: Explain the code you just wrote. DO it very detailed, as for people how do not know how this code works. Give me examples to explain how this code works. Explain concepts you used. And the alternative ways to implement the same functionality. 
     send: true
     model: Claude Haiku 4.5 (copilot)
+
  
 
 ---
