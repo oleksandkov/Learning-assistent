@@ -42,8 +42,13 @@ public class Unit implements Cloneable {
     public ImageView spearImage;
     public ImageView bowImage;
     public ImageView mainWeaponImage;
+    private Image originalBodyImage;
+    private boolean spearSwapped;
+    private boolean spearParked;
+    private Unit spearPilePrev;
+    private Unit spearPileLast;
 
-    protected double moveSpeed = 1;
+    protected double moveSpeed = 7.0;
     private static boolean isPushing = false;
 
     protected long lastAttackTime = 0;
@@ -346,6 +351,7 @@ public class Unit implements Cloneable {
                 "}\n";
     }
 
+    
     @Override
     public Unit clone() throws CloneNotSupportedException {
         Unit clonedUnit = (Unit) super.clone();
@@ -535,6 +541,52 @@ public class Unit implements Cloneable {
         }
     }
 
+public void swapBodyToSpear() {
+        if (spearSwapped) {
+            return;
+        }
+        if (originalBodyImage == null) {
+            originalBodyImage = image.getImage();
+        }
+        image.setImage(spearImage.getImage());
+        image.setFitWidth(100);
+        image.setFitHeight(100);
+        // image.setPreserveRatio(true);
+        spearSwapped = true;
+    }
+
+    public void onSpearIntersect(Unit other) {
+        if (!spearSwapped || other == null || other == this || other.spearParked) {
+            return;
+        }
+        double w = image != null ? image.getFitWidth() : 100.0;
+        double h = image != null ? image.getFitHeight() : 100.0;
+        double margin = 10.0;
+        double px;
+        double py;
+        if (spearPileLast != null) {
+            double lastW = spearPileLast.image != null ? spearPileLast.image.getFitWidth() : w;
+            px = spearPileLast.x + lastW + margin;
+            py = spearPileLast.y;
+        } else {
+            px = margin;
+            py = HelloApplication.WORLD_HEIGHT - h - margin;
+        }
+        other.x = px;
+        other.y = py;
+        other.spearPilePrev = spearPileLast;
+        other.spearParked = true;
+        other.isActive = false;
+        if (other.rectActive != null && HelloApplication.group != null) {
+            HelloApplication.group.getChildren().remove(other.rectActive);
+        }
+        spearPileLast = other;
+        if (other.image != null) {
+            other.clampBounds();
+            other.setCoordinates();
+        }
+    }
+
     public void loadMarkImages() {
         if (imageMarkRed != null && imageMarkGreen != null) {
             return;
@@ -604,6 +656,9 @@ public class Unit implements Cloneable {
     }
 
     public void move(double dx, double dy) {
+        if (spearParked) {
+            return;
+        }
         x += dx;
         y += dy;
         clampBounds();
@@ -613,7 +668,7 @@ public class Unit implements Cloneable {
     }
 
     public void locateAndRotateF() {
-        if (isPushing) {
+        if (isPushing || spearParked) {
             return;
         }
         if (HelloApplication.units == null || image == null) {
@@ -623,13 +678,16 @@ public class Unit implements Cloneable {
             isPushing = true;
             double selfCenterX = x + image.getFitWidth() / 2.0;
             double selfCenterY = y + image.getFitHeight() / 2.0;
-            double minDistance = 30.0;        
-            double pushDistance = 50.0;       
+            double minDistance = 30.0;
+            double pushDistance = 50.0;
             for (Unit unit : HelloApplication.units) {
                 if (unit == this || unit.image == null) {
                     continue;
                 }
-                if (unit.getTeam() != this.team) {
+                if (unit.spearParked) {
+                    continue;
+                }
+                if (unit.spearSwapped) {
                     continue;
                 }
                 double otherCenterX = unit.x + unit.image.getFitWidth() / 2.0;
@@ -639,6 +697,10 @@ public class Unit implements Cloneable {
                 double dist = Math.hypot(dx, dy);
 
                 if (dist < minDistance) {
+                    if (spearSwapped) {
+                        onSpearIntersect(unit);
+                        continue;
+                    }
                     if (dist < 0.001) {
                         dx = 1.0;
                         dy = 0.0;
@@ -658,6 +720,9 @@ public class Unit implements Cloneable {
     }
 
     public void moveTo(double newX, double newY) {
+        if (spearParked) {
+            return;
+        }
         double dx = newX - x;
         double dy = newY - y;
         double dist = Math.hypot(dx, dy);
@@ -676,6 +741,9 @@ public class Unit implements Cloneable {
     }
 
     public void setPosition(double newX, double newY) {
+        if (spearParked) {
+            return;
+        }
         x = newX;
         y = newY;
         clampBounds();
@@ -699,6 +767,10 @@ public class Unit implements Cloneable {
     public boolean tryActivate(double mx, double my) {
         if (image.getBoundsInParent().contains(mx, my)) {
             flipActivation();
+            if (spearParked && isActive) {
+                spearParked = false;
+                spearPilePrev = null;
+            }
             return true;
         }
         return false;

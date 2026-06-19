@@ -53,10 +53,12 @@ public class HelloApplication extends Application {
     public static ArrayList<Centurio> centurios;
     public static ArrayList<Pretorio> pretorios;
     public static ArrayList<Unit> units;
+    public static ArrayList<Unit> spearUnits;
 
     private final Map<KeyCode, Double> keysPresses = new HashMap<>();
     private final Map<KeyCode, Boolean> keysPressed = new HashMap<>();
     private final Set<KeyCode> handledActionKeys = new HashSet<>();
+    private final Map<KeyCode, Double> spearKeySteps = new HashMap<>();
 
     public static double keyStepX = 4.5;
     public static double keyStepY = 4.5;
@@ -130,6 +132,10 @@ public class HelloApplication extends Application {
         keysPresses.put(KeyCode.DOWN, keyStepY);
         keysPresses.put(KeyCode.LEFT, -keyStepX);
         keysPresses.put(KeyCode.RIGHT, keyStepX);
+        spearKeySteps.put(KeyCode.I, -keyStepY);
+        spearKeySteps.put(KeyCode.K, keyStepY);
+        spearKeySteps.put(KeyCode.J, -keyStepX);
+        spearKeySteps.put(KeyCode.L, keyStepX);
 
         cameraX = 0.0;
         cameraY = 0.0;
@@ -210,6 +216,7 @@ public class HelloApplication extends Application {
         centurios = new ArrayList<>();
         pretorios = new ArrayList<>();
         units = new ArrayList<>();
+        spearUnits = new ArrayList<>();
 
         Warrior warrior1 = new Warrior();
         warrior1.setTeam(true);
@@ -377,10 +384,14 @@ public class HelloApplication extends Application {
                 for (int i = units.size() - 1; i >= 0; i--) {
                     Unit unit = units.get(i);
                     if (unit.getImage().getBoundsInParent().contains(worldMouseX, worldMouseY)) {
-                        javafx.application.Platform.runLater(() -> {
-                            UnitEditDialog editDialog = new UnitEditDialog(unit);
-                            editDialog.showAndWait();
-                        });
+                        unit.swapBodyToSpear();
+                        if (!spearUnits.contains(unit)) {
+                            spearUnits.add(unit);
+                        }
+                        // javafx.application.Platform.runLater(() -> {
+                        //     UnitEditDialog editDialog = new UnitEditDialog(unit);
+                        //     editDialog.showAndWait();
+                        // });
                         break;
                     }
                 }
@@ -391,6 +402,7 @@ public class HelloApplication extends Application {
             @Override
             public void handle(long now) {
                 double dx = 0, dy = 0;
+                double spearDx = 0, spearDy = 0;
                 double camDx = 0, camDy = 0;
                 double camSpeedMultiplier = 4.5;
 
@@ -413,6 +425,17 @@ public class HelloApplication extends Application {
                             camDx += step * camSpeedMultiplier;
                         } else if (code == KeyCode.RIGHT) {
                             camDx += step * camSpeedMultiplier;
+                        }
+                    } else if (spearUnits != null && !spearUnits.isEmpty() && spearKeySteps.containsKey(code)) {
+                        double step = spearKeySteps.get(code);
+                        if (code == KeyCode.I) {
+                            spearDy += step;
+                        } else if (code == KeyCode.K) {
+                            spearDy += step;
+                        } else if (code == KeyCode.J) {
+                            spearDx += step;
+                        } else if (code == KeyCode.L) {
+                            spearDx += step;
                         }
                     } else if (code == KeyCode.DELETE) {
                         List<Unit> activeUnits = units.stream().filter(Unit::isActive).collect(Collectors.toList());
@@ -498,8 +521,12 @@ public class HelloApplication extends Application {
                 }
                 
                 for (Unit unit : new ArrayList<>(units)) {
-                    if (unit.isActive()) {
+                    boolean isSpearUnit = spearUnits != null && spearUnits.contains(unit);
+                    if (unit.isActive() && !isSpearUnit) {
                         unit.move(dx, dy);
+                    }
+                    if (isSpearUnit && unit.isActive()) {
+                        unit.move(spearDx, spearDy);
                     }
                     if (unit instanceof Warrior) {
                         Warrior w = (Warrior) unit;
