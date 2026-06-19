@@ -62,13 +62,22 @@ public class UnitCreationDialog {
         unitTypeCombo.getItems().addAll("Warrior", "Centurio", "Pretorio");
         unitTypeCombo.setValue("Warrior");
         unitTypeCombo.setPrefWidth(100);
-        unitTypeCombo.setOnAction(e -> updateOreVisibility());
+        unitTypeCombo.setOnAction(e -> {
+            updateOreVisibility();
+            double maxHealth = switch (unitTypeCombo.getValue()) {
+                case "Warrior"  -> Warrior.MAX_HEALTH;
+                case "Centurio" -> Centurio.MAX_HEALTH;
+                case "Pretorio" -> Pretorio.MAX_HEALTH;
+                default         -> 100.0;
+            };
+            healthField.setText(String.valueOf((int) maxHealth));
+        });
         typeBox.getChildren().add(unitTypeCombo);
 
         HBox healthBox = new HBox(8);
         healthBox.getChildren().add(new Label("Health:"));
         healthField = new TextField();
-        healthField.setText("100");
+        healthField.setText(String.valueOf((int) Warrior.MAX_HEALTH));
         healthField.setPrefWidth(100);
         healthField.setTextFormatter(new TextFormatter<>(c -> {
             if (c.getControlNewText().matches("\\d*")) return c;
@@ -149,10 +158,11 @@ public class UnitCreationDialog {
         );
 
         updateOreVisibility();
+        unitTypeCombo.getOnAction().handle(new javafx.event.ActionEvent());
         root.getChildren().add(root.getChildren().indexOf(buttonBox), oreBoxRow);
         root.getChildren().add(root.getChildren().indexOf(buttonBox), killsBox);
 
-        root.setStyle("-fx-background-color: #fb0000; -fx-border-color: #4100f3; -fx-border-width: 1px;");
+        root.setStyle("-fx-background-color: #b123ea; -fx-border-color: #ff0000; -fx-border-width: 2px;");
         Scene scene = new Scene(root);
         stage.setScene(scene);
     }

@@ -1,0 +1,353 @@
+package org.example.laba5;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.shape.Line;
+import org.example.laba5.Unit.Unit;
+import org.example.laba5.Unit.Warrior;
+import org.example.laba5.Unit.Centurio;
+import org.example.laba5.Unit.Pretorio;
+
+public class World {
+    private ArrayList<Unit> units;
+
+    public int x;
+    public int y;
+    public Image image;
+    public String name;
+    public int numUnits;
+    public Label labelName;
+    public Label numUnitsLabel;
+    public Line life;
+    public double health;
+    public boolean team;
+
+    public Image conturImageRedImage;
+    public Image conturImageGreenImage;
+    public ImageView contourView;
+    public ImageView imageView;
+    public double maxHealth;
+
+    public double oreAmount = 0;
+    public static int allyUnits = 0;
+    public static int enemyUnits = 0;
+
+    public int warriorsTeamA = 0;
+    public int warriorsTeamB = 0;
+    public int centaursTeamA = 0;
+    public int centaursTeamB = 0;
+    public int pretionsTeamA = 0;
+    public int pretionsTeamB = 0;
+
+    public double getOre() {
+        return this.oreAmount;
+    }
+
+    public void setOre(double oreAmount) {
+        this.oreAmount = oreAmount;
+    }
+
+    protected void setMaxHealth(double maxHealth) {
+        this.maxHealth = maxHealth;
+    }
+
+    public void setHealth(double health) {
+        this.health = health;
+        updateLifeBar();
+    }
+
+    public double getHealth() {
+        return health;
+    }
+
+    public double getMaxHealth() {
+        return maxHealth;
+    }
+
+    public boolean getTeam() {
+        return team;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public ImageView getImageView() {
+        return imageView;
+    }
+
+    protected void updateLifeBar() {
+        if (life == null) {
+            return;
+        }
+
+        double effectiveMaxHealth = maxHealth > 0.0 ? maxHealth : 100.0;
+        double currentHealth = Math.max(0.0, Math.min(health, effectiveMaxHealth));
+        double imageHeight = image != null && image.getHeight() > 0 ? image.getHeight() : 100.0;
+        double barWidth = (currentHealth / effectiveMaxHealth) * imageHeight;
+
+        double lifeBaseX = x - 5;
+        double lifeBaseY = y + 5;
+        life.setStartX(lifeBaseX);
+        life.setStartY(lifeBaseY);
+        life.setEndX(lifeBaseX);
+        life.setEndY(lifeBaseY + barWidth);
+    }
+
+    public static int objects = Unit.getNumObjects();
+
+    public World() {
+        units = new ArrayList<>();
+    }
+
+    public World(ArrayList<Unit> units) {
+        this.units = units;
+    }
+
+    public ArrayList<Unit> getUnits() {
+        return units;
+    }
+
+    public void setUnits(ArrayList<Unit> units) {
+        this.units = units;
+    }
+
+    public void printUnits() {
+        if (units == null || units.isEmpty()) {
+            return;
+        }
+        for (int i = 0; i < units.size(); i++) {
+            System.out.println("Unit " + i + ":");
+            System.out.println(units.get(i));
+        }
+    }
+
+    public void insertUnit(int index, Unit unit) {
+        if (units == null) {
+            units = new ArrayList<>();
+        }
+        units.add(index, unit);
+    }
+
+    public void update() {
+        if (units != null) {
+            Iterator<Unit> it = units.iterator();
+            while (it.hasNext()) {
+                Unit u = it.next();
+                if (u == null || Boolean.TRUE.equals(u.getDead()) || (u.getHealth() != null && u.getHealth() <= 0)) {
+                    it.remove();
+                    Unit.removeUnit();
+                }
+            }
+        }
+        updateUnits();
+    }
+
+    protected void initGraphics(Image image, String name, int numUnits, double x, double y, double maxHealth, double health) {
+        this.image = image;
+        this.name = name;
+        this.numUnits = numUnits;
+        this.labelName = new Label(name);
+        this.numUnitsLabel = new Label(String.valueOf(numUnits));
+        this.life = new Line();
+        this.x = (int) x;
+        this.y = (int) y;
+
+        setMaxHealth(maxHealth);
+        setHealth(health);
+
+        life.setStrokeWidth(5);
+        life.setStroke(javafx.scene.paint.Color.GREEN);
+        updateLifeBar();
+
+        labelName.setLayoutX(x);
+        labelName.setLayoutY(y - 30);
+        labelName.setFont(javafx.scene.text.Font.font(20));
+
+        numUnitsLabel.setLayoutX(x + image.getWidth() + 7);
+        numUnitsLabel.setLayoutY(y);
+        numUnitsLabel.setFont(javafx.scene.text.Font.font(20));
+    }
+
+    protected void resurrectWorld() {
+        if (HelloApplication.group == null || labelName == null || life == null || image == null) {
+            return;
+        }
+        imageView = new javafx.scene.image.ImageView(image);
+        imageView.setX(x);
+        imageView.setY(y);
+        HelloApplication.group.getChildren().addAll(labelName, life, imageView, numUnitsLabel);
+    }
+
+    protected void removeBuildingFromGame() {
+        if (HelloApplication.group == null) {
+            return;
+        }
+        if (labelName != null) {
+            HelloApplication.group.getChildren().remove(labelName);
+        }
+        if (life != null) {
+            HelloApplication.group.getChildren().remove(life);
+        }
+        if (imageView != null) {
+            HelloApplication.group.getChildren().remove(imageView);
+        }
+        if (numUnitsLabel != null) {
+            HelloApplication.group.getChildren().remove(numUnitsLabel);
+        }
+        if (conturImageGreenImage != null && this.team) {
+            HelloApplication.group.getChildren().remove(contourView);
+        }
+        if (conturImageRedImage != null && !this.team) {
+            HelloApplication.group.getChildren().remove(contourView);
+        }
+        HelloApplication.buildings.remove(this);
+        if (this.getClass().getSimpleName().equals("Base") && this.getTeam()) {
+            HelloApplication.basesA.remove(this);
+        } else if (this.getClass().getSimpleName().equals("Base") && !this.getTeam()) {
+            HelloApplication.basesB.remove(this);
+        } else if (this.getClass().getSimpleName().equals("Tower") && this.getTeam()) {
+            HelloApplication.towersA.remove(this);
+        } else if (this.getClass().getSimpleName().equals("Tower") && !this.getTeam()) {
+            HelloApplication.towersB.remove(this);
+        } else if (this.getClass().getSimpleName().equals("Source") && this.getTeam()) {
+            HelloApplication.sourcesA.remove(this);
+        } else if (this.getClass().getSimpleName().equals("Source") && !this.getTeam()) {
+            HelloApplication.sourcesB.remove(this);
+        }
+    }
+
+    protected void intersect() {
+    }
+
+    private void updateUnits() {
+        warriorsTeamA = 0;
+        warriorsTeamB = 0;
+        centaursTeamA = 0;
+        centaursTeamB = 0;
+        pretionsTeamA = 0;
+        pretionsTeamB = 0;
+        allyUnits = 0;
+        enemyUnits = 0;
+        if (HelloApplication.units == null) return;
+
+        warriorsTeamA = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && "Warrior".equals(u.getClass().getSimpleName()) && u.getTeam()).count();
+        warriorsTeamB = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && "Warrior".equals(u.getClass().getSimpleName()) && !u.getTeam()).count();
+
+        centaursTeamA = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && "Centurio".equals(u.getClass().getSimpleName()) && u.getTeam()).count();
+        centaursTeamB = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && "Centurio".equals(u.getClass().getSimpleName()) && !u.getTeam()).count();
+
+        pretionsTeamA = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && "Pretorio".equals(u.getClass().getSimpleName()) && u.getTeam()).count();
+        pretionsTeamB = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && "Pretorio".equals(u.getClass().getSimpleName()) && !u.getTeam()).count();
+
+        allyUnits = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && u.getTeam()).count();
+        enemyUnits = (int) HelloApplication.units.stream().filter(u -> u != null && u.image != null && !u.getTeam()).count();
+
+        HelloApplication.numUnitsTeamA.setText("Team A units: " + allyUnits);
+        HelloApplication.numUnitsTeamB.setText("Team B units: " + enemyUnits);
+    }
+
+    public void worldLogic() {
+        objects = Unit.getNumObjects();
+        updateUnits();
+        
+        int oreTeamA = 0;
+        int oreTeamB = 0;
+
+        if (HelloApplication.basesA != null && !HelloApplication.basesA.isEmpty()) {
+            oreTeamA = (int) HelloApplication.basesA.get(0).getOre();
+        }
+        if (HelloApplication.basesB != null && !HelloApplication.basesB.isEmpty()) {
+            oreTeamB = (int) HelloApplication.basesB.get(0).getOre();
+        }
+
+        if (oreTeamA >= 20 && warriorsTeamA < 6 && HelloApplication.basesA != null && !HelloApplication.basesA.isEmpty()) {
+            HelloApplication.basesA.get(0).setOre(oreTeamA - 20);
+            Unit newUnit = new Warrior();
+            newUnit.setTeam(true);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
+            newUnit.resurrect();
+        }
+        if (oreTeamB >= 20 && warriorsTeamB < 6 && HelloApplication.basesB != null && !HelloApplication.basesB.isEmpty()) {
+            HelloApplication.basesB.get(0).setOre(oreTeamB - 20);
+            Unit newUnit = new Warrior();
+            newUnit.setTeam(false);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesB.get(0).x, HelloApplication.basesB.get(0).y);
+            newUnit.resurrect();
+        }
+        if (oreTeamA >= 50 && centaursTeamA < 2 && HelloApplication.basesA != null && !HelloApplication.basesA.isEmpty()) {
+            HelloApplication.basesA.get(0).setOre(oreTeamA - 50);
+            Unit newUnit = new Centurio();
+            newUnit.setTeam(true);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
+            newUnit.resurrect();
+        }
+        if (oreTeamB >= 50 && centaursTeamB < 2 && HelloApplication.basesB != null && !HelloApplication.basesB.isEmpty()) {
+            HelloApplication.basesB.get(0).setOre(oreTeamB - 50);
+            Unit newUnit = new Centurio();
+            newUnit.setTeam(false);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesB.get(0).x, HelloApplication.basesB.get(0).y);
+            newUnit.resurrect();
+        }
+        if (oreTeamA >= 70 && pretionsTeamA < 10 && HelloApplication.basesA != null && !HelloApplication.basesA.isEmpty()) {
+            HelloApplication.basesA.get(0).setOre(oreTeamA - 70);
+            Unit newUnit = new Pretorio();
+            newUnit.setTeam(true);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesA.get(0).x, HelloApplication.basesA.get(0).y);
+            newUnit.resurrect();
+        }
+        if (oreTeamB >= 70 && pretionsTeamB < 10 && HelloApplication.basesB != null && !HelloApplication.basesB.isEmpty()) {
+            HelloApplication.basesB.get(0).setOre(oreTeamB - 70);
+            Unit newUnit = new Pretorio();
+            newUnit.setTeam(false);
+            HelloApplication.units.add(newUnit);
+            newUnit.setPosition(HelloApplication.basesB.get(0).x, HelloApplication.basesB.get(0).y);
+            newUnit.resurrect();
+        }
+    }
+    
+    public boolean isUnitInside(Unit unit) {
+        return false;
+    }
+
+    public void sortUnitsList(ArrayList<Unit> units) {
+        if (units == null || units.isEmpty()) {
+            return;
+        }
+        units.sort((u1, u2) -> {
+            String class1 = u1 == null ? "" : u1.getClass().getSimpleName();
+            String class2 = u2 == null ? "" : u2.getClass().getSimpleName();
+            int classCmp = class2.compareTo(class1);
+            if (classCmp != 0) {
+                return classCmp;
+            }
+
+            Integer health1 = u1 == null ? null : u1.getHealth();
+            Integer health2 = u2 == null ? null : u2.getHealth();
+            int healthCmp = Integer.compare(health2 == null ? 0 : health2, health1 == null ? 0 : health1);
+            if (healthCmp != 0) {
+                return healthCmp;
+            }
+
+            Integer damage1 = u1 == null ? null : u1.getDamage();
+            Integer damage2 = u2 == null ? null : u2.getDamage();
+            return Integer.compare(damage2 == null ? 0 : damage2, damage1 == null ? 0 : damage1);
+        });
+    }
+}
