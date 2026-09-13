@@ -1,0 +1,184 @@
+"""
+Генератор блок-схеми алгоритму у векторному форматі SVG
+відповідно до вимог Таблиці 1 методичних вказівок (ГОСТ 19.701-90).
+"""
+
+def generate_svg(filepath: str = "flowchart.svg"):
+    svg_content = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1550" viewBox="0 0 900 1550" style="background-color: #ffffff; font-family: Arial, sans-serif;">
+  <defs>
+    <!-- Маркери стрілок -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#333333" />
+    </marker>
+    <!-- Тіні для гарного вигляду -->
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="2" dy="2" stdDeviation="2" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Заголовок -->
+  <text x="450" y="40" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a237e">
+    БЛОК-СХЕМА АЛГОРИТМУ "КАСОВИЙ ЧЕК ІЗ НАКОПИЧУВАЛЬНОЮ ЗНИЖКОЮ"
+  </text>
+  <text x="450" y="65" text-anchor="middle" font-size="13" fill="#555555">
+    Лабораторна робота №1 з дисципліни "Алгоритми та структури даних"
+  </text>
+
+  <!-- ЛЕГЕНДА ДІЛЯНОК -->
+  <g transform="translate(180, 85)">
+    <rect x="0" y="0" width="160" height="26" rx="4" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.5"/>
+    <text x="80" y="17" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">Лінійна ділянка</text>
+
+    <rect x="180" y="0" width="160" height="26" rx="4" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+    <text x="260" y="17" text-anchor="middle" font-size="11" font-weight="bold" fill="#0d47a1">Циклічна ділянка</text>
+
+    <rect x="360" y="0" width="170" height="26" rx="4" fill="#fff3e0" stroke="#e65100" stroke-width="1.5"/>
+    <text x="445" y="17" text-anchor="middle" font-size="11" font-weight="bold" fill="#bf360c">Розгалужена ділянка</text>
+  </g>
+
+  <!-- 1. ПОЧАТОК (Термінатор - Лінійна ділянка) -->
+  <rect x="360" y="140" width="180" height="46" rx="23" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2" filter="url(#shadow)"/>
+  <text x="450" y="168" text-anchor="middle" font-size="14" font-weight="bold" fill="#1b5e20">Початок</text>
+
+  <!-- Лінія 1 -> 2 -->
+  <line x1="450" y1="186" x2="450" y2="220" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 2. ВВЕДЕННЯ (Паралелограм - Лінійна ділянка) -->
+  <polygon points="330,220 590,220 550,270 290,270" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2" filter="url(#shadow)"/>
+  <text x="440" y="243" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e20">Ввід: товари items[1..N],</text>
+  <text x="440" y="260" text-anchor="middle" font-size="12" fill="#1b5e20">T_item = 500 грн, T_order = 1500 грн</text>
+
+  <!-- Лінія 2 -> 3 -->
+  <line x1="440" y1="270" x2="440" y2="305" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 3. ІНІЦІАЛІЗАЦІЯ (Прямокутник - Лінійна ділянка) -->
+  <rect x="290" y="305" width="300" height="60" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2" filter="url(#shadow)"/>
+  <text x="440" y="328" text-anchor="middle" font-size="12" fill="#1b5e20">subtotal_raw = 0, total_item_disc = 0,</text>
+  <text x="440" y="348" text-anchor="middle" font-size="12" fill="#1b5e20">subtotal_after = 0, i = 1</text>
+
+  <!-- Лінія 3 -> 4 -->
+  <line x1="440" y1="365" x2="440" y2="400" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 4. ЗАГОЛОВОК ЦИКЛУ (Шестикутник - Циклічна ділянка) -->
+  <polygon points="340,425 370,400 510,400 540,425 510,450 370,450" fill="#e3f2fd" stroke="#1565c0" stroke-width="2" filter="url(#shadow)"/>
+  <text x="440" y="429" text-anchor="middle" font-size="13" font-weight="bold" fill="#0d47a1">i = 1, N</text>
+
+  <!-- Лінія 4 -> 5 -->
+  <line x1="440" y1="450" x2="440" y2="485" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 5. ОБРОБКА ПОЗИЦІЇ В ЦИКЛІ (Прямокутник - Циклічна ділянка) -->
+  <rect x="300" y="485" width="280" height="55" fill="#e3f2fd" stroke="#1565c0" stroke-width="2" filter="url(#shadow)"/>
+  <text x="440" y="508" text-anchor="middle" font-size="12" fill="#0d47a1">cost = items[i].price * items[i].qty</text>
+  <text x="440" y="527" text-anchor="middle" font-size="12" fill="#0d47a1">subtotal_raw += cost</text>
+
+  <!-- Лінія 5 -> 6 -->
+  <line x1="440" y1="540" x2="440" y2="575" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 6. РОЗГАЛУЖЕННЯ 1: УМОВА ЗНИЖКИ НА ТОВАР (Ромб) -->
+  <polygon points="440,575 580,625 440,675 300,625" fill="#fff3e0" stroke="#e65100" stroke-width="2" filter="url(#shadow)"/>
+  <text x="440" y="622" text-anchor="middle" font-size="12" font-weight="bold" fill="#bf360c">items[i].price &gt;=</text>
+  <text x="440" y="638" text-anchor="middle" font-size="12" font-weight="bold" fill="#bf360c">T_item (500 грн)?</text>
+
+  <!-- Гілка ТАК (праворуч) -->
+  <line x1="580" y1="625" x2="680" y2="625" stroke="#333" stroke-width="2"/>
+  <line x1="680" y1="625" x2="680" y2="675" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="615" y="618" font-size="12" font-weight="bold" fill="#2e7d32">Так (+)</text>
+
+  <!-- Дія для ТАК -->
+  <rect x="580" y="675" width="200" height="45" fill="#fff3e0" stroke="#e65100" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="680" y="702" text-anchor="middle" font-size="12" fill="#bf360c">disc_val = cost * 0.10</text>
+
+  <!-- Гілка НІ (ліворуч) -->
+  <line x1="300" y1="625" x2="200" y2="625" stroke="#333" stroke-width="2"/>
+  <line x1="200" y1="625" x2="200" y2="675" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="245" y="618" font-size="12" font-weight="bold" fill="#c62828">Ні (-)</text>
+
+  <!-- Дія для НІ -->
+  <rect x="110" y="675" width="180" height="45" fill="#fff3e0" stroke="#e65100" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="200" y="702" text-anchor="middle" font-size="12" fill="#bf360c">disc_val = 0.0</text>
+
+  <!-- Зведення гілок після розгалуження 1 -->
+  <line x1="680" y1="720" x2="680" y2="760" stroke="#333" stroke-width="2"/>
+  <line x1="680" y1="760" x2="440" y2="760" stroke="#333" stroke-width="2"/>
+  <line x1="200" y1="720" x2="200" y2="760" stroke="#333" stroke-width="2"/>
+  <line x1="200" y1="760" x2="440" y2="760" stroke="#333" stroke-width="2"/>
+  <line x1="440" y1="760" x2="440" y2="790" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 7. АКУМУЛЯЦІЯ В ЦИКЛІ (Прямокутник) -->
+  <rect x="290" y="790" width="300" height="55" fill="#e3f2fd" stroke="#1565c0" stroke-width="2" filter="url(#shadow)"/>
+  <text x="440" y="812" text-anchor="middle" font-size="12" fill="#0d47a1">total_item_disc += disc_val</text>
+  <text x="440" y="832" text-anchor="middle" font-size="12" fill="#0d47a1">subtotal_after += (cost - disc_val)</text>
+
+  <!-- Замикання циклу назад до заголовка (обхід зліва) -->
+  <line x1="440" y1="845" x2="440" y2="875" stroke="#333" stroke-width="2"/>
+  <line x1="440" y1="875" x2="60" y2="875" stroke="#333" stroke-width="2"/>
+  <line x1="60" y1="875" x2="60" y2="425" stroke="#333" stroke-width="2"/>
+  <line x1="60" y1="425" x2="340" y2="425" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Вихід з циклу (праворуч після завершення N ітерацій) -->
+  <line x1="540" y1="425" x2="820" y2="425" stroke="#333" stroke-width="2"/>
+  <text x="650" y="415" font-size="12" font-weight="bold" fill="#555">Вихід з циклу (i &gt; N)</text>
+  <line x1="820" y1="425" x2="820" y2="920" stroke="#333" stroke-width="2"/>
+  <line x1="820" y1="920" x2="440" y2="920" stroke="#333" stroke-width="2"/>
+  <line x1="440" y1="920" x2="440" y2="950" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 8. РОЗГАЛУЖЕННЯ 2: НАКОПИЧУВАЛЬНА ЗНИЖКА ЧЕКА (Ромб) -->
+  <polygon points="440,950 590,1005 440,1060 290,1005" fill="#fff3e0" stroke="#e65100" stroke-width="2" filter="url(#shadow)"/>
+  <text x="440" y="1000" text-anchor="middle" font-size="12" font-weight="bold" fill="#bf360c">subtotal_after &gt;=</text>
+  <text x="440" y="1018" text-anchor="middle" font-size="12" font-weight="bold" fill="#bf360c">T_order (1500 грн)?</text>
+
+  <!-- Гілка ТАК (праворуч) -->
+  <line x1="590" y1="1005" x2="690" y2="1005" stroke="#333" stroke-width="2"/>
+  <line x1="690" y1="1005" x2="690" y2="1060" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="625" y="998" font-size="12" font-weight="bold" fill="#2e7d32">Так (+)</text>
+
+  <!-- Дія для ТАК -->
+  <rect x="580" y="1060" width="220" height="45" fill="#fff3e0" stroke="#e65100" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="690" y="1087" text-anchor="middle" font-size="12" fill="#bf360c">receipt_disc = subtotal_after * 0.05</text>
+
+  <!-- Гілка НІ (ліворуч) -->
+  <line x1="290" y1="1005" x2="190" y2="1005" stroke="#333" stroke-width="2"/>
+  <line x1="190" y1="1005" x2="190" y2="1060" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="235" y="998" font-size="12" font-weight="bold" fill="#c62828">Ні (-)</text>
+
+  <!-- Дія для НІ -->
+  <rect x="100" y="1060" width="180" height="45" fill="#fff3e0" stroke="#e65100" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="190" y="1087" text-anchor="middle" font-size="12" fill="#bf360c">receipt_disc = 0.0</text>
+
+  <!-- Зведення гілок після розгалуження 2 -->
+  <line x1="690" y1="1105" x2="690" y2="1145" stroke="#333" stroke-width="2"/>
+  <line x1="690" y1="1145" x2="440" y2="1145" stroke="#333" stroke-width="2"/>
+  <line x1="190" y1="1105" x2="190" y2="1145" stroke="#333" stroke-width="2"/>
+  <line x1="190" y1="1145" x2="440" y2="1145" stroke="#333" stroke-width="2"/>
+  <line x1="440" y1="1145" x2="440" y2="1175" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 9. ЛІНІЙНА ДІЛЯНКА (ФІНАЛЬНІ РОЗРАХУНКИ) -->
+  <rect x="260" y="1175" width="360" height="70" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2" filter="url(#shadow)"/>
+  <text x="440" y="1198" text-anchor="middle" font-size="12" fill="#1b5e20">final_payable = subtotal_after - receipt_disc</text>
+  <text x="440" y="1218" text-anchor="middle" font-size="12" fill="#1b5e20">total_saved = total_item_disc + receipt_disc</text>
+  <text x="440" y="1238" text-anchor="middle" font-size="12" fill="#1b5e20">vat_amount = final_payable * (0.20 / 1.20)</text>
+
+  <!-- Лінія 9 -> 10 -->
+  <line x1="440" y1="1245" x2="440" y2="1280" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 10. ВИВЕДЕННЯ РЕЗУЛЬТАТІВ (Паралелограм - Лінійна ділянка) -->
+  <polygon points="270,1280 650,1280 610,1340 230,1340" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2" filter="url(#shadow)"/>
+  <text x="440" y="1305" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e20">Вивід: друк чека, позиції, знижки,</text>
+  <text x="440" y="1325" text-anchor="middle" font-size="12" fill="#1b5e20">сума final_payable, ПДВ, економія</text>
+
+  <!-- Лінія 10 -> 11 -->
+  <line x1="440" y1="1340" x2="440" y2="1375" stroke="#333" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 11. КІНЕЦЬ (Термінатор - Лінійна ділянка) -->
+  <rect x="360" y="1375" width="160" height="46" rx="23" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2" filter="url(#shadow)"/>
+  <text x="440" y="1403" text-anchor="middle" font-size="14" font-weight="bold" fill="#1b5e20">Кінець</text>
+</svg>
+"""
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(svg_content)
+    print(f"Flowchart SVG successfully created: {filepath}")
+
+if __name__ == "__main__":
+    generate_svg()
+
