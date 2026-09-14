@@ -1,0 +1,202 @@
+"""
+Генератор блок-схеми алгоритму (UML Activity Diagram) у форматі SVG.
+Лабораторна робота №1, Варіант 72: Опади у Вінниці (1949-1998 рр.) з покажчиками.
+Усі лінії та стрілки обходять блоки ззовні без жодних перетинів.
+Заголовок вилучено для зручної вставки у звіт.
+"""
+
+def generate_svg(filepath: str = "flowchart.svg"):
+    svg_content = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1570" viewBox="0 0 900 1570" style="background-color: #ffffff; font-family: Arial, sans-serif;">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2c3e50" />
+    </marker>
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="2" dy="2" stdDeviation="2" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <g transform="translate(0, -60)">
+    <!-- 1. ПОЧАТОК -->
+    <rect x="360" y="85" width="180" height="40" rx="20" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2" filter="url(#shadow)"/>
+    <text x="450" y="110" text-anchor="middle" font-size="14" font-weight="bold" fill="#1b5e20">Початок main()</text>
+
+    <line x1="450" y1="125" x2="450" y2="155" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- 2. ТЕСТУВАННЯ -->
+    <rect x="310" y="155" width="280" height="40" fill="#e3f2fd" stroke="#1565c0" stroke-width="2" filter="url(#shadow)"/>
+    <text x="450" y="180" text-anchor="middle" font-size="13" fill="#0d47a1">Виклик run_tests() [assert]</text>
+
+    <line x1="450" y1="195" x2="450" y2="225" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- 3. ІНІЦІАЛІЗАЦІЯ -->
+    <rect x="280" y="225" width="340" height="48" fill="#f5f5f5" stroke="#424242" stroke-width="2" filter="url(#shadow)"/>
+    <text x="450" y="245" text-anchor="middle" font-size="12" fill="#212121">START_YEAR = 1949, N = 50</text>
+    <text x="450" y="262" text-anchor="middle" font-size="12" fill="#212121">Оголошення масиву: double rain[50]</text>
+
+    <line x1="450" y1="273" x2="450" y2="305" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- 4. ВВЕДЕННЯ ВИБОРУ РЕЖИМУ -->
+    <polygon points="320,305 600,305 560,345 280,345" fill="#fff9c4" stroke="#fbc02d" stroke-width="2" filter="url(#shadow)"/>
+    <text x="440" y="330" text-anchor="middle" font-size="13" fill="#f57f17">Вивід меню та введення choice</text>
+
+    <line x1="440" y1="345" x2="440" y2="375" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- 5. РОЗГАЛУЖЕННЯ: choice == '2'? -->
+    <polygon points="440,375 560,410 440,445 320,410" fill="#fff3e0" stroke="#e65100" stroke-width="2" filter="url(#shadow)"/>
+    <text x="440" y="415" text-anchor="middle" font-size="13" font-weight="bold" fill="#bf360c">choice == '2'?</text>
+
+    <!-- Гілка ТАК (Ручне введення, праворуч) -->
+    <line x1="560" y1="410" x2="680" y2="410" stroke="#2c3e50" stroke-width="2"/>
+    <line x1="680" y1="410" x2="680" y2="450" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="610" y="402" font-size="12" font-weight="bold" fill="#2e7d32">Так (Ручне)</text>
+
+    <rect x="550" y="450" width="260" height="65" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2" filter="url(#shadow)"/>
+    <text x="680" y="472" text-anchor="middle" font-size="12" fill="#1b5e20">Цикл введення покажчиком p:</text>
+    <text x="680" y="490" text-anchor="middle" font-size="12" fill="#1b5e20">for (p = rain; p &lt; rain + N; ++p)</text>
+    <text x="680" y="506" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e20">std::cin &gt;&gt; *p</text>
+
+    <!-- Гілка НІ (Зразкові дані, ліворуч) -->
+    <line x1="320" y1="410" x2="210" y2="410" stroke="#2c3e50" stroke-width="2"/>
+    <line x1="210" y1="410" x2="210" y2="450" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="240" y="402" font-size="12" font-weight="bold" fill="#c62828">Ні (Зразкові)</text>
+
+    <rect x="80" y="450" width="260" height="65" fill="#ede7f6" stroke="#512da8" stroke-width="2" filter="url(#shadow)"/>
+    <text x="210" y="473" text-anchor="middle" font-size="12" fill="#311b92">Завантаження 50 значень:</text>
+    <text x="210" y="492" text-anchor="middle" font-size="12" fill="#311b92">*(rain + i) = sample_data[i]</text>
+    <text x="210" y="508" text-anchor="middle" font-size="11" fill="#4527a0">(кліматичні дані Вінниці)</text>
+
+    <!-- Зведення гілок після введення -->
+    <line x1="680" y1="515" x2="680" y2="545" stroke="#2c3e50" stroke-width="2"/>
+    <line x1="680" y1="545" x2="440" y2="545" stroke="#2c3e50" stroke-width="2"/>
+    <line x1="210" y1="515" x2="210" y2="545" stroke="#2c3e50" stroke-width="2"/>
+    <line x1="210" y1="545" x2="440" y2="545" stroke="#2c3e50" stroke-width="2"/>
+    <line x1="440" y1="545" x2="440" y2="575" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- ======================================================== -->
+    <!-- 6. ПІДПРОГРАМА calculate_average -->
+    <!-- ======================================================== -->
+    <rect x="90" y="575" width="720" height="395" rx="8" fill="#f0f9ff" stroke="#0288d1" stroke-width="2" stroke-dasharray="6,4"/>
+    <text x="450" y="602" text-anchor="middle" font-size="14" font-weight="bold" fill="#01579b">
+      Підпрограма calculate_average(const double *arr, int size)
+    </text>
+    
+    <rect x="290" y="615" width="320" height="34" fill="#ffffff" stroke="#0288d1" stroke-width="1.5"/>
+    <text x="450" y="636" text-anchor="middle" font-size="12" fill="#01579b">assert(arr != nullptr &amp;&amp; size &gt; 0)</text>
+
+    <line x1="450" y1="649" x2="450" y2="670" stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <rect x="290" y="670" width="320" height="34" fill="#ffffff" stroke="#0288d1" stroke-width="1.5"/>
+    <text x="450" y="691" text-anchor="middle" font-size="12" fill="#01579b">sum = 0.0;  p = arr;</text>
+
+    <line x1="450" y1="704" x2="450" y2="725" stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <!-- Ромб циклу: p < arr + size ? -->
+    <polygon points="450,725 560,755 450,785 340,755" fill="#ffffff" stroke="#0288d1" stroke-width="2"/>
+    <text x="450" y="759" text-anchor="middle" font-size="12" font-weight="bold" fill="#01579b">p &lt; arr + size ?</text>
+
+    <!-- Гілка ТАК (вниз, в тіло циклу) -->
+    <line x1="450" y1="785" x2="450" y2="815" stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="465" y="802" font-size="11" font-weight="bold" fill="#2e7d32">Так</text>
+
+    <rect x="330" y="815" width="240" height="38" fill="#ffffff" stroke="#0288d1" stroke-width="1.5"/>
+    <text x="450" y="838" text-anchor="middle" font-size="12" fill="#01579b">sum += *p;   ++p;</text>
+
+    <!-- Петля повернення в цикл (ліворуч від блоків) -->
+    <line x1="450" y1="853" x2="450" y2="875" stroke="#2c3e50" stroke-width="1.5"/>
+    <line x1="450" y1="875" x2="230" y2="875" stroke="#2c3e50" stroke-width="1.5"/>
+    <line x1="230" y1="875" x2="230" y2="755" stroke="#2c3e50" stroke-width="1.5"/>
+    <line x1="230" y1="755" x2="340" y2="755" stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <!-- Гілка НІ (вихід з циклу ПРАВОРУЧ, в обхід блоків) -->
+    <line x1="560" y1="755" x2="680" y2="755" stroke="#2c3e50" stroke-width="1.5"/>
+    <text x="585" y="747" font-size="11" font-weight="bold" fill="#c62828">Ні</text>
+    <line x1="680" y1="755" x2="680" y2="895" stroke="#2c3e50" stroke-width="1.5"/>
+    <line x1="680" y1="895" x2="450" y2="895" stroke="#2c3e50" stroke-width="1.5"/>
+    <line x1="450" y1="895" x2="450" y2="915" stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <!-- Повернення значення -->
+    <rect x="310" y="915" width="280" height="36" fill="#e1f5fe" stroke="#0288d1" stroke-width="2"/>
+    <text x="450" y="937" text-anchor="middle" font-size="12" font-weight="bold" fill="#01579b">return avg = sum / size</text>
+
+    <!-- Перехід до наступної підпрограми -->
+    <line x1="450" y1="970" x2="450" y2="1005" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <!-- ======================================================== -->
+    <!-- 7. ПІДПРОГРАМА print_report -->
+    <!-- ======================================================== -->
+    <rect x="90" y="1005" width="720" height="525" rx="8" fill="#fff5f2" stroke="#d84315" stroke-width="2" stroke-dasharray="6,4"/>
+    <text x="450" y="1032" text-anchor="middle" font-size="14" font-weight="bold" fill="#bf360c">
+      Підпрограма print_report(rain, 50, 1949, avg)
+    </text>
+
+    <polygon points="270,1048 630,1048 590,1086 230,1086" fill="#ffffff" stroke="#d84315" stroke-width="1.5"/>
+    <text x="430" y="1071" text-anchor="middle" font-size="12" fill="#bf360c">Вивід шапки: Рік | Опади | Відхилення</text>
+
+    <line x1="430" y1="1086" x2="430" y2="1108" stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <!-- Ініціалізація i = 0 -->
+    <rect x="360" y="1108" width="140" height="30" fill="#ffffff" stroke="#d84315" stroke-width="1.5"/>
+    <text x="430" y="1127" text-anchor="middle" font-size="12" fill="#bf360c">i = 0</text>
+
+    <line x1="430" y1="1138" x2="430" y2="1160" stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <!-- Ромб циклу: i < size (50) ? -->
+    <polygon points="430,1160 550,1192 430,1224 310,1192" fill="#ffffff" stroke="#d84315" stroke-width="2"/>
+    <text x="430" y="1196" text-anchor="middle" font-size="12" font-weight="bold" fill="#bf360c">i &lt; size (50) ?</text>
+
+    <!-- Гілка ТАК (вниз, в тіло циклу) -->
+    <line x1="430" y1="1224" x2="430" y2="1252" stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <text x="445" y="1240" font-size="11" font-weight="bold" fill="#2e7d32">Так</text>
+
+    <!-- Обчислення адреси та відхилення -->
+    <rect x="290" y="1252" width="280" height="42" fill="#ffffff" stroke="#d84315" stroke-width="1.5"/>
+    <text x="430" y="1270" text-anchor="middle" font-size="12" fill="#bf360c">p = arr + i</text>
+    <text x="430" y="1286" text-anchor="middle" font-size="12" fill="#bf360c">deviation = *p - avg</text>
+
+    <line x1="430" y1="1294" x2="430" y2="1316" stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <!-- Виведення рядка -->
+    <polygon points="270,1316 590,1316 555,1352 235,1352" fill="#ffffff" stroke="#d84315" stroke-width="1.5"/>
+    <text x="412" y="1338" text-anchor="middle" font-size="12" fill="#bf360c">Вивід рядка: (1949 + i), *p, deviation</text>
+
+    <line x1="412" y1="1352" x2="412" y2="1374" stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <!-- Інкремент ++i -->
+    <rect x="362" y="1374" width="100" height="28" fill="#ffffff" stroke="#d84315" stroke-width="1.5"/>
+    <text x="412" y="1392" text-anchor="middle" font-size="12" fill="#bf360c">++i</text>
+
+    <!-- Петля повернення в цикл (ліворуч від блоків) -->
+    <line x1="412" y1="1402" x2="412" y2="1424" stroke="#2c3e50" stroke-width="1.5"/>
+    <line x1="412" y1="1424" x2="190" y2="1424" stroke="#2c3e50" stroke-width="1.5"/>
+    <line x1="190" y1="1424" x2="190" y2="1192" stroke="#2c3e50" stroke-width="1.5"/>
+    <line x1="190" y1="1192" x2="310" y2="1192" stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <!-- Гілка НІ (вихід з циклу ПРАВОРУЧ, в обхід блоків) -->
+    <line x1="550" y1="1192" x2="700" y2="1192" stroke="#2c3e50" stroke-width="1.5"/>
+    <text x="575" y="1184" font-size="11" font-weight="bold" fill="#c62828">Ні</text>
+    <line x1="700" y1="1192" x2="700" y2="1446" stroke="#2c3e50" stroke-width="1.5"/>
+    <line x1="700" y1="1446" x2="430" y2="1446" stroke="#2c3e50" stroke-width="1.5"/>
+    <line x1="430" y1="1446" x2="430" y2="1468" stroke="#2c3e50" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+    <!-- Виведення середнього значення -->
+    <polygon points="250,1468 610,1468 575,1506 215,1506" fill="#ffffff" stroke="#d84315" stroke-width="1.5"/>
+    <text x="412" y="1491" text-anchor="middle" font-size="12" fill="#bf360c">Вивід підсумку: Середня кількість опадів = avg</text>
+
+    <!-- ======================================================== -->
+    <!-- 8. ЗАВЕРШЕННЯ -->
+    <!-- ======================================================== -->
+    <line x1="450" y1="1530" x2="450" y2="1570" stroke="#2c3e50" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="360" y="1570" width="180" height="42" rx="21" fill="#e8f5e9" stroke="#2e7d32" stroke-width="2" filter="url(#shadow)"/>
+    <text x="450" y="1596" text-anchor="middle" font-size="14" font-weight="bold" fill="#1b5e20">Кінець (return 0)</text>
+  </g>
+</svg>
+"""
+    with open(filepath, "w", encoding="utf-8") as f:
+        f.write(svg_content)
+    print(f"SVG оновлено без заголовка: {filepath}")
+
+if __name__ == "__main__":
+    generate_svg("flowchart.svg")

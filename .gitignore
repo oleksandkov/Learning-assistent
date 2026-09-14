@@ -72,3 +72,9 @@ dist/
 
 # Cach
 *.pyc
+
+*_scratch/
+
+*.log
+
+*.dsm
