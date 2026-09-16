@@ -1,0 +1,9 @@
+; 2x2 Deadlock Demonstration
+; Pushing a box into the 2x2 cluster creates a solid wall-box block
+######
+#    #
+# #$ #
+# #$ #
+#  @.#
+#  . #
+######

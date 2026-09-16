@@ -1,0 +1,21 @@
+build/
+build*/
+bin/
+lib/
+*.exe
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+.vscode/
+.idea/
+*.log
+*.csv
+*.json
+!CMakePresets.json
+# web (Next.js, sokoban-web) — manifests must be committed
+!web/package.json
+!web/package-lock.json
+!web/tsconfig.json
+levels/custom_level.xsb

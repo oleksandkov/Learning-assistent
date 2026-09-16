@@ -1,0 +1,7 @@
+; Corner Deadlock Demonstration
+; Level has a non-goal corner where pushing a box creates an unrecoverable deadlock
+######
+#    #
+# $$ #
+# .@.#
+######

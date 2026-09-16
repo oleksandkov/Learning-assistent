@@ -84,7 +84,15 @@
     {
       "label": "Compile and Run any .cpp file",
       "type": "shell",
-      "command": "cd \"${fileDirname}\"; chcp 65001 >$null; g++ ${fileBasename} -o ${fileBasenameNoExtension}.exe; .\\${fileBasenameNoExtension}.exe",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${workspaceFolder}/scripts/build_and_run_cpp.ps1",
+        "${file}"
+      ],
       "problemMatcher": [],
       "group": "build",
       "presentation": {

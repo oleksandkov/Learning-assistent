@@ -1,0 +1,12 @@
+# Next.js web app
+node_modules/
+.next/
+.next-dev/
+*.tsbuildinfo
+test-results/
+!src/lib/
+!src/lib/**
+out/
+dist/
+*.log
+.DS_Store

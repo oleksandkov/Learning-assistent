@@ -1,0 +1,9 @@
+; Freeze Deadlock Demonstration
+; Boxes trapped against walls horizontally and vertically
+#######
+#     #
+# ##  #
+# #$  #
+#  $  #
+# . .@#
+#######
