@@ -1,8 +1,7 @@
 #include "TerminalUI.hpp"
 #include "AlgorithmComparator.hpp"
 #include "AiClient.hpp"
-#include "../solvers/BFSSolver.hpp"
-#include "../solvers/AStarSolver.hpp"
+#include "../solvers/SolverRegistry.hpp"
 #include "../solvers/DeadlockDetector.hpp"
 #include "../solvers/LevelGenerator.hpp"
 #include <iostream>
@@ -510,7 +509,7 @@ void TerminalUI::render(const core::GameSession& session,
     // 8. Компактний блок керування
     out << "\nКерування:\n"
         << "  WASD/Стрілки - Рух | 1/P - A* штовхання | B - BFS | M - A* ходи | G - AI\n"
-        << "  T - Порівняти всі | Пробіл - Симуляція | N - Крок | H - Підказка\n"
+        << "  I - IDA* (good) | O - Greedy (bad) | T - Порівняти всі | Пробіл - Симуляція | N - Крок | H - Підказка\n"
         << "  U - Undo | Y - Redo | R - Перезапуск | K - AI-ключ | C - Камера | V - Зберегти | Q - Меню\n";
 
     std::string frame = out.str();
@@ -559,6 +558,8 @@ KeyCommand TerminalUI::readKey() {
         case 'b': case 'B': return KeyCommand::SolveBFS;
         case 'm': case 'M': return KeyCommand::SolveMoves;
         case 'p': case 'P': return KeyCommand::SolvePushes;
+        case 'i': case 'I': return KeyCommand::SolveIDAStar;
+        case 'o': case 'O': return KeyCommand::SolveGreedy;
         case 'g': case 'G': return KeyCommand::SolveAI;
         case 't': case 'T': return KeyCommand::CompareAll;
         case 'k': case 'K': return KeyCommand::SetAiKey;
@@ -601,6 +602,8 @@ KeyCommand TerminalUI::readKey() {
         case 'b': case 'B': return KeyCommand::SolveBFS;
         case 'm': case 'M': return KeyCommand::SolveMoves;
         case 'p': case 'P': return KeyCommand::SolvePushes;
+        case 'i': case 'I': return KeyCommand::SolveIDAStar;
+        case 'o': case 'O': return KeyCommand::SolveGreedy;
         case 'g': case 'G': return KeyCommand::SolveAI;
         case 't': case 'T': return KeyCommand::CompareAll;
         case 'k': case 'K': return KeyCommand::SetAiKey;
@@ -705,10 +708,7 @@ int runGame(core::ParsedLevel parsed) {
         ui.render(session, mode, parsed.name, statusMsg, "",
                   curTime, aiSolveTimeMs, displayedSidebar, -1, cameraEnabled);
 
-        std::unique_ptr<solvers::ISolver> solver =
-            (kind == solvers::SolverKind::BFS)
-                ? std::unique_ptr<solvers::ISolver>(std::make_unique<solvers::BFSSolver>())
-                : std::unique_ptr<solvers::ISolver>(std::make_unique<solvers::AStarSolver>());
+        std::unique_ptr<solvers::ISolver> solver = solvers::SolverRegistry::create(kind);
         solvers::SolverOptions opt{
             .algorithm = kind,
             .metric = metric,
@@ -939,12 +939,22 @@ int runGame(core::ParsedLevel parsed) {
                            solvers::OptimizationMetric::Moves, "A* ходи", curPlayerTime);
                 break;
             }
+            case KeyCommand::SolveIDAStar: {
+                solveLocal(solvers::SolverKind::IDAStar,
+                           solvers::OptimizationMetric::Pushes, "IDA* штовхання", curPlayerTime);
+                break;
+            }
+            case KeyCommand::SolveGreedy: {
+                solveLocal(solvers::SolverKind::Greedy,
+                           solvers::OptimizationMetric::Pushes, "Greedy (неоптимально)", curPlayerTime);
+                break;
+            }
             case KeyCommand::SolveAI: {
                 solveAi(curPlayerTime);
                 break;
             }
             case KeyCommand::Hint: {
-                solvers::AStarSolver solver;
+                auto solver = solvers::SolverRegistry::create(solvers::SolverKind::AStar);
                 solvers::SolverOptions opt{
                     .algorithm = solvers::SolverKind::AStar,
                     .metric = solvers::OptimizationMetric::Pushes,
@@ -953,10 +963,10 @@ int runGame(core::ParsedLevel parsed) {
                     .enableDeadlockDetection = true,
                     .enableSafeMode = true
                 };
-                solver.start(session.board(), session.currentState(), opt);
-                while (solver.advance(10000) == solvers::SearchStatus::Running) {}
-                auto sol = solver.solution();
-                if (solver.statistics().status == solvers::SearchStatus::Solved &&
+                solver->start(session.board(), session.currentState(), opt);
+                while (solver->advance(10000) == solvers::SearchStatus::Running) {}
+                auto sol = solver->solution();
+                if (solver->statistics().status == solvers::SearchStatus::Solved &&
                     sol.has_value() && !sol->moves.empty()) {
                     std::string dStr = "?";
                     switch (sol->moves[0]) {
@@ -1074,7 +1084,7 @@ int runGame(core::ParsedLevel parsed) {
                                                getTerminalSize().width);
                 if (ui.ansiSupported()) std::cout << "\033[H\033[2J\033[3J" << std::flush;
                 std::cout << tab.str() << std::flush;
-                std::cout << "Застосувати: [B] BFS  [M] A* ходи  [P] A* штовхання  "
+                std::cout << "Застосувати: [B] BFS  [M] A* ходи  [P] A* штовхання  [I] IDA*  [O] Greedy  "
                              "[G] AI  [інше] скасувати: " << std::flush;
                 KeyCommand pick = ui.readKey();
                 std::cout << "\n" << std::flush;
@@ -1082,19 +1092,21 @@ int runGame(core::ParsedLevel parsed) {
                 if (pick == KeyCommand::SolveBFS) idx = 0;
                 else if (pick == KeyCommand::SolveMoves) idx = 1;
                 else if (pick == KeyCommand::SolvePushes || pick == KeyCommand::Solve) idx = 2;
-                else if (pick == KeyCommand::SolveAI) idx = 3;
+                else if (pick == KeyCommand::SolveIDAStar) idx = 3;
+                else if (pick == KeyCommand::SolveGreedy) idx = 4;
+                else if (pick == KeyCommand::SolveAI) idx = 5;
                 if (idx >= 0 && idx < static_cast<int>(report.results.size()) &&
                     report.results[static_cast<std::size_t>(idx)].solution.has_value() &&
                     report.results[static_cast<std::size_t>(idx)].replayValid) {
                     const auto& r = report.results[static_cast<std::size_t>(idx)];
                     double searchMs = static_cast<double>(r.searchTime.count()) / 1'000'000.0;
-                    std::string extra = (idx == 3 && !aiExplanation.empty())
+                    std::string extra = (idx == 5 && !aiExplanation.empty())
                         ? ("AI: " + aiExplanation) : "";
                     applySolution(r.solution->moves, r.pushes, searchMs,
                                   "ШІ розв'язано (" + r.algorithmName + ")", extra);
                 } else {
                     mode = "Ручна гра";
-                    if (idx == 3 && !aiNote.empty()) statusMsg = aiNote;
+                    if (idx == 5 && !aiNote.empty()) statusMsg = aiNote;
                     else statusMsg = (idx >= 0)
                         ? "Обраний алгоритм не дав перевіреного рішення з цієї позиції."
                         : "Порівняння завершено без застосування (рішення не обрано).";
@@ -1109,7 +1121,7 @@ int runGame(core::ParsedLevel parsed) {
                     ui.render(session, mode, parsed.name, statusMsg, "",
                               curPlayerTime, aiSolveTimeMs, displayedSidebar, -1, cameraEnabled);
 
-                    solvers::AStarSolver solver;
+                    auto solver = solvers::SolverRegistry::create(solvers::SolverKind::AStar);
                     solvers::SolverOptions opt{
                         .algorithm = solvers::SolverKind::AStar,
                         .metric = solvers::OptimizationMetric::Pushes,
@@ -1118,12 +1130,12 @@ int runGame(core::ParsedLevel parsed) {
                         .enableDeadlockDetection = true,
                         .enableSafeMode = true
                     };
-                    solver.start(session.board(), session.currentState(), opt);
-                    while (solver.advance(10000) == solvers::SearchStatus::Running) {}
+                    solver->start(session.board(), session.currentState(), opt);
+                    while (solver->advance(10000) == solvers::SearchStatus::Running) {}
 
-                    auto stats = solver.statistics();
+                    auto stats = solver->statistics();
                     if (stats.status == solvers::SearchStatus::Solved) {
-                        currentSolution = solver.solution();
+                        currentSolution = solver->solution();
                         solutionMoveIndex = 0;
                         isAutoplay = true;
                         mode = "Симуляція";

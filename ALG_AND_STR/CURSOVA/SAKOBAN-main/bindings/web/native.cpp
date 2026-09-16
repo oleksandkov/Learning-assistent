@@ -143,8 +143,28 @@ int main(int argc, char** argv) {
         std::cout << std::boolalpha << std::setprecision(12);
         if (mode == "solve") {
             SolverOptions options;
-            options.algorithm = algorithm == "bfs" ? SolverKind::BFS : SolverKind::AStar;
-            options.metric = algorithm == "astar-pushes" ? OptimizationMetric::Pushes : OptimizationMetric::Moves;
+            if (algorithm == "bfs") {
+                options.algorithm = SolverKind::BFS;
+                options.metric = OptimizationMetric::Moves;
+            } else if (algorithm == "astar-pushes") {
+                options.algorithm = SolverKind::AStar;
+                options.metric = OptimizationMetric::Pushes;
+            } else if (algorithm == "astar-moves") {
+                options.algorithm = SolverKind::AStar;
+                options.metric = OptimizationMetric::Moves;
+            } else if (algorithm == "idastar" || algorithm == "idastar-pushes") {
+                options.algorithm = SolverKind::IDAStar;
+                options.metric = OptimizationMetric::Pushes;
+            } else if (algorithm == "idastar-moves") {
+                options.algorithm = SolverKind::IDAStar;
+                options.metric = OptimizationMetric::Moves;
+            } else if (algorithm == "greedy" || algorithm == "greedy-pushes") {
+                options.algorithm = SolverKind::Greedy;
+                options.metric = OptimizationMetric::Pushes;
+            } else {
+                options.algorithm = SolverKind::AStar;
+                options.metric = OptimizationMetric::Pushes;
+            }
             options.collectDebugState = true;
             const bool extendedSearch = game.board().size() > 2500 || game.currentState().boxes.size() > 6;
             options.timeLimit = std::chrono::milliseconds(extendedSearch ? 30000 : 8000);

@@ -14,7 +14,9 @@ namespace sokoban::solvers {
 
 enum class SolverKind {
     BFS,
-    AStar
+    AStar,
+    IDAStar,
+    Greedy
 };
 
 enum class OptimizationMetric {

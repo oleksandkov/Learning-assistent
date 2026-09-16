@@ -28,7 +28,7 @@
 # Розв'язання рівня алгоритмом A* (мінімізація штовхань)
 .\sokoban_cli.exe solve levels/02_microban.xsb --algorithm astar --metric pushes
 
-# Порівняння алгоритмів (BFS vs A* Moves vs A* Pushes)
+# Порівняння алгоритмів (BFS vs A* Moves vs A* Pushes vs IDA* vs Greedy)
 .\sokoban_cli.exe compare levels/02_microban.xsb
 ```
 

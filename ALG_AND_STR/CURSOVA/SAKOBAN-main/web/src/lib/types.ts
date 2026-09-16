@@ -1,5 +1,5 @@
 export type Dir = "U" | "L" | "D" | "R";
-export type LocalAlgorithm = "bfs" | "astar-moves" | "astar-pushes";
+export type LocalAlgorithm = "bfs" | "astar-moves" | "astar-pushes" | "idastar-pushes" | "greedy-pushes";
 export type Algorithm = LocalAlgorithm | "gemini";
 export const LOCAL_ALGORITHMS: {
   id: LocalAlgorithm;
@@ -9,6 +9,8 @@ export const LOCAL_ALGORITHMS: {
   { id: "bfs", label: "BFS", metric: "Мінімум ходів" },
   { id: "astar-moves", label: "A* · ходи", metric: "Мінімум ходів" },
   { id: "astar-pushes", label: "A* · штовхання", metric: "Мінімум штовхань" },
+  { id: "idastar-pushes", label: "IDA* · штовхання (good)", metric: "Мінімум штовхань · мало пам'яті" },
+  { id: "greedy-pushes", label: "Greedy (bad)", metric: "Швидко · неоптимально" },
 ];
 export const ALGORITHMS: { id: Algorithm; label: string; metric: string }[] = [
   ...LOCAL_ALGORITHMS,

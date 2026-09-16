@@ -19,6 +19,8 @@ struct BenchmarkOptions {
     bool runBFS = true;
     bool runAStarMoves = true;
     bool runAStarPushes = true;
+    bool runIDAStar = true;
+    bool runGreedy = true;
     std::chrono::milliseconds timeLimit{30000};
     std::size_t nodeLimit{1000000};
     OutputFormat format = OutputFormat::Table;

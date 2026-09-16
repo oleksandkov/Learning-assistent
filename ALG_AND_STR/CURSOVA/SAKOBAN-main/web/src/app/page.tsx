@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import MiniBoard from "@/components/MiniBoard";
+import HeroReplay from "@/components/HeroReplay";
 import Entrance from "@/components/Entrance";
 export default async function Home() {
   const xsb = await readFile(
@@ -13,9 +13,6 @@ export default async function Home() {
       <Entrance />
       <div className="home-copy">
         <h1>Сокобан</h1>
-        <p className="home-description">
-          Головоломка та візуалізація алгоритмів пошуку.
-        </p>
         <nav className="home-menu" aria-label="Головне меню">
           <Link href="/levels" className="main-choice">
             <span>Грати</span>
@@ -45,7 +42,9 @@ export default async function Home() {
       </div>
       <div className="home-art">
         <div className="board-plinth">
-          <MiniBoard xsb={xsb} hero />
+          <div className="hero-float">
+            <HeroReplay fallbackXsb={xsb} />
+          </div>
         </div>
         <div className="art-caption">
           <span className="mini-key">

@@ -85,7 +85,6 @@ export default function LevelCreator() {
           ← Каталог рівнів
         </Link>
         <h1>Створити рівень</h1>
-        <p>C++ ядро згенерує та перевірить розв’язний рівень.</p>
       </div>
       <div className="generator-layout">
         <form className="generator-form" onSubmit={generate}>

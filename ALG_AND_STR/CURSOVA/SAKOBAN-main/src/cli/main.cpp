@@ -1,8 +1,6 @@
 #include "../core/LevelParser.hpp"
 #include "../core/GameSession.hpp"
 #include "../solvers/SolverRegistry.hpp"
-#include "../solvers/BFSSolver.hpp"
-#include "../solvers/AStarSolver.hpp"
 #include "../solvers/DeadlockDetector.hpp"
 #include "../solvers/ReplayValidator.hpp"
 #include "../solvers/LevelGenerator.hpp"
@@ -74,12 +72,12 @@ void printHelp() {
               << "  sokoban_cli play <рівень.xsb>              Інтерактивна гра в терміналі\n"
               << "  sokoban_cli solve <рівень.xsb> [опції]     Автоматичне розв'язання рівня\n"
               << "  sokoban_cli hint <рівень.xsb> [опції]      Отримати підказку для наступного ходу\n"
-              << "  sokoban_cli compare <рівень.xsb> [опції]   Порівняння BFS vs A*-Moves vs A*-Pushes\n"
+              << "  sokoban_cli compare <рівень.xsb> [опції]   Порівняння BFS vs A*-Moves vs A*-Pushes vs IDA* vs Greedy\n"
               << "  sokoban_cli random [опції]                 Генерація та валідація випадкового рівня\n"
               << "  sokoban_cli benchmark <рівень|папка> [опції] Запуск бенчмарку швидкодії\n"
               << "  sokoban_cli --help                         Показати цю довідку\n\n"
                << "Опції solve / hint:\n"
-               << "  --algorithm <bfs|astar|ai|gemini|groq> Алгоритм (за замовчуванням: astar)\n"
+               << "  --algorithm <bfs|astar|idastar|greedy|ai|gemini|groq> Алгоритм (за замовчуванням: astar)\n"
                << "    ai = зовнішній ШІ, провайдер авто за ключем: Groq (GROQ_API_KEY)\n"
                << "         або Google AI Studio (GEMINI_API_KEY, AIza.../AQ...); gemini/groq = примусово\n"
                << "         ключ також вводиться у грі клавішею K (файл ~/.sokoban_ai_key)\n"
@@ -98,10 +96,11 @@ void printHelp() {
               << "  --repeat <число>          Кількість повторів для кожного рівня (за замовчуванням: 5)\n"
               << "  --format <table|csv|json> Формат виводу результатів (за замовчуванням: table)\n"
               << "  --output <файл>           Шлях до файлу для збереження результатів\n"
-              << "  --algorithm <all|bfs|astar> Вибір алгоритмів для тесту (за замовчуванням: all)\n\n"
+              << "  --algorithm <all|bfs|astar|idastar|greedy> Вибір алгоритмів для тесту (за замовчуванням: all)\n\n"
                << "Керування в інтерактивній грі:\n"
                << "  WASD / Стрілки            Рух гравця та штовхання ящиків\n"
                << "  B / M / P                 Розв'язати: BFS / A* ходи / A* штовхання (1 = P)\n"
+               << "  I / O                     Розв'язати: IDA* штовхання (good, мало пам'яті) / Greedy (bad, швидко але неоптимально)\n"
                << "  G                         Розв'язати через AI (авто: Groq / Google; K - ввести ключ)\n"
                << "  T                         Порівняти всі алгоритми з поточної позиції і обрати рішення\n"
               << "  U                         Скасування ходу (Undo)\n"
@@ -429,18 +428,37 @@ int runBenchmark(int argc, char* argv[]) {
             opt.outputFile = argv[++i];
         } else if (arg == "--algorithm" && i + 1 < argc) {
             std::string a = argv[++i];
+            for (char& c : a) c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
             if (a == "bfs") {
                 opt.runBFS = true;
                 opt.runAStarMoves = false;
                 opt.runAStarPushes = false;
+                opt.runIDAStar = false;
+                opt.runGreedy = false;
             } else if (a == "astar") {
                 opt.runBFS = false;
                 opt.runAStarMoves = true;
                 opt.runAStarPushes = true;
+                opt.runIDAStar = false;
+                opt.runGreedy = false;
+            } else if (a == "idastar" || a == "ida*" || a == "ida") {
+                opt.runBFS = false;
+                opt.runAStarMoves = false;
+                opt.runAStarPushes = false;
+                opt.runIDAStar = true;
+                opt.runGreedy = false;
+            } else if (a == "greedy" || a == "gbfs") {
+                opt.runBFS = false;
+                opt.runAStarMoves = false;
+                opt.runAStarPushes = false;
+                opt.runIDAStar = false;
+                opt.runGreedy = true;
             } else {
                 opt.runBFS = true;
                 opt.runAStarMoves = true;
                 opt.runAStarPushes = true;
+                opt.runIDAStar = true;
+                opt.runGreedy = true;
             }
         }
     }

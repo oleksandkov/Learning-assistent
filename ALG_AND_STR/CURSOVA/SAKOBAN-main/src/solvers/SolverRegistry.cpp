@@ -1,6 +1,8 @@
 #include "SolverRegistry.hpp"
 #include "BFSSolver.hpp"
 #include "AStarSolver.hpp"
+#include "IDAStarSolver.hpp"
+#include "GreedySolver.hpp"
 #include <algorithm>
 #include <stdexcept>
 
@@ -21,6 +23,10 @@ std::unique_ptr<ISolver> SolverRegistry::create(SolverKind kind) {
             return std::make_unique<BFSSolver>();
         case SolverKind::AStar:
             return std::make_unique<AStarSolver>();
+        case SolverKind::IDAStar:
+            return std::make_unique<IDAStarSolver>();
+        case SolverKind::Greedy:
+            return std::make_unique<GreedySolver>();
     }
     throw std::invalid_argument("Unknown solver kind");
 }
@@ -37,13 +43,21 @@ SolverKind SolverRegistry::parseKind(const std::string& name) {
     if (s == "astar" || s == "a*" || s == "a_star") {
         return SolverKind::AStar;
     }
-    throw std::invalid_argument("Unknown solver algorithm name: " + name + ". Available: bfs, astar");
+    if (s == "idastar" || s == "ida*" || s == "ida_star" || s == "ida") {
+        return SolverKind::IDAStar;
+    }
+    if (s == "greedy" || s == "gbfs" || s == "best-first" || s == "bestfirst" || s == "best_first") {
+        return SolverKind::Greedy;
+    }
+    throw std::invalid_argument("Unknown solver algorithm name: " + name + ". Available: bfs, astar, idastar, greedy");
 }
 
 std::string SolverRegistry::toString(SolverKind kind) {
     switch (kind) {
         case SolverKind::BFS: return "BFS";
         case SolverKind::AStar: return "A*";
+        case SolverKind::IDAStar: return "IDA*";
+        case SolverKind::Greedy: return "Greedy";
     }
     return "Unknown";
 }
@@ -68,7 +82,7 @@ std::string SolverRegistry::toString(OptimizationMetric metric) {
 }
 
 std::vector<std::string> SolverRegistry::availableSolvers() {
-    return {"bfs", "astar"};
+    return {"bfs", "astar", "idastar", "greedy"};
 }
 
 } // namespace sokoban::solvers

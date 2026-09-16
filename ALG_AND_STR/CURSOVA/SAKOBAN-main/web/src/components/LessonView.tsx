@@ -1,18 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { Lesson } from "@/lib/lessons";
+import type { ResolvedLesson } from "@/lib/lessons";
 import AlgorithmScene from "./AlgorithmScene";
 export default function LessonView({
   lesson,
   topics,
 }: {
-  lesson: Lesson;
+  lesson: ResolvedLesson;
   topics: { id: string; nav: string }[];
 }) {
   const [step, setStep] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [pace, setPace] = useState(3000);
+  const [pace, setPace] = useState(6000);
   useEffect(() => {
     if (!playing) return;
     if (step === lesson.frames.length - 1) {
@@ -23,7 +23,7 @@ export default function LessonView({
     return () => clearTimeout(timer);
   }, [pace, playing, step, lesson.frames.length]);
   const frame = lesson.frames[step];
-  const isMatrix = lesson.id === "hungarian";
+  const excerpt = lesson.excerpts[step];
   return (
     <main id="main" className="page">
       <div className="page-heading">
@@ -55,7 +55,7 @@ export default function LessonView({
           <section className="demo" aria-label="Покрокова демонстрація">
             <div className="demo-top">
               <span>Крок {step + 1} із {lesson.frames.length}</span>
-              <span>Псевдокод</span>
+              <span>Навчальний приклад</span>
             </div>
             <div className="demo-progress" aria-label="Перейти до кроку">
               {lesson.frames.map((_, index) => (
@@ -74,54 +74,20 @@ export default function LessonView({
                 </button>
               ))}
             </div>
+            <div className="lesson-step-heading">
+              <h3>{frame.title}</h3>
+              <p aria-live={playing ? "off" : "polite"}>{frame.text}</p>
+            </div>
             <div className="demo-content">
               <div className="demo-visual">
-                <div className="frame-enter">
-                  {isMatrix ? (
-                    <div
-                      className="trace-tiles matrix"
-                      style={{ gridTemplateColumns: "repeat(3, 1fr)" }}
-                    >
-                      {frame.values.map((value, i) => (
-                        <span
-                          key={`${lesson.id}-${i}`}
-                          className={frame.active.includes(i) ? "active" : ""}
-                        >
-                          {value}
-                        </span>
-                      ))}
-                    </div>
-                  ) : (
-                    <AlgorithmScene lessonId={lesson.id} step={step} total={lesson.frames.length} />
-                  )}
-                  <div className="trace-value" aria-live="off">
-                    <small>Стан структури</small>
-                    <strong>{frame.note}</strong>
-                  </div>
-                </div>
-              </div>
-              <div
-                className="code-panel"
-                aria-label="Псевдокод з активним рядком"
-              >
-                {lesson.code.map((line, i) => (
-                  <div
-                    key={i}
-                    className={`code-line ${frame.line === i ? "active" : ""}`}
-                    aria-current={frame.line === i ? "step" : undefined}
-                  >
-                    <em>{i + 1}</em>
-                    <span className="code-text">{line}</span>
-                    {frame.line === i ? <strong className="code-running">зараз</strong> : null}
-                  </div>
-                ))}
+                <AlgorithmScene lessonId={lesson.id} step={step} />
               </div>
             </div>
             <div className="demo-bottom">
               <div className="step-copy">
-                <span>Що відбувається</span>
-                <p key={`${lesson.id}-copy-${step}`} className="frame-enter" aria-live={playing ? "off" : "polite"}>
-                  {frame.text}
+                <span>На цьому кроці</span>
+                <p>
+                  {frame.note}
                 </p>
               </div>
               <div className="demo-buttons">
@@ -176,12 +142,23 @@ export default function LessonView({
               <label className="lesson-pace">
                 Темп
                 <select value={pace} onChange={(event) => setPace(Number(event.target.value))}>
-                  <option value="4200">Повільно</option>
-                  <option value="3000">Звичайно</option>
+                  <option value="9000">Повільно</option>
+                  <option value="6000">Звичайно</option>
                   <option value="1800">Швидко</option>
                 </select>
               </label>
             </div>
+            <details className="lesson-source" open>
+              <summary>Як це написано в проєкті <span>C++ · справжній фрагмент</span></summary>
+              <div className="source-file">{excerpt.file}:{excerpt.start}</div>
+              <div className="code-panel" tabIndex={0} role="region" aria-label="Код C++ з активним рядком">
+                {excerpt.lines.map((line, i) => (
+                  <div key={i} className={`code-line ${i === 0 ? "active" : ""}`} aria-current={i === 0 ? "step" : undefined}>
+                    <em>{excerpt.start + i}</em><code className="code-text">{line || " "}</code>
+                  </div>
+                ))}
+              </div>
+            </details>
           </section>
           <div className="lesson-reading">
             {lesson.sections.map((section, i) => (
@@ -197,8 +174,8 @@ export default function LessonView({
             <p>{lesson.takeaway}</p>
           </div>
           <p className="source-note">
-            Реалізація в проєкті: <code>{lesson.source}</code>. Приклад вище
-            ілюструє принцип, а не виміряний запуск гри.
+            Приклади спрощено для навчання. Код читається безпосередньо з файлів C++ цього проєкту.
+            Схеми показують принцип роботи, а не виміряний запуск пошуку.
           </p>
           <Link
             className="button secondary"

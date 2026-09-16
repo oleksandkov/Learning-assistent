@@ -24,6 +24,8 @@ enum class KeyCommand {
     SolveAStar,
     SolveMoves,   // A* з метрикою Moves
     SolvePushes,  // A* з метрикою Pushes (= Solve)
+    SolveIDAStar, // IDA* штовхання (good: оптимальний, мало пам'яті)
+    SolveGreedy,  // Greedy штовхання (bad: швидко, неоптимально)
     SolveAI,      // Зовнішній AI (авто: Groq або Google за ключем)
     CompareAll,   // порівняти всі алгоритми з поточної позиції (як у web)
     SetAiKey,     // ввести/оновити AI API-ключ

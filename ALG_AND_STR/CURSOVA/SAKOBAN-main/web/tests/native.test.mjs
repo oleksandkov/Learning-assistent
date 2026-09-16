@@ -110,12 +110,27 @@ test("blocked move, undo/redo histories, current-state solving, solved state and
   assert.equal(goal.validated, true);
 });
 test("the old third map is unsolvable and reports NoSolution", () => {
-  for (const algo of ["bfs", "astar-moves", "astar-pushes"]) {
+  for (const algo of ["bfs", "astar-moves", "astar-pushes", "idastar-pushes", "greedy-pushes"]) {
     const result = run("03_microban_3.xsb", "solve", algo);
     assert.equal(result.status, "NoSolution");
     assert.equal(result.validated, false);
     assert.equal(result.moves, "");
   }
+});
+test("new algorithms: IDA* optimal pushes, Greedy valid but not optimal-claimed", () => {
+  const astar = run("01_simple.xsb", "solve", "astar-pushes");
+  assert.equal(astar.status, "Solved");
+  const ida = run("01_simple.xsb", "solve", "idastar-pushes");
+  assert.equal(ida.status, "Solved");
+  assert.equal(ida.validated, true);
+  assert.equal(ida.pushes, astar.pushes);
+  assert.ok(Array.isArray(ida.trace) && ida.trace.length >= 2);
+  const greedy = run("01_simple.xsb", "solve", "greedy-pushes");
+  assert.equal(greedy.status, "Solved");
+  assert.equal(greedy.validated, true);
+  assert.ok(greedy.pushes >= ida.pushes);
+  const replay = run("01_simple.xsb", "state", "greedy-pushes", greedy.moves);
+  assert.equal(replay.won, true);
 });
 test("custom generator honors dimensions, boxes, exact walls and seed", () => {
   const generated = generate(8, 8, 2, 4, "12345");

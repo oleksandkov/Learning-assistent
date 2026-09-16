@@ -50,7 +50,6 @@ export default function ComparisonReplay({ decisions, load, onClose }: {
 
   return <section className="comparison-replay" aria-label="Синхронне порівняння">
     <div className="section-line"><h3>Маршрути поруч</h3><button className="button subtle" onClick={onClose}>Закрити порівняння</button></div>
-    <p>Один такт — один хід. Усі поля починають з однакової позиції.</p>
     <div className="comparison-boards">
       {decisions.map((d, i) => <article key={d.result.algorithm}>
         <header>

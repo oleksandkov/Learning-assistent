@@ -39,7 +39,7 @@ target_include_directories(sokoban_core PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
 )
 
-# Solvers library (BFS, A*, deadlocks, Hungarian heuristic, Zobrist)
+# Solvers library (BFS, A*, IDA*, Greedy, deadlocks, Hungarian heuristic, Zobrist)
 add_library(sokoban_solvers STATIC
     src/solvers/ISolver.hpp
     src/solvers/Zobrist.hpp
@@ -54,6 +54,10 @@ add_library(sokoban_solvers STATIC
     src/solvers/BFSSolver.cpp
     src/solvers/AStarSolver.hpp
     src/solvers/AStarSolver.cpp
+    src/solvers/IDAStarSolver.hpp
+    src/solvers/IDAStarSolver.cpp
+    src/solvers/GreedySolver.hpp
+    src/solvers/GreedySolver.cpp
     src/solvers/SolverRegistry.hpp
     src/solvers/SolverRegistry.cpp
     src/solvers/LevelGenerator.hpp

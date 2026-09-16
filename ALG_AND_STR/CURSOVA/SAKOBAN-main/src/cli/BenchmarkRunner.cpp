@@ -1,7 +1,6 @@
 #include "BenchmarkRunner.hpp"
 #include "../core/LevelParser.hpp"
-#include "../solvers/BFSSolver.hpp"
-#include "../solvers/AStarSolver.hpp"
+#include "../solvers/SolverRegistry.hpp"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -74,6 +73,22 @@ int BenchmarkRunner::run(const BenchmarkOptions& options) {
                                              options.timeLimit,
                                              options.nodeLimit));
         }
+        if (options.runIDAStar) {
+            records.push_back(benchmarkLevel(file,
+                                             solvers::SolverKind::IDAStar,
+                                             solvers::OptimizationMetric::Pushes,
+                                             options.repeats,
+                                             options.timeLimit,
+                                             options.nodeLimit));
+        }
+        if (options.runGreedy) {
+            records.push_back(benchmarkLevel(file,
+                                             solvers::SolverKind::Greedy,
+                                             solvers::OptimizationMetric::Pushes,
+                                             options.repeats,
+                                             options.timeLimit,
+                                             options.nodeLimit));
+        }
     }
 
     std::ostream* out = &std::cout;
@@ -110,7 +125,15 @@ BenchmarkRecord BenchmarkRunner::benchmarkLevel(const std::string& levelPath,
                                                 std::size_t nodeLimit) {
     BenchmarkRecord rec;
     rec.levelName = std::filesystem::path(levelPath).filename().string();
-    rec.algorithm = (kind == solvers::SolverKind::BFS) ? "BFS" : "A*";
+    if (kind == solvers::SolverKind::BFS) {
+        rec.algorithm = "BFS";
+    } else if (kind == solvers::SolverKind::IDAStar) {
+        rec.algorithm = "IDA*";
+    } else if (kind == solvers::SolverKind::Greedy) {
+        rec.algorithm = "Greedy";
+    } else {
+        rec.algorithm = "A*";
+    }
     rec.metric = (metric == solvers::OptimizationMetric::Moves) ? "Moves" : "Pushes";
 
     core::ParsedLevel parsed;
@@ -132,12 +155,7 @@ BenchmarkRecord BenchmarkRunner::benchmarkLevel(const std::string& levelPath,
     };
 
     auto runOnce = [&]() -> solvers::SearchStatistics {
-        std::unique_ptr<solvers::ISolver> solver;
-        if (kind == solvers::SolverKind::BFS) {
-            solver = std::make_unique<solvers::BFSSolver>();
-        } else {
-            solver = std::make_unique<solvers::AStarSolver>();
-        }
+        std::unique_ptr<solvers::ISolver> solver = solvers::SolverRegistry::create(kind);
 
         solver->start(parsed.board, parsed.initialState, opt);
         while (solver->advance(10000) == solvers::SearchStatus::Running) {}

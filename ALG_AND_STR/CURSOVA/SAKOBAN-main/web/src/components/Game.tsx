@@ -692,7 +692,6 @@ export default function Game({
             ← Усі рівні
           </Link>
           <h1>{level.title}</h1>
-          <p>{level.difficulty}</p>
         </div>
         <span className="level-counter">
           {isCustom ? "Свій" : String(index + 1).padStart(2, "0")}
@@ -861,7 +860,6 @@ export default function Game({
         </section>
         <aside className="solver-panel">
           <h2>Пошук рішення</h2>
-          <p>Розрахунок розв’язку з поточної позиції.</p>
           <label className="field-label" htmlFor="algorithm">
             Алгоритм
           </label>
@@ -1053,11 +1051,7 @@ export default function Game({
       {decisions.length > 0 && (
         <section className="results algorithm-workbench">
           <div className="section-line">
-            <div>
-              <h2>Рішення алгоритмів</h2>
-              <p>Обери рішення для синхронного відтворення.</p>
-            </div>
-            <Link href="/about">Теорія алгоритмів</Link>
+            <h2>Рішення алгоритмів</h2>
           </div>
           <div className="decision-grid">
             {decisions.map((decision) => {

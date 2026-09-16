@@ -2,6 +2,8 @@
 #include "../core/LevelParser.hpp"
 #include "../solvers/BFSSolver.hpp"
 #include "../solvers/AStarSolver.hpp"
+#include "../solvers/IDAStarSolver.hpp"
+#include "../solvers/GreedySolver.hpp"
 #include "../solvers/ReplayValidator.hpp"
 #include <iostream>
 #include <iomanip>
@@ -86,10 +88,12 @@ LevelComparisonReport AlgorithmComparator::compare(const core::Board& board,
         std::string optimalityTag;
     };
 
-    const RunTarget targets[3] = {
+    const RunTarget targets[5] = {
         {"BFS", solvers::SolverKind::BFS, solvers::OptimizationMetric::Moves, "Yes (Moves)"},
         {"A* (Moves)", solvers::SolverKind::AStar, solvers::OptimizationMetric::Moves, "Yes (Moves)"},
-        {"A* (Pushes)", solvers::SolverKind::AStar, solvers::OptimizationMetric::Pushes, "Yes (Pushes)"}
+        {"A* (Pushes)", solvers::SolverKind::AStar, solvers::OptimizationMetric::Pushes, "Yes (Pushes)"},
+        {"IDA* (Pushes)", solvers::SolverKind::IDAStar, solvers::OptimizationMetric::Pushes, "Yes (Pushes)"},
+        {"Greedy", solvers::SolverKind::Greedy, solvers::OptimizationMetric::Pushes, "No"}
     };
 
     for (const auto& target : targets) {
@@ -101,6 +105,10 @@ LevelComparisonReport AlgorithmComparator::compare(const core::Board& board,
         std::unique_ptr<solvers::ISolver> solver;
         if (target.kind == solvers::SolverKind::BFS) {
             solver = std::make_unique<solvers::BFSSolver>();
+        } else if (target.kind == solvers::SolverKind::IDAStar) {
+            solver = std::make_unique<solvers::IDAStarSolver>();
+        } else if (target.kind == solvers::SolverKind::Greedy) {
+            solver = std::make_unique<solvers::GreedySolver>();
         } else {
             solver = std::make_unique<solvers::AStarSolver>();
         }
@@ -132,7 +140,7 @@ LevelComparisonReport AlgorithmComparator::compare(const core::Board& board,
             if (valResult.valid) {
                 res.moves = sol->moveCount;
                 res.pushes = sol->pushCount;
-                res.isOptimal = true;
+                res.isOptimal = (target.optimalityTag.rfind("Yes", 0) == 0);
                 res.optimalityDescription = target.optimalityTag;
                 res.solution = sol;
             } else {

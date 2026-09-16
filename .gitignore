@@ -78,3 +78,6 @@ dist/
 *.log
 
 *.dsm
+
+# playwright-mcp
+*.playwright-mcp/

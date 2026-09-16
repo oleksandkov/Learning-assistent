@@ -32,7 +32,6 @@ export default async function Levels() {
               <MiniBoard xsb={maps[i]} />
             </div>
             <div className="level-copy">
-              <span className="small-label">{level.difficulty}</span>
               <h2>
                 {level.title}
                 <span aria-hidden="true">↗</span>
@@ -47,7 +46,6 @@ export default async function Levels() {
             <span className="create-range">100 × 100</span>
           </div>
           <div className="level-copy">
-            <span className="small-label">Власна карта</span>
             <h2>Створити рівень<span aria-hidden="true">↗</span></h2>
           </div>
         </Link>

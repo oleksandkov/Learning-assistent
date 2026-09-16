@@ -117,7 +117,7 @@ SOKOBAN_TEST(Ai, CompareTableShowsAiRowWideAndCompact) {
     grow.isOptimal = true;
     grow.optimalityDescription = "AI (перевірено)";
     report.results.push_back(grow);
-    SOKOBAN_ASSERT_EQ(report.results.size(), 4ULL);
+    SOKOBAN_ASSERT_EQ(report.results.size(), 6ULL);
 
     std::ostringstream wide;
     sokoban::cli::AlgorithmComparator::printTable(report, wide, false);

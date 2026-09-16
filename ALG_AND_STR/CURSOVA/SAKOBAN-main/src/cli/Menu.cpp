@@ -510,8 +510,68 @@ void Menu::animateAStar(std::ostream& out) {
     sleepMs(400);
 }
 
+void Menu::showIDAStarArticle(std::ostream& out) {
+    out << "\n--- 3. IDA* (GOOD: ОПТИМАЛЬНИЙ + МАЛО ПАМ'ЯТІ) ---\n\n"
+        << "Як працює:\n"
+        << "• Ітеративне поглиблення A*: поріг f = g + h зростає крок за кроком.\n"
+        << "• Та сама допустима евристика (Hungarian + reverse-push), той самий Deadlock Detection.\n"
+        << "• Пам'ять O(глибина) замість O(V): тільки поточний шлях, без великої черги.\n\n"
+        << "Головна властивість:\n"
+        << "• Оптимальний за штовханнями, як A*, але працює там, де A*/BFS вичерпують пам'ять.\n"
+        << "• Повільніший за A* через повторні розширення — плата за економію пам'яті.\n\n";
+}
+
+void Menu::animateIDAStar(std::ostream& out) {
+    out << "[Анімація IDA*]:\n\n";
+    out << "Кадр 1: Поріг f=2. DFS йде вглиб, відсікає гілки з f>2.\n"
+        << "#######\n"
+        << "#@ $ .#\n"
+        << "#######\n";
+    sleepMs(400);
+    out << "\nКадр 2: Поріг не дав рішення. Новий поріг f=4 (мінімум з відсічених).\n"
+        << "#######\n"
+        << "# @$ .#\n"
+        << "#######\n";
+    sleepMs(400);
+    out << "\nКадр 3: З порогом f=4 ціль досягнута оптимально!\n"
+        << "#######\n"
+        << "#   @*#\n"
+        << "#######\n\n";
+    sleepMs(300);
+}
+
+void Menu::showGreedyArticle(std::ostream& out) {
+    out << "\n--- 4. GREEDY BEST-FIRST (BAD: ШВИДКО АЛЕ НЕОПТИМАЛЬНО) ---\n\n"
+        << "Як працює:\n"
+        << "• Завжди розкриває вузол з найменшим h, ігнорує вже пройдений шлях g.\n"
+        << "• Перший візит перемагає: стан ніколи не перевідкривається за кращого g.\n\n"
+        << "Чому поганий:\n"
+        << "• Швидкий на простих рівнях, але рішення довші за оптимум.\n"
+        << "• На складних рівнях блукає в хибний бік і впирається в ліміт.\n"
+        << "• Навчальна цінність: показує ціну відмови від g в A*.\n\n";
+}
+
+void Menu::animateGreedy(std::ostream& out) {
+    out << "[Анімація Greedy]:\n\n";
+    out << "Кадр 1: h тягне гравця @ прямо до цілі, ігноруючи ящик $ збоку.\n"
+        << "#######\n"
+        << "#@  $.#\n"
+        << "#######\n";
+    sleepMs(400);
+    out << "\nКадр 2: Ящик штовхнуто не туди — шлях довший за оптимум.\n"
+        << "#######\n"
+        << "#  @$.#\n"
+        << "#######\n";
+    sleepMs(400);
+    out << "\nКадр 3: Рішення знайдено, але з зайвими штовханнями!\n"
+        << "#######\n"
+        << "#   @*#\n"
+        << "#######\n\n";
+    sleepMs(300);
+}
+
 void Menu::showDeadlockArticle(std::ostream& out) {
-    out << "\n--- 3. ДЕТЕКТОР ТУПИКІВ (DEADLOCK DETECTION) ---\n\n"
+    out << "\n--- 5. ДЕТЕКТОР ТУПИКІВ (DEADLOCK DETECTION) ---\n\n"
         << "Як працює:\n"
         << "• У Sokoban дуже легко загнати ящик у глухий кут, звідки його вже не витягнути.\n"
         << "• Детектор тупиків перевіряє такі позиції заздалегідь:\n"
@@ -555,10 +615,12 @@ void Menu::showAboutMenu(std::istream& in, std::ostream& out) {
         out << "\nПРО АЛГОРИТМИ:\n"
             << "  1. Пошук у ширину (BFS)\n"
             << "  2. Евристичний пошук A*\n"
-            << "  3. Детектор тупиків (Deadlock Detection)\n"
-            << "  4. Переглянути всі по черзі\n"
-            << "  5. Назад у головне меню\n"
-            << "Оберіть пункт (1-5): ";
+            << "  3. IDA* (good: оптимальний, мало пам'яті)\n"
+            << "  4. Greedy (bad: швидко, неоптимально)\n"
+            << "  5. Детектор тупиків (Deadlock Detection)\n"
+            << "  6. Переглянути всі по черзі\n"
+            << "  7. Назад у головне меню\n"
+            << "Оберіть пункт (1-7): ";
 
         std::string choice;
         if (!std::getline(in, choice)) break;
@@ -577,23 +639,37 @@ void Menu::showAboutMenu(std::istream& in, std::ostream& out) {
             out << "Натисніть Enter для продовження...";
             std::string d; std::getline(in, d);
         } else if (choice == "3") {
+            showIDAStarArticle(out);
+            animateIDAStar(out);
+            out << "Натисніть Enter для продовження...";
+            std::string d; std::getline(in, d);
+        } else if (choice == "4") {
+            showGreedyArticle(out);
+            animateGreedy(out);
+            out << "Натисніть Enter для продовження...";
+            std::string d; std::getline(in, d);
+        } else if (choice == "5") {
             showDeadlockArticle(out);
             animateDeadlocks(out);
             out << "Натисніть Enter для продовження...";
             std::string d; std::getline(in, d);
-        } else if (choice == "4") {
+        } else if (choice == "6") {
             showBFSArticle(out);
             animateBFS(out);
             showAStarArticle(out);
             animateAStar(out);
+            showIDAStarArticle(out);
+            animateIDAStar(out);
+            showGreedyArticle(out);
+            animateGreedy(out);
             showDeadlockArticle(out);
             animateDeadlocks(out);
             out << "Натисніть Enter для продовження...";
             std::string d; std::getline(in, d);
-        } else if (choice == "5" || choice == "B" || choice == "b" || choice == "0") {
+        } else if (choice == "7" || choice == "B" || choice == "b" || choice == "0") {
             break;
         } else {
-            out << "Будь ласка, введіть число від 1 до 5.\n";
+            out << "Будь ласка, введіть число від 1 до 7.\n";
         }
     }
 }

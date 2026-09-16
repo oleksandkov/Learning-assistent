@@ -15,11 +15,13 @@ std::string resolveLevelPath(const std::string& rel) {
 SOKOBAN_TEST(Comparator, CompareMetricsOnSimpleLevel) {
     auto report = sokoban::cli::AlgorithmComparator::compareFile(resolveLevelPath("levels/01_simple.xsb"));
 
-    SOKOBAN_ASSERT_EQ(report.results.size(), 3ULL);
+    SOKOBAN_ASSERT_EQ(report.results.size(), 5ULL);
 
     const auto& bfsRes = report.results[0];
     const auto& astarMovesRes = report.results[1];
     const auto& astarPushesRes = report.results[2];
+    const auto& idastarRes = report.results[3];
+    const auto& greedyRes = report.results[4];
 
     // Check algorithms and metrics
     SOKOBAN_ASSERT_EQ(bfsRes.algorithmName, "BFS");
@@ -43,6 +45,22 @@ SOKOBAN_TEST(Comparator, CompareMetricsOnSimpleLevel) {
     SOKOBAN_ASSERT(astarPushesRes.isOptimal);
     SOKOBAN_ASSERT_EQ(astarPushesRes.optimalityDescription, "Yes (Pushes)");
 
+    SOKOBAN_ASSERT_EQ(idastarRes.algorithmName, "IDA* (Pushes)");
+    SOKOBAN_ASSERT(idastarRes.metric == sokoban::solvers::OptimizationMetric::Pushes);
+    SOKOBAN_ASSERT(idastarRes.status == sokoban::solvers::SearchStatus::Solved);
+    SOKOBAN_ASSERT(idastarRes.replayValid);
+    SOKOBAN_ASSERT(idastarRes.isOptimal);
+    SOKOBAN_ASSERT_EQ(idastarRes.optimalityDescription, "Yes (Pushes)");
+    // IDA* optimal pushes must match A* Pushes on tiny level
+    SOKOBAN_ASSERT_EQ(idastarRes.pushes, astarPushesRes.pushes);
+
+    SOKOBAN_ASSERT_EQ(greedyRes.algorithmName, "Greedy");
+    SOKOBAN_ASSERT(greedyRes.metric == sokoban::solvers::OptimizationMetric::Pushes);
+    SOKOBAN_ASSERT(greedyRes.status == sokoban::solvers::SearchStatus::Solved);
+    SOKOBAN_ASSERT(greedyRes.replayValid);
+    SOKOBAN_ASSERT(!greedyRes.isOptimal);
+    SOKOBAN_ASSERT_EQ(greedyRes.optimalityDescription, "No");
+
     // BFS and A* (Moves) must agree on the minimum number of moves
     SOKOBAN_ASSERT_EQ(bfsRes.moves, astarMovesRes.moves);
 
@@ -50,11 +68,15 @@ SOKOBAN_TEST(Comparator, CompareMetricsOnSimpleLevel) {
     SOKOBAN_ASSERT(bfsRes.exploredStates >= 1);
     SOKOBAN_ASSERT(astarMovesRes.exploredStates >= 1);
     SOKOBAN_ASSERT(astarPushesRes.exploredStates >= 1);
+    SOKOBAN_ASSERT(idastarRes.exploredStates >= 1);
+    SOKOBAN_ASSERT(greedyRes.exploredStates >= 1);
 
     // Pure search time must be non-negative
     SOKOBAN_ASSERT(bfsRes.searchTime.count() >= 0);
     SOKOBAN_ASSERT(astarMovesRes.searchTime.count() >= 0);
     SOKOBAN_ASSERT(astarPushesRes.searchTime.count() >= 0);
+    SOKOBAN_ASSERT(idastarRes.searchTime.count() >= 0);
+    SOKOBAN_ASSERT(greedyRes.searchTime.count() >= 0);
 }
 
 SOKOBAN_TEST(Comparator, CompareOnUnsolvableDeadlockLevel) {
@@ -66,7 +88,7 @@ SOKOBAN_TEST(Comparator, CompareOnUnsolvableDeadlockLevel) {
     auto parsed = sokoban::core::LevelParser::parseString(xsb, "Unsolvable");
     auto report = sokoban::cli::AlgorithmComparator::compare(parsed.board, parsed.initialState, "Unsolvable");
 
-    SOKOBAN_ASSERT_EQ(report.results.size(), 3ULL);
+    SOKOBAN_ASSERT_EQ(report.results.size(), 5ULL);
     for (const auto& r : report.results) {
         SOKOBAN_ASSERT(r.status == sokoban::solvers::SearchStatus::NoSolution);
         SOKOBAN_ASSERT(!r.replayValid);
@@ -86,6 +108,8 @@ SOKOBAN_TEST(Comparator, TablePrintFormattedOutput) {
     SOKOBAN_ASSERT(text.find("BFS") != std::string::npos);
     SOKOBAN_ASSERT(text.find("A* (Moves)") != std::string::npos);
     SOKOBAN_ASSERT(text.find("A* (Pushes)") != std::string::npos);
+    SOKOBAN_ASSERT(text.find("IDA*") != std::string::npos);
+    SOKOBAN_ASSERT(text.find("Greedy") != std::string::npos);
     SOKOBAN_ASSERT(text.find("Yes (Moves)") != std::string::npos);
     SOKOBAN_ASSERT(text.find("Yes (Pushes)") != std::string::npos);
     SOKOBAN_ASSERT(text.find("Passed") != std::string::npos);
