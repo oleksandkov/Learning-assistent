@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="1650" viewBox="0 0 2400 1650">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker><marker id="open-arrow" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#FFFFFF" stroke="#334155" stroke-width="2"/></marker></defs>
+<rect width="2400" height="1650" fill="#FFFFFF"/>
+<rect x="70" y="70" width="420" height="245" rx="8" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="280.0" y="108" font-family="Arial" font-size="26" font-weight="700" text-anchor="middle" fill="#1F4E78">LevelParser</text>
+<line x1="70" y1="148" x2="490" y2="148" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="88" y="178" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- filename: string</text>
+<line x1="70" y1="210" x2="490" y2="210" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="88" y="240" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ load(): GameState</text>
+<rect x="610" y="70" width="420" height="285" rx="8" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="820.0" y="108" font-family="Arial" font-size="26" font-weight="700" text-anchor="middle" fill="#1F4E78">Board</text>
+<line x1="610" y1="148" x2="1030" y2="148" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="628" y="178" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- width, height: int</text>
+<text x="628" y="205" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- cells: Cell[]</text>
+<line x1="610" y1="250" x2="1030" y2="250" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="628" y="280" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ at(p): Cell</text>
+<text x="628" y="307" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ isWall(p): bool</text>
+<rect x="1170" y="70" width="420" height="285" rx="8" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="1380.0" y="108" font-family="Arial" font-size="26" font-weight="700" text-anchor="middle" fill="#1F4E78">GameState</text>
+<line x1="1170" y1="148" x2="1590" y2="148" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="1188" y="178" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- player: Position</text>
+<text x="1188" y="205" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- boxes: Position[]</text>
+<line x1="1170" y1="250" x2="1590" y2="250" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="1188" y="280" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ isSolved(): bool</text>
+<text x="1188" y="307" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ hash(): uint64</text>
+<rect x="1870" y="70" width="420" height="285" rx="8" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="2080.0" y="108" font-family="Arial" font-size="26" font-weight="700" text-anchor="middle" fill="#1F4E78">GameRules</text>
+<line x1="1870" y1="148" x2="2290" y2="148" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="1888" y="178" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- board: Board</text>
+<line x1="1870" y1="250" x2="2290" y2="250" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="1888" y="280" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ canMove(s,d): bool</text>
+<text x="1888" y="307" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ apply(s,d): GameState</text>
+<rect x="70" y="600" width="420" height="300" rx="8" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="280.0" y="638" font-family="Arial" font-size="26" font-weight="700" text-anchor="middle" fill="#1F4E78">GameSession</text>
+<line x1="70" y1="678" x2="490" y2="678" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="88" y="708" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- state: GameState</text>
+<text x="88" y="735" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- history: Move[]</text>
+<line x1="70" y1="795" x2="490" y2="795" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="88" y="825" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ move(d): bool</text>
+<text x="88" y="852" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ undo(): void</text>
+<rect x="610" y="600" width="420" height="245" rx="8" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="820.0" y="638" font-family="Arial" font-size="26" font-weight="700" text-anchor="middle" fill="#1F4E78">ReplayValidator</text>
+<line x1="610" y1="678" x2="1030" y2="678" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="628" y="708" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- rules: GameRules</text>
+<line x1="610" y1="740" x2="1030" y2="740" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="628" y="770" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ validate(path): bool</text>
+<rect x="1170" y="560" width="420" height="245" rx="8" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="1380.0" y="588" font-family="Arial" font-size="18" font-weight="400" text-anchor="middle" fill="#0F172A" font-style="italic">«interface»</text>
+<text x="1380.0" y="618" font-family="Arial" font-size="26" font-weight="700" text-anchor="middle" fill="#1F4E78">ISolver</text>
+<line x1="1170" y1="650" x2="1590" y2="650" stroke="#334155" stroke-width="2" fill="none"/>
+<line x1="1170" y1="700" x2="1590" y2="700" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="1188" y="730" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ solve(start): Solution</text>
+<rect x="1870" y="600" width="420" height="245" rx="8" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="2080.0" y="638" font-family="Arial" font-size="26" font-weight="700" text-anchor="middle" fill="#1F4E78">DeadlockDetector</text>
+<line x1="1870" y1="678" x2="2290" y2="678" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="1888" y="708" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- board: Board</text>
+<line x1="1870" y1="740" x2="2290" y2="740" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="1888" y="770" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ isDeadlock(s): bool</text>
+<rect x="70" y="1170" width="420" height="245" rx="8" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="280.0" y="1208" font-family="Arial" font-size="26" font-weight="700" text-anchor="middle" fill="#1F4E78">Zobrist</text>
+<line x1="70" y1="1248" x2="490" y2="1248" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="88" y="1278" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- table: uint64[]</text>
+<line x1="70" y1="1310" x2="490" y2="1310" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="88" y="1340" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ hash(s): uint64</text>
+<rect x="610" y="1130" width="420" height="260" rx="8" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="820.0" y="1168" font-family="Arial" font-size="26" font-weight="700" text-anchor="middle" fill="#1F4E78">BFSSolver</text>
+<line x1="610" y1="1208" x2="1030" y2="1208" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="628" y="1238" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- detector: DeadlockDetector</text>
+<line x1="610" y1="1285" x2="1030" y2="1285" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="628" y="1315" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ solve(start): Solution</text>
+<rect x="1170" y="1130" width="420" height="285" rx="8" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="1380.0" y="1168" font-family="Arial" font-size="26" font-weight="700" text-anchor="middle" fill="#1F4E78">AStarSolver</text>
+<line x1="1170" y1="1208" x2="1590" y2="1208" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="1188" y="1238" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- detector: DeadlockDetector</text>
+<line x1="1170" y1="1310" x2="1590" y2="1310" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="1188" y="1340" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ solve(start): Solution</text>
+<text x="1188" y="1367" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">- heuristic(s): int</text>
+<rect x="1870" y="1170" width="420" height="220" rx="8" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="2080.0" y="1208" font-family="Arial" font-size="26" font-weight="700" text-anchor="middle" fill="#1F4E78">Hungarian</text>
+<line x1="1870" y1="1248" x2="2290" y2="1248" stroke="#334155" stroke-width="2" fill="none"/>
+<line x1="1870" y1="1285" x2="2290" y2="1285" stroke="#334155" stroke-width="2" fill="none"/>
+<text x="1888" y="1315" font-family="Arial" font-size="20" font-weight="400" text-anchor="start" fill="#0F172A">+ minCost(matrix): int</text>
+<polyline points="490,190 610,190" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="550" y="165" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">створює</text>
+<polyline points="280,315 280,390 1380,390 1380,355" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="925" y="370" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">створює</text>
+<polyline points="820,355 820,430 2080,430 2080,355" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1450" y="410" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">використовує</text>
+<polyline points="1590,240 1870,240" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1730" y="215" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">перевіряє</text>
+<polyline points="280,600 280,470 1380,470 1380,355" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="810" y="445" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">зберігає</text>
+<polyline points="490,720 610,720" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="550" y="695" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">перевіряє</text>
+<polyline points="820,1130 820,940 1260,940 1260,805" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#open-arrow)" stroke-dasharray="10 8"/>
+<text x="990" y="915" font-family="Arial" font-size="19" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">реалізує</text>
+<polyline points="1380,1130 1380,805" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#open-arrow)" stroke-dasharray="10 8"/>
+<text x="1455" y="980" font-family="Arial" font-size="19" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">реалізує</text>
+<polyline points="1030,1220 1100,1220 1100,1010 2080,1010 2080,845" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1610" y="985" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">відсікає</text>
+<polyline points="1590,1230 1760,1230 1760,1080 2080,1080 2080,845" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1810" y="1055" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">відсікає</text>
+<polyline points="610,1320 540,1320 540,1500 280,1500 280,1415" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="430" y="1475" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">хешує</text>
+<polyline points="1170,1360 1110,1360 1110,1560 200,1560 200,1415" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="820" y="1535" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">хешує</text>
+<polyline points="1590,1320 1870,1320" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1730" y="1295" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">евристика</text>
+</svg>

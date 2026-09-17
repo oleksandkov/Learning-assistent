@@ -81,3 +81,14 @@ dist/
 
 # playwright-mcp
 *.playwright-mcp/
+
+#tmp 
+
+*tmp/
+
+--output
+
+#files
+
+*_test.docx
+*_test.pdf

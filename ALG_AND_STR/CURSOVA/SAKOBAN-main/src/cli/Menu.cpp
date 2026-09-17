@@ -428,252 +428,6 @@ core::ParsedLevel Menu::selectLevel(std::istream& in, std::ostream& out, bool& c
     return selectPrebuiltLevel(in, out, cancelled);
 }
 
-void Menu::showBFSArticle(std::ostream& out) {
-    out << "\n--- 1. ПОШУК У ШИРИНУ (BFS) ---\n\n"
-        << "Як працює:\n"
-        << "• Досліджує всі можливі ходи рівень за рівнем через чергу (FIFO).\n"
-        << "• Для кожного кроку перевіряються 4 напрямки (вгору, вниз, вліво, вправо).\n"
-        << "• Усі відвідані стани запам'ятовуються у списку, щоб не повторюватись.\n\n"
-        << "Головна властивість:\n"
-        << "• Гарантує знаходження найкоротшого шляху за кількістю рухів (Moves).\n\n"
-        << "Складність:\n"
-        << "• Зі збільшенням поля кількість варіантів зростає експоненційно,\n"
-        << "  тому для складних рівнів алгоритм вимагає багато пам'яті.\n\n";
-}
-
-void Menu::animateBFS(std::ostream& out) {
-    out << "[Анімація BFS]:\n\n";
-
-    out << "Кадр 1: Початок. Гравець @ шукає шлях до цілі G.\n"
-        << "#######\n"
-        << "#@   G#\n"
-        << "#######\n";
-    sleepMs(500);
-
-    out << "\nКадр 2: Хвиля 1. Перевірено першу сусідню клітинку.\n"
-        << "#######\n"
-        << "#.1  G#\n"
-        << "#######\n";
-    sleepMs(500);
-
-    out << "\nКадр 3: Хвиля 2. Перевірено другу клітинку.\n"
-        << "#######\n"
-        << "#.12 G#\n"
-        << "#######\n";
-    sleepMs(500);
-
-    out << "\nКадр 4: Хвиля 3. Ціль G досягнута!\n"
-        << "#######\n"
-        << "#.123*#  Найкоротший шлях знайдено за 3 кроки.\n"
-        << "#######\n\n";
-    sleepMs(400);
-}
-
-void Menu::showAStarArticle(std::ostream& out) {
-    out << "\n--- 2. ЕВРИСТИЧНИЙ ПОШУК A* ТА HUNGARIAN MATCHING ---\n\n"
-        << "Як працює:\n"
-        << "• A* використовує розумну оцінку: f = пройдений шлях + приблизна відстань до мети.\n"
-        << "• Завдяки цьому алгоритм рухається цілеспрямовано до ящиків і цілей,\n"
-        << "  не витрачаючи час на порожні кути карти.\n\n"
-        << "Угорський алгоритм (Hungarian matching):\n"
-        << "• Знаходить найкраще призначення кожного ящика до своєї цілі,\n"
-        << "  щоб сумарна відстань була мінімальною.\n\n"
-        << "Головна властивість:\n"
-        << "• Знаходить оптимальний розв'язок у 10-50 разів швидше за звичайний BFS.\n\n";
-}
-
-void Menu::animateAStar(std::ostream& out) {
-    out << "[Анімація A*]:\n\n";
-
-    out << "Кадр 1: Оцінка відстані. A* спрямовує гравця @ до ящика $.\n"
-        << "#######\n"
-        << "#@ $ .#\n"
-        << "#######\n";
-    sleepMs(500);
-
-    out << "\nКадр 2: Гравець підійшов до ящика.\n"
-        << "#######\n"
-        << "# @$ .#\n"
-        << "#######\n";
-    sleepMs(500);
-
-    out << "\nКадр 3: Перший поштовх ящика вправо.\n"
-        << "#######\n"
-        << "#  @$*#\n"
-        << "#######\n";
-    sleepMs(500);
-
-    out << "\nКадр 4: Ящик доставлено на ціль [*]!\n"
-        << "#######\n"
-        << "#   @*#  Рішення знайдено за мінімум дій!\n"
-        << "#######\n\n";
-    sleepMs(400);
-}
-
-void Menu::showIDAStarArticle(std::ostream& out) {
-    out << "\n--- 3. IDA* (GOOD: ОПТИМАЛЬНИЙ + МАЛО ПАМ'ЯТІ) ---\n\n"
-        << "Як працює:\n"
-        << "• Ітеративне поглиблення A*: поріг f = g + h зростає крок за кроком.\n"
-        << "• Та сама допустима евристика (Hungarian + reverse-push), той самий Deadlock Detection.\n"
-        << "• Пам'ять O(глибина) замість O(V): тільки поточний шлях, без великої черги.\n\n"
-        << "Головна властивість:\n"
-        << "• Оптимальний за штовханнями, як A*, але працює там, де A*/BFS вичерпують пам'ять.\n"
-        << "• Повільніший за A* через повторні розширення — плата за економію пам'яті.\n\n";
-}
-
-void Menu::animateIDAStar(std::ostream& out) {
-    out << "[Анімація IDA*]:\n\n";
-    out << "Кадр 1: Поріг f=2. DFS йде вглиб, відсікає гілки з f>2.\n"
-        << "#######\n"
-        << "#@ $ .#\n"
-        << "#######\n";
-    sleepMs(400);
-    out << "\nКадр 2: Поріг не дав рішення. Новий поріг f=4 (мінімум з відсічених).\n"
-        << "#######\n"
-        << "# @$ .#\n"
-        << "#######\n";
-    sleepMs(400);
-    out << "\nКадр 3: З порогом f=4 ціль досягнута оптимально!\n"
-        << "#######\n"
-        << "#   @*#\n"
-        << "#######\n\n";
-    sleepMs(300);
-}
-
-void Menu::showGreedyArticle(std::ostream& out) {
-    out << "\n--- 4. GREEDY BEST-FIRST (BAD: ШВИДКО АЛЕ НЕОПТИМАЛЬНО) ---\n\n"
-        << "Як працює:\n"
-        << "• Завжди розкриває вузол з найменшим h, ігнорує вже пройдений шлях g.\n"
-        << "• Перший візит перемагає: стан ніколи не перевідкривається за кращого g.\n\n"
-        << "Чому поганий:\n"
-        << "• Швидкий на простих рівнях, але рішення довші за оптимум.\n"
-        << "• На складних рівнях блукає в хибний бік і впирається в ліміт.\n"
-        << "• Навчальна цінність: показує ціну відмови від g в A*.\n\n";
-}
-
-void Menu::animateGreedy(std::ostream& out) {
-    out << "[Анімація Greedy]:\n\n";
-    out << "Кадр 1: h тягне гравця @ прямо до цілі, ігноруючи ящик $ збоку.\n"
-        << "#######\n"
-        << "#@  $.#\n"
-        << "#######\n";
-    sleepMs(400);
-    out << "\nКадр 2: Ящик штовхнуто не туди — шлях довший за оптимум.\n"
-        << "#######\n"
-        << "#  @$.#\n"
-        << "#######\n";
-    sleepMs(400);
-    out << "\nКадр 3: Рішення знайдено, але з зайвими штовханнями!\n"
-        << "#######\n"
-        << "#   @*#\n"
-        << "#######\n\n";
-    sleepMs(300);
-}
-
-void Menu::showDeadlockArticle(std::ostream& out) {
-    out << "\n--- 5. ДЕТЕКТОР ТУПИКІВ (DEADLOCK DETECTION) ---\n\n"
-        << "Як працює:\n"
-        << "• У Sokoban дуже легко загнати ящик у глухий кут, звідки його вже не витягнути.\n"
-        << "• Детектор тупиків перевіряє такі позиції заздалегідь:\n"
-        << "  1. Кут із двох стін (де немає цілі);\n"
-        << "  2. Блок 2х2 із ящиків і стін;\n"
-        << "  3. Мертві клітинки вздовж глухих стін.\n\n"
-        << "Користь:\n"
-        << "• Миттєво відкидає програшні ходи та економить до 99% пам'яті.\n\n";
-}
-
-void Menu::animateDeadlocks(std::ostream& out) {
-    out << "[Анімація виявлення тупика]:\n\n";
-
-    out << "Кадр 1: Ящик $ біля кутка стін.\n"
-        << "#######\n"
-        << "#  $@ #\n"
-        << "# ### #\n"
-        << "#   . #\n"
-        << "#######\n";
-    sleepMs(500);
-
-    out << "\nКадр 2: Гравець штовхнув ящик у кут (#$).\n"
-        << "#######\n"
-        << "#$ @  #  <- ТУПИК! Ящик затиснутий у кутку.\n"
-        << "# ### #\n"
-        << "#   . #\n"
-        << "#######\n";
-    sleepMs(500);
-
-    out << "\nКадр 3: Детектор тупиків відкидає цю гілку.\n"
-        << "#######\n"
-        << "#[X]  #  <- Хід скасовано, алгоритм обирає правильний шлях!\n"
-        << "# ### #\n"
-        << "#   . #\n"
-        << "#######\n\n";
-    sleepMs(400);
-}
-
-void Menu::showAboutMenu(std::istream& in, std::ostream& out) {
-    while (true) {
-        out << "\nПРО АЛГОРИТМИ:\n"
-            << "  1. Пошук у ширину (BFS)\n"
-            << "  2. Евристичний пошук A*\n"
-            << "  3. IDA* (good: оптимальний, мало пам'яті)\n"
-            << "  4. Greedy (bad: швидко, неоптимально)\n"
-            << "  5. Детектор тупиків (Deadlock Detection)\n"
-            << "  6. Переглянути всі по черзі\n"
-            << "  7. Назад у головне меню\n"
-            << "Оберіть пункт (1-7): ";
-
-        std::string choice;
-        if (!std::getline(in, choice)) break;
-
-        while (!choice.empty() && (choice.back() == ' ' || choice.back() == '\r')) choice.pop_back();
-        while (!choice.empty() && choice.front() == ' ') choice.erase(choice.begin());
-
-        if (choice == "1") {
-            showBFSArticle(out);
-            animateBFS(out);
-            out << "Натисніть Enter для продовження...";
-            std::string d; std::getline(in, d);
-        } else if (choice == "2") {
-            showAStarArticle(out);
-            animateAStar(out);
-            out << "Натисніть Enter для продовження...";
-            std::string d; std::getline(in, d);
-        } else if (choice == "3") {
-            showIDAStarArticle(out);
-            animateIDAStar(out);
-            out << "Натисніть Enter для продовження...";
-            std::string d; std::getline(in, d);
-        } else if (choice == "4") {
-            showGreedyArticle(out);
-            animateGreedy(out);
-            out << "Натисніть Enter для продовження...";
-            std::string d; std::getline(in, d);
-        } else if (choice == "5") {
-            showDeadlockArticle(out);
-            animateDeadlocks(out);
-            out << "Натисніть Enter для продовження...";
-            std::string d; std::getline(in, d);
-        } else if (choice == "6") {
-            showBFSArticle(out);
-            animateBFS(out);
-            showAStarArticle(out);
-            animateAStar(out);
-            showIDAStarArticle(out);
-            animateIDAStar(out);
-            showGreedyArticle(out);
-            animateGreedy(out);
-            showDeadlockArticle(out);
-            animateDeadlocks(out);
-            out << "Натисніть Enter для продовження...";
-            std::string d; std::getline(in, d);
-        } else if (choice == "7" || choice == "B" || choice == "b" || choice == "0") {
-            break;
-        } else {
-            out << "Будь ласка, введіть число від 1 до 7.\n";
-        }
-    }
-}
-
 void Menu::promptSaveCustomLevel(std::istream& in, std::ostream& out,
                                  const std::string& xsbContent,
                                  const std::string& defaultTitle) {
@@ -844,10 +598,6 @@ int Menu::handleMenuChoice(int choice, std::istream& in, std::ostream& out) {
             }
             return 0;
         }
-        case 2: { // About options (articles & animations)
-            showAboutMenu(in, out);
-            return 0;
-        }
         case 4: { // AI API key (Groq / Google)
             promptAiKey(in, out);
             return 0;
@@ -871,11 +621,10 @@ void Menu::run(std::istream& in, std::ostream& out) {
 #endif
     while (true) {
         out << "\nSOKOBAN - ГОЛОВНЕ МЕНЮ\n"
-            << "  1. Грати рівень (готові або власний)\n"
-            << "  2. Про алгоритми (теорія та анімація)\n"
+            << "  1. Грати рівень\n"
             << "  3. Вихід\n"
-            << "  4. Налаштувати ШІ (ключ + безкоштовна модель)\n"
-            << "Оберіть дію (1-4): " << std::flush;
+            << "  4. Налаштувати ШІ\n"
+            << "Оберіть дію (1, 3-4): " << std::flush;
 
         std::string line;
         if (!std::getline(in, line)) {
@@ -893,7 +642,7 @@ void Menu::run(std::istream& in, std::ostream& out) {
         try {
             choice = std::stoi(line);
         } catch (...) {
-            out << "Будь ласка, введіть число від 1 до 4.\n";
+            out << "Будь ласка, введіть 1, 3 або 4.\n";
             continue;
         }
 

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1050" viewBox="0 0 1800 1050">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker><marker id="open-arrow" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#FFFFFF" stroke="#334155" stroke-width="2"/></marker></defs>
+<rect width="1800" height="1050" fill="#FFFFFF"/>
+<rect x="450.0" y="45.0" width="500" height="90" rx="45.0" fill="#ECF7EF" stroke="#334155" stroke-width="3"/>
+<text x="700" y="82.75" font-family="Arial" font-size="25" font-weight="600" text-anchor="middle" fill="#0F172A">Рівні Sokoban</text>
+<text x="700" y="114.75" font-family="Arial" font-size="25" font-weight="600" text-anchor="middle" fill="#0F172A">levels/*.xsb</text>
+<rect x="100" y="200" width="1200" height="440" rx="18" fill="#EAF2F8" stroke="#1F4E78" stroke-width="4"/>
+<text x="700" y="250" font-family="Arial" font-size="31" font-weight="700" text-anchor="middle" fill="#0F172A">sokoban_core · C++20</text>
+<rect x="125" y="292" width="350" height="116" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="300" y="345" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">Board</text>
+<text x="300" y="379" font-family="Arial" font-size="17" font-weight="400" text-anchor="middle" fill="#64748B">поле та статичні клітини</text>
+<rect x="525" y="292" width="350" height="116" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="700" y="345" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">GameState</text>
+<text x="700" y="379" font-family="Arial" font-size="17" font-weight="400" text-anchor="middle" fill="#64748B">позиції гравця і ящиків</text>
+<rect x="925" y="292" width="350" height="116" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="1100" y="345" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">GameRules</text>
+<text x="1100" y="379" font-family="Arial" font-size="17" font-weight="400" text-anchor="middle" fill="#64748B">перевірка та виконання ходів</text>
+<rect x="125" y="462" width="350" height="116" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="300" y="515" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">LevelParser</text>
+<text x="300" y="549" font-family="Arial" font-size="17" font-weight="400" text-anchor="middle" fill="#64748B">завантаження XSB</text>
+<rect x="525" y="462" width="350" height="116" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="700" y="515" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">BFS / A*</text>
+<text x="700" y="549" font-family="Arial" font-size="17" font-weight="400" text-anchor="middle" fill="#64748B">пошук розв’язку</text>
+<rect x="925" y="462" width="350" height="116" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="1100" y="515" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">Deadlock / Hungarian / Zobrist</text>
+<text x="1100" y="549" font-family="Arial" font-size="17" font-weight="400" text-anchor="middle" fill="#64748B">відсікання · евристика · хешування</text>
+<line x1="700" y1="135" x2="700" y2="200" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<rect x="1380" y="260" width="350" height="110" rx="12" fill="#ECF7EF" stroke="#334155" stroke-width="2"/>
+<text x="1555" y="310" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">sokoban_tests</text>
+<text x="1555" y="344" font-family="Arial" font-size="17" font-weight="400" text-anchor="middle" fill="#64748B">72 модульні тести</text>
+<line x1="1300" y1="315" x2="1380" y2="315" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<rect x="1380" y="420" width="350" height="110" rx="12" fill="#ECF7EF" stroke="#334155" stroke-width="2"/>
+<text x="1555" y="470" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">BenchmarkRunner</text>
+<text x="1555" y="504" font-family="Arial" font-size="17" font-weight="400" text-anchor="middle" fill="#64748B">звіти CSV / JSON</text>
+<line x1="1300" y1="475" x2="1380" y2="475" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<rect x="1380" y="580" width="350" height="110" rx="12" fill="#ECF7EF" stroke="#334155" stroke-width="2"/>
+<text x="1555" y="630" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">ReplayValidator</text>
+<text x="1555" y="664" font-family="Arial" font-size="17" font-weight="400" text-anchor="middle" fill="#64748B">перевірка послідовності ходів</text>
+<line x1="1300" y1="635" x2="1380" y2="635" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<rect x="55" y="790" width="390" height="155" rx="16" fill="#FFFFFF" stroke="#1F4E78" stroke-width="3"/>
+<text x="250" y="835" font-family="Arial" font-size="28" font-weight="700" text-anchor="middle" fill="#1F4E78">CLI</text>
+<text x="250" y="884.0" font-family="Arial" font-size="20" font-weight="400" text-anchor="middle" fill="#0F172A">TerminalUI</text>
+<text x="250" y="910.0" font-family="Arial" font-size="20" font-weight="400" text-anchor="middle" fill="#0F172A">ANSI-візуалізація</text>
+<line x1="250" y1="640" x2="250" y2="790" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<rect x="505" y="790" width="390" height="155" rx="16" fill="#FFFFFF" stroke="#1F4E78" stroke-width="3"/>
+<text x="700" y="835" font-family="Arial" font-size="28" font-weight="700" text-anchor="middle" fill="#1F4E78">Godot 4</text>
+<text x="700" y="884.0" font-family="Arial" font-size="20" font-weight="400" text-anchor="middle" fill="#0F172A">GDExtension + GDScript</text>
+<text x="700" y="910.0" font-family="Arial" font-size="20" font-weight="400" text-anchor="middle" fill="#0F172A">графічний інтерфейс</text>
+<line x1="700" y1="640" x2="700" y2="790" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<rect x="955" y="790" width="390" height="155" rx="16" fill="#FFFFFF" stroke="#1F4E78" stroke-width="3"/>
+<text x="1150" y="835" font-family="Arial" font-size="28" font-weight="700" text-anchor="middle" fill="#1F4E78">Web</text>
+<text x="1150" y="884.0" font-family="Arial" font-size="20" font-weight="400" text-anchor="middle" fill="#0F172A">Next.js / React</text>
+<text x="1150" y="910.0" font-family="Arial" font-size="20" font-weight="400" text-anchor="middle" fill="#0F172A">WebAssembly</text>
+<line x1="1150" y1="640" x2="1150" y2="790" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+</svg>

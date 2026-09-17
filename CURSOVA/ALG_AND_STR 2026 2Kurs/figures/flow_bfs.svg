@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2200" viewBox="0 0 1600 2200">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker><marker id="open-arrow" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#FFFFFF" stroke="#334155" stroke-width="2"/></marker></defs>
+<rect width="1600" height="2200" fill="#FFFFFF"/>
+<rect x="520.0" y="40.0" width="560" height="100" rx="50.0" fill="#ECF7EF" stroke="#334155" stroke-width="3"/>
+<text x="800" y="82.75" font-family="Arial" font-size="25" font-weight="600" text-anchor="middle" fill="#0F172A">Ініціалізація черги</text>
+<text x="800" y="114.75" font-family="Arial" font-size="25" font-weight="600" text-anchor="middle" fill="#0F172A">queue ← {початковий стан}</text>
+<polygon points="800,200.0 1060.0,290 800,380.0 540.0,290" fill="#FFF7E6" stroke="#334155" stroke-width="3"/>
+<text x="800" y="298.4" font-family="Arial" font-size="24" font-weight="600" text-anchor="middle" fill="#0F172A">Черга порожня?</text>
+<rect x="1110.0" y="240.0" width="330" height="100" rx="50.0" fill="#FBECEC" stroke="#334155" stroke-width="3"/>
+<text x="1275" y="298.4" font-family="Arial" font-size="24" font-weight="600" text-anchor="middle" fill="#0F172A">Розв’язку немає</text>
+<rect x="550.0" y="450.0" width="500" height="100" rx="12" fill="#EAF2F8" stroke="#334155" stroke-width="3"/>
+<text x="800" y="492.9" font-family="Arial" font-size="24" font-weight="400" text-anchor="middle" fill="#0F172A">Вилучити перший стан</text>
+<text x="800" y="523.9" font-family="Arial" font-size="24" font-weight="400" text-anchor="middle" fill="#0F172A">current ← queue.pop()</text>
+<polygon points="800,610.0 1050.0,700 800,790.0 550.0,700" fill="#FFF7E6" stroke="#334155" stroke-width="3"/>
+<text x="800" y="692.9" font-family="Arial" font-size="24" font-weight="600" text-anchor="middle" fill="#0F172A">Усі ящики</text>
+<text x="800" y="723.9" font-family="Arial" font-size="24" font-weight="600" text-anchor="middle" fill="#0F172A">на цілях?</text>
+<rect x="1100.0" y="645.0" width="350" height="110" rx="55.0" fill="#ECF7EF" stroke="#334155" stroke-width="3"/>
+<text x="1275" y="692.9" font-family="Arial" font-size="24" font-weight="600" text-anchor="middle" fill="#0F172A">Відновити шлях</text>
+<text x="1275" y="723.9" font-family="Arial" font-size="24" font-weight="600" text-anchor="middle" fill="#0F172A">і завершити</text>
+<polygon points="800,825.0 1060.0,910 800,995.0 540.0,910" fill="#FFF7E6" stroke="#334155" stroke-width="3"/>
+<text x="800" y="902.9" font-family="Arial" font-size="24" font-weight="600" text-anchor="middle" fill="#0F172A">Є неперевірений</text>
+<text x="800" y="933.9" font-family="Arial" font-size="24" font-weight="600" text-anchor="middle" fill="#0F172A">напрямок?</text>
+<rect x="550.0" y="1030.0" width="500" height="100" rx="12" fill="#EAF2F8" stroke="#334155" stroke-width="3"/>
+<text x="800" y="1088.4" font-family="Arial" font-size="24" font-weight="400" text-anchor="middle" fill="#0F172A">next ← try_move(current, dir)</text>
+<polygon points="800,1190.0 1050.0,1280 800,1370.0 550.0,1280" fill="#FFF7E6" stroke="#334155" stroke-width="3"/>
+<text x="800" y="1288.4" font-family="Arial" font-size="24" font-weight="600" text-anchor="middle" fill="#0F172A">Хід допустимий?</text>
+<polygon points="800,1415.0 1060.0,1510 800,1605.0 540.0,1510" fill="#FFF7E6" stroke="#334155" stroke-width="3"/>
+<text x="800" y="1518.4" font-family="Arial" font-size="24" font-weight="600" text-anchor="middle" fill="#0F172A">Push-deadlock?</text>
+<polygon points="800,1645.0 1060.0,1740 800,1835.0 540.0,1740" fill="#FFF7E6" stroke="#334155" stroke-width="3"/>
+<text x="800" y="1732.9" font-family="Arial" font-size="24" font-weight="600" text-anchor="middle" fill="#0F172A">Стан уже</text>
+<text x="800" y="1763.9" font-family="Arial" font-size="24" font-weight="600" text-anchor="middle" fill="#0F172A">відвіданий?</text>
+<rect x="515.0" y="1905.0" width="570" height="110" rx="12" fill="#EAF2F8" stroke="#334155" stroke-width="3"/>
+<text x="800" y="1952.9" font-family="Arial" font-size="24" font-weight="400" text-anchor="middle" fill="#0F172A">visited.insert(next)</text>
+<text x="800" y="1983.9" font-family="Arial" font-size="24" font-weight="400" text-anchor="middle" fill="#0F172A">queue.push(next)</text>
+<line x1="800" y1="140" x2="800" y2="200" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<line x1="800" y1="380" x2="800" y2="450" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<line x1="800" y1="550" x2="800" y2="610" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<line x1="800" y1="790" x2="800" y2="825" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<line x1="800" y1="995" x2="800" y2="1030" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<line x1="800" y1="1130" x2="800" y2="1190" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<line x1="800" y1="1370" x2="800" y2="1415" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<line x1="800" y1="1605" x2="800" y2="1645" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<line x1="800" y1="1835" x2="800" y2="1905" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<text x="865" y="420" font-family="Arial" font-size="21" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">ні</text>
+<polyline points="1060,290 1110,290" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1085" y="260" font-family="Arial" font-size="21" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">так</text>
+<polyline points="1060,700 1100,700" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1080" y="670" font-family="Arial" font-size="21" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">так</text>
+<text x="865" y="815" font-family="Arial" font-size="21" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">ні</text>
+<polyline points="540,910 90,910 90,290 540,290" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="505" y="880" font-family="Arial" font-size="21" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">ні</text>
+<text x="865" y="1018" font-family="Arial" font-size="21" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">так</text>
+<line x1="1060" y1="1280" x2="1450" y2="1280" stroke="#334155" stroke-width="3" fill="none"/>
+<text x="1145" y="1256" font-family="Arial" font-size="21" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">ні</text>
+<line x1="1060" y1="1510" x2="1450" y2="1510" stroke="#334155" stroke-width="3" fill="none"/>
+<text x="1145" y="1486" font-family="Arial" font-size="21" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">так</text>
+<line x1="1060" y1="1740" x2="1450" y2="1740" stroke="#334155" stroke-width="3" fill="none"/>
+<text x="1145" y="1716" font-family="Arial" font-size="21" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">так</text>
+<polyline points="1450,1280 1450,2080 1085,2080" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="865" y="1405" font-family="Arial" font-size="21" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">так</text>
+<text x="865" y="1635" font-family="Arial" font-size="21" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">ні</text>
+<text x="865" y="1865" font-family="Arial" font-size="21" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">ні</text>
+<rect x="550.0" y="2035.0" width="500" height="90" rx="12" fill="#FFFFFF" stroke="#334155" stroke-width="3"/>
+<text x="800" y="2087.7" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">Перейти до наступного напрямку</text>
+<line x1="800" y1="2015" x2="800" y2="2035" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<polyline points="550,2080 120,2080 120,960 555,960" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+</svg>

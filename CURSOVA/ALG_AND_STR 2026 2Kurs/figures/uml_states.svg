@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1150" viewBox="0 0 1900 1150">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker><marker id="open-arrow" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#FFFFFF" stroke="#334155" stroke-width="2"/></marker></defs>
+<rect width="1900" height="1150" fill="#FFFFFF"/>
+<circle cx="120" cy="560" r="24" fill="#0F172A"/>
+<rect x="270.0" y="515.0" width="300" height="120" rx="28" fill="#ECF7EF" stroke="#1F4E78" stroke-width="3"/>
+<text x="420" y="583.4" font-family="Arial" font-size="24" font-weight="700" text-anchor="middle" fill="#0F172A">Ручний режим</text>
+<rect x="825.0" y="120.0" width="310" height="120" rx="28" fill="#EAF2F8" stroke="#1F4E78" stroke-width="3"/>
+<text x="980" y="188.4" font-family="Arial" font-size="24" font-weight="700" text-anchor="middle" fill="#0F172A">Підказка</text>
+<rect x="825.0" y="360.0" width="310" height="120" rx="28" fill="#EAF2F8" stroke="#1F4E78" stroke-width="3"/>
+<text x="980" y="428.4" font-family="Arial" font-size="24" font-weight="700" text-anchor="middle" fill="#0F172A">Крок ШІ</text>
+<rect x="825.0" y="660.0" width="310" height="120" rx="28" fill="#EAF2F8" stroke="#1F4E78" stroke-width="3"/>
+<text x="980" y="728.4" font-family="Arial" font-size="24" font-weight="700" text-anchor="middle" fill="#0F172A">Автовідтворення</text>
+<rect x="825.0" y="910.0" width="310" height="120" rx="28" fill="#EAF2F8" stroke="#1F4E78" stroke-width="3"/>
+<text x="980" y="978.4" font-family="Arial" font-size="24" font-weight="700" text-anchor="middle" fill="#0F172A">Порівняння</text>
+<rect x="1415.0" y="515.0" width="330" height="120" rx="28" fill="#ECF7EF" stroke="#1F4E78" stroke-width="3"/>
+<text x="1580" y="583.4" font-family="Arial" font-size="24" font-weight="700" text-anchor="middle" fill="#0F172A">Рівень розв’язано</text>
+<line x1="134" y1="575" x2="270" y2="575" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<text x="200" y="545" font-family="Arial" font-size="18" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">start</text>
+<path d="M 560 525 C 650 350, 735 245, 825 205" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<text x="700" y="315" font-family="Arial" font-size="20" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">H</text>
+<path d="M 825 170 C 690 210, 595 370, 535 515" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<text x="650" y="225" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">Confirm / Esc</text>
+<path d="M 570 548 C 675 500, 745 445, 825 420" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<text x="690" y="455" font-family="Arial" font-size="20" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">N</text>
+<path d="M 825 450 C 720 465, 650 520, 570 578" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<text x="705" y="535" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">крок виконано</text>
+<path d="M 570 598 C 675 635, 750 690, 825 710" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<text x="700" y="675" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">B / M / R / G</text>
+<path d="M 825 740 C 710 720, 635 655, 550 620" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<text x="690" y="770" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">pause / takeover</text>
+<path d="M 540 625 C 620 790, 720 900, 825 955" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<text x="700" y="875" font-family="Arial" font-size="20" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">T</text>
+<path d="M 825 990 C 690 935, 585 785, 525 635" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<text x="660" y="1020" font-family="Arial" font-size="17" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">вибір режиму</text>
+<polyline points="570,575 1415,575" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1000" y="545" font-family="Arial" font-size="18" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">усі ящики на цілях</text>
+<polyline points="1580,515 1580,80 380,80 380,515" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="980" y="55" font-family="Arial" font-size="18" font-weight="600" text-anchor="middle" fill="#0F172A" paint-order="stroke" stroke="#FFFFFF" stroke-width="8" stroke-linejoin="round">R — почати рівень знову</text>
+</svg>

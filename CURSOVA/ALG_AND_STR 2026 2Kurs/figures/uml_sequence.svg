@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1450" viewBox="0 0 2200 1450">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker><marker id="open-arrow" markerWidth="12" markerHeight="12" refX="10" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#FFFFFF" stroke="#334155" stroke-width="2"/></marker></defs>
+<rect width="2200" height="1450" fill="#FFFFFF"/>
+<rect x="5.0" y="55" width="250" height="75" rx="8" fill="#EAF2F8" stroke="#1F4E78" stroke-width="3"/>
+<text x="130" y="103" font-family="Arial" font-size="23" font-weight="700" text-anchor="middle" fill="#0F172A">Користувач</text>
+<line x1="130" y1="130" x2="130" y2="1380" stroke="#64748B" stroke-width="2" fill="none" stroke-dasharray="10 8"/>
+<rect x="280.0" y="55" width="280" height="75" rx="8" fill="#EAF2F8" stroke="#1F4E78" stroke-width="3"/>
+<text x="420" y="103" font-family="Arial" font-size="23" font-weight="700" text-anchor="middle" fill="#0F172A">CLI / TerminalUI</text>
+<line x1="420" y1="130" x2="420" y2="1380" stroke="#64748B" stroke-width="2" fill="none" stroke-dasharray="10 8"/>
+<rect x="620.0" y="55" width="280" height="75" rx="8" fill="#EAF2F8" stroke="#1F4E78" stroke-width="3"/>
+<text x="760" y="103" font-family="Arial" font-size="23" font-weight="700" text-anchor="middle" fill="#0F172A">SolverRegistry</text>
+<line x1="760" y1="130" x2="760" y2="1380" stroke="#64748B" stroke-width="2" fill="none" stroke-dasharray="10 8"/>
+<rect x="960.0" y="55" width="280" height="75" rx="8" fill="#EAF2F8" stroke="#1F4E78" stroke-width="3"/>
+<text x="1100" y="103" font-family="Arial" font-size="23" font-weight="700" text-anchor="middle" fill="#0F172A">AStarSolver</text>
+<line x1="1100" y1="130" x2="1100" y2="1380" stroke="#64748B" stroke-width="2" fill="none" stroke-dasharray="10 8"/>
+<rect x="1300.0" y="55" width="300" height="75" rx="8" fill="#EAF2F8" stroke="#1F4E78" stroke-width="3"/>
+<text x="1450" y="103" font-family="Arial" font-size="23" font-weight="700" text-anchor="middle" fill="#0F172A">Board / GameState</text>
+<line x1="1450" y1="130" x2="1450" y2="1380" stroke="#64748B" stroke-width="2" fill="none" stroke-dasharray="10 8"/>
+<rect x="1650.0" y="55" width="280" height="75" rx="8" fill="#EAF2F8" stroke="#1F4E78" stroke-width="3"/>
+<text x="1790" y="103" font-family="Arial" font-size="23" font-weight="700" text-anchor="middle" fill="#0F172A">DeadlockDetector</text>
+<line x1="1790" y1="130" x2="1790" y2="1380" stroke="#64748B" stroke-width="2" fill="none" stroke-dasharray="10 8"/>
+<rect x="1970.0" y="55" width="220" height="75" rx="8" fill="#EAF2F8" stroke="#1F4E78" stroke-width="3"/>
+<text x="2080" y="103" font-family="Arial" font-size="23" font-weight="700" text-anchor="middle" fill="#0F172A">ReplayValidator</text>
+<line x1="2080" y1="130" x2="2080" y2="1380" stroke="#64748B" stroke-width="2" fill="none" stroke-dasharray="10 8"/>
+<line x1="130" y1="190" x2="420" y2="190" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+<text x="275.0" y="178" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">Solve</text>
+<line x1="420" y1="260" x2="760" y2="260" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+<text x="590.0" y="248" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">create(kind = A*)</text>
+<line x1="760" y1="330" x2="420" y2="330" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="9 7"/>
+<text x="590.0" y="318" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">ISolver*</text>
+<line x1="420" y1="400" x2="1100" y2="400" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+<text x="760.0" y="388" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">solve(start)</text>
+<rect x="1025" y="420" width="150" height="730" rx="6" fill="#FFFFFF" stroke="#64748B" stroke-width="2" stroke-dasharray="10 7"/>
+<text x="1045" y="455" font-family="Arial" font-size="21" font-weight="700" text-anchor="start" fill="#64748B">loop: advance(nodeBudget)</text>
+<line x1="1100" y1="520" x2="1450" y2="520" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+<text x="1275.0" y="508" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">reachablePositions(state)</text>
+<line x1="1450" y1="590" x2="1100" y2="590" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="9 7"/>
+<text x="1275.0" y="578" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">positions</text>
+<line x1="1100" y1="660" x2="1450" y2="660" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+<text x="1275.0" y="648" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">tryPush(box, dir)</text>
+<line x1="1450" y1="730" x2="1100" y2="730" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="9 7"/>
+<text x="1275.0" y="718" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">nextState</text>
+<line x1="1100" y1="800" x2="1790" y2="800" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+<text x="1445.0" y="788" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">isDeadlock(nextState)</text>
+<line x1="1790" y1="870" x2="1100" y2="870" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="9 7"/>
+<text x="1445.0" y="858" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">false</text>
+<line x1="1100" y1="940" x2="1450" y2="940" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+<text x="1275.0" y="928" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">reversePushDistance(nextState)</text>
+<line x1="1450" y1="1010" x2="1100" y2="1010" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="9 7"/>
+<text x="1275.0" y="998" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">costMatrix</text>
+<polyline points="1100,1080 1215,1080 1215,1130 1100,1130" stroke="#334155" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="1225" y="1068" font-family="Arial" font-size="22" font-weight="400" text-anchor="end" fill="#0F172A">h ← Hungarian.minCost(costMatrix)</text>
+<line x1="1100" y1="1180" x2="420" y2="1180" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="9 7"/>
+<text x="760.0" y="1168" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">Solution {moves, stats}</text>
+<line x1="420" y1="1250" x2="2080" y2="1250" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+<text x="1250.0" y="1238" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">validate(level, moves)</text>
+<line x1="2080" y1="1320" x2="1450" y2="1320" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+<text x="1765.0" y="1308" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">GameRules::apply для кожного ходу</text>
+<line x1="2080" y1="1380" x2="420" y2="1380" stroke="#334155" stroke-width="2.5" fill="none" marker-end="url(#arrow)" stroke-dasharray="9 7"/>
+<text x="1250.0" y="1368" font-family="Arial" font-size="22" font-weight="400" text-anchor="middle" fill="#0F172A">Result {UDLR, time, stats}</text>
+</svg>
