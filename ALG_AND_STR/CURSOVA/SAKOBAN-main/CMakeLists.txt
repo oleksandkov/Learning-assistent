@@ -58,6 +58,12 @@ add_library(sokoban_solvers STATIC
     src/solvers/IDAStarSolver.cpp
     src/solvers/GreedySolver.hpp
     src/solvers/GreedySolver.cpp
+    src/solvers/Prototype1Solver.hpp
+    src/solvers/Prototype1Solver.cpp
+    src/solvers/AntColonySolver.hpp
+    src/solvers/AntColonySolver.cpp
+    src/solvers/GeneticSolver.hpp
+    src/solvers/GeneticSolver.cpp
     src/solvers/SolverRegistry.hpp
     src/solvers/SolverRegistry.cpp
     src/solvers/LevelGenerator.hpp

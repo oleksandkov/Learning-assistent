@@ -58,6 +58,27 @@ const rules: Record<
     explanation:
       "Greedy завжди йде туди, де менше h, і не перевідкриває стани: швидко, але рішення довші й неоптимальні.",
   },
+  prototype1: {
+    structure: "Послідовний план X → Y",
+    choice: "Найближча вільна ціль",
+    cost: "Мангеттенська відстань",
+    explanation:
+      "Прототип бере ящики по черзі, призначає найближчу ціль і спочатку штовхає по X, потім по Y. Стіни бачить лише фінальна перевірка правил.",
+  },
+  aco: {
+    structure: "Рій випадкових маршрутів",
+    choice: "Феромон × близькість цілі",
+    cost: "Шлях + штраф тупика",
+    explanation:
+      "Мурахи пробують допустимі ходи, а найкращі маршрути підсилюють феромон для наступного покоління.",
+  },
+  genetic: {
+    structure: "Популяція хромосом",
+    choice: "Відбір за fitness",
+    cost: "Ходи + відстань + штрафи",
+    explanation:
+      "GA схрещує послідовності напрямків, мутує окремі гени та залишає кращі маршрути для нового покоління.",
+  },
   gemini: {
     structure: "Зовнішня модель",
     choice: "Згенерований план",
@@ -220,7 +241,7 @@ export default function SearchDebugger({
     typeof point.boxTo === "number"
       ? [{ cell: point.boxTo, kind: "push", label: "•" }]
       : [];
-  const isAStar = result.algorithm !== "bfs";
+  const isAStar = !["bfs", "prototype1", "aco", "genetic"].includes(result.algorithm);
   const g = point.g ?? 0;
   const h = point.h ?? 0;
   const selectionText =
@@ -228,6 +249,12 @@ export default function SearchDebugger({
       ? "Початковий стан"
       : result.algorithm === "bfs"
         ? `FIFO: рівень ${point.depth ?? g}`
+        : result.algorithm === "prototype1"
+          ? `Крок плану ${g} · залишилось ${h}`
+        : result.algorithm === "aco"
+          ? "Найкраща феромонна стежка"
+        : result.algorithm === "genetic"
+          ? "Найкраща хромосома"
         : `Найменше f = ${g + h}`;
 
   function switchPhase(next: DebugPhase) {

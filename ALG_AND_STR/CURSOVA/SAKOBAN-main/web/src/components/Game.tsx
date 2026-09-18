@@ -5,6 +5,7 @@ import BoardView from "./BoardView";
 import type { BoardCamera } from "./BoardView";
 import SearchDebugger from "./SearchDebugger";
 import ComparisonReplay from "./ComparisonReplay";
+import EvolutionViewer from "./EvolutionViewer";
 import {
   ALGORITHMS,
   AI_KEY_STORAGE,
@@ -1139,6 +1140,13 @@ export default function Game({
                   </dl>
                   {result.explanation ? (
                     <p className="decision-explanation">{result.explanation}</p>
+                  ) : null}
+                  {result.evolution ? (
+                    <details className="evolution-observer">
+                      <summary>{result.evolution.kind === "aco" ? "Спостерігати за мурахами" : "Спостерігати за еволюцією"}</summary>
+                      <EvolutionViewer result={result} loadSnapshot={(moves) =>
+                        request<Snapshot>(decision.base + moves, "state", "", result.algorithm)} />
+                    </details>
                   ) : null}
                   {result.algorithm === "gemini" && result.aiSession ? (
                     <details className="ai-session">

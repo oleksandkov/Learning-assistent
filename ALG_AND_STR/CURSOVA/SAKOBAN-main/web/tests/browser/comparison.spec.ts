@@ -6,7 +6,7 @@ test("selected routes advance together without moving the human board", async ({
   await page.goto("/play/04-small");
   await expect(page.locator(".play-area .game-board")).toBeVisible();
   await page.getByRole("button", { name: "Порівняти всі алгоритми" }).click();
-  await expect(page.locator(".decision-card")).toHaveCount(3);
+  await expect(page.locator(".decision-card")).toHaveCount(8);
   await page.getByLabel("Порівнювати BFS", { exact: true }).check();
   await page.getByLabel("Порівнювати A* · ходи", { exact: true }).check();
   await page.getByRole("button", { name: "Порівняти вибрані поруч" }).click();
@@ -40,7 +40,7 @@ test("comparing all algorithms on a completed level computes solutions from the 
   await page.keyboard.press("ArrowUp");
   await expect(page.getByTestId("level-status")).toHaveText("Рівень завершено");
   await page.getByRole("button", { name: "Порівняти всі алгоритми" }).click();
-  await expect(page.locator(".decision-card")).toHaveCount(3);
+  await expect(page.locator(".decision-card")).toHaveCount(8);
   const firstCard = page.locator(".decision-card").first();
   await expect(firstCard.locator(".decision-score strong").first()).not.toHaveText("0");
   await page.getByLabel("Порівнювати BFS", { exact: true }).check();

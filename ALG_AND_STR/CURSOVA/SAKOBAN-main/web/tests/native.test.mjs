@@ -132,6 +132,27 @@ test("new algorithms: IDA* optimal pushes, Greedy valid but not optimal-claimed"
   const replay = run("01_simple.xsb", "state", "greedy-pushes", greedy.moves);
   assert.equal(replay.won, true);
 });
+test("Prototype 1 solves open levels and returns a validated replay", () => {
+  for (const file of ["01_simple.xsb", "03_two_boxes.xsb"]) {
+    const result = run(file, "solve", "prototype1");
+    assert.equal(result.status, "Solved");
+    assert.equal(result.validated, true);
+    assert.equal(run(file, "state", "prototype1", result.moves).won, true);
+  }
+});
+test("ACO and Genetic prototypes expose observable populations", () => {
+  for (const algorithm of ["aco", "genetic"]) {
+    const result = run("01_simple.xsb", "solve", algorithm);
+    assert.equal(result.status, "Solved");
+    assert.equal(result.validated, true);
+    assert.equal(result.evolution.kind, algorithm);
+    assert.ok(result.evolution.generations.length >= 1);
+    assert.ok(result.evolution.generations[0].length >= 10);
+    assert.ok(result.evolution.generations.flat().every(item =>
+      typeof item.moves === "string" && Number.isFinite(item.cost)));
+    assert.equal(run("01_simple.xsb", "state", algorithm, result.moves).won, true);
+  }
+});
 test("custom generator honors dimensions, boxes, exact walls and seed", () => {
   const generated = generate(8, 8, 2, 4, "12345");
   assert.equal(generated.success, true);

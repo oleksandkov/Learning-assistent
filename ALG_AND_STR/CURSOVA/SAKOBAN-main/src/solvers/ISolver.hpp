@@ -16,7 +16,10 @@ enum class SolverKind {
     BFS,
     AStar,
     IDAStar,
-    Greedy
+    Greedy,
+    Prototype1,
+    AntColony,
+    Genetic
 };
 
 enum class OptimizationMetric {

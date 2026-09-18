@@ -4,6 +4,9 @@
 #include "solvers/AStarSolver.hpp"
 #include "solvers/IDAStarSolver.hpp"
 #include "solvers/GreedySolver.hpp"
+#include "solvers/Prototype1Solver.hpp"
+#include "solvers/AntColonySolver.hpp"
+#include "solvers/GeneticSolver.hpp"
 #include "solvers/SolverRegistry.hpp"
 #include "solvers/ReplayValidator.hpp"
 
@@ -254,8 +257,88 @@ SOKOBAN_TEST(Solvers, RegistryCreatesIDAStarAndGreedy) {
     SOKOBAN_ASSERT(ida != nullptr);
     auto greedy = sokoban::solvers::SolverRegistry::create("greedy");
     SOKOBAN_ASSERT(greedy != nullptr);
+    auto prototype = sokoban::solvers::SolverRegistry::create("prototype1");
+    SOKOBAN_ASSERT(prototype != nullptr);
     SOKOBAN_ASSERT_EQ(sokoban::solvers::SolverRegistry::parseKind("IDA*"), sokoban::solvers::SolverKind::IDAStar);
     SOKOBAN_ASSERT_EQ(sokoban::solvers::SolverRegistry::parseKind("gbfs"), sokoban::solvers::SolverKind::Greedy);
     SOKOBAN_ASSERT_EQ(sokoban::solvers::SolverRegistry::toString(sokoban::solvers::SolverKind::IDAStar), "IDA*");
     SOKOBAN_ASSERT_EQ(sokoban::solvers::SolverRegistry::toString(sokoban::solvers::SolverKind::Greedy), "Greedy");
+    SOKOBAN_ASSERT_EQ(sokoban::solvers::SolverRegistry::toString(sokoban::solvers::SolverKind::Prototype1), "Prototype 1");
+}
+
+SOKOBAN_TEST(Solvers, Prototype1SolvesOpenFieldWithTwoBoxes) {
+    const std::string xsb =
+        "#######\n"
+        "#     #\n"
+        "# $ $ #\n"
+        "# . . #\n"
+        "#  @  #\n"
+        "#######\n";
+    auto parsed = sokoban::core::LevelParser::parseString(xsb);
+    sokoban::solvers::Prototype1Solver solver;
+    sokoban::solvers::SolverOptions options{
+        .algorithm = sokoban::solvers::SolverKind::Prototype1,
+        .metric = sokoban::solvers::OptimizationMetric::Pushes
+    };
+    solver.start(parsed.board, parsed.initialState, options);
+    while (solver.advance(1) == sokoban::solvers::SearchStatus::Running) {}
+
+    SOKOBAN_ASSERT_EQ(solver.statistics().status, sokoban::solvers::SearchStatus::Solved);
+    auto result = solver.solution();
+    SOKOBAN_ASSERT(result.has_value());
+    SOKOBAN_ASSERT(sokoban::solvers::ReplayValidator::validate(
+        parsed.board, parsed.initialState, *result).valid);
+}
+
+SOKOBAN_TEST(Solvers, Prototype1RejectsItsPlanThroughAWall) {
+    const std::string xsb =
+        "#######\n"
+        "#@    #\n"
+        "# $#. #\n"
+        "#     #\n"
+        "#######\n";
+    auto parsed = sokoban::core::LevelParser::parseString(xsb);
+    sokoban::solvers::Prototype1Solver solver;
+    sokoban::solvers::SolverOptions options{
+        .algorithm = sokoban::solvers::SolverKind::Prototype1,
+        .metric = sokoban::solvers::OptimizationMetric::Pushes
+    };
+    solver.start(parsed.board, parsed.initialState, options);
+    while (solver.advance(1) == sokoban::solvers::SearchStatus::Running) {}
+
+    SOKOBAN_ASSERT_EQ(solver.statistics().status, sokoban::solvers::SearchStatus::NoSolution);
+    SOKOBAN_ASSERT(!solver.solution().has_value());
+}
+
+SOKOBAN_TEST(Solvers, EvolutionaryPrototypesSolveTinyLevelAndKeepHistory) {
+    const std::string xsb =
+        "######\n"
+        "#  . #\n"
+        "#  $ #\n"
+        "#  @ #\n"
+        "######\n";
+    auto parsed = sokoban::core::LevelParser::parseString(xsb);
+    sokoban::solvers::SolverOptions options{
+        .algorithm = sokoban::solvers::SolverKind::AntColony,
+        .metric = sokoban::solvers::OptimizationMetric::Moves
+    };
+
+    sokoban::solvers::AntColonySolver aco;
+    aco.start(parsed.board, parsed.initialState, options);
+    while (aco.advance(1) == sokoban::solvers::SearchStatus::Running) {}
+    SOKOBAN_ASSERT_EQ(aco.statistics().status, sokoban::solvers::SearchStatus::Solved);
+    SOKOBAN_ASSERT(!aco.history().empty());
+    SOKOBAN_ASSERT(aco.solution().has_value());
+    SOKOBAN_ASSERT(sokoban::solvers::ReplayValidator::validate(
+        parsed.board, parsed.initialState, *aco.solution()).valid);
+
+    options.algorithm = sokoban::solvers::SolverKind::Genetic;
+    sokoban::solvers::GeneticSolver genetic;
+    genetic.start(parsed.board, parsed.initialState, options);
+    while (genetic.advance(1) == sokoban::solvers::SearchStatus::Running) {}
+    SOKOBAN_ASSERT_EQ(genetic.statistics().status, sokoban::solvers::SearchStatus::Solved);
+    SOKOBAN_ASSERT(!genetic.history().empty());
+    SOKOBAN_ASSERT(genetic.solution().has_value());
+    SOKOBAN_ASSERT(sokoban::solvers::ReplayValidator::validate(
+        parsed.board, parsed.initialState, *genetic.solution()).valid);
 }

@@ -1,5 +1,5 @@
 export type Dir = "U" | "L" | "D" | "R";
-export type LocalAlgorithm = "bfs" | "astar-moves" | "astar-pushes" | "idastar-pushes" | "greedy-pushes";
+export type LocalAlgorithm = "bfs" | "astar-moves" | "astar-pushes" | "idastar-pushes" | "greedy-pushes" | "prototype1" | "aco" | "genetic";
 export type Algorithm = LocalAlgorithm | "gemini";
 export const LOCAL_ALGORITHMS: {
   id: LocalAlgorithm;
@@ -11,6 +11,9 @@ export const LOCAL_ALGORITHMS: {
   { id: "astar-pushes", label: "A* · штовхання", metric: "Мінімум штовхань" },
   { id: "idastar-pushes", label: "IDA* · штовхання (good)", metric: "Мінімум штовхань · мало пам'яті" },
   { id: "greedy-pushes", label: "Greedy (bad)", metric: "Швидко · неоптимально" },
+  { id: "prototype1", label: "Прототип 1 · X → Y", metric: "Навчальний · стіни ігноруються" },
+  { id: "aco", label: "Прототип 2 · ACO", metric: "Мурахи · феромонні стежки" },
+  { id: "genetic", label: "Прототип 3 · GA", metric: "Хромосоми · еволюція" },
 ];
 export const ALGORITHMS: { id: Algorithm; label: string; metric: string }[] = [
   ...LOCAL_ALGORITHMS,
@@ -105,6 +108,7 @@ export interface SearchResult {
   frontier: number;
   validated: boolean;
   trace: SearchTracePoint[];
+  evolution?: EvolutionHistory;
   remoteMs?: number;
   explanation?: string;
   aiSession?: {
@@ -112,6 +116,21 @@ export interface SearchResult {
     prompt: string;
     response: string;
   };
+}
+export interface EvolutionIndividual {
+  id: number;
+  moves: string;
+  genes?: string;
+  cost: number;
+  pushes?: number;
+  won: boolean;
+  parentA?: number;
+  parentB?: number;
+  mutationIndex?: number;
+}
+export interface EvolutionHistory {
+  kind: "aco" | "genetic";
+  generations: EvolutionIndividual[][];
 }
 export interface GeneratedLevel {
   success: boolean;

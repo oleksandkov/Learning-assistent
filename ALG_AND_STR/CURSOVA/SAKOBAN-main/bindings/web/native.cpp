@@ -3,6 +3,8 @@
 #include "solvers/SolverRegistry.hpp"
 #include "solvers/ReplayValidator.hpp"
 #include "solvers/LevelGenerator.hpp"
+#include "solvers/AntColonySolver.hpp"
+#include "solvers/GeneticSolver.hpp"
 #include <algorithm>
 #include <chrono>
 #include <iostream>
@@ -161,6 +163,15 @@ int main(int argc, char** argv) {
             } else if (algorithm == "greedy" || algorithm == "greedy-pushes") {
                 options.algorithm = SolverKind::Greedy;
                 options.metric = OptimizationMetric::Pushes;
+            } else if (algorithm == "prototype1") {
+                options.algorithm = SolverKind::Prototype1;
+                options.metric = OptimizationMetric::Pushes;
+            } else if (algorithm == "aco") {
+                options.algorithm = SolverKind::AntColony;
+                options.metric = OptimizationMetric::Moves;
+            } else if (algorithm == "genetic") {
+                options.algorithm = SolverKind::Genetic;
+                options.metric = OptimizationMetric::Moves;
             } else {
                 options.algorithm = SolverKind::AStar;
                 options.metric = OptimizationMetric::Pushes;
@@ -235,7 +246,52 @@ int main(int argc, char** argv) {
                 }
                 std::cout << '}';
             }
-            std::cout << "]}";
+            std::cout << ']';
+            auto printMoves = [](const auto& moves) {
+                for (auto direction : moves) std::cout << directionToChar(direction);
+            };
+            if (const auto* aco = dynamic_cast<const AntColonySolver*>(solver.get())) {
+                std::cout << ",\"evolution\":{\"kind\":\"aco\",\"generations\":[";
+                const auto& history = aco->history();
+                for (std::size_t generation = 0; generation < history.size(); ++generation) {
+                    if (generation) std::cout << ',';
+                    std::cout << '[';
+                    for (std::size_t ant = 0; ant < history[generation].size(); ++ant) {
+                        if (ant) std::cout << ',';
+                        const auto& item = history[generation][ant];
+                        std::cout << "{\"id\":" << item.antId << ",\"moves\":\"";
+                        printMoves(item.moves);
+                        std::cout << "\",\"cost\":" << item.cost
+                            << ",\"pushes\":" << item.pushes
+                            << ",\"won\":" << item.won << '}';
+                    }
+                    std::cout << ']';
+                }
+                std::cout << "]}";
+            } else if (const auto* genetic = dynamic_cast<const GeneticSolver*>(solver.get())) {
+                std::cout << ",\"evolution\":{\"kind\":\"genetic\",\"generations\":[";
+                const auto& history = genetic->history();
+                for (std::size_t generation = 0; generation < history.size(); ++generation) {
+                    if (generation) std::cout << ',';
+                    std::cout << '[';
+                    for (std::size_t index = 0; index < history[generation].size(); ++index) {
+                        if (index) std::cout << ',';
+                        const auto& item = history[generation][index];
+                        std::cout << "{\"id\":" << item.id << ",\"moves\":\"";
+                        printMoves(item.moves);
+                        std::cout << "\",\"genes\":\"";
+                        printMoves(item.genes);
+                        std::cout << "\",\"cost\":" << item.fitness
+                            << ",\"won\":" << item.won
+                            << ",\"parentA\":" << item.parentA
+                            << ",\"parentB\":" << item.parentB
+                            << ",\"mutationIndex\":" << item.mutationIndex << '}';
+                    }
+                    std::cout << ']';
+                }
+                std::cout << "]}";
+            }
+            std::cout << '}';
             return 0;
         }
         bool accepted = true;

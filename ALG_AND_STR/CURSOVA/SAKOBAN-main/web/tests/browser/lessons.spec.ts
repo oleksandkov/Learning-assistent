@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { LESSONS } from "../../src/lib/lessons";
 
-test("all twelve lessons keep every visual step attached to actual C++ source", async ({ page }) => {
+test("all lessons keep every visual step attached to actual C++ source", async ({ page }) => {
   test.setTimeout(120000);
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
@@ -83,4 +83,21 @@ test("playback stops, resumes, resets, and starts fresh on a new topic", async (
   await page.getByRole("link", { name: "Greedy", exact: true }).click();
   await expect(page.locator(".step-count")).toHaveText("1 / 4");
   await expect(page.getByRole("button", { name: "Відтворити", exact: true })).toBeVisible();
+});
+
+test("ACO and GA explanations show their own motion language", async ({ page }) => {
+  await page.goto("/about/aco");
+  await expect(page.locator(".teaching-ant")).toHaveCount(8);
+  const leader = page.locator(".teaching-ant.leader");
+  const start = await leader.getAttribute("style");
+  await page.getByLabel("Крок 6", { exact: true }).click();
+  await expect(leader).not.toHaveAttribute("style", start ?? "");
+  await expect(page.locator(".pheromone-legend i")).toHaveAttribute("style", /scaleX\(1\)/);
+
+  await page.goto("/about/genetic");
+  await page.getByLabel("Крок 4", { exact: true }).click();
+  await expect(page.locator(".child-row")).toHaveClass(/visible/);
+  await page.getByLabel("Крок 5", { exact: true }).click();
+  await expect(page.locator(".teaching-genes .mutated")).toHaveCount(1);
+  expect(await page.locator(".scene-genetic").evaluate(scene => scene.scrollWidth <= scene.clientWidth + 1)).toBeTruthy();
 });

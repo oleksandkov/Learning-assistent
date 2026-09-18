@@ -164,11 +164,11 @@ test("comparison from a moved state, replay pause, step, switching solver and co
   await page.getByRole("button", { name: "Порівняти всі алгоритми" }).click();
   await expect(
     page.getByRole("button", { name: "Застосувати", exact: true }),
-  ).toHaveCount(3);
+  ).toHaveCount(7);
   await expect(
     page.getByRole("button", { name: "Застосувати", exact: true }).first(),
   ).toBeEnabled();
-  await expect(page.locator(".decision-card")).toHaveCount(3);
+  await expect(page.locator(".decision-card")).toHaveCount(8);
   await page
     .locator(".decision-card")
     .first()
@@ -252,17 +252,17 @@ test("comparison from a moved state, replay pause, step, switching solver and co
     .click();
   await expect(page.getByTestId("level-status")).toHaveText("Рівень завершено", { timeout: 15000 });
   await page.getByRole("button", { name: "Спочатку", exact: true }).click();
-  await expect(page.locator(".decision-card")).toHaveCount(3);
+  await expect(page.locator(".decision-card")).toHaveCount(8);
   const firstDecision = page.locator(".decision-card").first();
   await Promise.all([
     page.waitForResponse((response) => response.url().includes("/api/game")),
     firstDecision.getByRole("button", { name: "Перерахувати" }).click(),
   ]);
-  await expect(page.locator(".decision-card")).toHaveCount(3);
+  await expect(page.locator(".decision-card")).toHaveCount(8);
   await firstDecision.getByRole("button", { name: "Видалити" }).click();
-  await expect(page.locator(".decision-card")).toHaveCount(2);
+  await expect(page.locator(".decision-card")).toHaveCount(7);
   await page.reload();
-  await expect(page.locator(".decision-card")).toHaveCount(2);
+  await expect(page.locator(".decision-card")).toHaveCount(7);
   await page.screenshot({ path: "test-results/game-won.png", fullPage: true });
 });
 test("single solver decision persists while the player keeps moving", async ({

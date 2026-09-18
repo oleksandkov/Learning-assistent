@@ -3,6 +3,9 @@
 #include "AStarSolver.hpp"
 #include "IDAStarSolver.hpp"
 #include "GreedySolver.hpp"
+#include "Prototype1Solver.hpp"
+#include "AntColonySolver.hpp"
+#include "GeneticSolver.hpp"
 #include <algorithm>
 #include <stdexcept>
 
@@ -27,6 +30,12 @@ std::unique_ptr<ISolver> SolverRegistry::create(SolverKind kind) {
             return std::make_unique<IDAStarSolver>();
         case SolverKind::Greedy:
             return std::make_unique<GreedySolver>();
+        case SolverKind::Prototype1:
+            return std::make_unique<Prototype1Solver>();
+        case SolverKind::AntColony:
+            return std::make_unique<AntColonySolver>();
+        case SolverKind::Genetic:
+            return std::make_unique<GeneticSolver>();
     }
     throw std::invalid_argument("Unknown solver kind");
 }
@@ -49,7 +58,10 @@ SolverKind SolverRegistry::parseKind(const std::string& name) {
     if (s == "greedy" || s == "gbfs" || s == "best-first" || s == "bestfirst" || s == "best_first") {
         return SolverKind::Greedy;
     }
-    throw std::invalid_argument("Unknown solver algorithm name: " + name + ". Available: bfs, astar, idastar, greedy");
+    if (s == "prototype1" || s == "prototype-1" || s == "prototype_1") {
+        return SolverKind::Prototype1;
+    }
+    throw std::invalid_argument("Unknown solver algorithm name: " + name + ". Available: bfs, astar, idastar, greedy, prototype1");
 }
 
 std::string SolverRegistry::toString(SolverKind kind) {
@@ -58,6 +70,9 @@ std::string SolverRegistry::toString(SolverKind kind) {
         case SolverKind::AStar: return "A*";
         case SolverKind::IDAStar: return "IDA*";
         case SolverKind::Greedy: return "Greedy";
+        case SolverKind::Prototype1: return "Prototype 1";
+        case SolverKind::AntColony: return "ACO";
+        case SolverKind::Genetic: return "Genetic";
     }
     return "Unknown";
 }
@@ -82,7 +97,7 @@ std::string SolverRegistry::toString(OptimizationMetric metric) {
 }
 
 std::vector<std::string> SolverRegistry::availableSolvers() {
-    return {"bfs", "astar", "idastar", "greedy"};
+    return {"bfs", "astar", "idastar", "greedy", "prototype1"};
 }
 
 } // namespace sokoban::solvers

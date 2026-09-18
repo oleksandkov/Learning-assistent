@@ -509,7 +509,7 @@ void TerminalUI::render(const core::GameSession& session,
     // 8. Компактний блок керування
     out << "\nКерування:\n"
         << "  WASD/Стрілки - Рух | 1/P - A* штовхання | B - BFS | M - A* ходи | G - AI\n"
-        << "  I - IDA* (good) | O - Greedy (bad) | T - Порівняти всі | Пробіл - Симуляція | N - Крок | H - Підказка\n"
+        << "  I - IDA* | O - Greedy | X - Прототип 1 | T - Порівняти всі | Пробіл - Симуляція | N - Крок | H - Підказка\n"
         << "  U - Undo | Y - Redo | R - Перезапуск | K - AI-ключ | C - Камера | V - Зберегти | Q - Меню\n";
 
     std::string frame = out.str();
@@ -560,6 +560,7 @@ KeyCommand TerminalUI::readKey() {
         case 'p': case 'P': return KeyCommand::SolvePushes;
         case 'i': case 'I': return KeyCommand::SolveIDAStar;
         case 'o': case 'O': return KeyCommand::SolveGreedy;
+        case 'x': case 'X': return KeyCommand::SolvePrototype1;
         case 'g': case 'G': return KeyCommand::SolveAI;
         case 't': case 'T': return KeyCommand::CompareAll;
         case 'k': case 'K': return KeyCommand::SetAiKey;
@@ -604,6 +605,7 @@ KeyCommand TerminalUI::readKey() {
         case 'p': case 'P': return KeyCommand::SolvePushes;
         case 'i': case 'I': return KeyCommand::SolveIDAStar;
         case 'o': case 'O': return KeyCommand::SolveGreedy;
+        case 'x': case 'X': return KeyCommand::SolvePrototype1;
         case 'g': case 'G': return KeyCommand::SolveAI;
         case 't': case 'T': return KeyCommand::CompareAll;
         case 'k': case 'K': return KeyCommand::SetAiKey;
@@ -947,6 +949,11 @@ int runGame(core::ParsedLevel parsed) {
             case KeyCommand::SolveGreedy: {
                 solveLocal(solvers::SolverKind::Greedy,
                            solvers::OptimizationMetric::Pushes, "Greedy (неоптимально)", curPlayerTime);
+                break;
+            }
+            case KeyCommand::SolvePrototype1: {
+                solveLocal(solvers::SolverKind::Prototype1,
+                           solvers::OptimizationMetric::Pushes, "Прототип 1 · X → Y", curPlayerTime);
                 break;
             }
             case KeyCommand::SolveAI: {

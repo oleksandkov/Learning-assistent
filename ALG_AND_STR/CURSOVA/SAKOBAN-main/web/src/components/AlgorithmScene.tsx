@@ -4,6 +4,8 @@ const ROOM = ["#######", "#     #", "#     #", "#     #", "#######"];
 const REACH = ["#######", "#  #  #", "# #   #", "#     #", "#######"];
 const CORRIDOR = ["#######", "#######", "#     #", "#######", "#######"];
 const PARSER = ["       ", " ##### ", " #   # ", " #   # ", " ##### ", "       "];
+const PROTOTYPE_ROOM = ["#######", "#     #", "#     #", "#     #", "#     #", "#######"];
+const ACO_ROOM = ["#######", "#     #", "#  #  #", "#     #", "#######"];
 const cell = (x: number, y: number) => y * 7 + x;
 
 // Small, deterministic examples use the same neighbor/support rules as the C++
@@ -203,6 +205,123 @@ function Iterative({ step }: { step: number }) {
     <div className="scene-result">{step === 2 ? "× C: 6 > 4 · повертаємося" : step === 3 ? "C: 6, D: 7 → наступна межа 6" : step === 5 ? "✓ g = 6 · h = 0" : "Схема скорочена: між C і ціллю ще 4 штовхання"}</div>
   </>;
 }
+function Prototype1({ step }: { step: number }) {
+  const boxes = [
+    [cell(2, 2), cell(2, 4)],
+    [cell(2, 2), cell(2, 4)],
+    [cell(2, 2), cell(2, 4)],
+    [cell(4, 2), cell(2, 4)],
+    [cell(4, 3), cell(2, 4)],
+    [cell(4, 3), cell(5, 4)],
+  ][step];
+  const players = [cell(1, 1), cell(1, 1), cell(1, 2), cell(3, 2), cell(4, 2), cell(4, 4)];
+  const routes = [[], [], [cell(1, 1), cell(1, 2)], [cell(2, 2), cell(3, 2), cell(4, 2)],
+    [cell(4, 1), cell(4, 2), cell(4, 3)], [cell(2, 4), cell(3, 4), cell(4, 4), cell(5, 4)]][step];
+  const results = [
+    "Board + GameState: повне повторне сканування не потрібне",
+    "Ящик A → ціль 1 · ящик B → ціль 2",
+    "Гравець став позаду ящика A",
+    "X збігся: 4 = 4",
+    "Y збігся: 3 = 3 · ціль 1 зайнята",
+    "✓ Обидва маршрути пройшли перевірку правил",
+  ];
+  return <>
+    <div className="prototype-phases" aria-label="Фази прототипу">
+      <span className={step <= 2 ? "active" : step > 2 ? "done" : ""}>Вибір</span>
+      <span className={step === 3 ? "active" : step > 3 ? "done" : ""}>Вісь X</span>
+      <span className={step === 4 ? "active" : step > 4 ? "done" : ""}>Вісь Y</span>
+      <span className={step === 5 ? "active" : ""}>Перевірка</span>
+    </div>
+    <div className="prototype-stage">
+      <Board rows={PROTOTYPE_ROOM} player={players[step]} boxes={boxes}
+        goals={[cell(4, 3), cell(5, 4)]} route={routes}
+        caption={`Прототип 1, крок ${step + 1}: ${results[step]}`} />
+      <div className="prototype-pairs" aria-label="Призначення ящиків цілям">
+        <span className={step >= 1 ? "selected" : ""}><b>A</b><i data-distance="3" /><strong>1</strong></span>
+        <span className={step >= 5 ? "selected" : ""}><b>B</b><i data-distance="3" /><strong>2</strong></span>
+      </div>
+    </div>
+    <BoardKey extra="підсвічене — поточний прямий маршрут" />
+    <div className="scene-result">{results[step]}</div>
+  </>;
+}
+function AntColony({ step }: { step: number }) {
+  const clouds = [
+    [[1, 3], [1, 3], [1, 3], [1, 3], [1, 3], [1, 3], [1, 3], [1, 3]],
+    [[2, 3], [1, 2], [2, 2], [2, 3], [1, 3], [2, 3], [1, 2], [2, 3]],
+    [[3, 3], [2, 1], [2, 2], [3, 3], [1, 1], [2, 3], [2, 1], [3, 3]],
+    [[4, 3], [3, 1], [2, 2], [4, 3], [1, 1], [3, 3], [3, 1], [4, 3]],
+    [[5, 3], [4, 1], [3, 3], [5, 3], [2, 3], [4, 3], [4, 1], [5, 3]],
+    [[5, 2], [5, 2], [4, 3], [5, 2], [5, 3], [5, 2], [5, 1], [5, 2]],
+  ][step];
+  const route = step >= 4 ? [cell(1, 3), cell(2, 3), cell(3, 3), cell(4, 3), cell(5, 3), cell(5, 2)] : [];
+  return <>
+    <div className="swarm-meter"><span>Покоління {step + 1}</span><div><i style={{ transform: `scaleX(${(step + 1) / 6})` }} /></div><strong>{step < 4 ? "розвідка" : "збіжність"}</strong></div>
+    <div className="swarm-board">
+      <Board rows={ACO_ROOM} boxes={[cell(4, 2)]} goals={[cell(5, 2)]} route={route}
+        caption={`ACO, покоління ${step + 1}: ${step < 4 ? "мурахи досліджують різні маршрути" : "рій сходиться до правого коридору"}`} />
+      {clouds.map(([x, y], index) => <i key={index} className={`teaching-ant ${index === 0 ? "leader" : ""} ${step === 3 && index === 4 ? "stopped" : ""}`}
+        style={{ width: `${100 / 7}%`, height: `${100 / 5}%`, transform: `translate(${x * 100}%, ${y * 100}%)`, transitionDelay: `${index * 35}ms` }} />)}
+    </div>
+    <div className="pheromone-legend"><span>слабкий слід</span><i style={{ transform: `scaleX(${.2 + step * .16})` }} /><strong>підсилений маршрут</strong></div>
+    <div className="scene-result">{step === 0 ? "Однаковий феромон · усі напрями рівні" : step === 3 ? "Тупикові стежки отримують штраф" : step === 5 ? "✓ Переможець проходить ReplayValidator" : "Кращі треки стають імовірнішими"}</div>
+  </>;
+}
+function Genetic({ step }: { step: number }) {
+  const parentA = "RRUURR", parentB = "ULDDRR", child = step >= 4 ? "RRUDRR" : "RRDDRR";
+  const phases = ["Популяція", "Оцінка", "Відбір", "Схрещення", "Мутація", "Перевірка"];
+  const strip = (genes: string, role: string) => <div className={`teaching-genes ${role}`}>
+    {Array.from(genes).map((gene, index) => {
+      const fromA = role === "child" && index < 3;
+      const fromB = role === "child" && index >= 3;
+      const mutated = step >= 4 && role === "child" && index === 2;
+      return <span key={index} className={`${fromA ? "from-a" : ""} ${fromB ? "from-b" : ""} ${mutated ? "mutated" : ""}`}
+        title={`Ген ${index + 1}: ${gene}`}>
+        <em>{index + 1}</em><b>{arrowsForGene(gene)}</b>
+      </span>;
+    })}
+  </div>;
+  return <>
+    <div className="genetic-phases" aria-label="Етапи генетичного алгоритму">
+      {phases.map((phase, index) => <span key={phase} className={index === step ? "current" : index < step ? "done" : ""}>
+        <b>{index + 1}</b>{phase}
+      </span>)}
+    </div>
+    <div className="genetic-workbench">
+      <div className="teaching-population">
+        <div className={`genetic-card parent-card ${step >= 2 ? "selected" : ""}`}>
+          <div><small>{step < 2 ? "Кандидат A" : "Обраний батько A"}</small><strong>fitness 18</strong></div>
+          {strip(parentA, "parent-a")}
+          {step >= 2 ? <i className="selection-badge">✓ турнір</i> : null}
+        </div>
+        <div className={`genetic-card parent-card ${step >= 2 ? "selected" : ""}`}>
+          <div><small>{step < 2 ? "Кандидат B" : "Обраний батько B"}</small><strong>fitness 23</strong></div>
+          {strip(parentB, "parent-b")}
+          {step >= 2 ? <i className="selection-badge">✓ турнір</i> : null}
+        </div>
+        <div className={`crossover-formula ${step >= 3 ? "visible" : ""}`} aria-hidden={step < 3}>
+          <span className="source-a">A: 1–3</span><b>+</b><span className="source-b">B: 4–6</span><b>→</b><span>дитина</span>
+        </div>
+        <div className={`child-row genetic-card ${step >= 3 ? "visible" : ""}`}>
+          <div><small>Нова дитина</small><strong>fitness {step >= 4 ? 7 : 14}</strong></div>
+          {strip(child, "child")}
+        </div>
+      </div>
+
+      <aside className="genetic-insight" aria-live="polite">
+        {step === 0 ? <><strong>36</strong><span>хромосом у стартовій популяції</span><p>Одна клітинка — одна команда руху.</p></> : null}
+        {step === 1 ? <><strong>18 &lt; 23</strong><span>менший fitness — кращий маршрут</span><p>GameRules приймає хід або додає штраф за недопустимий ген.</p></> : null}
+        {step === 2 ? <><strong>6</strong><span>еліт переходять без втрати</span><p>Решту батьків обирає турнір: перемагає менший fitness.</p></> : null}
+        {step === 3 ? <><div className="gene-origin"><i className="source-a" />A · гени 1–3<i className="source-b" />B · гени 4–6</div><p>Точка розрізу визначає, яку частину дає кожен батько.</p></> : null}
+        {step === 4 ? <><div className="mutation-change"><span>3: ↓</span><b>→</b><span>3: ↑</span></div><span>змінився тільки один ген</span><p>Червона рамка показує мутацію.</p></> : null}
+        {step === 5 ? <><Board rows={CORRIDOR} player={cell(4, 2)} boxes={[cell(5, 2)]} goals={[cell(5, 2)]}
+          caption="Виграшна хромосома поставила ящик на ціль" /><div className="validation-chain"><span>гени</span><b>→</b><span>GameRules</span><b>→</b><span>ReplayValidator ✓</span></div></> : null}
+      </aside>
+    </div>
+    <div className="scene-result">{step === 0 ? "Ген = напрямок, хромосома = можливий маршрут" : step === 1 ? "Кожна хромосома реально програється на полі" : step === 2 ? "Еліта зберігається, турнір обирає батьків" : step === 3 ? "Дитина: перші 3 гени від A, останні 3 — від B" : step === 4 ? "Мутація: третій ген ↓ замінено на ↑" : "✓ Лише допустимий виграшний префікс стає рішенням"}</div>
+  </>;
+}
+function arrowsForGene(gene: string) { return ({ U: "↑", L: "←", D: "↓", R: "→" } as Record<string, string>)[gene]; }
 export default function AlgorithmScene({ lessonId, step }: { lessonId: string; step: number }) {
   let scene;
   switch (lessonId) {
@@ -217,6 +336,9 @@ export default function AlgorithmScene({ lessonId, step }: { lessonId: string; s
     case "generator": scene = <Replay step={step} generator />; break;
     case "parser": scene = <Parser step={step} />; break;
     case "idastar": scene = <Iterative step={step} />; break;
+    case "prototype1": scene = <Prototype1 step={step} />; break;
+    case "aco": scene = <AntColony step={step} />; break;
+    case "genetic": scene = <Genetic step={step} />; break;
     default: return null;
   }
   return <div className={`algorithm-scene scene-${lessonId}`} data-scene={lessonId} data-step={step}>{scene}</div>;

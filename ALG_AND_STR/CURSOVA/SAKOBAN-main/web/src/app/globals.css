@@ -1287,13 +1287,13 @@ h3 {
   z-index: 2;
   display: grid;
   place-items: center;
-  padding: 24%;
+  padding: 0;
   pointer-events: none;
 }
 .board-marker i {
   display: grid;
-  width: 100%;
-  height: 100%;
+  width: 34%;
+  height: 34%;
   place-items: center;
   border-radius: 50%;
   background: var(--accent-soft);
@@ -2545,6 +2545,512 @@ th small {
 .ida-budget i { display: block; height: 100%; background: var(--accent); transform-origin: left; transition: transform 600ms var(--ease-in-out); }
 .ida-stack { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); }
 .ida-stack b { padding: 8px 12px; background: var(--accent-soft); color: var(--accent); border-radius: 5px; transition: opacity 250ms ease, transform 400ms var(--ease-out); }
+.prototype-phases {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+  gap: 5px;
+}
+.prototype-phases span {
+  position: relative;
+  padding: 8px 4px;
+  border-bottom: 2px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+  transition: color 200ms ease, border-color 200ms ease, transform 500ms var(--ease-in-out);
+}
+.prototype-phases span.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+.prototype-phases span.done { border-color: var(--box); }
+.prototype-stage {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 70px;
+  gap: 18px;
+  align-items: center;
+}
+.prototype-stage .lesson-board { width: 100%; }
+.prototype-pairs { display: grid; gap: 14px; }
+.prototype-pairs span {
+  display: grid;
+  grid-template-columns: 24px 1fr 24px;
+  align-items: center;
+  gap: 3px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.prototype-pairs b,
+.prototype-pairs strong {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  border-radius: 4px;
+}
+.prototype-pairs b { color: white; background: var(--box); }
+.prototype-pairs strong { color: var(--accent); border: 2px solid var(--accent); border-radius: 50%; }
+.prototype-pairs i {
+  height: 2px;
+  position: relative;
+  background: var(--line);
+  color: transparent;
+  transform: scaleX(.25);
+  transform-origin: left;
+  transition: transform 600ms var(--ease-in-out), background 200ms ease;
+}
+.prototype-pairs span.selected i { background: var(--accent); transform: scaleX(1); }
+.prototype-pairs span.selected i::after {
+  content: attr(data-distance);
+  position: absolute;
+  right: 0;
+  bottom: 5px;
+  color: var(--accent);
+}
+.evolution-observer {
+  grid-column: 1 / -1;
+  min-width: 0;
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.evolution-observer > summary {
+  cursor: pointer;
+  padding: 14px 0 4px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+}
+.evolution-viewer {
+  min-width: 0;
+  padding-top: 16px;
+}
+.evolution-viewer-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+.evolution-viewer-heading > div > span {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.evolution-viewer-heading h4 {
+  margin: 5px 0 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+.evolution-viewer-heading p {
+  max-width: 590px;
+  margin-top: 6px;
+  font-size: 12px;
+}
+.evolution-viewer-heading > strong {
+  flex: 0 0 auto;
+  color: var(--accent);
+  font-size: 26px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+.evolution-viewer-heading > strong small {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 400;
+}
+.evolution-toolbar,
+.evolution-playback {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.evolution-toolbar {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+}
+.evolution-toolbar label,
+.evolution-playback label {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 10px;
+}
+.evolution-toolbar select,
+.evolution-playback select { min-height: 34px; padding: 5px 28px 5px 8px; }
+.evolution-toolbar .button { align-self: flex-end; }
+.evolution-workspace {
+  display: grid;
+  grid-template-columns: minmax(300px, 1.15fr) minmax(250px, .85fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+.evolution-board-panel,
+.evolution-inspector {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+}
+.evolution-board-panel {
+  display: flex;
+  min-height: 390px;
+  flex-direction: column;
+}
+.evolution-panel-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.evolution-panel-heading > span {
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+}
+.evolution-panel-heading > strong,
+.evolution-panel-heading > small {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.evolution-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+}
+.evolution-summary span {
+  min-width: 0;
+  min-height: 66px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 9px;
+}
+.evolution-summary b { display: block; margin-bottom: 4px; color: var(--ink); font-size: 12px; overflow-wrap: anywhere; }
+.evolution-stage {
+  display: grid;
+  flex: 1;
+  min-height: 280px;
+  place-items: center;
+  padding: 16px 0;
+  overflow: hidden;
+}
+.evolution-stage .game-board { width: min(100%, 340px); margin: 0 auto; }
+.evolution-loading { min-height: 180px; display: grid; place-items: center; color: var(--muted); font-size: 11px; }
+.route-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 9px;
+}
+.route-legend span { display: flex; align-items: center; gap: 6px; }
+.route-legend i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.route-legend i.active { background: transparent; box-shadow: inset 0 0 0 2px var(--accent); }
+.fitness-panel {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.fitness-chart {
+  display: flex;
+  height: 150px;
+  align-items: flex-end;
+  gap: 3px;
+  margin-top: 12px;
+  padding: 8px 4px 0;
+  border-bottom: 1px solid var(--line);
+}
+.fitness-chart button {
+  flex: 1;
+  min-width: 2px;
+  padding: 0;
+  border: 0;
+  border-radius: 2px 2px 0 0;
+  background: color-mix(in srgb, var(--accent) 30%, var(--line));
+  transition: height 600ms var(--ease-in-out), background 200ms ease;
+}
+.fitness-chart button.current { background: var(--accent); }
+.fitness-chart button:focus-visible { outline-offset: 2px; }
+.fitness-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 9px;
+}
+.sequence-panel {
+  min-width: 0;
+  margin-top: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+}
+.sequence-panel > p { margin-top: 4px; font-size: 10px; }
+.gene-strip {
+  display: flex;
+  gap: 3px;
+  overflow-x: auto;
+  padding: 12px 2px 8px;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+}
+.gene-strip span {
+  flex: 0 0 24px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  background: var(--floor);
+  color: var(--muted);
+  font-size: 12px;
+  transition: transform 200ms var(--ease-out), color 200ms ease, background 200ms ease;
+}
+.gene-strip span.current { color: white; background: var(--accent); transform: translateY(-4px); }
+.gene-strip span.done { color: var(--accent); background: var(--accent-soft); }
+.gene-strip span.mutated { box-shadow: inset 0 0 0 2px var(--danger); color: var(--danger); }
+.gene-strip span.current.mutated { color: white; }
+.evolution-playback {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.evolution-scrubber {
+  flex: 1 1 150px;
+  min-width: 120px;
+}
+.evolution-scrubber input {
+  width: 100%;
+  accent-color: var(--accent);
+}
+.evolution-playback > span { margin-left: auto; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.swarm-meter {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.swarm-meter > div {
+  flex: 1;
+  height: 5px;
+  border-radius: 4px;
+  background: var(--line);
+  overflow: hidden;
+}
+.swarm-meter > div i {
+  display: block;
+  background: var(--accent);
+  transform-origin: left;
+  transition: transform 600ms var(--ease-in-out);
+}
+.swarm-meter > div i { width: 100%; height: 100%; }
+.swarm-meter strong { color: var(--accent); font-weight: 600; }
+.swarm-board { position: relative; width: min(100%, 350px); }
+.swarm-board .lesson-board { width: 100%; }
+.teaching-ant {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  place-items: center;
+  z-index: 4;
+  transition: transform 700ms var(--ease-in-out), opacity 200ms ease;
+}
+.teaching-ant::before {
+  content: "";
+  width: 12px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: -6px 0 0 -2px var(--ink), 6px 0 0 -2px var(--ink);
+  opacity: .48;
+}
+.teaching-ant.leader::before { background: var(--accent); box-shadow: -6px 0 0 -2px var(--accent), 6px 0 0 -2px var(--accent); opacity: 1; }
+.teaching-ant.stopped { opacity: .16; }
+.pheromone-legend { width: 100%; display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; font-size: 10px; color: var(--muted); }
+.pheromone-legend i { height: 4px; background: linear-gradient(90deg, var(--line), var(--accent)); transform-origin: left; transition: transform 600ms var(--ease-in-out); }
+.pheromone-legend strong { color: var(--accent); font-weight: 500; }
+.scene-genetic { max-width: 820px; min-height: 390px; }
+.genetic-phases {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 5px;
+}
+.genetic-phases span {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 7px 5px;
+  border-bottom: 2px solid var(--line);
+  color: var(--muted);
+  font-size: 9px;
+}
+.genetic-phases b {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--floor);
+  font-size: 9px;
+}
+.genetic-phases span.done { border-color: var(--box); }
+.genetic-phases span.current { border-color: var(--accent); color: var(--accent); }
+.genetic-phases span.current b { color: white; background: var(--accent); }
+.genetic-workbench {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(210px, .65fr);
+  gap: 12px;
+  align-items: stretch;
+}
+.teaching-population {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.genetic-card {
+  position: relative;
+  min-width: 0;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  transition: border-color 200ms ease, transform 600ms var(--ease-in-out), opacity 200ms ease;
+}
+.genetic-card > div:first-child {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+.genetic-card small { color: var(--muted); font-size: 9px; }
+.genetic-card > div > strong { color: var(--ink); font-size: 10px; font-weight: 550; white-space: nowrap; }
+.genetic-card.selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent-soft) 45%, var(--surface));
+  transform: translateY(-3px);
+}
+.selection-badge {
+  position: absolute;
+  top: -8px;
+  right: 8px;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: white;
+  font-size: 8px;
+  font-style: normal;
+}
+.teaching-genes { display: flex; gap: 4px; }
+.teaching-genes span {
+  position: relative;
+  flex: 1;
+  min-width: 24px;
+  max-width: 40px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  color: var(--ink);
+  background: var(--floor);
+  transition: transform 250ms var(--ease-out), background 200ms ease, color 200ms ease;
+}
+.teaching-genes span em {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  color: var(--muted);
+  font-size: 7px;
+  font-style: normal;
+}
+.teaching-genes span b { font-size: 14px; font-weight: 500; }
+.teaching-genes.parent-a span,
+.teaching-genes span.from-a { background: color-mix(in srgb, var(--accent) 18%, var(--floor)); }
+.teaching-genes.parent-b span,
+.teaching-genes span.from-b { background: color-mix(in srgb, var(--box) 35%, var(--floor)); }
+.teaching-genes span.mutated {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 13%, var(--floor)) !important;
+  box-shadow: inset 0 0 0 2px var(--danger);
+  transform: translateY(-5px);
+}
+.crossover-formula {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 30px;
+  color: var(--muted);
+  font-size: 9px;
+  opacity: .15;
+  transform: translateY(7px);
+  transition: opacity 200ms ease, transform 500ms var(--ease-in-out);
+}
+.crossover-formula.visible { opacity: 1; transform: translateY(0); }
+.crossover-formula span { padding: 4px 8px; border-radius: 4px; background: var(--floor); }
+.crossover-formula .source-a { color: var(--accent); background: var(--accent-soft); }
+.crossover-formula .source-b { color: var(--box-edge); background: color-mix(in srgb, var(--box) 24%, var(--floor)); }
+.child-row {
+  grid-column: 1 / -1;
+  opacity: .12;
+  transform: translateY(12px);
+}
+.child-row.visible { opacity: 1; transform: translateY(0); }
+.child-row .teaching-genes { justify-content: center; }
+.genetic-insight {
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--floor);
+  text-align: center;
+}
+.genetic-insight > strong { color: var(--accent); font-size: 30px; font-weight: 500; }
+.genetic-insight > span { color: var(--ink); font-size: 11px; font-weight: 550; }
+.genetic-insight p { font-size: 10px; line-height: 1.5; }
+.genetic-insight .lesson-board { width: min(100%, 230px); }
+.gene-origin { display: grid; grid-template-columns: 12px auto; gap: 8px; align-items: center; color: var(--muted); font-size: 10px; text-align: left; }
+.gene-origin i { width: 12px; height: 12px; border-radius: 3px; }
+.gene-origin .source-a { background: var(--accent-soft); border: 1px solid var(--accent); }
+.gene-origin .source-b { background: color-mix(in srgb, var(--box) 35%, var(--floor)); border: 1px solid var(--box-edge); }
+.mutation-change { display: flex; align-items: center; gap: 10px; }
+.mutation-change span { padding: 9px 12px; border: 1px solid var(--line); border-radius: 5px; font-size: 15px; }
+.mutation-change span:last-child { color: var(--danger); border-color: var(--danger); }
+.validation-chain { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; color: var(--muted); font-size: 8px; }
+.validation-chain span:last-child { color: var(--accent); }
 @media (max-width: 600px) {
   .lesson-step-heading { padding: 20px 18px 0; }
   .lesson-step-heading h3 { font-size: 18px; }
@@ -2562,9 +3068,33 @@ th small {
   .lesson-actor.player { padding: 10px; }
   .lesson-actor.box { padding: 6px; }
   .cell-label { font-size: 12px; }
+  .prototype-stage { grid-template-columns: minmax(0, 1fr) 58px; gap: 10px; }
+  .evolution-viewer-heading { gap: 12px; }
+  .evolution-viewer-heading > strong { font-size: 20px; }
+  .evolution-viewer-heading > strong small { display: block; margin-top: 2px; }
+  .evolution-workspace { grid-template-columns: 1fr; }
+  .evolution-board-panel { min-height: 330px; }
+  .evolution-stage { min-height: 230px; }
+  .evolution-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .evolution-toolbar .button { width: 100%; }
+  .evolution-playback .button { flex: 1 1 30%; padding-inline: 8px; }
+  .evolution-playback > span { margin-left: 0; }
+  .evolution-scrubber { flex-basis: 100%; order: 2; }
+  .genetic-phases { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .genetic-workbench { grid-template-columns: 1fr; }
+  .teaching-population { grid-template-columns: 1fr; }
+  .parent-card,
+  .child-row,
+  .crossover-formula { grid-column: 1; }
+  .genetic-insight { min-height: 180px; }
+  .teaching-genes span { min-width: 0; width: 28px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .algorithm-scene *, .algorithm-scene *::after { transition-duration: 0.01ms !important; transition-delay: 0ms !important; animation: none !important; }
+  .scene-prototype1 .lesson-actor { transition: opacity 200ms ease !important; }
+  .evolution-viewer .actor,
+  .evolution-viewer .gene-strip span,
+  .evolution-viewer .fitness-chart button { transition: opacity 200ms ease !important; }
 }
 .source-note {
   margin-top: 24px;
