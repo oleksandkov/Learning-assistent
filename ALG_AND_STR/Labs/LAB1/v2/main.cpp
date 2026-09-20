@@ -3,22 +3,19 @@
 #include <cassert>
 #include <cmath>
 
-
-const int START_YEAR = 1949; 
-const int N = 50;             
-
+const int START_YEAR = 1949;
+const int N = 50;
 
 double calculate_average(const double *arr, int size) {
-    assert(arr != nullptr && size > 0); 
+    assert(arr != nullptr && size > 0);
 
-    double sum = 0.0;     
+    double sum = 0.0;
     for (const double *p = arr; p < arr + size; ++p) {
-        sum += *p; 
+        sum += *p;
     }
 
-    return sum / size; 
+    return sum / size;
 }
-
 
 void print_report(const double *arr, int size, int start_year, double avg) {
     std::cout << "\n-----------------------------------------\n";
@@ -26,9 +23,9 @@ void print_report(const double *arr, int size, int start_year, double avg) {
     std::cout << "-----------------------------------------\n";
 
     for (int i = 0; i < size; ++i) {
-        
-        const double *p = arr + i;       
-        double deviation = *p - avg;     
+
+        const double *p = arr + i;
+        double deviation = *p - avg;
 
         std::cout << "  " << (start_year + i)
                   << " | " << std::setw(12) << std::fixed << std::setprecision(2) << *p
@@ -40,10 +37,8 @@ void print_report(const double *arr, int size, int start_year, double avg) {
     std::cout << "Середня кількість опадів: " << std::fixed << std::setprecision(2) << avg << " мм\n\n";
 }
 
-
-
 int main(int argc, char *argv[]) {
-    
+
     if (argc > 1 && std::string(argv[1]) == "--test") {
         std::cout << "Тести успішно пройдені.\n";
         return 0;
@@ -57,17 +52,17 @@ int main(int argc, char *argv[]) {
     std::cout << "2 - Ввести 50 значень вручну\n";
     std::cout << "Ваш вибір (за замовчуванням 1): ";
 
-    char choice = '1'; 
+    char choice = '1';
     if (!(std::cin >> choice) || (choice != '1' && choice != '2')) {
-        choice = '1';  
+        choice = '1';
     }
 
     if (choice == '2') {
         std::cout << "Введіть " << N << " дійсних чисел (опади за 1949-1998 рр.):\n";
         for (double *p = rain; p < rain + N; ++p) {
-            int year = START_YEAR + static_cast<int>(p - rain); 
+            int year = START_YEAR + static_cast<int>(p - rain);
             std::cout << year << ": ";
-            if (!(std::cin >> *p)) { 
+            if (!(std::cin >> *p)) {
                 std::cerr << "Помилка введення даних.\n";
                 return 1;
             }

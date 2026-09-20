@@ -7,9 +7,14 @@ export interface BoardCamera {
   centerY: number;
 }
 export interface BoardMarker {
+  id?: string;
   cell: number;
-  kind: "route" | "push" | "current";
+  kind: "route" | "push" | "current" | "swarm" | "leader" | "stopped";
   label?: string;
+}
+export interface BoardCellHint {
+  label: string;
+  intensity: number;
 }
 export default function BoardView({
   board,
@@ -19,6 +24,8 @@ export default function BoardView({
   onCameraPan,
   onCameraZoom,
   markers = [],
+  cellHints = {},
+  hidePlayer = false,
   className = "",
 }: {
   board: Board;
@@ -28,6 +35,8 @@ export default function BoardView({
   onCameraPan?: (dx: number, dy: number) => void;
   onCameraZoom?: (delta: number) => void;
   markers?: BoardMarker[];
+  cellHints?: Record<number, BoardCellHint>;
+  hidePlayer?: boolean;
   className?: string;
 }) {
   // Core parser pads the original XSB by one cell; omit that exterior frame for display.
@@ -110,6 +119,7 @@ export default function BoardView({
               className={`board-cell ${board.walls[cell] ? "wall" : board.floor[cell] ? "floor" : "void"} ${board.goals[cell] ? "goal" : ""}`}
             >
               <i />
+              {cellHints[cell] ? <span className="board-cell-hint" style={{ opacity: cellHints[cell].intensity }}>{cellHints[cell].label}</span> : null}
             </div>
           );
         })}
@@ -125,7 +135,7 @@ export default function BoardView({
           </div>
         ) : null,
       )}
-      {visible(state.player) ? (
+      {!hidePlayer && visible(state.player) ? (
         <div className="actor player" style={position(state.player)}>
           <i />
         </div>
@@ -134,7 +144,7 @@ export default function BoardView({
         <span
           className={`board-marker ${marker.kind}`}
           style={position(marker.cell)}
-          key={`${marker.kind}-${marker.cell}-${index}`}
+          key={marker.id ?? `${marker.kind}-${marker.cell}-${index}`}
           aria-hidden="true"
         >
           <i>{marker.label}</i>

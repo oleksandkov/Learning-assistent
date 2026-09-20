@@ -101,3 +101,20 @@ test("ACO and GA explanations show their own motion language", async ({ page }) 
   await expect(page.locator(".teaching-genes .mutated")).toHaveCount(1);
   expect(await page.locator(".scene-genetic").evaluate(scene => scene.scrollWidth <= scene.clientWidth + 1)).toBeTruthy();
 });
+
+test("Drain and Cannibal explanations make force and DNA transfer visible", async ({ page }) => {
+  await page.goto("/about/gravity");
+  await page.getByLabel("Крок 5", { exact: true }).click();
+  await expect(page.locator(".gravity-stage")).toHaveClass(/shaking/);
+  await expect(page.locator(".drain-vectors .blocked")).toHaveCount(1);
+  expect(await page.locator(".drain-mass").evaluate(element => getComputedStyle(element).transitionProperty)).toContain("transform");
+
+  await page.goto("/about/cannibal");
+  await page.getByLabel("Крок 5", { exact: true }).click();
+  await expect(page.locator(".cannibal-card.offspring")).toHaveClass(/visible/);
+  await expect(page.locator(".dna-transfer")).toHaveClass(/visible/);
+  await expect(page.locator(".cannibal-genes.offspring .from-victim")).toHaveCount(4);
+  await expect(page.locator(".cannibal-genes.offspring .escape")).toHaveCount(1);
+  expect(await page.locator(".cannibal-genes.offspring span").first().evaluate(element => getComputedStyle(element).transitionProperty)).toContain("transform");
+  expect(await page.locator(".scene-cannibal").evaluate(scene => scene.scrollWidth <= scene.clientWidth + 1)).toBeTruthy();
+});

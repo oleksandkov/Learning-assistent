@@ -5,6 +5,8 @@
 #include "solvers/LevelGenerator.hpp"
 #include "solvers/AntColonySolver.hpp"
 #include "solvers/GeneticSolver.hpp"
+#include "solvers/GravityDrainSolver.hpp"
+#include "solvers/CannibalGeneticSolver.hpp"
 #include <algorithm>
 #include <chrono>
 #include <iostream>
@@ -172,6 +174,12 @@ int main(int argc, char** argv) {
             } else if (algorithm == "genetic") {
                 options.algorithm = SolverKind::Genetic;
                 options.metric = OptimizationMetric::Moves;
+            } else if (algorithm == "gravity") {
+                options.algorithm = SolverKind::GravityDrain;
+                options.metric = OptimizationMetric::Moves;
+            } else if (algorithm == "cannibal") {
+                options.algorithm = SolverKind::CannibalGenetic;
+                options.metric = OptimizationMetric::Moves;
             } else {
                 options.algorithm = SolverKind::AStar;
                 options.metric = OptimizationMetric::Pushes;
@@ -285,6 +293,50 @@ int main(int argc, char** argv) {
                             << ",\"won\":" << item.won
                             << ",\"parentA\":" << item.parentA
                             << ",\"parentB\":" << item.parentB
+                            << ",\"mutationIndex\":" << item.mutationIndex << '}';
+                    }
+                    std::cout << ']';
+                }
+                std::cout << "]}";
+            } else if (const auto* drain = dynamic_cast<const GravityDrainSolver*>(solver.get())) {
+                std::cout << ",\"evolution\":{\"kind\":\"gravity\",\"generations\":[";
+                const auto& history = drain->history();
+                for (std::size_t generation = 0; generation < history.size(); ++generation) {
+                    if (generation) std::cout << ',';
+                    std::cout << '[';
+                    for (std::size_t index = 0; index < history[generation].size(); ++index) {
+                        if (index) std::cout << ',';
+                        const auto& item = history[generation][index];
+                        std::cout << "{\"id\":" << item.id << ",\"moves\":\"";
+                        printMoves(item.moves);
+                        std::cout << "\",\"cost\":" << item.cost
+                            << ",\"pushes\":" << item.pushes
+                            << ",\"shakes\":" << item.shakes
+                            << ",\"won\":" << item.won << '}';
+                    }
+                    std::cout << ']';
+                }
+                std::cout << "]}";
+            } else if (const auto* cannibal = dynamic_cast<const CannibalGeneticSolver*>(solver.get())) {
+                std::cout << ",\"evolution\":{\"kind\":\"cannibal\",\"generations\":[";
+                const auto& history = cannibal->history();
+                for (std::size_t generation = 0; generation < history.size(); ++generation) {
+                    if (generation) std::cout << ',';
+                    std::cout << '[';
+                    for (std::size_t index = 0; index < history[generation].size(); ++index) {
+                        if (index) std::cout << ',';
+                        const auto& item = history[generation][index];
+                        std::cout << "{\"id\":" << item.id << ",\"moves\":\"";
+                        printMoves(item.moves);
+                        std::cout << "\",\"genes\":\"";
+                        printMoves(item.genes);
+                        std::cout << "\",\"cost\":" << item.fitness
+                            << ",\"won\":" << item.won
+                            << ",\"parentA\":" << item.predatorId
+                            << ",\"parentB\":" << item.consumedId
+                            << ",\"consumedId\":" << item.consumedId
+                            << ",\"fatalGene\":" << item.fatalGene
+                            << ",\"validPrefix\":" << item.validPrefix
                             << ",\"mutationIndex\":" << item.mutationIndex << '}';
                     }
                     std::cout << ']';

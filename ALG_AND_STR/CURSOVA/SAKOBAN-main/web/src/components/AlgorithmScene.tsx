@@ -321,6 +321,139 @@ function Genetic({ step }: { step: number }) {
     <div className="scene-result">{step === 0 ? "Ген = напрямок, хромосома = можливий маршрут" : step === 1 ? "Кожна хромосома реально програється на полі" : step === 2 ? "Еліта зберігається, турнір обирає батьків" : step === 3 ? "Дитина: перші 3 гени від A, останні 3 — від B" : step === 4 ? "Мутація: третій ген ↓ замінено на ↑" : "✓ Лише допустимий виграшний префікс стає рішенням"}</div>
   </>;
 }
+function GravityDrain({ step }: { step: number }) {
+  const phases = ["Рельєф", "Потоки", "Сила", "Правила", "Струс", "Перевірка"];
+  const boxes = [cell(2, 2), cell(2, 2), cell(3, 2), cell(3, 2), cell(4, 2), cell(5, 2)];
+  const players = [cell(1, 2), cell(1, 2), cell(2, 2), cell(2, 2), cell(3, 2), cell(4, 2)];
+  const results = [
+    "Висота спадає до цілі: h3 → h2 → h1 → h0",
+    "28 потоків читають той самий рельєф незалежно",
+    "Корисне штовхання отримує найбільшу силу",
+    "× Вектор у стіну відхилено до оцінювання",
+    "Струс додає шум, але не дозволяє заборонений хід",
+    "✓ Маршрут повторно пройшов ReplayValidator",
+  ];
+  return <>
+    <div className="drain-phases" aria-label="Етапи гравітаційного зливу">
+      {phases.map((phase, index) => <span key={phase} className={index === step ? "current" : index < step ? "done" : ""}><b>{index + 1}</b>{phase}</span>)}
+    </div>
+    <div className={`gravity-stage ${step === 4 ? "shaking" : ""}`} data-drain-step={step}>
+      <section className="terrain-laboratory" aria-label="Поле висот і напрямок потоку">
+        <header><span>Поле потенціалу</span><strong>нижче = краще</strong></header>
+        <div className="terrain-profile">
+          <div className="terrain-scale" aria-hidden="true">
+            <span><b>h3</b><small>високо</small></span>
+            <span><b>h2</b><small>схил</small></span>
+            <span><b>h1</b><small>низина</small></span>
+            <span><b>h0</b><small>ціль</small></span>
+          </div>
+          <div className="drain-liquid" aria-hidden="true">
+            {Array.from({ length: 5 }, (_, index) => <i key={index} style={{ transitionDelay: `${index * 55}ms` }} />)}
+          </div>
+          <div className="drain-mass" aria-hidden="true"><i>□</i><span>ящик</span></div>
+          <div className={`drain-vectors ${step >= 1 ? "visible" : ""}`} aria-hidden="true">
+            <i className="vector-up blocked"><b>↑</b><small>стіна</small></i>
+            <i className="vector-back"><b>←</b><small>−3</small></i>
+            <i className="vector-forward"><b>→</b><small>+11</small></i>
+          </div>
+        </div>
+        <div className="drain-causality" aria-label="Послідовність вибору ходу">
+          <span className={step <= 2 ? "active" : "done"}><b>1</b>Поле дає силу</span>
+          <i>→</i>
+          <span className={step === 3 ? "active" : step > 3 ? "done" : ""}><b>2</b>GameRules фільтрує</span>
+          <i>→</i>
+          <span className={step >= 4 ? "active" : ""}><b>3</b>Виконуємо хід</span>
+        </div>
+      </section>
+
+      <aside className="drain-console" aria-live="polite">
+        <header><span>Сила →</span><strong>{step === 4 ? "+6 шум" : "11"}</strong></header>
+        <div className="force-readout">
+          <span className={step >= 2 ? "active" : ""}>нахил <b>+8</b></span>
+          <span className={step >= 1 ? "active" : ""}>тиск <b>+2</b></span>
+          <span className={step >= 1 ? "active" : ""}>інерція <b>+1</b></span>
+          <strong><small>разом</small>= 11 →</strong>
+        </div>
+        <div className={`rules-gate ${step >= 3 ? "checked" : ""}`}>
+          <span>GameRules</span>
+          <b>{step < 3 ? "очікує" : "→ дозволено"}</b>
+          <small>{step >= 3 ? "↑ відхилено: стіна" : "перевіряє реальний Sokoban"}</small>
+        </div>
+        <div className={`shake-meter ${step === 4 ? "active" : ""}`}><span>Струс</span><i><b /></i><small>{step === 4 ? "вихід із западини" : "не потрібен"}</small></div>
+      </aside>
+
+      <div className="drain-reality">
+        <div><span>Чесний дискретний replay</span><small>декорація потоку не рухає ящик сама</small></div>
+        <Board rows={CORRIDOR} player={players[step]} boxes={[boxes[step]]} goals={[cell(5, 2)]}
+          route={step >= 2 ? [cell(2, 2), cell(3, 2), cell(4, 2), cell(5, 2)] : []}
+          caption={`Гравітаційний злив, крок ${step + 1}: ${results[step]}`} />
+        <div className={`validation-pulse ${step === 5 ? "visible" : ""}`}><b>✓</b><span>ReplayValidator</span></div>
+      </div>
+    </div>
+    <div className="scene-result">{results[step]}</div>
+  </>;
+}
+function CannibalGenetic({ step }: { step: number }) {
+  const phases = ["Популяція", "Помилка", "Турнір", "Ролі", "Перенесення", "Перевірка"];
+  const genes = (value: string, role: "predator" | "victim" | "offspring") => <div className={`cannibal-genes ${role}`}>
+    {Array.from(value).map((gene, index) => <span key={index} style={{ transitionDelay: `${index * 55}ms` }} className={role === "victim" && index === 4 ? "fatal" : role === "offspring" ? index < 4 ? "from-victim" : index === 4 ? "escape" : "from-predator" : ""}>
+      <small>{index + 1}</small><b>{arrowsForGene(gene)}</b>{role === "victim" && index === 4 ? <em>×</em> : null}
+    </span>)}
+  </div>;
+  const results = [
+    "64 боти стартують з різними послідовностями ходів",
+    "Жертва: корисні гени 1–4 · ген 5 веде в тупик",
+    "Турнір чотирьох: найменший fitness перемагає",
+    "Хижак дає хвіст, жертва — лише безпечний префікс",
+    "Дитина = префікс жертви + новий ген + хвіст хижака",
+    "✓ Еліта збереглась, переможець пройшов ReplayValidator",
+  ];
+  return <>
+    <div className="cannibal-phases" aria-label="Етапи генетичного канібалізму">
+      {phases.map((phase, index) => <span key={phase} className={index === step ? "current" : index < step ? "done" : ""}><b>{index + 1}</b>{phase}</span>)}
+    </div>
+    <div className="cannibal-arena" data-cannibal-step={step}>
+      <section className="tournament-ring" aria-label="Турнір чотирьох ботів">
+        <header><span>Локальний турнір</span><strong>4 → 2 ролі</strong></header>
+        <div className="combatants">
+          <span className="bot predator-bot"><i>#12</i><b>18</b><small>хижак</small></span>
+          <span className="bot victim-bot"><i>#31</i><b>1540</b><small>тупик</small></span>
+          <span className="bot eliminated"><i>#07</i><b>690</b><small>вибуває</small></span>
+          <span className="bot eliminated"><i>#44</i><b>820</b><small>вибуває</small></span>
+          <div className="tournament-core"><span>fitness</span><b>менше<br />краще</b></div>
+        </div>
+        <p>{step < 2 ? "Чотири випадкові боти входять у турнір" : "#12 — найсильніший, #31 має корисний початок до тупика"}</p>
+      </section>
+
+      <section className="dna-harvest" aria-label="Перенесення ДНК до нової дитини">
+        <div className={`cannibal-card victim ${step >= 2 ? "selected" : ""} ${step >= 3 ? "consumed" : ""}`}>
+          <header><span>Жертва #31</span><b>префікс + помилка</b></header>{genes("RRUULR", "victim")}
+          <small className="source-caption">Беремо 1–4 · ген 5 відкидаємо</small>
+        </div>
+        <div className={`cannibal-card predator ${step >= 2 ? "selected" : ""}`}>
+          <header><span>Хижак #12</span><b>fitness 18</b></header>{genes("RURDRR", "predator")}
+          <small className="source-caption">Зберігаємо хвіст після з’єднання</small>
+        </div>
+
+        <div className={`dna-transfer ${step >= 3 ? "visible" : ""}`} aria-hidden="true">
+          <i className="victim-beam"><span>1–4</span></i>
+          <i className="predator-beam"><span>6</span></i>
+          <b>перенесення</b>
+        </div>
+
+        <div className={`cannibal-card offspring ${step >= 4 ? "visible" : ""}`}>
+          <header><span>Дитина #65</span><b>нова ДНК</b></header>
+          {genes("RRUURR", "offspring")}
+          <div className="splice-explanation"><span>1–4 від жертви</span><b>+</b><span>5 новий</span><b>+</b><span>6 від хижака</span></div>
+        </div>
+        <div className={`cannibal-validation ${step === 5 ? "visible" : ""}`}><b>✓</b><span>GameRules</span><i>→</i><span>ReplayValidator</span></div>
+      </section>
+
+      <aside className="cannibal-legend"><span><i className="victim-source" />від жертви</span><span><i className="escape-source" />альтернатива</span><span><i className="predator-source" />від хижака</span></aside>
+    </div>
+    <div className="scene-result">{results[step]}</div>
+  </>;
+}
 function arrowsForGene(gene: string) { return ({ U: "↑", L: "←", D: "↓", R: "→" } as Record<string, string>)[gene]; }
 export default function AlgorithmScene({ lessonId, step }: { lessonId: string; step: number }) {
   let scene;
@@ -339,6 +472,8 @@ export default function AlgorithmScene({ lessonId, step }: { lessonId: string; s
     case "prototype1": scene = <Prototype1 step={step} />; break;
     case "aco": scene = <AntColony step={step} />; break;
     case "genetic": scene = <Genetic step={step} />; break;
+    case "gravity": scene = <GravityDrain step={step} />; break;
+    case "cannibal": scene = <CannibalGenetic step={step} />; break;
     default: return null;
   }
   return <div className={`algorithm-scene scene-${lessonId}`} data-scene={lessonId} data-step={step}>{scene}</div>;

@@ -140,8 +140,8 @@ test("Prototype 1 solves open levels and returns a validated replay", () => {
     assert.equal(run(file, "state", "prototype1", result.moves).won, true);
   }
 });
-test("ACO and Genetic prototypes expose observable populations", () => {
-  for (const algorithm of ["aco", "genetic"]) {
+test("stochastic prototypes expose observable populations", () => {
+  for (const algorithm of ["aco", "genetic", "gravity", "cannibal"]) {
     const result = run("01_simple.xsb", "solve", algorithm);
     assert.equal(result.status, "Solved");
     assert.equal(result.validated, true);
@@ -150,6 +150,8 @@ test("ACO and Genetic prototypes expose observable populations", () => {
     assert.ok(result.evolution.generations[0].length >= 10);
     assert.ok(result.evolution.generations.flat().every(item =>
       typeof item.moves === "string" && Number.isFinite(item.cost)));
+    if (algorithm === "gravity") assert.ok(result.evolution.generations.flat().every(item => Number.isInteger(item.shakes)));
+    if (algorithm === "cannibal") assert.ok(result.evolution.generations.flat().every(item => typeof item.genes === "string"));
     assert.equal(run("01_simple.xsb", "state", algorithm, result.moves).won, true);
   }
 });

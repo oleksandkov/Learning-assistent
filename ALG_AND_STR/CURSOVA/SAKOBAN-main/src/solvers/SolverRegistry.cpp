@@ -6,6 +6,8 @@
 #include "Prototype1Solver.hpp"
 #include "AntColonySolver.hpp"
 #include "GeneticSolver.hpp"
+#include "GravityDrainSolver.hpp"
+#include "CannibalGeneticSolver.hpp"
 #include <algorithm>
 #include <stdexcept>
 
@@ -36,6 +38,10 @@ std::unique_ptr<ISolver> SolverRegistry::create(SolverKind kind) {
             return std::make_unique<AntColonySolver>();
         case SolverKind::Genetic:
             return std::make_unique<GeneticSolver>();
+        case SolverKind::GravityDrain:
+            return std::make_unique<GravityDrainSolver>();
+        case SolverKind::CannibalGenetic:
+            return std::make_unique<CannibalGeneticSolver>();
     }
     throw std::invalid_argument("Unknown solver kind");
 }
@@ -73,6 +79,8 @@ std::string SolverRegistry::toString(SolverKind kind) {
         case SolverKind::Prototype1: return "Prototype 1";
         case SolverKind::AntColony: return "ACO";
         case SolverKind::Genetic: return "Genetic";
+        case SolverKind::GravityDrain: return "Gravity Drain";
+        case SolverKind::CannibalGenetic: return "Cannibal Genetic";
     }
     return "Unknown";
 }

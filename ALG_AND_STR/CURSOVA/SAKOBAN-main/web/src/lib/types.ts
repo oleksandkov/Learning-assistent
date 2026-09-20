@@ -1,5 +1,5 @@
 export type Dir = "U" | "L" | "D" | "R";
-export type LocalAlgorithm = "bfs" | "astar-moves" | "astar-pushes" | "idastar-pushes" | "greedy-pushes" | "prototype1" | "aco" | "genetic";
+export type LocalAlgorithm = "bfs" | "astar-moves" | "astar-pushes" | "idastar-pushes" | "greedy-pushes" | "prototype1" | "aco" | "genetic" | "gravity" | "cannibal";
 export type Algorithm = LocalAlgorithm | "gemini";
 export const LOCAL_ALGORITHMS: {
   id: LocalAlgorithm;
@@ -14,6 +14,8 @@ export const LOCAL_ALGORITHMS: {
   { id: "prototype1", label: "Прототип 1 · X → Y", metric: "Навчальний · стіни ігноруються" },
   { id: "aco", label: "Прототип 2 · ACO", metric: "Мурахи · феромонні стежки" },
   { id: "genetic", label: "Прототип 3 · GA", metric: "Хромосоми · еволюція" },
+  { id: "gravity", label: "Прототип 6 · Drain", metric: "Рельєф · потік і струшування" },
+  { id: "cannibal", label: "Прототип 7 · Cannibal GA", metric: "Турніри · перенесення ДНК" },
 ];
 export const ALGORITHMS: { id: Algorithm; label: string; metric: string }[] = [
   ...LOCAL_ALGORITHMS,
@@ -127,9 +129,13 @@ export interface EvolutionIndividual {
   parentA?: number;
   parentB?: number;
   mutationIndex?: number;
+  shakes?: number;
+  consumedId?: number;
+  fatalGene?: number;
+  validPrefix?: number;
 }
 export interface EvolutionHistory {
-  kind: "aco" | "genetic";
+  kind: "aco" | "genetic" | "gravity" | "cannibal";
   generations: EvolutionIndividual[][];
 }
 export interface GeneratedLevel {

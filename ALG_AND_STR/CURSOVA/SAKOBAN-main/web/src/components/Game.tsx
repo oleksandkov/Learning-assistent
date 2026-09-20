@@ -1143,7 +1143,7 @@ export default function Game({
                   ) : null}
                   {result.evolution ? (
                     <details className="evolution-observer">
-                      <summary>{result.evolution.kind === "aco" ? "Спостерігати за мурахами" : "Спостерігати за еволюцією"}</summary>
+                      <summary>{{ aco: "Спостерігати за мурахами", gravity: "Спостерігати за потоками", cannibal: "Спостерігати за турнірами", genetic: "Спостерігати за еволюцією" }[result.evolution.kind]}</summary>
                       <EvolutionViewer result={result} loadSnapshot={(moves) =>
                         request<Snapshot>(decision.base + moves, "state", "", result.algorithm)} />
                     </details>

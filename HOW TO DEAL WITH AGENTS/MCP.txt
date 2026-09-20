@@ -1,0 +1,52 @@
+MCP INVENTORY
+Inventory date: 2026-09-18
+User profile: C:/Users/muaro
+
+SCOPE AND STATUS
+This inventory reflects only currently active, enabled, or built-in MCP servers configured on this device.
+All additional/third-party MCP servers have been removed across all agents in the pool.
+
+PER AGENT
+
+Codex (1 built-in configured)
+Source: C:/Users/muaro/.codex/config.toml
+- node_repl | enabled; OpenAI built-in CUA/browser runtime execution server
+  Path: C:\Users\muaro\AppData\Local\OpenAI\Codex\runtimes\cua_node\a708e72b10c27b59\bin\node_repl.exe
+
+Claude Code (0 configured)
+Source: C:/Users/muaro/.claude.json
+- No MCP servers configured ("mcpServers": {}). Runs pure with native agent tools.
+
+Kilo Code (0 configured)
+Source: C:/Users/muaro/.config/kilo/kilo.jsonc
+- No MCP servers configured ("mcp": {}). Runs pure with native agent tools.
+
+OpenCode (0 configured)
+Source: C:/Users/muaro/.config/opencode/opencode.jsonc
+- No MCP servers configured ("mcp": {}). Runs pure with native agent tools.
+
+Antigravity CLI (0 configured)
+Source: C:/Users/muaro/.gemini/config/mcp_config.json
+- No MCP servers configured ("mcpServers": {}). Runs pure with native agent tools.
+
+Gemini CLI (0 configured)
+Source: C:/Users/muaro/.gemini/settings.json
+- No MCP servers configured ("mcpServers": {}). Runs pure with native agent tools.
+
+Qwen Code (0 configured)
+Source: C:/Users/muaro/.qwen/settings.json
+- No MCP servers configured ("mcpServers": {}). Runs pure with native agent tools.
+
+Codex plugin-provided MCP definitions
+- codex_app: disabled in plugin manifest
+  Source: C:/Users/muaro/.codex/plugins/cache/openai-bundled/codex-app-tools/0.1.4/.mcp.json
+- cua_repl: enabled in plugin manifest
+  Source: C:/Users/muaro/.codex/plugins/cache/openai-bundled/unified-computer-use/26.908.40834/.mcp.json
+
+CURRENTLY CONFIGURED AGENT MCP SERVERS
+- node_repl: Codex (OpenAI built-in runtime)
+- cua_repl: Codex (bundled plugin manifest)
+
+COVERAGE
+Only active, enabled, and built-in tools present on this device are documented.
+All information regarding deleted or uninstalled external MCP servers has been removed.

@@ -79,6 +79,20 @@ const rules: Record<
     explanation:
       "GA схрещує послідовності напрямків, мутує окремі гени та залишає кращі маршрути для нового покоління.",
   },
+  gravity: {
+    structure: "Популяція потоків",
+    choice: "Найсильніший дозволений нахил",
+    cost: "Висота + шлях + струшування",
+    explanation:
+      "Поле потенціалу тягне ящики до цілей, а контрольоване струшування допомагає залишити локальну западину.",
+  },
+  cannibal: {
+    structure: "Турніри хромосом",
+    choice: "Хижак + префікс жертви",
+    cost: "Fitness + штраф тупика",
+    explanation:
+      "Сильний бот зберігає хвіст власної ДНК, забирає безпечний префікс невдалого бота й змінює критичний ген.",
+  },
   gemini: {
     structure: "Зовнішня модель",
     choice: "Згенерований план",
@@ -241,7 +255,7 @@ export default function SearchDebugger({
     typeof point.boxTo === "number"
       ? [{ cell: point.boxTo, kind: "push", label: "•" }]
       : [];
-  const isAStar = !["bfs", "prototype1", "aco", "genetic"].includes(result.algorithm);
+  const isAStar = !["bfs", "prototype1", "aco", "genetic", "gravity", "cannibal"].includes(result.algorithm);
   const g = point.g ?? 0;
   const h = point.h ?? 0;
   const selectionText =
@@ -255,6 +269,10 @@ export default function SearchDebugger({
           ? "Найкраща феромонна стежка"
         : result.algorithm === "genetic"
           ? "Найкраща хромосома"
+        : result.algorithm === "gravity"
+          ? "Найсильніший дозволений потік"
+        : result.algorithm === "cannibal"
+          ? "Найкращий канібальний бот"
         : `Найменше f = ${g + h}`;
 
   function switchPhase(next: DebugPhase) {

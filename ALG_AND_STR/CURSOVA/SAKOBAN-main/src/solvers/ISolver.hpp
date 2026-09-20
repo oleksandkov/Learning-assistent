@@ -19,7 +19,9 @@ enum class SolverKind {
     Greedy,
     Prototype1,
     AntColony,
-    Genetic
+    Genetic,
+    GravityDrain,
+    CannibalGenetic
 };
 
 enum class OptimizationMetric {

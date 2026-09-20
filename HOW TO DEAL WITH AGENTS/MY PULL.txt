@@ -1,0 +1,58 @@
+MY AGENT POOL
+Inventory date: 2026-09-18
+User profile: C:/Users/muaro
+
+1. Codex
+   Command: codex
+   Found on PATH: C:/Users/muaro/AppData/Roaming/npm/codex.ps1
+   Configuration under the user profile: .codex/config.toml
+
+2. Claude Code
+   Command: claude
+   Found on PATH: C:/Users/muaro/.local/bin/claude.exe
+   Configuration under the user profile: .claude.json; .claude/settings.json
+
+3. Kilo Code
+   Command: kilo
+   Found on PATH: C:/Users/muaro/AppData/Roaming/npm/kilo.ps1
+   Configuration under the user profile: .config/kilo/kilo.jsonc
+
+4. OpenCode
+   Command: opencode
+   Found on PATH: C:/Users/muaro/AppData/Roaming/npm/opencode.ps1
+   Configuration under the user profile: .config/opencode/opencode.jsonc; .config/opencode/opencode.json
+
+5. Antigravity CLI
+   Command: agy
+   Found on PATH: C:/Users/muaro/AppData/Local/agy/bin/agy.exe
+   Configuration under the user profile: .gemini/config/; .gemini/antigravity-cli/settings.json
+
+6. Gemini CLI
+   Command: gemini
+   Found on PATH: C:/Users/muaro/AppData/Roaming/npm/gemini.ps1
+   Configuration under the user profile: .gemini/settings.json
+
+7. Qwen Code
+   Command: qwen
+   Found on PATH: C:/Users/muaro/AppData/Roaming/npm/qwen.ps1
+   Configuration under the user profile: .qwen/settings.json
+
+Names normalized from the dictated list: codecs = Codex; cloth code = Claude Code;
+open coat = OpenCode; anti-gravity CLI = Antigravity CLI.
+
+COMPANION FILES
+MCP.txt     - MCPs by agent, combined list, and installation evidence.
+skills.txt  - Skills by agent, shared skills, and all discovered skill files.
+plugins.txt - Plugins by agent, shared catalog, and cached-only entries.
+
+SCOPE AND STATUS
+This is a local configuration/filesystem inventory, not a connectivity test.
+Configured does not guarantee running, authenticated, or downloaded. Remote MCPs
+are configured services, not necessarily software installed on this PC.
+Checked the seven agents' user configuration, plugin and skill directories, other
+agent folders, VS Code MCP settings, global npm packages, and C:/Github projects.
+Backups, conversation history, most dependency trees, and marketplace catalogs
+were excluded. Other Windows users, WSL, other drives, and arbitrary folders were
+not exhaustively scanned. No passwords, tokens, environment values, or MCP
+command arguments are included. A shared skill is not automatically active in
+every agent. Cached plugins and project copies are explicitly distinguished.

@@ -64,6 +64,10 @@ add_library(sokoban_solvers STATIC
     src/solvers/AntColonySolver.cpp
     src/solvers/GeneticSolver.hpp
     src/solvers/GeneticSolver.cpp
+    src/solvers/GravityDrainSolver.hpp
+    src/solvers/GravityDrainSolver.cpp
+    src/solvers/CannibalGeneticSolver.hpp
+    src/solvers/CannibalGeneticSolver.cpp
     src/solvers/SolverRegistry.hpp
     src/solvers/SolverRegistry.cpp
     src/solvers/LevelGenerator.hpp
