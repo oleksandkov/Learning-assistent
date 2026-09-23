@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import FlyBrainScene from "./FlyBrainScene";
 
 const ROOM = ["#######", "#     #", "#     #", "#     #", "#######"];
 const REACH = ["#######", "#  #  #", "# #   #", "#     #", "#######"];
@@ -458,6 +459,7 @@ function arrowsForGene(gene: string) { return ({ U: "↑", L: "←", D: "↓", R
 export default function AlgorithmScene({ lessonId, step }: { lessonId: string; step: number }) {
   let scene;
   switch (lessonId) {
+    case "flybrain": scene = <FlyBrainScene step={step} />; break;
     case "bfs": scene = <Breadth step={step} />; break;
     case "astar": scene = <Ranking step={step} greedy={false} />; break;
     case "greedy": scene = <Ranking step={step} greedy />; break;

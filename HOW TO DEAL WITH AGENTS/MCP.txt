@@ -1,17 +1,204 @@
-MCP INVENTORY
-Inventory date: 2026-09-18
+MCP AND SESSION TOOL INVENTORY
+Codex inventory date: 2026-09-21
+OpenCode inventory date: 2026-09-22
 User profile: C:/Users/muaro
 
-SCOPE AND STATUS
-This inventory reflects only currently active, enabled, or built-in MCP servers configured on this device.
-All additional/third-party MCP servers have been removed across all agents in the pool.
+Codex was rescanned 2026-09-21. OpenCode was rescanned 2026-09-22 (see OPENCODE.md).
+Other-agent records below are retained from 2026-09-18 and have NOT been reverified.
+Configured, cached, and session-exposed are distinct.
+No credentials or private conversation contents are included.
 
-PER AGENT
-
-Codex (1 built-in configured)
+CODEX USER CONFIGURATION
 Source: C:/Users/muaro/.codex/config.toml
-- node_repl | enabled; OpenAI built-in CUA/browser runtime execution server
-  Path: C:\Users\muaro\AppData\Local\OpenAI\Codex\runtimes\cua_node\a708e72b10c27b59\bin\node_repl.exe
+- node_repl: configured; no enabled=false entry
+  Command: C:\Users\muaro\AppData\Local\OpenAI\Codex\runtimes\cua_node\a708e72b10c27b59\bin\node_repl.exe
+  Args: []
+  Startup timeout: 120 seconds
+  Environment variable names (values omitted): NODE_REPL_NATIVE_PIPE_CONNECT_TIMEOUT_MS, NODE_REPL_NODE_MODULE_DIRS, NODE_REPL_NODE_PATH, NODE_REPL_TRUSTED_CODE_PATHS, CODEX_HOME, BROWSER_USE_AVAILABLE_BACKENDS, BROWSER_USE_TINYSKY_ENABLED, NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER, NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME, BROWSER_USE_CODEX_APP_BUILD_FLAVOR, BROWSER_USE_CODEX_APP_VERSION, NODE_REPL_TRUSTED_SERVICES, SKY_CUA_NATIVE_PIPE, SKY_CUA_NATIVE_PIPE_DIRECTORY, CODEX_CLI_PATH
+- playwright: configured; no enabled=false entry
+  Command: npx.cmd
+  Args: ["-y", "@playwright/mcp@latest"]
+  Startup timeout: 60 seconds
+- chrome-devtools: configured; no enabled=false entry
+  Command: npx.cmd
+  Args: ["-y", "chrome-devtools-mcp@latest"]
+  Startup timeout: 60 seconds
+- context7: configured; no enabled=false entry
+  Command: npx.cmd
+  Args: ["-y", "@upstash/context7-mcp@latest"]
+  Startup timeout: 60 seconds
+
+DOCUMENT MCPs ADDED AND VERIFIED — 2026-09-21
+See MCP-VERIFICATION.md for installation, test coverage, and repeatable checks.
+- markitdown: installed, enabled, MCP initialization and functional checks passed
+  Command: C:/Users/muaro/.local/bin/markitdown-mcp.exe
+  Args: []
+  Startup timeout: 120 seconds; tool timeout: 300 seconds
+  Tools discovered: 1
+  Checks: docx: text extracted; pptx: text extracted; xlsx: text extracted; pdf: text extracted; missing file: error returned
+- docling: installed, enabled, MCP initialization and functional checks passed
+  Command: C:/Users/muaro/.local/bin/docling-mcp-server.exe
+  Args: ["--transport", "stdio", "conversion", "generation", "manipulation"]
+  Startup timeout: 120 seconds; tool timeout: 600 seconds
+  Tools discovered: 19
+  Checks: sample.pdf: converted and extracted content verified; scanned.pdf: converted and extracted content verified; missing file: error returned
+  Environment variable names: DOCLING_MCP_CONVERSION_MODE, PYTHONIOENCODING, HF_HUB_DISABLE_SYMLINKS, CACHE_DIR
+- excel: installed, enabled, MCP initialization and functional checks passed
+  Command: C:/Users/muaro/.codex/mcps/excel/node_modules/@negokaz/excel-mcp-server/dist/excel-mcp-server_windows_amd64_v1/excel-mcp-server.exe
+  Args: []
+  Startup timeout: 60 seconds; tool timeout: 120 seconds
+  Tools discovered: 7
+  Checks: read existing XLSX; write and read back text and formula; native Excel sheet screenshot; missing sheet: error returned
+  Environment variable names: EXCEL_MCP_PAGING_CELLS_LIMIT
+
+PLUGIN MCP DEFINITIONS
+- codex_app: enabled = False
+  Source: C:/Users/muaro/.codex/plugins/cache/openai-bundled/codex-app-tools/0.1.4/.mcp.json
+  Omit tools from: deferred
+- cua_repl: enabled = True
+  Source: C:/Users/muaro/.codex/plugins/cache/openai-bundled/unified-computer-use/26.908.40834/.mcp.json
+  Enabled tools: js, js_reset, turn_ended
+  Omit tools from: code_mode, deferred
+
+TOOLS EXPOSED IN THE ORIGINAL SESSION (BEFORE DOCUMENT MCP INSTALLATION)
+This is a capability listing, not a connectivity or authentication test.
+App connector capabilities may be provided by the host without user MCP entries.
+
+chrome_devtools (29):
+- mcp__chrome_devtools__click
+- mcp__chrome_devtools__close_page
+- mcp__chrome_devtools__drag
+- mcp__chrome_devtools__emulate
+- mcp__chrome_devtools__evaluate_script
+- mcp__chrome_devtools__fill
+- mcp__chrome_devtools__fill_form
+- mcp__chrome_devtools__get_console_message
+- mcp__chrome_devtools__get_network_request
+- mcp__chrome_devtools__handle_dialog
+- mcp__chrome_devtools__hover
+- mcp__chrome_devtools__lighthouse_audit
+- mcp__chrome_devtools__list_console_messages
+- mcp__chrome_devtools__list_network_requests
+- mcp__chrome_devtools__list_pages
+- mcp__chrome_devtools__navigate_page
+- mcp__chrome_devtools__new_page
+- mcp__chrome_devtools__performance_analyze_insight
+- mcp__chrome_devtools__performance_start_trace
+- mcp__chrome_devtools__performance_stop_trace
+- mcp__chrome_devtools__press_key
+- mcp__chrome_devtools__resize_page
+- mcp__chrome_devtools__select_page
+- mcp__chrome_devtools__take_heapsnapshot
+- mcp__chrome_devtools__take_screenshot
+- mcp__chrome_devtools__take_snapshot
+- mcp__chrome_devtools__type_text
+- mcp__chrome_devtools__upload_file
+- mcp__chrome_devtools__wait_for
+
+clock (1):
+- clock__curr_time
+
+codex_apps (38):
+- mcp__codex_apps__codex_document_control_execute_document_command
+- mcp__codex_apps__codex_document_control_get_document_tool_schemas
+- mcp__codex_apps__codex_document_control_list_document_sessions
+- mcp__codex_apps__hotline_get_local_hotline
+- mcp__codex_apps__plugin_management_get_app_permissions
+- mcp__codex_apps__plugin_management_get_plugin_dependencies
+- mcp__codex_apps__plugin_management_search_plugins
+- mcp__codex_apps__plugin_management_suggest_plugins
+- mcp__codex_apps__plugin_management_uninstall_app
+- mcp__codex_apps__plugin_management_update_app_permissions
+- mcp__codex_apps__safety_settings_get_family_info
+- mcp__codex_apps__safety_settings_get_parental_controls
+- mcp__codex_apps__safety_settings_get_trusted_contact
+- mcp__codex_apps__safety_settings_prepare_parental_control_update
+- mcp__codex_apps__safety_settings_update_parental_control
+- mcp__codex_apps__sites_add_custom_domain
+- mcp__codex_apps__sites_change_site_slug
+- mcp__codex_apps__sites_create_site
+- mcp__codex_apps__sites_create_source_repository_write_credential
+- mcp__codex_apps__sites_deploy_private_site_version
+- mcp__codex_apps__sites_deploy_site_version
+- mcp__codex_apps__sites_generate_siwc_bypass_token
+- mcp__codex_apps__sites_get_deployment_status
+- mcp__codex_apps__sites_get_environment_variables
+- mcp__codex_apps__sites_get_site
+- mcp__codex_apps__sites_get_site_version
+- mcp__codex_apps__sites_get_site_worker_logs
+- mcp__codex_apps__sites_list_custom_domains
+- mcp__codex_apps__sites_list_site_versions
+- mcp__codex_apps__sites_list_sites
+- mcp__codex_apps__sites_read_database_overview
+- mcp__codex_apps__sites_read_database_table_rows
+- mcp__codex_apps__sites_refresh_custom_domain_status
+- mcp__codex_apps__sites_remove_custom_domain
+- mcp__codex_apps__sites_save_site_version
+- mcp__codex_apps__sites_update_environment_variables
+- mcp__codex_apps__sites_update_site_access
+- mcp__codex_apps__sites_update_site_metadata
+
+context7 (2):
+- mcp__context7__query_docs
+- mcp__context7__resolve_library_id
+
+image_gen (1):
+- image_gen__imagegen
+
+native (10):
+- apply_patch
+- create_goal
+- exec_command
+- get_goal
+- list_mcp_resource_templates
+- list_mcp_resources
+- read_mcp_resource
+- update_goal
+- view_image
+- write_stdin
+
+node_repl (3):
+- mcp__node_repl__js
+- mcp__node_repl__js_add_node_module_dir
+- mcp__node_repl__js_reset
+
+playwright (25):
+- mcp__playwright__browser_click
+- mcp__playwright__browser_close
+- mcp__playwright__browser_console_messages
+- mcp__playwright__browser_drag
+- mcp__playwright__browser_drop
+- mcp__playwright__browser_emulate_media
+- mcp__playwright__browser_evaluate
+- mcp__playwright__browser_file_upload
+- mcp__playwright__browser_fill_form
+- mcp__playwright__browser_find
+- mcp__playwright__browser_handle_dialog
+- mcp__playwright__browser_hover
+- mcp__playwright__browser_navigate
+- mcp__playwright__browser_navigate_back
+- mcp__playwright__browser_network_request
+- mcp__playwright__browser_network_requests
+- mcp__playwright__browser_press_key
+- mcp__playwright__browser_resize
+- mcp__playwright__browser_run_code_unsafe
+- mcp__playwright__browser_select_option
+- mcp__playwright__browser_snapshot
+- mcp__playwright__browser_tabs
+- mcp__playwright__browser_take_screenshot
+- mcp__playwright__browser_type
+- mcp__playwright__browser_wait_for
+
+web (1):
+- web__run
+
+Direct orchestration tools, listed separately from the deferred tool catalog:
+- functions: exec, wait, request_user_input, request_user_input_async
+- collaboration: spawn_agent, followup_task, send_message, interrupt_agent, list_agents, wait_agent
+- clock: sleep
+Tool availability can vary by session and collaboration mode.
+
+OTHER AGENTS — HISTORICAL RECORD, 2026-09-18
 
 Claude Code (0 configured)
 Source: C:/Users/muaro/.claude.json
@@ -21,9 +208,22 @@ Kilo Code (0 configured)
 Source: C:/Users/muaro/.config/kilo/kilo.jsonc
 - No MCP servers configured ("mcp": {}). Runs pure with native agent tools.
 
-OpenCode (0 configured)
-Source: C:/Users/muaro/.config/opencode/opencode.jsonc
-- No MCP servers configured ("mcp": {}). Runs pure with native agent tools.
+OpenCode (6 configured) — MIRRORED FROM CODEX 2026-09-22
+Sources: C:/Users/muaro/.config/opencode/opencode.jsonc ("mcp" map, 6 entries);
+         C:/Users/muaro/.config/opencode/opencode.json (providers only, no mcp key)
+- Mirrored from Codex config.toml: playwright, chrome-devtools, context7,
+  markitdown, docling, excel. `opencode mcp list` reports all 6 connected.
+- node_repl skipped: Codex-runtime internal (SKY_CUA pipe, version-tied
+  node_repl.exe), not portable to OpenCode.
+- markitdown re-probed 2026-09-22 via stdio: 1 tool (convert_to_markdown).
+  excel re-probed: 7 tools. docling: `connected` (19 tools verified 2026-09-21,
+  same binary). npx servers: `connected`.
+- Skills: review-agent copied to ~/.config/opencode/skills/review-agent/.
+  Other Codex .system skills (imagegen, openai-docs, plugin-creator,
+  skill-creator, skill-installer) are Codex-specific, not copied.
+- Plugins: ponytail already in both (Codex marketplace + opencode.jsonc).
+  Codex bundled plugins are runtime-provided, no OpenCode equivalent.
+  Details: OPENCODE.md.
 
 Antigravity CLI (0 configured)
 Source: C:/Users/muaro/.gemini/config/mcp_config.json
@@ -37,16 +237,11 @@ Qwen Code (0 configured)
 Source: C:/Users/muaro/.qwen/settings.json
 - No MCP servers configured ("mcpServers": {}). Runs pure with native agent tools.
 
-Codex plugin-provided MCP definitions
-- codex_app: disabled in plugin manifest
-  Source: C:/Users/muaro/.codex/plugins/cache/openai-bundled/codex-app-tools/0.1.4/.mcp.json
-- cua_repl: enabled in plugin manifest
-  Source: C:/Users/muaro/.codex/plugins/cache/openai-bundled/unified-computer-use/26.908.40834/.mcp.json
-
-CURRENTLY CONFIGURED AGENT MCP SERVERS
-- node_repl: Codex (OpenAI built-in runtime)
-- cua_repl: Codex (bundled plugin manifest)
-
-COVERAGE
-Only active, enabled, and built-in tools present on this device are documented.
-All information regarding deleted or uninstalled external MCP servers has been removed.
+EFFECTIVE RUNTIME CONFIGURATION
+The current CLI uses CODEX_HOME=C:/Users/muaro/AppData/Roaming/orca/codex-runtime-home/home.
+Its config.toml also contains the three verified document MCP definitions;
+the ordinary ~/.codex/config.toml remains updated for regular Codex use.
+The host automatically synchronized the new entries into its runtime config.
+No manual runtime edit was necessary; all three definitions match the user config.
+The user config backup is ~/.codex/config.toml.bak-document-mcp-20260921.
+Runtime-managed settings and hooks were not edited.

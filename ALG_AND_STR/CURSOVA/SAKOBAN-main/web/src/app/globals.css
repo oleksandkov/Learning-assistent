@@ -1648,7 +1648,6 @@ select {
 .ai-session h4 { margin: 0 0 6px; color: var(--muted); font-size: 11px; font-weight: 400; }
 .ai-session pre { max-height: 300px; margin: 0; padding: 12px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; color: var(--ink); font: 11px/1.55 Consolas, monospace; }
 .decision-footer { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.decision-origin { font-size: 11px; margin: 0 auto 0 0; }
 .decision-actions,.decision-management { display: flex; gap: 6px; }
 .decision-footer .button { min-height: 36px; padding: 8px 12px; font-size: 11px; }
 .button.danger { color: var(--danger); }
@@ -1671,7 +1670,6 @@ select {
   .decision-card { grid-template-columns: 1fr; gap: 14px; }
   .ai-session-grid { grid-template-columns: 1fr; }
   .decision-footer { gap: 10px; }
-  .decision-origin { flex-basis: 100%; }
   .comparison-boards { grid-template-columns: 1fr; }
 }
 .search-debugger {
@@ -2937,13 +2935,6 @@ th small {
   box-shadow: inset 0 0 0 1px var(--accent);
 }
 .route-legend i.active { background: transparent; box-shadow: inset 0 0 0 2px var(--accent); }
-.route-legend i.swarm { background: var(--box); box-shadow: none; }
-.route-legend i.leader { background: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
-.swarm-honesty {
-  margin-top: 8px;
-  font-size: 9px;
-  line-height: 1.5;
-}
 .fitness-panel {
   margin-top: 16px;
   padding-top: 16px;
@@ -2992,11 +2983,6 @@ th small {
   margin-top: 5px;
   color: var(--muted);
   font-size: 9px;
-}
-.fitness-explanation {
-  margin-top: 10px;
-  font-size: 9px;
-  line-height: 1.55;
 }
 .sequence-panel {
   min-width: 0;

@@ -100,6 +100,10 @@ const rules: Record<
     explanation:
       "AI пропонує маршрут, після чого локальне ядро перевіряє кожен його хід.",
   },
+  flybrain: {
+    structure: "LIF-мережа у Web Worker", choice: "Моторний пул із найбільшою активністю",
+    cost: "Без гарантії рішення", explanation: "Спайки й допустимий маршрут показує окремий спостерігач FlyBrain.",
+  },
 };
 
 export default function SearchDebugger({

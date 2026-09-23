@@ -6,6 +6,9 @@ import type { BoardCamera } from "./BoardView";
 import SearchDebugger from "./SearchDebugger";
 import ComparisonReplay from "./ComparisonReplay";
 import EvolutionViewer from "./EvolutionViewer";
+import FlyBrainViewer from "./FlyBrainViewer";
+import { brainConfig, compactFlyBrain, DEFAULT_BRAIN_CONFIG, restoreFlyBrain } from "@/lib/flybrain";
+import type { FlyBrainEvent } from "@/workers/flybrain.worker";
 import {
   ALGORITHMS,
   AI_KEY_STORAGE,
@@ -134,7 +137,7 @@ function restoreDecision(value: unknown): Decision | null {
     : [];
   return {
     base: candidate.base,
-    result: { ...(result as SearchResult), trace },
+    result: { ...(result as SearchResult), trace, flybrain: restoreFlyBrain(result.flybrain) },
   };
 }
 
@@ -160,6 +163,12 @@ export default function Game({
   const [decisions, setDecisions] = useState<Decision[]>([]);
   const decisionsRef = useRef(decisions);
   const [searching, setSearching] = useState(false);
+  const [liveBrain, setLiveBrain] = useState<Decision | null>(null);
+  const [brainSettings, setBrainSettings] = useState(DEFAULT_BRAIN_CONFIG);
+  const [retryBrain, setRetryBrain] = useState(false);
+  const retryBrainRef = useRef(false);
+  retryBrainRef.current = retryBrain;
+  const nextBrainSeed = useRef(8);
   const controller = useRef<AbortController | null>(null);
   const version = useRef(0);
   const mounted = useRef(true);
@@ -197,6 +206,7 @@ export default function Game({
   const [showDebugger, setShowDebugger] = useState(false);
   const [selectedComparisons, setSelectedComparisons] = useState<Algorithm[]>([]);
   const [comparison, setComparison] = useState<Decision[] | null>(null);
+  const [sortBy, setSortBy] = useState<"default" | "time" | "moves" | "pushes">("default");
   const [aiKey, setAiKey] = useState("");
   const [aiModel, setAiModel] = useState("");
 
@@ -227,8 +237,12 @@ export default function Game({
     decisionsRef.current = next;
     setDecisions(next);
     try {
-      sessionStorage.setItem(decisionStorageKey, JSON.stringify(next));
+      sessionStorage.setItem(decisionStorageKey, JSON.stringify(next.map(compactDecision)));
     } catch {}
+  }
+  function compactDecision(decision: Decision): Decision {
+    return decision.result.flybrain ? { ...decision, result: { ...decision.result,
+      flybrain: compactFlyBrain(decision.result.flybrain) } } : decision;
   }
   function saveDecision(decision: Decision) {
     const next = [
@@ -258,7 +272,7 @@ export default function Game({
         history,
         mode,
         direction,
-        algorithm: algo === "gemini" ? "astar-pushes" : algo,
+        algorithm: algo === "gemini" || algo === "flybrain" ? "astar-pushes" : algo,
         customXsb,
       }),
       signal,
@@ -297,11 +311,43 @@ export default function Game({
     }
     throw new Error("AI не зміг побудувати маршрут.");
   }
+  async function requestFlyBrain(base: string, signal: AbortSignal): Promise<SearchResult> {
+    const config = brainConfig(brainSettings);
+    const previous = decisionsRef.current.find(d => d.result.algorithm === "flybrain")?.result.flybrain;
+    nextBrainSeed.current = Math.max(nextBrainSeed.current, (previous?.seed ?? 7) + 1);
+    let attempt = 0;
+    while (true) {
+    const seed = nextBrainSeed.current++ >>> 0;
+    attempt++;
+    const result = await new Promise<SearchResult>((resolve, reject) => {
+      signal.throwIfAborted();
+      const worker = new Worker(new URL("../workers/flybrain.worker.ts", import.meta.url));
+      const cleanup = () => { signal.removeEventListener("abort", cancel); worker.terminate(); };
+      const cancel = () => { worker.postMessage({ type: "abort" }); cleanup(); reject(new DOMException("Пошук скасовано", "AbortError")); };
+      signal.addEventListener("abort", cancel, { once: true });
+      worker.onerror = () => { cleanup(); reject(new Error("Не вдалося запустити FlyBrain. Спробуйте ще раз.")); };
+      worker.onmessage = (event: MessageEvent<FlyBrainEvent>) => {
+        if (signal.aborted) return;
+        const message = event.data;
+        if (message.type === "error") { cleanup(); reject(new Error(message.message)); }
+        else if (message.type === "done") { cleanup(); resolve(message.result); }
+        else setLiveBrain({ result: message.result, base });
+      };
+      worker.postMessage({ levelId: level.id, customXsb, base, seed, config, attempt });
+    });
+    signal.throwIfAborted();
+    saveDecision({ result, base });
+    setLiveBrain({ result, base });
+    if (!retryBrainRef.current || result.status !== "LimitReached") return result;
+    // Retry from the same base with a new seeded network; never continue a deadlocked route.
+    }
+  }
   function cancelSearch(announce = false) {
     version.current++;
     controller.current?.abort();
     controller.current = null;
     setSearching(false);
+    setLiveBrain(null);
     if (announce) setMessage("Пошук зупинено.");
   }
   function invalidate() {
@@ -402,6 +448,8 @@ export default function Game({
         const result =
           algo === "gemini"
             ? await requestGemini(base, abort.signal)
+            : algo === "flybrain"
+              ? await requestFlyBrain(base, abort.signal)
             : await request<SearchResult>(
                 base,
                 "solve",
@@ -418,7 +466,7 @@ export default function Game({
       if (token === version.current && (error as Error).name !== "AbortError")
         setMessage((error as Error).message);
     } finally {
-      if (token === version.current && mounted.current) setSearching(false);
+      if (token === version.current && mounted.current) { setSearching(false); setLiveBrain(null); }
     }
   }
   async function replayStep(back = false) {
@@ -437,9 +485,28 @@ export default function Game({
   }
   async function apply(decision: Decision) {
     const { result, base } = decision;
-    if (busy || searching || !result.validated || result.status !== "Solved")
+    const partialBrain = result.algorithm === "flybrain" && result.status === "LimitReached" && result.moves.length > 0;
+    if (lock.current || busy || searching || !result.validated || (result.status !== "Solved" && !partialBrain))
       return;
     setPlaying(false);
+    if (result.algorithm === "flybrain") {
+      lock.current = true;
+      setBusy(true);
+      gameController.current = new AbortController();
+      try {
+        const checked = await request<Snapshot>(base + result.moves, "state", "", "astar-pushes", gameController.current.signal);
+        if (!mounted.current) return;
+        if (!/^[UDLR]*$/.test(result.moves) || !checked.accepted || result.status === "Solved" && !checked.won)
+          throw new Error("Маршрут FlyBrain не пройшов перевірку.");
+      } catch (error) {
+        if (!mounted.current || (error as Error).name === "AbortError") return;
+        saveDecision({ ...decision, result: { ...result, validated: false, status: "InternalError" } });
+        setMessage((error as Error).message); return;
+      } finally {
+        lock.current = false;
+        if (mounted.current) setBusy(false);
+      }
+    }
     if (
       current.current.history !== base &&
       !(await transition(base, "", [], true))
@@ -452,7 +519,7 @@ export default function Game({
     const saved = { result, base };
     setSavedPlan(saved);
     try {
-      sessionStorage.setItem(solutionStorageKey, JSON.stringify(saved));
+      sessionStorage.setItem(solutionStorageKey, JSON.stringify(compactDecision(saved)));
     } catch {}
   }
   async function replaySavedSolution() {
@@ -612,7 +679,7 @@ export default function Game({
       return;
     }
     if (
-      target.closest("input, select, textarea") ||
+      target.closest("input, select, textarea, .flybrain-viewer") ||
       (target.closest("button, a") && [" ", "Enter"].includes(event.key)) ||
       target.isContentEditable ||
       event.ctrlKey ||
@@ -651,6 +718,21 @@ export default function Game({
     showDebugger && debugAlgorithm
       ? decisions.find((item) => item.result.algorithm === debugAlgorithm) ?? null
       : null;
+  const visibleDecisions = useMemo(() => {
+    const merged = liveBrain
+      ? decisions.some((d) => d.result.algorithm === "flybrain")
+        ? decisions.map((d) => (d.result.algorithm === "flybrain" ? liveBrain : d))
+        : [...decisions, liveBrain]
+      : decisions;
+    if (sortBy === "default") return merged;
+    const value = (d: Decision) =>
+      sortBy === "time"
+        ? d.result.totalMs
+        : sortBy === "moves"
+          ? d.result.moves.length
+          : d.result.pushes;
+    return [...merged].sort((a, b) => value(a) - value(b));
+  }, [decisions, liveBrain, sortBy]);
   function openMap() {
     if (snapshot) {
       setCamera((currentCamera) => ({
@@ -871,10 +953,55 @@ export default function Game({
           >
             {ALGORITHMS.map((a) => (
               <option key={a.id} value={a.id}>
-                {a.label} · {a.metric}
+                {a.label}
               </option>
             ))}
           </select>
+          {(algorithm === "flybrain" || liveBrain) && <fieldset className="flybrain-settings">
+            <legend>Налаштування FlyBrain</legend>
+            <label>Ліміт кроків<input aria-label="Ліміт кроків FlyBrain" type="number" min={1} max={2000} value={brainSettings.maxSteps} disabled={searching}
+              onChange={e => setBrainSettings(s => ({ ...s, maxSteps: Number(e.target.value) }))} onBlur={() => setBrainSettings(brainConfig(brainSettings))} /></label>
+            <label>Вікно нейронів, мс<input aria-label="Вікно нейронів, мс" type="number" min={1} max={100} value={brainSettings.windowMs} disabled={searching}
+              onChange={e => setBrainSettings(s => ({ ...s, windowMs: Number(e.target.value) }))} onBlur={() => setBrainSettings(brainConfig(brainSettings))} /></label>
+            <label>Час спроби, с<input aria-label="Час спроби, с" type="number" min={1} max={120} value={brainSettings.maxWallMs / 1000} disabled={searching}
+              onChange={e => setBrainSettings(s => ({ ...s, maxWallMs: Number(e.target.value) * 1000 }))} onBlur={() => setBrainSettings(brainConfig(brainSettings))} /></label>
+            <label>Сенсорне підсилення<input aria-label="Сенсорне підсилення" type="number" min={1} max={20} value={brainSettings.sensoryGain} disabled={searching}
+              onChange={e => setBrainSettings(s => ({ ...s, sensoryGain: Number(e.target.value) }))} onBlur={() => setBrainSettings(brainConfig(brainSettings))} /></label>
+            <label className="flybrain-retry"><input type="checkbox" checked={retryBrain} onChange={e => setRetryBrain(e.target.checked)} />Повторювати до розв’язання</label>
+            <div className="flybrain-settings-help" aria-label="Пояснення налаштувань FlyBrain">
+              <details>
+                <summary>Ліміт кроків — що змінює?</summary>
+                <p>Максимальна кількість рішень агента за одну спробу. Заблоковані ходи теж враховуються.</p>
+                <p><strong>Збільшити:</strong> більше можливостей дослідити поле й знайти довший шлях, але й більше повторних ходів та обчислень.</p>
+                <p><strong>Зменшити:</strong> спроба завершиться раніше, проте може обірвати перспективний шлях. Обмеження часу може зупинити її ще до ліміту кроків.</p>
+              </details>
+              <details>
+                <summary>Вікно нейронів — що змінює?</summary>
+                <p>Час роботи нейронної симуляції перед вибором кожного напрямку. Це модельні мілісекунди; швидкість відтворення ходів налаштовується окремо.</p>
+                <p><strong>Збільшити:</strong> сигнали мають більше часу поширитися, а нейрони — накопичити імпульси. Обчислення кожного кроку триватимуть довше; кращий результат не гарантовано.</p>
+                <p><strong>Зменшити:</strong> менше обчислень на крок, але моторні нейрони можуть не встигнути спрацювати. Якщо вони мовчать, агент пробує випадковий напрямок.</p>
+              </details>
+              <details>
+                <summary>Час спроби — що змінює?</summary>
+                <p>Ліміт реального часу обчислення однієї спроби в секундах. Перемога або ліміт кроків можуть завершити її раніше. Кожна повторна спроба отримує цей час заново.</p>
+                <p><strong>Збільшити:</strong> більше часу для повільних обчислень, але ліміт кроків залишається тим самим.</p>
+                <p><strong>Зменшити:</strong> швидше завершення та перехід до нової спроби, якщо повторення ввімкнено; менше часу на пошук у поточній спробі.</p>
+              </details>
+              <details>
+                <summary>Сенсорне підсилення — що змінює?</summary>
+                <p>Множник сили сигналів від сенсорних нейронів до центральних. Кількість нейронів залишається незмінною.</p>
+                <p><strong>Збільшити:</strong> центральні нейрони легше збуджуються від сигналів поля. Надмірне підсилення може спричинити зайву активність і не покращити вибір ходів.</p>
+                <p><strong>Зменшити:</strong> слабший вплив сенсорних сигналів; центральні й моторні нейрони можуть частіше мовчати, а агент — обирати випадкові напрямки.</p>
+              </details>
+              <details>
+                <summary>Повторення — як працює?</summary>
+                <p><strong>Увімкнено:</strong> після вичерпання ліміту запускається нова спроба з тієї самої початкової позиції та новим зерном випадковості (seed). Знайдене й перевірене рішення зупиняє повторення та показує завершене поле.</p>
+                <p><strong>Вимкнено:</strong> виконується лише поточна спроба. Якщо вимкнути під час роботи, вона завершиться без наступного запуску. Щоб зупинити її одразу, натисніть «Скасувати».</p>
+                <p>Повторення не гарантує розв’язання. Помилка також зупиняє пошук.</p>
+              </details>
+            </div>
+            <p>Кожна спроба має новий seed і той самий старт. Працює до перемоги або скасування; рішення не гарантоване. Вікно — час симуляції на хід, темп перегляду налаштовується окремо.</p>
+          </fieldset>}
           {algorithm === "gemini" ? (
             !aiKey.trim() ? (
               <p className="gemini-help">
@@ -1039,24 +1166,30 @@ export default function Game({
               </div>
             </section>
           )}
-          {!decisions.length && !plan && !snapshot?.won && (
-            <div className="solver-empty">
-              <span className="empty-route" aria-hidden="true">
-                □ <span>···</span> ◎
-              </span>
-              <p>Оберіть алгоритм для розрахунку розв’язку.</p>
-            </div>
-          )}
         </aside>
       </div>
-      {decisions.length > 0 && (
+      {(decisions.length > 0 || liveBrain) && (
         <section className="results algorithm-workbench">
           <div className="section-line">
             <h2>Рішення алгоритмів</h2>
+            <label style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 12 }}>
+              Сортувати
+              <select
+                aria-label="Сортувати рішення"
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+              >
+                <option value="default">За замовчуванням</option>
+                <option value="time">За часом</option>
+                <option value="moves">За ходами</option>
+                <option value="pushes">За штовханнями</option>
+              </select>
+            </label>
           </div>
           <div className="decision-grid">
-            {decisions.map((decision) => {
+            {visibleDecisions.map((decision) => {
               const result = decision.result;
+              const brainRunning = result.algorithm === "flybrain" && Boolean(liveBrain) && searching;
               const info = ALGORITHMS.find(
                 (item) => item.id === result.algorithm,
               )!;
@@ -1070,20 +1203,20 @@ export default function Game({
               );
               return (
                 <article
-                  className={`decision-card ${isApplied ? "applied" : ""}`}
+                  className={`decision-card ${isApplied ? "applied" : ""} ${brainRunning ? "flybrain-live" : ""}`}
                   key={result.algorithm}
                 >
                   <div className="decision-card-top">
                     <header>
                       <div className="decision-identity">
-                        <input type="checkbox" aria-label={`Порівнювати ${info.label}`} disabled={!result.validated || result.status !== "Solved"} checked={selectedComparisons.includes(result.algorithm)} onChange={e => setSelectedComparisons(previous => e.target.checked ? [...previous, result.algorithm] : previous.filter(id => id !== result.algorithm))} />
+                        <input type="checkbox" aria-label={`Порівнювати ${info.label}`} disabled={result.algorithm === "flybrain" || !result.validated || result.status !== "Solved"} checked={selectedComparisons.includes(result.algorithm)} onChange={e => setSelectedComparisons(previous => e.target.checked ? [...previous, result.algorithm] : previous.filter(id => id !== result.algorithm))} />
                         <div>
                           <h3>{info.label}</h3>
                           <p>{info.metric}</p>
                         </div>
                       </div>
                       <span className={`decision-status ${result.status.toLowerCase()}`}>
-                        {isApplied
+                        {brainRunning ? `Спроба ${result.flybrain?.attempt ?? 1}` : isApplied
                           ? "Застосовано"
                           : result.status === "Solved"
                             ? "Розв’язано"
@@ -1108,13 +1241,13 @@ export default function Game({
                           ? "Бюджет пошуку вичерпано. Шлях генератора все ще доступний."
                           : result.algorithm === "gemini"
                             ? "AI не зміг знайти перевірене рішення. Результат не можна застосувати."
-                            : failures[result.status]}
+                            : brainRunning ? "Симуляція триває в цьому спостерігачі." : failures[result.status]}
                       </p>
                     )}
                   </div>
                   <dl className="decision-metrics">
                     <div>
-                      <dt>{result.algorithm === "gemini" ? "Відповідь AI" : "Пошук"}</dt>
+                      <dt>{result.algorithm === "gemini" ? "Відповідь AI" : result.algorithm === "flybrain" ? "Симуляція" : "Пошук"}</dt>
                       <dd>{(result.remoteMs ?? result.searchMs).toFixed(3)} мс</dd>
                     </div>
                     <div>
@@ -1130,7 +1263,7 @@ export default function Game({
                       <dd>{result.algorithm === "gemini" ? "—" : result.frontier.toLocaleString("uk-UA")}</dd>
                     </div>
                     <div>
-                      <dt>Тупики</dt>
+                      <dt>{result.algorithm === "flybrain" ? "Заблоковано" : "Тупики"}</dt>
                       <dd>{result.algorithm === "gemini" ? "—" : result.deadlocks.toLocaleString("uk-UA")}</dd>
                     </div>
                     <div>
@@ -1148,6 +1281,15 @@ export default function Game({
                         request<Snapshot>(decision.base + moves, "state", "", result.algorithm)} />
                     </details>
                   ) : null}
+                  {result.flybrain && <details className="flybrain-observer" open>
+                    <summary>Спостерігати за мозком</summary>
+                    <FlyBrainViewer result={result} running={brainRunning}
+                      recalculate={() => recalculateDecision(decision)} cancel={() => cancelSearch(true)}
+                      retryUntilSolved={retryBrain} onRetryChange={setRetryBrain}
+                      loadSnapshot={(moves, signal) => request<Snapshot>(decision.base + moves, "state", "", "astar-pushes", signal)}
+                      baseline={decisions.find(d => d.base === decision.base && d.result.algorithm === "astar-pushes")?.result}
+                      compare={searching ? undefined : () => void solve(false, "astar-pushes", decision.base)} />
+                  </details>}
                   {result.algorithm === "gemini" && result.aiSession ? (
                     <details className="ai-session">
                       <summary>Переглянути сесію AI</summary>
@@ -1164,17 +1306,14 @@ export default function Game({
                     </details>
                   ) : null}
                   <footer className="decision-footer">
-                    <p className="decision-origin">
-                      Старт · після {decision.base.length} ходів
-                    </p>
                     <div className="decision-actions">
-                      {result.status === "Solved" ? (
+                      {result.status === "Solved" || result.algorithm === "flybrain" && result.status === "LimitReached" && result.moves.length > 0 ? (
                         <button
                           className="button primary"
-                          disabled={busy || searching}
+                          disabled={busy || searching || !result.validated}
                           onClick={() => void apply(decision)}
                         >
-                          Застосувати
+                          {result.status === "Solved" ? "Застосувати" : "Застосувати частковий маршрут"}
                         </button>
                       ) : null}
                       {showDebugger ? (
@@ -1188,13 +1327,13 @@ export default function Game({
                       ) : null}
                     </div>
                     <div className="decision-management">
-                      <button
+                      {result.algorithm !== "flybrain" && <button
                         className="button subtle"
                         disabled={busy || searching}
                         onClick={() => recalculateDecision(decision)}
                       >
                         ↻ Перерахувати
-                      </button>
+                      </button>}
                       <button
                         className="button subtle danger"
                         disabled={busy || searching}

@@ -12,7 +12,7 @@ const viewerCopy = {
   cannibal: { singular: "бот", plural: "ботів", cycle: "покоління", cycleLabel: "Покоління", cycles: "поколінь", lab: "Лабораторія Cannibal GA", title: "Родовід канібального бота", description: "Оберіть покоління та бота: кольори ДНК показують префікс жертви, змінений ген і хвіст хижака.", best: "Найкращий бот покоління", commands: "Допустимі команди бота", route: "Допустимий шлях бота" },
 } as const;
 
-function replayState(origin: Snapshot, moves: string, count: number): State {
+export function replayState(origin: Snapshot, moves: string, count: number): State {
   const state = { player: origin.state.player, boxes: [...origin.state.boxes] };
   for (const move of moves.slice(0, count)) {
     const delta = move === "U" ? -origin.board.width : move === "D" ? origin.board.width : move === "L" ? -1 : 1;
@@ -322,16 +322,7 @@ export default function EvolutionViewer({
                   markers={viewMode === "generation" ? generationMarkers : routeMarkers} />
               : <div className="evolution-loading">Завантаження поля…</div>}
           </div>
-          {viewMode === "generation" ? (
-            <>
-              <div className="route-legend" aria-label="Позначення покоління">
-                <span><i className="swarm" /> інші учасники</span>
-                <span><i className="leader" /> ★ лідер за вартістю</span>
-                {evolution.kind === "cannibal" ? <span><i className="stopped" /> × тупиковий бот</span> : null}
-              </div>
-              <p className="swarm-honesty">Ящики на полі належать лідеру; точки показують позиції гравців інших незалежних станів.</p>
-            </>
-          ) : (
+          {viewMode === "generation" ? null : (
             <div className="route-legend" aria-label="Позначення маршруту">
               <span><i className="visited" /> пройдена клітинка</span>
               <span><i className="active" /> поточна клітинка</span>
@@ -382,12 +373,6 @@ export default function EvolutionViewer({
               })}
             </div>
             <div className="fitness-axis"><span>1</span><span>менше — краще</span><span>{bestCosts.length}</span></div>
-            <p className="fitness-explanation">{{
-              aco: "ACO не зберігає найкращу мураху як еліту. Феромон лише підвищує ймовірність вдалих переходів, тому окрема наступна ітерація може бути гіршою.",
-              genetic: "GA переносить шість еліт без змін, тому найкраща вартість не повинна погіршуватися між поколіннями.",
-              gravity: "Кожен цикл запускає нові потоки. Тиск зберігає корисні переходи, але струшування додає шум, тому окремий цикл може бути гіршим.",
-              cannibal: "Шість еліт зберігають рекорд. Інші діти отримують безпечний префікс жертви, альтернативний ген і хвіст сильнішого бота.",
-            }[evolution.kind]}</p>
           </section>
         </aside>
       </div>

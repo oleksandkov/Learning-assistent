@@ -16,27 +16,15 @@ export default async function Home() {
         <nav className="home-menu" aria-label="Головне меню">
           <Link href="/levels" className="main-choice">
             <span>Грати</span>
-            <span className="choice-detail">
-              5 рівнів <span aria-hidden="true">↗</span>
-            </span>
           </Link>
           <Link href="/about">
             <span>Алгоритми</span>
-            <span className="choice-detail">
-              Теорія та код <span aria-hidden="true">↗</span>
-            </span>
           </Link>
           <Link href="/ai">
             <span>Налаштувати ШІ</span>
-            <span className="choice-detail">
-              Google AI Studio <span aria-hidden="true">↗</span>
-            </span>
           </Link>
           <Link href="/game-info">
             <span>Про гру</span>
-            <span className="choice-detail">
-              Правила <span aria-hidden="true">↗</span>
-            </span>
           </Link>
         </nav>
       </div>

@@ -1,22 +1,115 @@
 PLUGINS INVENTORY
-Inventory date: 2026-09-18
+Codex inventory date: 2026-09-21
+OpenCode inventory date: 2026-09-22
 User profile: C:/Users/muaro
 
-PER AGENT
+Codex was rescanned 2026-09-21. OpenCode was rescanned 2026-09-22 (see OPENCODE.md).
+Other-agent records below are retained from 2026-09-18 and have NOT been reverified.
+Configured, cached, and session-exposed are distinct.
+No credentials or private conversation contents are included.
 
-Codex
+CODEX CONFIGURED PLUGINS (12)
 Source: C:/Users/muaro/.codex/config.toml
-- browser@openai-bundled: enabled
-- codex-app-tools@openai-bundled: enabled
-- computer-use@openai-bundled: enabled
-- documents@openai-primary-runtime: enabled
-- pdf@openai-primary-runtime: enabled
-- presentations@openai-primary-runtime: enabled
-- sites@openai-bundled: enabled
-- spreadsheets@openai-primary-runtime: enabled
-- template-creator@openai-primary-runtime: enabled
-- unified-computer-use@openai-bundled: enabled
-- visualize@openai-bundled: enabled
+- codex-app-tools@openai-bundled: enabled = true
+- sites@openai-bundled: enabled = true
+- browser@openai-bundled: enabled = true
+- unified-computer-use@openai-bundled: enabled = true
+- visualize@openai-bundled: enabled = true
+- computer-use@openai-bundled: enabled = true
+- documents@openai-primary-runtime: enabled = true
+- pdf@openai-primary-runtime: enabled = true
+- spreadsheets@openai-primary-runtime: enabled = true
+- presentations@openai-primary-runtime: enabled = true
+- template-creator@openai-primary-runtime: enabled = true
+- ponytail@ponytail: enabled = true
+
+CONFIGURED MARKETPLACES
+- openai-bundled: local | \\?\C:\Users\muaro\.codex\.tmp\bundled-marketplaces\openai-bundled
+- openai-primary-runtime: local | \\?\C:\Users\muaro\.cache\codex-runtimes\codex-primary-runtime\plugins\openai-primary-runtime
+- ponytail: git | https://github.com/DietrichGebert/ponytail.git
+
+LOCAL PLUGIN MANIFESTS (14)
+- browser@openai-bundled | cache version 26.908.40834 | explicitly enabled in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-bundled/browser/26.908.40834/.codex-plugin/plugin.json
+  Purpose: Browser / browser-use plugin
+
+Aliases: @browser, @browser-use, browser-use, Browser, in-app browser.
+
+Use Browser, the ChatGPT in-app browser, when the user asks to open, inspect, navigate, test, click, type, or screenshot local web targets such as localhost, 127.0.0.1, ::1, file:// URLs, or the current in-app browser tab.
+
+After significant frontend changes to a local app, use Browser to open the relevant local target when it is known or obvious, unless the user asks for another browser tool.
+
+For requests like "open localhost:3000" or "open to localhost:4000", navigate the in-app browser to http://localhost:3000 or http://localhost:4000.
+
+Do not satisfy explicit @browser or @browser-use requests with macOS `open`, shell commands, or generic web browsing unless the user asks for another browser tool or approves a fallback.
+  skills: "./skills/"
+  hooks: {"hooks": {"Interrupt": [{"hooks": [{"type": "mcp_tool", "server": "node_repl", "tool": "turn_ended", "input": {"hook_event_name": "${hook_event_name}", "session_id": "${session_id}", "turn_id": "${turn_id}"}}]}], "SubagentStop": [{"hooks": [{"type": "mcp_tool", "server": "node_repl", "tool": "turn_ended", "input": {"hook_event_name": "${hook_event_name}", "session_id": "${agent_id}", "turn_id": "${turn_id}"}}]}], "Stop": [{"hooks": [{"type": "mcp_tool", "server": "node_repl", "tool": "turn_ended", "input": {"hook_event_name": "${hook_event_name}", "session_id": "${session_id}", "turn_id": "${turn_id}"}}]}]}}
+- codex-app-tools@openai-bundled | cache version 0.1.4 | explicitly enabled in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-bundled/codex-app-tools/0.1.4/.codex-plugin/plugin.json
+  Purpose: Exposes Codex desktop app tools through one local MCP server.
+  mcpServers: "./.mcp.json"
+- computer-use@openai-bundled | cache version 26.908.40834 | explicitly enabled in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-bundled/computer-use/26.908.40834/.codex-plugin/plugin.json
+  Purpose: Control desktop apps on Windows from ChatGPT through Computer Use.
+  skills: "./skills/"
+  hooks: {"hooks": {"Interrupt": [{"hooks": [{"type": "mcp_tool", "server": "node_repl", "tool": "turn_ended", "input": {"hook_event_name": "${hook_event_name}", "session_id": "${session_id}", "turn_id": "${turn_id}"}}]}], "SubagentStop": [{"hooks": [{"type": "mcp_tool", "server": "node_repl", "tool": "turn_ended", "input": {"hook_event_name": "${hook_event_name}", "session_id": "${agent_id}", "turn_id": "${turn_id}"}}]}], "Stop": [{"hooks": [{"type": "mcp_tool", "server": "node_repl", "tool": "turn_ended", "input": {"hook_event_name": "${hook_event_name}", "session_id": "${session_id}", "turn_id": "${turn_id}"}}]}]}}
+- sites@openai-bundled | cache version 0.1.57 | explicitly enabled in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-bundled/sites/0.1.57/.codex-plugin/plugin.json
+  Purpose: Build and deploy websites with Sites. Use of Sites is subject to the ChatGPT Sites Terms (https://openai.com/policies/chatgpt-sites-terms/), and you are responsible for your website content.
+  skills: "./skills/"
+  apps: "./.app.json"
+- unified-computer-use@openai-bundled | cache version 26.908.40834 | explicitly enabled in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-bundled/unified-computer-use/26.908.40834/.codex-plugin/plugin.json
+  Purpose: App-managed browser automation runtime.
+  hooks: {"hooks": {"Interrupt": [{"hooks": [{"type": "mcp_tool", "server": "cua_repl", "tool": "turn_ended", "input": {"hook_event_name": "${hook_event_name}", "session_id": "${session_id}", "turn_id": "${turn_id}"}}]}], "SubagentStop": [{"hooks": [{"type": "mcp_tool", "server": "cua_repl", "tool": "turn_ended", "input": {"hook_event_name": "${hook_event_name}", "session_id": "${agent_id}", "turn_id": "${turn_id}"}}]}], "Stop": [{"hooks": [{"type": "mcp_tool", "server": "cua_repl", "tool": "turn_ended", "input": {"hook_event_name": "${hook_event_name}", "session_id": "${session_id}", "turn_id": "${turn_id}"}}]}]}}
+  mcpServers: "./.mcp.json"
+- visualize@openai-bundled | cache version 1.0.37 | explicitly enabled in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-bundled/visualize/1.0.37/.codex-plugin/plugin.json
+  Purpose: Create interactive charts, maps, diagrams, simulations, 3D models, data explorers, and UI previews directly in Codex.
+  skills: "./skills/"
+- openai-templates@openai-curated-remote | cache version 0.1.1 | cached; no explicit enable entry in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/.codex-plugin/plugin.json
+  Purpose: OpenAI default document, presentation, and spreadsheet templates.
+  skills: "./skills/"
+  apps: "./.app.json"
+- plugin-management@openai-curated-remote | cache version 0.1.0 | cached; no explicit enable entry in config.toml; skill and tools exposed in this session
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/plugin-management/0.1.0/.codex-plugin/plugin.json
+  Purpose: Discover relevant plugins and manage app connections, permissions, and dependencies.
+  skills: "./skills/"
+  apps: "./.app.json"
+- documents@openai-primary-runtime | cache version 26.909.12148 | explicitly enabled in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/documents/26.909.12148/.codex-plugin/plugin.json
+  Purpose: Create and edit document artifacts in Codex, including Word files and Google Docs.
+  skills: "./skills/"
+- pdf@openai-primary-runtime | cache version 26.909.12148 | explicitly enabled in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/pdf/26.909.12148/.codex-plugin/plugin.json
+  Purpose: Read, create, inspect, render, and verify PDF files in Codex.
+  skills: "./skills/"
+- presentations@openai-primary-runtime | cache version 26.909.12148 | explicitly enabled in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/presentations/26.909.12148/.codex-plugin/plugin.json
+  Purpose: Create, edit, render, verify, and export presentation slide decks. Use when Codex needs to build or modify a deck, slidedeck, presentation deck, slide deck, slides, PowerPoint, Google Slides, PPT, PPTX, .ppt, or .pptx file.
+  skills: "./skills/"
+- spreadsheets@openai-primary-runtime | cache version 26.909.12148 | explicitly enabled in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.909.12148/.codex-plugin/plugin.json
+  Purpose: Create, edit, analyze, visualize, render, and export spreadsheets, Microsoft Excel or Google Sheets-ready workbooks in Codex.
+  skills: "./skills/"
+  apps: "./.app.json"
+- template-creator@openai-primary-runtime | cache version 26.909.12148 | explicitly enabled in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/template-creator/26.909.12148/.codex-plugin/plugin.json
+  Purpose: Create and update personal templates from files, Google Docs, Slides, and Sheets links, ImageGen or Product Design images, emails, Slack messages, and Site projects.
+  skills: "./skills/"
+- ponytail@ponytail | cache version 4.10.0 | explicitly enabled in config.toml
+  Manifest: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/.codex-plugin/plugin.json
+  Purpose: Lazy senior dev mode. Forces the simplest, shortest solution that actually works: YAGNI, stdlib first, no unrequested abstractions.
+  skills: "./skills/"
+  hooks: "./hooks/claude-codex-hooks.json"
+
+OTHER SHARED CATALOG
+C:/Users/muaro/.agents/plugins/marketplace.json advertises vercel-plugin.
+It is not in the scanned Codex cache or enabled Codex plugin configuration;
+a catalog listing does not establish installation.
+
+OTHER AGENTS — HISTORICAL RECORD, 2026-09-18
 
 Claude Code
 Source: C:/Users/muaro/.claude/settings.json; C:/Users/muaro/.claude/plugins/installed_plugins.json
@@ -27,13 +120,19 @@ Source: C:/Users/muaro/.config/kilo/kilo.jsonc; C:/Users/muaro/.config/kilo/pack
 - @kilocode/plugin: installed as an SDK dependency (package.json: 7.3.21)
 - No user-facing plugins configured.
 
-OpenCode
-Source: C:/Users/muaro/.config/opencode/opencode.jsonc
-- No external plugins configured ("plugin": []). OpenCode runs pure with core built-in tools.
-Local plugin files/directories:
-- voice-interface.js: ~/.config/opencode/plugin/voice-interface.js
-- opencode-bar: ~/.config/opencode/plugins/opencode-bar (source checkout)
-- worktree: ~/.local/share/opencode/plugins/worktree (local plugin data)
+OpenCode — RESCANNED 2026-09-22
+Sources: C:/Users/muaro/.config/opencode/opencode.json; opencode.jsonc; tui.json
+- Configured plugin array (both top-level configs):
+  - @dietrichgebert/ponytail — enabled; ponytail skills exposed in session.
+- Global tui.json: "@slkiser/opencode-quota" (quota toast UI).
+- Project .opencode/tui.json: "plugin": [] (no project TUI plugins).
+- On disk, NOT in config plugin array (not proven loaded):
+  - voice-interface.js: ~/.config/opencode/plugin/voice-interface.js
+  - opencode-bar: ~/.config/opencode/plugins/opencode-bar (v0.1.0 source checkout)
+  - opencode-bar.json, opencode-quota/quota-toast.json (supporting configs)
+- Historical (2026-09-18): worktree under ~/.local/share/opencode/plugins/.
+- Caveat: opencode.json and opencode.jsonc both exist and diverge; plugin key
+  matches today, but other keys do not — see OPENCODE.md.
 
 Antigravity CLI
 Source: C:/Users/muaro/.gemini/config/config.json
@@ -50,39 +149,3 @@ Source: C:/Users/muaro/.gemini/settings.json
 Qwen Code
 Source: C:/Users/muaro/.qwen/settings.json
 - No extensions or plugins installed.
-
-CURRENTLY ENABLED / PRESENT PLUGINS (SUMMARY)
-- android-cli-plugin (Antigravity CLI)
-- browser@openai-bundled (Codex)
-- chrome-devtools-plugin (Antigravity CLI)
-- codex-app-tools@openai-bundled (Codex)
-- computer-use@openai-bundled (Codex)
-- documents@openai-primary-runtime (Codex)
-- firebase (Antigravity CLI)
-- google-antigravity-sdk (Antigravity CLI)
-- pdf@openai-primary-runtime (Codex)
-- presentations@openai-primary-runtime (Codex)
-- sites@openai-bundled (Codex)
-- spreadsheets@openai-primary-runtime (Codex)
-- template-creator@openai-primary-runtime (Codex)
-- unified-computer-use@openai-bundled (Codex)
-- visualize@openai-bundled (Codex)
-- @kilocode/plugin (Kilo Code internal SDK dependency)
-
-CODEX PLUGIN MANIFEST LOCATIONS
-- browser: C:/Users/muaro/.codex/plugins/cache/openai-bundled/browser/26.908.40834/.codex-plugin/plugin.json
-- codex-app-tools: C:/Users/muaro/.codex/plugins/cache/openai-bundled/codex-app-tools/0.1.4/.codex-plugin/plugin.json
-- computer-use: C:/Users/muaro/.codex/plugins/cache/openai-bundled/computer-use/26.908.40834/.codex-plugin/plugin.json
-- documents: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/documents/26.909.12148/.codex-plugin/plugin.json
-- openai-templates: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/.codex-plugin/plugin.json
-- pdf: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/pdf/26.909.12148/.codex-plugin/plugin.json
-- plugin-management: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/plugin-management/0.1.0/.codex-plugin/plugin.json
-- presentations: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/presentations/26.909.12148/.codex-plugin/plugin.json
-- sites: C:/Users/muaro/.codex/plugins/cache/openai-bundled/sites/0.1.57/.codex-plugin/plugin.json
-- spreadsheets: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.909.12148/.codex-plugin/plugin.json
-- template-creator: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/template-creator/26.909.12148/.codex-plugin/plugin.json
-- unified-computer-use: C:/Users/muaro/.codex/plugins/cache/openai-bundled/unified-computer-use/26.908.40834/.codex-plugin/plugin.json
-- visualize: C:/Users/muaro/.codex/plugins/cache/openai-bundled/visualize/1.0.37/.codex-plugin/plugin.json
-
-COVERAGE
-Only actively enabled or locally present tools on this device are included.

@@ -7,8 +7,8 @@ test("selected routes advance together without moving the human board", async ({
   await expect(page.locator(".play-area .game-board")).toBeVisible();
   await page.getByRole("button", { name: "Порівняти всі алгоритми" }).click();
   await expect(page.locator(".decision-card")).toHaveCount(10);
-  await page.getByLabel("Порівнювати BFS", { exact: true }).check();
-  await page.getByLabel("Порівнювати A* · ходи", { exact: true }).check();
+  await page.getByLabel("Порівнювати 1 - BFS", { exact: true }).check();
+  await page.getByLabel("Порівнювати 2 - A* ходи", { exact: true }).check();
   await page.getByRole("button", { name: "Порівняти вибрані поруч" }).click();
   const comparison = page.getByRole("region", { name: "Синхронне порівняння" });
   await expect(comparison.locator(".game-board")).toHaveCount(2);
@@ -43,8 +43,8 @@ test("comparing all algorithms on a completed level computes solutions from the 
   await expect(page.locator(".decision-card")).toHaveCount(10);
   const firstCard = page.locator(".decision-card").first();
   await expect(firstCard.locator(".decision-score strong").first()).not.toHaveText("0");
-  await page.getByLabel("Порівнювати BFS", { exact: true }).check();
-  await page.getByLabel("Порівнювати A* · ходи", { exact: true }).check();
+  await page.getByLabel("Порівнювати 1 - BFS", { exact: true }).check();
+  await page.getByLabel("Порівнювати 2 - A* ходи", { exact: true }).check();
   await page.getByRole("button", { name: "Порівняти вибрані поруч" }).click();
   const comparison = page.getByRole("region", { name: "Синхронне порівняння" });
   await expect(comparison.locator(".game-board")).toHaveCount(2);

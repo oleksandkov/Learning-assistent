@@ -149,9 +149,9 @@ export default function LessonView({
               </label>
             </div>
             <details className="lesson-source" open>
-              <summary>Як це написано в проєкті <span>C++ · справжній фрагмент</span></summary>
+              <summary>Як це написано в проєкті <span>{excerpt.file.endsWith(".ts") ? "TypeScript" : "C++"} · справжній фрагмент</span></summary>
               <div className="source-file">{excerpt.file}:{excerpt.start}</div>
-              <div className="code-panel" tabIndex={0} role="region" aria-label="Код C++ з активним рядком">
+              <div className="code-panel" tabIndex={0} role="region" aria-label={`Код ${excerpt.file.endsWith(".ts") ? "TypeScript" : "C++"} з активним рядком`}>
                 {excerpt.lines.map((line, i) => (
                   <div key={i} className={`code-line ${i === 0 ? "active" : ""}`} aria-current={i === 0 ? "step" : undefined}>
                     <em>{excerpt.start + i}</em><code className="code-text">{line || " "}</code>
@@ -174,7 +174,7 @@ export default function LessonView({
             <p>{lesson.takeaway}</p>
           </div>
           <p className="source-note">
-            Приклади спрощено для навчання. Код читається безпосередньо з файлів C++ цього проєкту.
+            Приклади спрощено для навчання. Код читається безпосередньо з файлів цього проєкту.
             Схеми показують принцип роботи, а не виміряний запуск пошуку.
           </p>
           <Link

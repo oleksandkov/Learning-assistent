@@ -1,59 +1,197 @@
 SKILLS INVENTORY
-Inventory date: 2026-09-18
+Codex inventory date: 2026-09-21
+OpenCode inventory date: 2026-09-22
 User profile: C:/Users/muaro
 
-SCOPE AND STATUS
-All non-built-in / external skills (global user skills ~/.agents/skills, project skills, and agent-specific user skills in ~/.claude/skills and ~/.qwen/skills) have been removed from this device.
-A timestamped backup archive is preserved at:
-C:\Users\muaro\.agents\backups\skills_backup_20260918_230131.zip
+Codex was rescanned 2026-09-21. OpenCode was rescanned 2026-09-22 (see OPENCODE.md).
+Other-agent records below are retained from 2026-09-18 and have NOT been reverified.
+Configured, cached, and session-exposed are distinct.
+No credentials or private conversation contents are included.
 
-Only built-in, system, or bundled runtime skills remain on the device.
+CODEX: 57 SKILL.md files on disk; 26 exposed in this session.
+The earlier claims that shared/project skills were deleted are obsolete.
+A file in a plugin cache is not proof that its skill is loaded.
 
-PER AGENT
+ROOT: C:/Users/muaro/.codex/skills (6 files)
+- imagegen | exposed in this session
+  Path: C:/Users/muaro/.codex/skills/.system/imagegen/SKILL.md
+  Purpose: Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas.
+- openai-docs | exposed in this session
+  Path: C:/Users/muaro/.codex/skills/.system/openai-docs/SKILL.md
+  Purpose: Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, customization, automations, and self-knowledge—including 'you,' 'your,' 'this app,' or 'this coding agent' when they refer to Codex—and for OpenAI APIs/products and ChatGPT Work. Also use for model choice/migration, prompting, SDKs, Responses, Realtime, agents, evals, and Chat/Work/Codex comparisons. Do not use for generic app/software tasks that merely mention Codex.
+- plugin-creator | exposed in this session
+  Path: C:/Users/muaro/.codex/skills/.system/plugin-creator/SKILL.md
+  Purpose: Create and scaffold plugin directories for Codex with a required `.codex-plugin/plugin.json`, optional plugin folders/files, valid manifest defaults, and personal-marketplace entries by default. Use when Codex needs to create a new personal plugin, add optional plugin structure, generate or update marketplace entries for plugin ordering and availability metadata, or update an existing local plugin during development with the CLI-driven cachebuster and reinstall flow.
+- review-agent | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/skills/.system/review-agent/SKILL.md
+  Purpose: Perform a read-only, defect-first review of a specified code change and return every actionable finding. Use when another agent delegates review of uncommitted changes, a base-branch diff, a commit, or custom review instructions.
+- skill-creator | exposed in this session
+  Path: C:/Users/muaro/.codex/skills/.system/skill-creator/SKILL.md
+  Purpose: Create or update a Codex skill with appropriately scoped instructions and any needed supporting resources.
+- skill-installer | exposed in this session
+  Path: C:/Users/muaro/.codex/skills/.system/skill-installer/SKILL.md
+  Purpose: Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).
 
-1. Codex
-- Shared user skills: None.
-- Project skills: None.
-- Codex system skills on disk (6 files):
-  - imagegen | C:/Users/muaro/.codex/skills/.system/imagegen/SKILL.md
-  - openai-docs | C:/Users/muaro/.codex/skills/.system/openai-docs/SKILL.md
-  - plugin-creator | C:/Users/muaro/.codex/skills/.system/plugin-creator/SKILL.md
-  - review-agent | C:/Users/muaro/.codex/skills/.system/review-agent/SKILL.md
-  - skill-creator | C:/Users/muaro/.codex/skills/.system/skill-creator/SKILL.md
-  - skill-installer | C:/Users/muaro/.codex/skills/.system/skill-installer/SKILL.md
+ROOT: C:/Users/muaro/.agents/skills (6 files)
+- finetuning | exposed in this session
+  Path: C:/Users/muaro/.agents/skills/microsoft-foundry/finetuning/SKILL.md
+  Purpose: Fine-tune models on Microsoft Foundry using SFT (supervised), DPO (preference), or RFT (reinforcement with graders). Covers dataset preparation, training job submission, deployment, and evaluation. USE FOR: fine-tune, SFT, DPO, RFT, training data, grader, distillation, fine-tuned model, training job, large file upload, calibrate grader, deploy fine-tuned model, evaluate fine-tuned model. DO NOT USE FOR: general model deployment without fine-tuning (use deploy-model), agent creation (use agents), prompt optimization without training (use prompt-optimizer).
+- capacity | exposed in this session
+  Path: C:/Users/muaro/.agents/skills/microsoft-foundry/models/deploy-model/capacity/SKILL.md
+  Purpose: Discovers available Azure OpenAI model capacity across regions and projects. Analyzes quota limits, compares availability, and recommends optimal deployment locations based on capacity requirements. USE FOR: find capacity, check quota, where can I deploy, capacity discovery, best region for capacity, multi-project capacity search, quota analysis, model availability, region comparison, check TPM availability. DO NOT USE FOR: actual deployment (hand off to preset or customize after discovery), quota increase requests (direct user to Azure Portal), listing existing deployments.
+- customize | exposed in this session
+  Path: C:/Users/muaro/.agents/skills/microsoft-foundry/models/deploy-model/customize/SKILL.md
+  Purpose: Interactive guided deployment flow for Azure OpenAI models with full customization control. Step-by-step selection of model version, SKU (GlobalStandard/Standard/ProvisionedManaged), capacity, RAI policy (content filter), and advanced options (dynamic quota, priority processing, spillover). USE FOR: custom deployment, customize model deployment, choose version, select SKU, set capacity, configure content filter, RAI policy, deployment options, detailed deployment, advanced deployment, PTU deployment, provisioned throughput. DO NOT USE FOR: quick deployment to optimal region (use preset).
+- preset | exposed in this session
+  Path: C:/Users/muaro/.agents/skills/microsoft-foundry/models/deploy-model/preset/SKILL.md
+  Purpose: Intelligently deploys Azure OpenAI models to optimal regions by analyzing capacity across all available regions. Automatically checks current region first and shows alternatives if needed. USE FOR: quick deployment, optimal region, best region, automatic region selection, fast setup, multi-region capacity check, high availability deployment, deploy to best location. DO NOT USE FOR: custom SKU selection (use customize), specific version selection (use customize), custom capacity configuration (use customize), PTU deployments (use customize).
+- deploy-model | exposed in this session
+  Path: C:/Users/muaro/.agents/skills/microsoft-foundry/models/deploy-model/SKILL.md
+  Purpose: Unified Azure OpenAI model deployment skill with intelligent intent-based routing. Handles quick preset deployments, fully customized deployments (version/SKU/capacity/RAI policy), and capacity discovery across regions and projects. USE FOR: deploy model, deploy gpt, create deployment, model deployment, deploy openai model, set up model, provision model, find capacity, check model availability, where can I deploy, best region for model, capacity analysis. DO NOT USE FOR: listing existing deployments (use foundry_models_deployments_list MCP tool), deleting deployments, agent creation (use agent/create), project creation (use project/create).
+- microsoft-foundry | exposed in this session
+  Path: C:/Users/muaro/.agents/skills/microsoft-foundry/SKILL.md
+  Purpose: Build, deploy, evaluate, optimize, fine-tune, and manage Microsoft Foundry agents, models, and resources end to end. USE FOR: foundry, azd ai agent, azd provision/deploy, hosted agent scaffold/develop/run/deploy/troubleshoot, prompt agent create, create agent, update agent, add tool to agent, invoke agent, agent.yaml, agent insights, pull agent insights, evaluate agent, batch eval, continuous eval, continuous monitoring, agent CI/CD, optimize prompt, improve prompt, prompt optimizer, optimize agent instructions, Agent Optimizer scaffold, dataset curation from traces, deploy model, model fine-tuning (SFT/DPO/RFT), Foundry project, RBAC, role assignment, permissions, quota, capacity, region, deployment failure, AI Services, create Foundry resource, knowledge index, customize deployment, onboard, availability, training-data, grader, distillation, large file upload. DO NOT USE FOR: Azure Functions, App Service, general Azure deploy (use azure-deploy), general Azure prep (use azure-prepare).
 
-- Codex bundled plugin skills (includes cached runtimes) (37 files):
-  - computer-use | C:/Users/muaro/.codex/plugins/cache/openai-bundled/computer-use/26.908.40834/skills/computer-use/SKILL.md
-  - sites-building | C:/Users/muaro/.codex/plugins/cache/openai-bundled/sites/0.1.57/skills/sites-building/SKILL.md
-  - sites-hosting | C:/Users/muaro/.codex/plugins/cache/openai-bundled/sites/0.1.57/skills/sites-hosting/SKILL.md
-  - visualize | C:/Users/muaro/.codex/plugins/cache/openai-bundled/visualize/1.0.37/skills/visualize/SKILL.md
-  - documents | C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/documents/26.909.12148/skills/documents/SKILL.md
-  - pdf | C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/pdf/26.909.12148/skills/pdf/SKILL.md
-  - Presentations | C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/presentations/26.909.12148/skills/presentations/SKILL.md
-  - excel-live-control | C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.909.12148/skills/excel-live-control/SKILL.md
-  - Spreadsheets | C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.909.12148/skills/spreadsheets/SKILL.md
-  - template-creator | C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/template-creator/26.909.12148/skills/template-creator/SKILL.md
-  - plugin-management | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/plugin-management/0.1.0/skills/plugin-management/SKILL.md
-  - artifact-template-analytics-dashboard | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-analytics-dashboard/SKILL.md
-  - artifact-template-business-review | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-business-review/SKILL.md
-  - artifact-template-design-report | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-design-report/SKILL.md
-  - artifact-template-experiment-analysis | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-experiment-analysis/SKILL.md
-  - artifact-template-financial-budget | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-financial-budget/SKILL.md
-  - artifact-template-investment-committee-memo | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-investment-committee-memo/SKILL.md
-  - artifact-template-legal-memorandum | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-legal-memorandum/SKILL.md
-  - artifact-template-market-trends-report | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-market-trends-report/SKILL.md
-  - artifact-template-minimal-letterhead | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-minimal-letterhead/SKILL.md
-  - artifact-template-operating-calendar | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-operating-calendar/SKILL.md
-  - artifact-template-operating-review | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-operating-review/SKILL.md
-  - artifact-template-project-kickoff | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-project-kickoff/SKILL.md
-  - artifact-template-project-tracker | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-project-tracker/SKILL.md
-  - artifact-template-sales-pipeline | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-sales-pipeline/SKILL.md
-  - artifact-template-simple-dark-mode | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-simple-dark-mode/SKILL.md
-  - artifact-template-simple-light-mode | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-simple-light-mode/SKILL.md
-  - artifact-template-strategy-memorandum | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-strategy-memorandum/SKILL.md
-  - artifact-template-system-design | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-system-design/SKILL.md
-  - artifact-template-team-alignment | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-team-alignment/SKILL.md
-  - artifact-template-three-statement-forecast | C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-three-statement-forecast/SKILL.md
+ROOT: C:/Github/Learning-assistent/.agents/skills (2 files)
+- animate | exposed in this session
+  Path: C:/Github/Learning-assistent/.agents/skills/animate/SKILL.md
+  Purpose: Build an animation from scratch, making the decisions in the order that determines whether it feels right — should it animate at all, what purpose, which tool, which properties, which curve and duration, how it interrupts, how it exits. Writes the implementation. Use when asked to animate something, add motion, make a component feel alive, or build a transition. For critiquing existing motion use review-animations; for auditing a whole codebase use improve-animations.
+- frontend-design | exposed in this session
+  Path: C:/Github/Learning-assistent/.agents/skills/frontend-design/SKILL.md
+  Purpose: Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direction, typography, and making choices that don't read as templated defaults.
+
+ROOT: C:/Users/muaro/.codex/plugins/cache (43 files)
+- computer-use | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-bundled/computer-use/26.908.40834/skills/computer-use/SKILL.md
+  Purpose: Control Windows apps from ChatGPT
+- sites-building | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-bundled/sites/0.1.57/skills/sites-building/SKILL.md
+  Purpose: Use Sites to build websites, including landing pages, portfolios, dashboards, portals, trackers, hubs, and internal tools. Always use Sites when the project contains `.openai/hosting.json`.
+- sites-hosting | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-bundled/sites/0.1.57/skills/sites-hosting/SKILL.md
+  Purpose: Host websites with Sites. Always use after `sites-building`, and use for website publishing, deployment, hosting management, or projects containing `.openai/hosting.json`.
+- visualize | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-bundled/visualize/1.0.37/skills/visualize/SKILL.md
+  Purpose: Create visualizations and interactive tools directly in conversation. Proactively use to show how something works; explore 'what happens when', 'what changes', or 'help me understand'; compare or inspect; create simulations, maps, charts, graphs, and mockups. Use standard tools for static scientific figures.
+- artifact-template-analytics-dashboard | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-analytics-dashboard/SKILL.md
+  Purpose: Create a spreadsheet using the Analytics Dashboard template and its retained reference file. Use when the user selects or names Analytics Dashboard. Monitor acquisition, engagement, retention, revenue, and conversion funnel KPIs with charts.
+- artifact-template-business-review | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-business-review/SKILL.md
+  Purpose: Create a presentation using the Business Review template and its retained reference file. Use when the user selects or names Business Review. Review business performance, KPIs, segment results, strategic priorities, decisions, and outlook.
+- artifact-template-design-report | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-design-report/SKILL.md
+  Purpose: Create a document using the Design Report template and its retained reference file. Use when the user selects or names Design Report. Produce design reports with an executive summary, key findings, implications, recommendations, and appendix.
+- artifact-template-experiment-analysis | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-experiment-analysis/SKILL.md
+  Purpose: Create a document using the Experiment Analysis template and its retained reference file. Use when the user selects or names Experiment Analysis. Analyze experiments with hypotheses, methodology, results, interpretation, limitations, and next steps.
+- artifact-template-financial-budget | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-financial-budget/SKILL.md
+  Purpose: Create a spreadsheet using the Financial Budget template and its retained reference file. Use when the user selects or names Financial Budget. Model actuals, budget and scenario forecasts, variances, cash runway, and departmental plans.
+- artifact-template-investment-committee-memo | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-investment-committee-memo/SKILL.md
+  Purpose: Create a document using the Investment Committee Memo template and its retained reference file. Use when the user selects or names Investment Committee Memo. Prepare investment committee memos with the thesis, transaction details, financial analysis, risks, and recommendation.
+- artifact-template-legal-memorandum | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-legal-memorandum/SKILL.md
+  Purpose: Create a document using the Legal Memorandum template and its retained reference file. Use when the user selects or names Legal Memorandum. Draft legal memoranda with the issue, brief answer, relevant facts, analysis, and conclusion.
+- artifact-template-market-trends-report | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-market-trends-report/SKILL.md
+  Purpose: Create a presentation using the Market Trends Report template and its retained reference file. Use when the user selects or names Market Trends Report. Communicate market or industry trends, supporting evidence, implications, and recommended responses.
+- artifact-template-minimal-letterhead | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-minimal-letterhead/SKILL.md
+  Purpose: Create a document using the Minimal Letterhead template and its retained reference file. Use when the user selects or names Minimal Letterhead. Write professional business letters with sender, recipient, message, and signature fields in a minimal letterhead layout.
+- artifact-template-operating-calendar | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-operating-calendar/SKILL.md
+  Purpose: Create a spreadsheet using the Operating Calendar template and its retained reference file. Use when the user selects or names Operating Calendar. Plan annual and monthly operating milestones, campaigns, launches, deadlines, and recurring events.
+- artifact-template-operating-review | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-operating-review/SKILL.md
+  Purpose: Create a presentation using the Operating Review template and its retained reference file. Use when the user selects or names Operating Review. Run weekly operating reviews with scorecards, functional updates, risks, decisions, and action items.
+- artifact-template-project-kickoff | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-project-kickoff/SKILL.md
+  Purpose: Create a presentation using the Project Kickoff template and its retained reference file. Use when the user selects or names Project Kickoff. Align teams on project goals, scope, roles, milestones, risks, and the working model.
+- artifact-template-project-tracker | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-project-tracker/SKILL.md
+  Purpose: Create a spreadsheet using the Project Tracker template and its retained reference file. Use when the user selects or names Project Tracker. Manage workstreams, tasks, owners, status, priority, dates, launch pulse, and a Gantt schedule.
+- artifact-template-sales-pipeline | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-sales-pipeline/SKILL.md
+  Purpose: Create a spreadsheet using the Sales Pipeline template and its retained reference file. Use when the user selects or names Sales Pipeline. Track opportunities, stages, owners, deal sizes, probabilities, forecasts, next steps, and risks.
+- artifact-template-simple-dark-mode | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-simple-dark-mode/SKILL.md
+  Purpose: Create a presentation using the Simple Dark Mode template and its retained reference file. Use when the user selects or names Simple Dark Mode. Create clean dark-mode presentations with bold typography, simple sections, charts, and imagery.
+- artifact-template-simple-light-mode | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-simple-light-mode/SKILL.md
+  Purpose: Create a presentation using the Simple Light Mode template and its retained reference file. Use when the user selects or names Simple Light Mode. Create clean light-mode presentations with spacious typography, simple sections, charts, and imagery.
+- artifact-template-strategy-memorandum | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-strategy-memorandum/SKILL.md
+  Purpose: Create a document using the Strategy Memorandum template and its retained reference file. Use when the user selects or names Strategy Memorandum. Present strategic context, choices, rationale, risks, milestones, and a clear recommendation.
+- artifact-template-system-design | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-system-design/SKILL.md
+  Purpose: Create a document using the System Design template and its retained reference file. Use when the user selects or names System Design. Document system architecture, requirements, components, data flows, APIs, tradeoffs, and operational considerations.
+- artifact-template-team-alignment | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-team-alignment/SKILL.md
+  Purpose: Create a presentation using the Team Alignment template and its retained reference file. Use when the user selects or names Team Alignment. Facilitate team offsites and planning with context, goals, priorities, decisions, and action items.
+- artifact-template-three-statement-forecast | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/openai-templates/0.1.1/skills/artifact-template-three-statement-forecast/SKILL.md
+  Purpose: Create a spreadsheet using the Three-Statement Forecast template and its retained reference file. Use when the user selects or names Three-Statement Forecast. Build an integrated income statement, balance sheet, and cash flow forecast with assumptions, checks, and an executive summary.
+- plugin-management | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-curated-remote/plugin-management/0.1.0/skills/plugin-management/SKILL.md
+  Purpose: Discover and suggest relevant plugins, inspect app permissions and dependencies, and manage plugin connections or removal. Use when the user asks about plugins or when a task would materially benefit from an external app, account, service, or data source that available tools cannot access.
+- documents | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/documents/26.909.12148/skills/documents/SKILL.md
+  Purpose: Create, edit, redline, and comment on `.docx`, Word, and Google Docs-targeted document artifacts inside the container, with a strict render-and-verify workflow. Use `render_docx.py` to generate page PNGs (and optional PDF) for visual QA, then iterate until layout is flawless before delivering the final document.
+- pdf | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/pdf/26.909.12148/skills/pdf/SKILL.md
+  Purpose: Read, create, inspect, render, and verify PDF files where visual layout matters, including fillable AcroForms. Use Poppler rendering plus Python tools such as reportlab, pdfplumber, and pypdf for generation and extraction.
+- Presentations | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/presentations/26.909.12148/skills/presentations/SKILL.md
+  Purpose: Read, create or edit PowerPoint or Google Slides decks. Use for presentation, slide deck, PowerPoint, PPT, PPTX, or Google Slides requests.
+- excel-live-control | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.909.12148/skills/excel-live-control/SKILL.md
+  Purpose: Control an open or active Microsoft Excel workbook through the ChatGPT add-in or connected session. Use when the user tags the Microsoft Excel app in Codex or follows up on an established live Excel task. Do not use for standalone spreadsheet files or Google Sheets.
+- Spreadsheets | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/spreadsheets/26.909.12148/skills/spreadsheets/SKILL.md
+  Purpose: Use skill when user requests to create, modify, analyze, visualize, or work with spreadsheet files (`.xlsx`, `.xls`, `.csv`, `.tsv`) or Google Sheets with formulas, formatting, charts, tables, and recalculation. Do not use for live controlling Microsoft Excel app or a live Excel session.
+- template-creator | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/openai-primary-runtime/template-creator/26.909.12148/skills/template-creator/SKILL.md
+  Purpose: Create or update a reusable personal Codex artifact-template skill. Use when the user invokes $template-creator or asks in natural language to create a reusable template from a reference document, presentation, spreadsheet, Google Docs, Slides, or Sheets link, ImageGen or Product Design image, email, Slack message, or Site project, or explicitly asks to edit or update a passed artifact-template skill. Do not use for one-off creation from an existing template.
+- ponytail | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/.openclaw/skills/ponytail/SKILL.md
+  Purpose: Lazy senior dev mode for any coding task (write, refactor, fix, review): YAGNI, stdlib first, no unrequested abstractions. Not for non-coding requests.
+- ponytail-audit | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/.openclaw/skills/ponytail-audit/SKILL.md
+  Purpose: Audit the whole repo for over-engineering. A ranked list of what to delete, simplify, or replace with stdlib or native features.
+- ponytail-debt | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/.openclaw/skills/ponytail-debt/SKILL.md
+  Purpose: Harvest every ponytail: shortcut comment into one debt ledger, so deferrals get tracked instead of forgotten. One-shot report.
+- ponytail-gain | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/.openclaw/skills/ponytail-gain/SKILL.md
+  Purpose: Show ponytail measured impact as a scoreboard: less code, less cost, more speed, from the benchmark medians. One-shot display.
+- ponytail-help | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/.openclaw/skills/ponytail-help/SKILL.md
+  Purpose: Quick reference for ponytail's modes, skills, and commands. One-shot display.
+- ponytail-review | on disk; not in this session skill catalog
+  Path: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/.openclaw/skills/ponytail-review/SKILL.md
+  Purpose: Review a diff for over-engineering. Finds what to delete: reinvented stdlib, needless deps, speculative abstractions. One line per finding.
+- ponytail | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/skills/ponytail/SKILL.md
+  Purpose: >
+- ponytail-audit | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/skills/ponytail-audit/SKILL.md
+  Purpose: >
+- ponytail-debt | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/skills/ponytail-debt/SKILL.md
+  Purpose: >
+- ponytail-gain | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/skills/ponytail-gain/SKILL.md
+  Purpose: >
+- ponytail-help | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/skills/ponytail-help/SKILL.md
+  Purpose: >
+- ponytail-review | exposed in this session
+  Path: C:/Users/muaro/.codex/plugins/cache/ponytail/ponytail/4.10.0/skills/ponytail-review/SKILL.md
+  Purpose: >
+
+OTHER AGENTS — HISTORICAL RECORD, 2026-09-18
 
 2. Claude Code
 - User skills: None. All external skills removed.
@@ -63,9 +201,17 @@ PER AGENT
 - User skills: None. paths array set to [] in ~/.config/kilo/kilo.jsonc.
 - Plugin skills: None. Runs pure with native agent tools.
 
-4. OpenCode
-- User skills: None.
-- Plugin skills: None. Runs pure with native agent tools.
+4. OpenCode — RESCANNED 2026-09-22
+- User skill root: none (no ~/.config/opencode/skills directory).
+- Repository skills (2), locked in skills-lock.json under .agents/skills/:
+  - animate | C:/Github/Learning-assistent/.agents/skills/animate/SKILL.md
+  - frontend-design | C:/Github/Learning-assistent/.agents/skills/frontend-design/SKILL.md
+- Shared skills used in session: Microsoft Foundry set under C:/Users/muaro/.agents/skills/
+  (microsoft-foundry, finetuning, deploy-model, capacity, customize, preset).
+- Plugin skills: ponytail family via @dietrichgebert/ponytail in opencode.json/jsonc
+  (ponytail, ponytail-audit, ponytail-debt, ponytail-gain, ponytail-help, ponytail-review).
+- On disk but not in config plugin array: none providing skills beyond the above.
+- No MCP-backed skill servers. Details: OPENCODE.md.
 
 5. Antigravity CLI
 - Antigravity CLI built-in skills (5 files):
@@ -87,12 +233,5 @@ PER AGENT
 - User skills: None. All external skills removed.
 - Plugin skills: None. Runs pure with native agent tools.
 
-SHARED USER SKILLS
-- None. C:/Users/muaro/.agents/skills has been deleted.
-
-PROJECT SKILLS
-- None. C:/Github/Learning-assistent/.agents/skills has been deleted.
-
-COVERAGE
-Only active, enabled, and built-in skills present on this device are documented.
-All external and deleted skill information has been pruned in accordance with the current device configuration.
+Coverage: system, shared user, repository, and installed plugin-cache skill roots.
+Temporary marketplace downloads, backups, other users, and unrelated repositories excluded.

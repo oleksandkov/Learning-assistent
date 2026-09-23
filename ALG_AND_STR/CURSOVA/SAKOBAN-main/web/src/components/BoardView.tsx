@@ -27,6 +27,7 @@ export default function BoardView({
   cellHints = {},
   hidePlayer = false,
   className = "",
+  fullBoard = false,
 }: {
   board: Board;
   state: State;
@@ -38,11 +39,12 @@ export default function BoardView({
   cellHints?: Record<number, BoardCellHint>;
   hidePlayer?: boolean;
   className?: string;
+  fullBoard?: boolean;
 }) {
   // Core parser pads the original XSB by one cell; omit that exterior frame for display.
   const fullWidth = board.width - 2,
     fullHeight = board.height - 2;
-  const cameraMode = fullWidth > 22 || fullHeight > 22;
+  const cameraMode = !fullBoard && (fullWidth > 22 || fullHeight > 22);
   const fieldOfView = Math.max(7, Math.min(41, camera?.fov ?? 17));
   const w = cameraMode ? Math.min(fieldOfView, fullWidth) : fullWidth;
   const h = cameraMode ? Math.min(fieldOfView, fullHeight) : fullHeight;

@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { Lesson, ResolvedLesson } from "./lessons";
 
-// Server/build only: keep explanations attached to the actual shared C++ core.
+// Server/build only: keep explanations attached to the actual implementation.
 export async function withSource(lesson: Lesson): Promise<ResolvedLesson> {
   const files = Array.from(new Set(lesson.frames.map(frame => frame.source ?? lesson.source)));
   const sources = new Map(await Promise.all(files.map(async file => [

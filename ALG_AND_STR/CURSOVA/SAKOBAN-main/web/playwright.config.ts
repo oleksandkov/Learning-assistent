@@ -11,7 +11,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   webServer: {
-    command: "npm run start -- --port 3105",
+    command: "node node_modules/next/dist/bin/next start --port 3105",
     url: "http://127.0.0.1:3105",
     reuseExistingServer: false,
     timeout: 30000,

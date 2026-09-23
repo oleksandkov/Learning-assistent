@@ -39,7 +39,6 @@ test("web-only population methods expose an interactive observer", async ({ page
     await expect(card.locator(".board-marker.leader")).toHaveCount(1);
     await card.getByRole("button", { name: `Запустити всіх ${plural}` }).click();
     await expect(card.locator(".evolution-board-panel .evolution-panel-heading")).toContainText("Крок 1 /", { timeout: 5000 });
-    await expect(card.locator(".fitness-explanation")).toBeVisible();
     await card.screenshot({ path: `test-results/${algorithm}-generation.png` });
     expect(await card.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBeTruthy();
     expect(await card.locator(".evolution-stage .game-board").evaluate(board => {

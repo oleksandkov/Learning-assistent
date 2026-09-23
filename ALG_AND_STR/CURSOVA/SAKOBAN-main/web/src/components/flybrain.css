@@ -1,0 +1,220 @@
+.flybrain-observer { grid-column: 1 / -1; min-width: 0; margin-top: 18px; border-top: 1px solid var(--line); }
+.flybrain-observer > summary { padding: 20px 0; cursor: pointer; font-weight: 600; }
+.flybrain-live { margin-top: 32px; }
+.flybrain-viewer { --fb-blue: #137fa5; --fb-violet: #7856bc; --fb-amber: #ad6714; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+.flybrain-viewer .flybrain-heading { padding: 26px 28px 20px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.flybrain-heading h3 { font-size: clamp(24px, 3vw, 34px); font-weight: 550; letter-spacing: -.04em; }
+.flybrain-viewer .flybrain-heading p { margin-top: 8px; font-size: 13px; }
+.flybrain-session { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; font-size: 12px; color: var(--muted); padding-top: 9px; }
+.flybrain-session i { width: 7px; height: 7px; background: var(--muted); border-radius: 50%; }
+.flybrain-session.recording i { background: var(--fb-blue); box-shadow: 0 0 0 4px color-mix(in srgb, var(--fb-blue) 14%, transparent); }
+.flybrain-circuit { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 0 28px 24px; font-size: 13px; color: var(--muted); }
+.flybrain-circuit b { font-size: 17px; font-variant-numeric: tabular-nums; font-weight: 600; }
+.flybrain-circuit span:nth-of-type(1) { color: var(--fb-blue); }
+.flybrain-circuit span:nth-of-type(2) { color: var(--fb-violet); }
+.flybrain-circuit span:nth-of-type(3) { color: var(--fb-amber); }
+.flybrain-circuit i { font-style: normal; color: var(--muted); }
+.flybrain-workspace { display: grid; grid-template-columns: minmax(0, 1.9fr) minmax(220px, 1fr); border-block: 1px solid var(--line); }
+.flybrain-recording { background: #172a47; color: #f1f6ff; padding: 22px 20px 18px; min-width: 0; }
+.flybrain-panel-title { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.flybrain-viewer h4 { margin: 0; font-size: 14px; font-weight: 600; }
+.flybrain-panel-title > span { font-size: 11px; opacity: .75; }
+.flybrain-recording canvas { display: block; width: 100%; margin-top: 15px; }
+.flybrain-output { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding-top: 18px; border-top: 1px solid #ffffff24; }
+.flybrain-directions { display: flex; gap: 5px; flex-shrink: 0; }
+.flybrain-directions span { display: grid; place-items: center; width: 36px; height: 40px; border: 1px solid #ffffff38; border-radius: 6px; font-size: 24px; color: #b7c9e2; }
+.flybrain-directions .chosen { color: #172a47; background: #f4c26b; border-color: #f4c26b; }
+.flybrain-directions .blocked { color: #172a47; background: #ffa6b2; border-color: #ffa6b2; }
+.flybrain-output-info { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.flybrain-output-primary { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.flybrain-output-primary strong { font-size: 13px; font-weight: 600; }
+.flybrain-intent-pill { font-size: 11px; font-weight: 500; color: #d6e5fb; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.16); padding: 1px 7px; border-radius: 4px; }
+.flybrain-output p { font-size: 11px; color: #b7c9e2; margin-top: 3px; }
+.flybrain-projection-tag { margin-left: auto; font-size: 11px; color: #a2bcdb; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 3px 8px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+.flybrain-board-panel { padding: 22px; display: flex; flex-direction: column; min-width: 0; background: var(--bg); }
+.flybrain-board { display: grid; place-items: center; flex: 1; padding: 18px 8px; min-height: 200px; }
+.flybrain-board .game-board { width: 100%; max-width: 260px; max-height: 300px; }
+.flybrain-trails { font-size: 12px; display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.flybrain-controls { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; padding: 18px 24px; border-bottom: 1px solid var(--line); }
+.flybrain-controls button, .flybrain-controls select, .flybrain-winner { min-height: 38px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--ink); padding: 7px 12px; font-size: 12px; }
+.flybrain-controls .flybrain-play { background: var(--ink); color: var(--surface); min-width: 95px; }
+.flybrain-controls label { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); }
+.flybrain-controls output { font-size: 12px; min-width: 60px; font-variant-numeric: tabular-nums; }
+.flybrain-scrubber { flex: 1; min-width: 130px; }
+.flybrain-scrubber input { width: 100%; min-width: 70px; accent-color: var(--fb-blue); }
+.flybrain-analysis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; padding: 26px 28px; }
+.flybrain-analysis section { min-width: 0; }
+.flybrain-bars { display: grid; gap: 9px; margin-top: 18px; }
+.flybrain-bars > div { display: grid; grid-template-columns: 52px 1fr 30px; align-items: center; gap: 10px; font-size: 11px; color: var(--muted); }
+.flybrain-bars b { text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+.flybrain-bars meter { width: 100%; height: 10px; }
+.flybrain-bars meter::-webkit-meter-bar { border: 0; background: var(--line); }
+.flybrain-bars meter::-webkit-meter-optimum-value { background: var(--fb-amber); }
+.flybrain-bars > div:first-child meter::-webkit-meter-optimum-value { background: var(--fb-blue); }
+.flybrain-bars > div:nth-child(2) meter::-webkit-meter-optimum-value { background: var(--fb-violet); }
+.flybrain-stats { margin: 16px 0 0; font-size: 12px; }
+.flybrain-stats div { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.flybrain-stats dt { color: var(--muted); }
+.flybrain-stats dd { margin: 0; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
+.fb-val-reward { color: #4cd964 !important; }
+.fb-val-penalty { color: #bc9cfa !important; }
+.flybrain-distribution { display: flex; justify-content: space-between; font-size: 12px; }
+.flybrain-goals { width: 100%; max-height: 100px; color: var(--fb-blue); margin-top: 10px; }
+.flybrain-analysis section > p { font-size: 11px; }
+.flybrain-winner { margin-top: 12px; font-size: 11px; width: 100%; }
+.flybrain-footnote { display: flex; justify-content: space-between; gap: 24px; padding: 20px 28px; border-top: 1px solid var(--line); background: var(--bg); }
+.flybrain-footnote strong { font-size: 13px; font-weight: 600; }
+.flybrain-footnote p { font-size: 11px; margin-top: 5px; max-width: 55ch; }
+.flybrain-notice { padding: 12px 24px; font-size: 13px; }
+.flybrain-help { margin: 14px 0; font-size: 12px; }
+@media (max-width: 1050px) {
+  .flybrain-workspace { grid-template-columns: minmax(0, 1.5fr) minmax(180px, 1fr); }
+  .flybrain-output { flex-wrap: wrap; gap: 12px; }
+  .flybrain-analysis { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+}
+@media (max-width: 600px) {
+  .flybrain-viewer .flybrain-heading, .flybrain-footnote { flex-direction: column; padding: 20px; gap: 12px; }
+  .flybrain-circuit { padding-inline: 20px; gap: 8px; }
+  .flybrain-workspace { grid-template-columns: 1fr; }
+  .flybrain-recording { padding: 18px 12px; }
+  .flybrain-board .game-board { max-width: 210px; }
+  .flybrain-controls { padding: 16px; }
+  .flybrain-scrubber { order: 1; flex-basis: 100%; }
+  .flybrain-analysis { grid-template-columns: 1fr; padding: 20px 16px; }
+  .flybrain-panel-title { flex-wrap: wrap; gap: 6px; }
+}
+@media (prefers-color-scheme: dark) {
+  .flybrain-viewer { --fb-blue: #56c6e7; --fb-violet: #bc9cfa; --fb-amber: #f4c26b; --fb-green: #4cd964; --fb-red: #ff5370; }
+}
+
+/* Precision avionics telemetry: CX Compass & 8-Ray Ommatidia sensor */
+.flybrain-nav-section { display: flex; flex-direction: column; }
+.flybrain-nav-instrument { display: flex; align-items: center; gap: 14px; margin-top: 14px; padding: 10px 12px; background: rgba(0, 0, 0, 0.18); border: 1px solid var(--line); border-radius: 10px; }
+.flybrain-cx-dial { width: 68px; height: 68px; flex-shrink: 0; }
+.cx-dial-svg { width: 100%; height: 100%; overflow: visible; display: block; }
+.cx-ring-outer { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.cx-ring-inner { fill: none; stroke: var(--line); stroke-dasharray: 2 3; stroke-width: 1; }
+.cx-axis { stroke: var(--line); stroke-dasharray: 2 3; stroke-width: 1; }
+.cx-cardinal { font-size: 8px; fill: var(--muted); text-anchor: middle; dominant-baseline: middle; font-weight: 600; }
+.cx-needle-group { transition: transform 250ms cubic-bezier(0.23, 1, 0.32, 1); will-change: transform; }
+.cx-needle-north { fill: var(--fb-blue, #56c6e7); filter: drop-shadow(0 0 2px rgba(86, 198, 231, 0.45)); }
+.cx-needle-south { fill: var(--muted); opacity: 0.45; }
+.cx-pivot { fill: var(--fb-amber, #f4c26b); }
+.flybrain-nav-meta { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+.flybrain-nav-meta .nav-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 11px; }
+.nav-row-label { color: var(--muted); }
+.nav-row-value { color: var(--ink); font-variant-numeric: tabular-nums; font-weight: 600; }
+.nav-caption { font-size: 10px; color: var(--muted); margin: 3px 0 0; line-height: 1.35; }
+
+.flybrain-rays-panel { margin-top: 10px; padding: 10px 12px; background: rgba(0, 0, 0, 0.18); border: 1px solid var(--line); border-radius: 10px; }
+.flybrain-rays-header { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 7px; }
+.flybrain-rays-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.ray-item { display: flex; flex-direction: column; gap: 2px; font-size: 9px; color: var(--muted); }
+.ray-label { font-weight: 600; font-size: 9px; }
+.ray-bar-bg { height: 4px; background: var(--line); border-radius: 2px; overflow: hidden; }
+.ray-bar-fill { height: 100%; background: var(--fb-blue, #56c6e7); border-radius: 2px; transform-origin: left; transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1); }
+.ray-val { font-variant-numeric: tabular-nums; font-size: 9px; color: var(--ink); }
+@media (max-width: 600px) {
+  .flybrain-rays-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* The lesson moves a single signal through the circuit; playback owns the timing. */
+.flybrain-lesson { width: 100%; }
+.flybrain-phases { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.flybrain-phases span { display: flex; align-items: center; gap: 6px; padding: 6px 9px; border-radius: 6px; color: var(--muted); font-size: 11px; }
+.flybrain-phases b { font-weight: 500; opacity: .65; }
+.flybrain-phases .active { color: var(--accent); background: var(--accent-soft); }
+.flybrain-anatomy { background: #172a47; color: #edf4ff; border-radius: 16px; padding: 16px 18px 12px; }
+.flybrain-anatomy > svg { display: block; width: 100%; max-height: 360px; overflow: visible; }
+.flybrain-anatomy > p { color: #b7c9e2; text-align: center; font-size: 10px; margin-top: 12px; }
+.fb-lobe { fill: #223957; stroke: #7690b1; stroke-width: 1; }
+.fb-midline { stroke: #7690b1; stroke-dasharray: 3 5; opacity: .4; }
+.fb-connections { fill: none; stroke: #bc9cfa; stroke-width: .7; opacity: .12; transition: opacity 250ms var(--ease-out); }
+.fb-connections.lit { opacity: .55; }
+.fb-sensory-wires, .fb-motor-wires { fill: none; stroke: #56c6e7; stroke-width: 1.5; opacity: .2; transition: opacity 250ms var(--ease-out); }
+.fb-motor-wires { stroke: #f4c26b; }
+.fb-sensory-wires.lit, .fb-motor-wires.lit { opacity: .9; }
+.fb-neuron { fill: #bc9cfa; opacity: .3; transition: opacity 250ms var(--ease-out); }
+.fb-neuron.firing { opacity: 1; }
+.fb-sensor { fill: #56c6e7; }
+.fb-motor { fill: #172a47; stroke: #f4c26b; }
+.fb-motor.selected { fill: #84602e; stroke-width: 2; }
+.fb-direction-label { fill: #fff; font-size: 13px; text-anchor: middle; }
+.fb-caption { fill: #c7d5e9; font-size: 11px; text-anchor: middle; }
+.fb-signal { fill: white; stroke: #56c6e7; stroke-width: 4; transition: transform 500ms var(--ease-in-out); }
+.fb-feedback { fill: none; stroke: #56c6e7; stroke-dasharray: 4 5; opacity: .15; transition: opacity 250ms var(--ease-out); }
+.fb-feedback.lit { opacity: .8; }
+.fb-feedback-label { fill: #a4b8d2; text-anchor: middle; font-size: 10px; }
+.flybrain-lesson-readouts { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 20px; }
+.flybrain-lesson-readouts section { min-width: 0; padding: 12px; border-radius: 10px; border: 1px solid var(--line); }
+.flybrain-lesson-readouts section.focused { border-color: var(--accent); }
+.flybrain-lesson-readouts h4 { font-size: 11px; font-weight: 600; margin: 0 0 12px; }
+.flybrain-lesson-readouts svg { width: 100%; color: var(--muted); }
+.flybrain-lesson-readouts svg text { fill: currentColor; font-size: 9px; }
+.fb-voltage-rest, .fb-voltage-spike { fill: none; stroke: var(--accent); stroke-width: 2.5; transition: opacity 250ms var(--ease-out); }
+.fb-votes { display: grid; gap: 9px; }
+.fb-votes > div { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; }
+.fb-votes > div.winner { color: var(--accent); }
+.fb-votes i { flex: 1; height: 6px; background: var(--line); overflow: hidden; border-radius: 3px; }
+.fb-votes b { display: block; height: 100%; background: currentColor; transform-origin: left; transition: transform 500ms var(--ease-in-out); }
+.fb-votes strong { min-width: 18px; font-size: 11px; }
+.fb-teaching-board { display: grid; grid-template-columns: repeat(5, 1fr); position: relative; aspect-ratio: 5 / 3; max-width: 180px; margin: auto; gap: 2px; }
+.fb-teaching-board > .wall { background: var(--wall); border-radius: 2px; }
+.fb-teaching-board > .floor { background: var(--floor); }
+.fb-teaching-board > .fb-teaching-player, .fb-teaching-board > .fb-teaching-box, .fb-teaching-board > .fb-goal { position: absolute; top: 33.333%; width: 20%; height: 33.333%; display: grid; place-items: center; font-size: 22px; transition: transform 500ms var(--ease-in-out); }
+.fb-teaching-player { left: 20%; color: var(--player); }
+.fb-teaching-box { left: 40%; color: var(--accent); font-weight: bold; }
+.fb-goal { left: 60%; color: var(--muted); }
+.fb-teaching-box.on-goal { color: var(--fb-blue, var(--accent)); }
+.fb-verdict { font-size: 10px; margin-top: 9px; text-align: center; }
+@media (max-width: 600px) {
+  .flybrain-lesson-readouts { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .flybrain-lesson-readouts section:last-child { grid-column: 1 / -1; }
+  .flybrain-anatomy { padding-inline: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flybrain-lesson *, .flybrain-lesson *::before, .flybrain-lesson *::after { transition: none !important; }
+}
+.flybrain-settings { margin: 16px 0; padding: 14px; border: 1px solid var(--line); border-radius: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.flybrain-settings legend { font-size: 13px; padding: 0 6px; }
+.flybrain-settings label { display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: var(--muted); }
+.flybrain-settings input[type=number] { width: 100%; min-width: 0; padding: 8px; border: 1px solid var(--line); border-radius: 5px; background: var(--surface); color: var(--ink); }
+.flybrain-settings .flybrain-retry { grid-column: 1 / -1; flex-direction: row; align-items: center; font-size: 12px; }
+.flybrain-settings p { grid-column: 1 / -1; font-size: 11px; }
+.flybrain-settings-help { grid-column: 1 / -1; min-width: 0; border-top: 1px solid var(--line); }
+.flybrain-settings-help details { border-bottom: 1px solid var(--line); }
+.flybrain-settings-help summary { padding: 10px 0; font-size: 12px; color: var(--ink); cursor: pointer; }
+.flybrain-settings-help summary:hover { color: var(--muted); }
+.flybrain-settings-help details[open] { padding-bottom: 10px; }
+.flybrain-settings .flybrain-settings-help p { margin: 0 0 8px; font-size: 12px; line-height: 1.6; color: var(--muted); }
+.flybrain-settings-help strong { color: var(--ink); font-weight: 600; }
+.flybrain-model-launch { display: flex; gap: 16px; align-items: center; padding: 0 28px 22px; }
+.flybrain-model-launch span { color: var(--muted); font-size: 12px; }
+.flybrain-dialog { width: min(1100px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--line); border-radius: 18px; color: var(--ink); background: var(--surface); }
+.flybrain-dialog::backdrop { background: #06101ecc; }
+.flybrain-viewer .flybrain-dialog > header { display: flex; padding: 20px 24px; gap: 16px; justify-content: space-between; }
+.flybrain-dialog h3 { font-size: 24px; }
+.flybrain-dialog header p { font-size: 12px; margin-top: 7px; }
+.flybrain-3d { background: #101e35; color: #e8f0fc; }
+.flybrain-3d-legend { display: flex; align-items: center; gap: 20px; padding: 18px 24px 0; font-size: 12px; flex-wrap: wrap; }
+.flybrain-3d-legend label { display: flex; gap: 7px; align-items: center; }
+.flybrain-3d-legend > span { margin-left: auto; color: #b7c9e2; }
+.flybrain-3d canvas { display: block; width: 100%; height: clamp(260px, 45vh, 480px); touch-action: none; cursor: grab; }
+.flybrain-3d canvas:active { cursor: grabbing; }
+.flybrain-3d-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; padding: 8px 24px; font-size: 12px; }
+.flybrain-3d-tools label { display: flex; align-items: center; gap: 12px; }
+.flybrain-3d-tools .button { background: #223957; border-color: #506282; color: #e8f0fc; }
+.flybrain-3d > p { padding: 12px 24px 20px; color: #b7c9e2; font-size: 11px; }
+.flybrain-dialog-actions { display: flex; align-items: center; gap: 16px; justify-content: space-between; padding: 16px 24px; font-size: 12px; }
+@media (max-width: 600px) {
+  .flybrain-model-launch { align-items: flex-start; flex-direction: column; padding-inline: 20px; }
+  .flybrain-dialog { width: calc(100vw - 12px); max-height: calc(100dvh - 12px); border-radius: 10px; }
+  .flybrain-viewer .flybrain-dialog > header { padding: 14px; }
+  .flybrain-dialog h3 { font-size: 20px; }
+  .flybrain-3d-legend { padding-inline: 14px; gap: 10px; }
+  .flybrain-3d-tools, .flybrain-dialog-actions { padding-inline: 14px; flex-wrap: wrap; }
+}
+.flybrain-run-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; padding: 16px 24px; background: var(--bg); border-top: 1px solid var(--line); }
+.flybrain-run-controls label { display: flex; gap: 8px; align-items: center; font-size: 13px; font-weight: 600; }
+.flybrain-run-controls p { flex: 1; min-width: 180px; font-size: 11px; }
+.flybrain-solved { padding: 16px 24px; color: var(--accent); background: var(--accent-soft); font-weight: 600; font-size: 14px; }

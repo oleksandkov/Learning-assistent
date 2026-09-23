@@ -1,6 +1,12 @@
 MY AGENT POOL
-Inventory date: 2026-09-18
+Codex inventory date: 2026-09-21
+OpenCode inventory date: 2026-09-22
 User profile: C:/Users/muaro
+
+Codex was rescanned 2026-09-21. OpenCode was rescanned 2026-09-22.
+Other-agent records below are retained from 2026-09-18 and have NOT been reverified.
+Configured, cached, and session-exposed are distinct.
+No credentials or private conversation contents are included.
 
 1. Codex
    Command: codex
@@ -40,19 +46,44 @@ User profile: C:/Users/muaro
 Names normalized from the dictated list: codecs = Codex; cloth code = Claude Code;
 open coat = OpenCode; anti-gravity CLI = Antigravity CLI.
 
-COMPANION FILES
-MCP.txt     - MCPs by agent, combined list, and installation evidence.
-skills.txt  - Skills by agent, shared skills, and all discovered skill files.
-plugins.txt - Plugins by agent, shared catalog, and cached-only entries.
+CODEX RESCAN
+- npm package @openai/codex: installed version 0.155.1, read from package.json.
+- Configured model: gpt-6-astra; reasoning effort: medium.
+- 7 MCP servers configured; 12 plugins explicitly enabled.
+- Shared Microsoft Foundry skills, two repository skills, and Ponytail are present.
+- Ponytail persisted mode: full.
+- CLI version cache says 0.153.4, last checked 2026-09-07; this is stale
+  update-check metadata, not the installed package version.
 
-SCOPE AND STATUS
-This is a local configuration/filesystem inventory, not a connectivity test.
-Configured does not guarantee running, authenticated, or downloaded. Remote MCPs
-are configured services, not necessarily software installed on this PC.
-Checked the seven agents' user configuration, plugin and skill directories, other
-agent folders, VS Code MCP settings, global npm packages, and C:/Github projects.
-Backups, conversation history, most dependency trees, and marketplace catalogs
-were excluded. Other Windows users, WSL, other drives, and arbitrary folders were
-not exhaustively scanned. No passwords, tokens, environment values, or MCP
-command arguments are included. A shared skill is not automatically active in
-every agent. Cached plugins and project copies are explicitly distinguished.
+OPENCODE RESCAN — 2026-09-22
+- Two divergent global configs: opencode.json (freellmapi providers + ponytail)
+  and opencode.jsonc (model, SecondBrain instructions, mcp:{}, /secondbrain).
+- 0 MCP servers; 1 configured plugin (@dietrichgebert/ponytail); TUI plugin
+  @slkiser/opencode-quota; on-disk voice-interface.js and opencode-bar not in
+  plugin array.
+- Repository skills: animate, frontend-design (skills-lock.json).
+- Full write-up: OPENCODE.md.
+
+COMPANION FILES
+OPENCODE.md   - OpenCode overview, dual-config caveat, providers, plugins, skills.
+MCP-VERIFICATION.md - Installed document MCP versions and passing functional tests.
+CODEX.md   - Codex overview, settings snapshot, hooks, instructions, and coverage.
+MCP.txt    - Configured MCP servers, plugin MCP declarations, session tool names.
+skills.txt - All discovered Codex skill paths, descriptions, and session status.
+plugins.txt - Enabled plugins, marketplaces, cache versions, and manifest paths.
+
+SCOPE
+Codex rescanned 2026-09-21; OpenCode rescanned 2026-09-22. Other agents retain
+their older 2026-09-18 records.
+This is a local configuration inventory, not an exhaustive machine or account audit.
+Codex was updated with MarkItDown, Docling, and Excel MCPs after functional tests.
+Credentials, personal logs, chats, and database contents were not exported. Local configuration is not proof of service health or access.
+
+EFFECTIVE RUNTIME CONFIGURATION
+The current CLI uses CODEX_HOME=C:/Users/muaro/AppData/Roaming/orca/codex-runtime-home/home.
+Its config.toml also contains the three verified document MCP definitions;
+the ordinary ~/.codex/config.toml remains updated for regular Codex use.
+The host automatically synchronized the new entries into its runtime config.
+No manual runtime edit was necessary; all three definitions match the user config.
+The user config backup is ~/.codex/config.toml.bak-document-mcp-20260921.
+Runtime-managed settings and hooks were not edited.
