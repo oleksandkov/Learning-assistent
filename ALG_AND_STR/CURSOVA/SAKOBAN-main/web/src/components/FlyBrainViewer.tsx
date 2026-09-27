@@ -10,11 +10,12 @@ import "./flybrain.css";
 const arrows = { U: "↑", D: "↓", L: "←", R: "→" };
 const colors = ["#56c6e7", "#bc9cfa", "#f4c26b"];
 
-function CXCompassRadar({ heading = 0 }: { heading?: number }) {
+function CXCompassRadar({ heading = 0, ring }: { heading?: number; ring?: number[] }) {
   const deg = (heading * 180) / Math.PI;
   return (
     <div className="flybrain-cx-dial" title={`Центральний комплекс (CX): азимут ${Math.round(deg)}°`}>
       <svg viewBox="0 0 100 100" className="cx-dial-svg" aria-label={`Компас CX: ${Math.round(deg)} градусів`}>
+        {ring?.map((value, i) => <circle key={i} cx={50 + 39 * Math.cos(i * Math.PI / 8)} cy={50 + 39 * Math.sin(i * Math.PI / 8)} r={2 + value * 10} fill="#75e4b6" opacity={.2 + value / Math.max(...ring) * .8}><title>Сектор {i + 1}: {(value * 100).toFixed(1)}%</title></circle>)}
         <circle cx="50" cy="50" r="44" className="cx-ring-outer" />
         <circle cx="50" cy="50" r="32" className="cx-ring-inner" />
         <line x1="50" y1="8" x2="50" y2="92" className="cx-axis" />
@@ -23,7 +24,7 @@ function CXCompassRadar({ heading = 0 }: { heading?: number }) {
         <text x="88" y="54" className="cx-cardinal">Сх</text>
         <text x="50" y="90" className="cx-cardinal">Пд</text>
         <text x="12" y="54" className="cx-cardinal">Зх</text>
-        <g className="cx-needle-group" style={{ transform: `rotate(${deg}deg)`, transformOrigin: "50px 50px" }}>
+        <g className="cx-needle-group" style={{ transform: `rotate(${deg + 90}deg)`, transformOrigin: "50px 50px" }}>
           <polygon points="50,14 46,50 54,50" className="cx-needle-north" />
           <polygon points="50,86 46,50 54,50" className="cx-needle-south" />
           <circle cx="50" cy="50" r="3.5" className="cx-pivot" />
@@ -77,6 +78,7 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
   const [playing, setPlaying] = useState(false);
   const [following, setFollowing] = useState(false);
   const [speed, setSpeed] = useState(240);
+  const [vision, setVision] = useState(false);
   const [trails, setTrails] = useState(true);
   const [origin, setOrigin] = useState<Snapshot | null>(null);
   const [error, setError] = useState("");
@@ -162,8 +164,23 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
     if (open3d) dialog.current?.showModal(); else dialog.current?.close();
   }, [open3d]);
 
-  const acceptedMoves = useMemo(() => frames.slice(0, count).filter(f => f.accepted).map(f => f.dir).join(""), [frames, count]);
+  const acceptedMoves = useMemo(() => frames.slice(0, count).filter(f => f.accepted && f.behavior !== "PAUSE").map(f => f.dir).join(""), [frames, count]);
   const state = useMemo(() => origin ? replayState(origin, acceptedMoves, acceptedMoves.length) : null, [origin, acceptedMoves]);
+  const visionHints = useMemo(() => {
+    const hints: Record<number, { label: string; intensity: number }> = {};
+    if (!vision || !origin || !state) return hints;
+    const { board } = origin, boxes = new Set(state.boxes);
+    for (const [dx, dy] of [[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]]) {
+      for (let distance = 1; distance < Math.max(board.width, board.height); distance++) {
+        const x = state.player % board.width + dx * distance, y = Math.floor(state.player / board.width) + dy * distance;
+        const cell = y * board.width + x;
+        if (x < 0 || y < 0 || x >= board.width || y >= board.height || board.walls[cell] || !board.floor[cell]) break;
+        hints[cell] = { label: "·", intensity: .65 };
+        if (boxes.has(cell)) break;
+      }
+    }
+    return hints;
+  }, [vision, origin, state]);
   const markers = useMemo<BoardMarker[]>(() => {
     if (!origin || !trails) return [];
     const cells = new Map<number, BoardMarker>();
@@ -190,8 +207,9 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
     return Array.from(cells.values());
   }, [acceptedMoves, origin, trails, frame?.ghostTrace]);
 
-  const directionCounts = DIRECTIONS.map(d => frames.filter(f => f.dir === d).length);
-  const entropy = directionCounts.reduce((total, n) => n ? total - n / frames.length * Math.log2(n / frames.length) : total, 0);
+  const actionFrames = frames.filter(f => f.behavior !== "PAUSE");
+  const directionCounts = DIRECTIONS.map(d => actionFrames.filter(f => f.dir === d).length);
+  const entropy = directionCounts.reduce((total, n) => n ? total - n / actionFrames.length * Math.log2(n / actionFrames.length) : total, 0);
   const activity = frame ? [frame.sensory, frame.central, ...frame.motor] : [0, 0, 0, 0, 0, 0];
   const progress = frames.filter(f => f.goals !== undefined);
   const winner = frames.findIndex(f => f.won);
@@ -219,7 +237,7 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
   const runControls = (
     <div className="flybrain-run-controls">
       <label><input type="checkbox" checked={retryUntilSolved} onChange={e => onRetryChange?.(e.target.checked)} />Повторювати до розв’язання</label>
-      <p>Новий seed після кожної невдалої спроби. Зупиниться, коли C++ підтвердить усі ящики на цілях.</p>
+      <p>Новий seed, збережені ваги пам’яті після кожної завершеної спроби. Зупиниться, коли C++ підтвердить усі ящики на цілях.</p>
       {running ? <button type="button" className="button secondary" onClick={cancel}>Скасувати пошук</button>
         : <button type="button" className="button primary" onClick={recalculate}>↻ Перерахувати тут</button>}
     </div>
@@ -229,10 +247,10 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
     <div className="flybrain-viewer" data-seed={history.seed} data-attempt={history.attempt ?? 1} data-step={count} data-frames={frames.length}>
       <header className="flybrain-heading">
         <div><h3>Від імпульсу до руху</h3><p>Біо-агент · не гарантує рішення · ліміт {history.config?.maxSteps ?? MAX_STEPS} кроків</p></div>
-        <span className={`flybrain-session ${running ? "recording" : ""}`}><i />{running ? `Спроба ${history.attempt ?? 1} · запис триває` : "Запис завершено"}</span>
+        <span className={`flybrain-session ${running ? "recording" : ""}`}><i />{running ? `Спроба ${history.attempt ?? 1} · запис триває` : (history.attempt ?? 1) > 1 ? `Спроба ${history.attempt} · запис завершено` : "Запис завершено"}</span>
       </header>
       <div className="flybrain-circuit" aria-label="Будова симуляції">
-        <span><b>64</b> сенсорні (фасеткові)</span><i>→</i><span><b>1 780</b> центральні (MB)</span><i>→</i><span><b>4 × 40</b> моторні (симетричні)</span><i>→</i><span>хід перевіряє C++</span>
+        <span><b>64</b> сенсорні (фасеткові)</span><i>→</i><span><b>1 780</b> центральні (MB · CX · FB · PB)</span><i>→</i><span><b>4 × 40</b> моторні (симетричні)</span><i>→</i><span>хід перевіряє C++</span>
       </div>
       <div className="flybrain-model-launch">
         <button type="button" className="button secondary" onClick={() => setOpen3d(true)}>Відкрити 3D-мозок</button>
@@ -240,7 +258,7 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
       </div>
       {runControls}
       {!running && result.status === "Solved" && result.validated && (
-        <p className="flybrain-solved" role="status">✓ Розв’язано · усі ящики на цілях. Повторні спроби зупинено.</p>
+        <p className="flybrain-solved" role="status">✓ Розв’язано{(history.attempt ?? 1) > 1 ? ` з ${history.attempt}-ї спроби` : ""} · усі ящики на цілях. Повторні спроби зупинено.</p>
       )}
       <div className="flybrain-workspace">
         <section className="flybrain-recording" aria-label="Нейронна активність">
@@ -250,19 +268,20 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
           <div className="flybrain-output">
             <div className="flybrain-directions" aria-label="Моторна команда">
               {(["U", "L", "D", "R"] as const).map(dir => (
-                <span key={dir} className={frame?.dir === dir ? (frame.accepted ? "chosen" : "blocked") : ""}>
+                <span key={dir} className={frame?.behavior !== "PAUSE" && frame?.dir === dir ? (frame.accepted ? "chosen" : "blocked") : ""}>
                   {arrows[dir]}
                 </span>
               ))}
             </div>
             <div className="flybrain-output-info">
               <div className="flybrain-output-primary">
-                <strong>{frame ? (frame.accepted ? "Хід прийнято" : "Хід заблоковано") : "Очікування імпульсу"}</strong>
+                <strong>{frame ? (frame.behavior === "PAUSE" ? "Огляд · без руху" : frame.accepted ? "Хід прийнято" : "Хід заблоковано") : "Очікування імпульсу"}</strong>
+                {frame?.behavior && <span className="fb-behavior" data-behavior={frame.behavior}>{frame.behavior} · {({ MOVE: "рух", SEARCH: "пошук", PUSH: "штовхання", PAUSE: "огляд" } as const)[frame.behavior]}</span>}
                 {frame?.macroIntent && <span className="flybrain-intent-pill">{frame.macroIntent}</span>}
               </div>
               <p>
                 {frame
-                  ? frame.deadlockAverted
+                  ? frame.behavior === "PAUSE" ? "Нейрони продовжують обробляти сигнал. Команду руху не надіслано." : frame.inhibited?.length ? `Рефлекс перешкоди: ${frame.inhibited.map(d => arrows[d]).join(" ")} вже відхилено C++ у цій позиції. Обираємо інший вихід.` : frame.deadlockAverted
                     ? "Рефлекс болю: відвернуто кутовий дедлок, обрано безпечну альтернативу."
                     : frame.motor.every(n => n === 0)
                     ? "Моторні пули мовчать: випадкова стохастична спроба."
@@ -280,8 +299,9 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
         <section className="flybrain-board-panel" aria-label="Поле FlyBrain">
           <div className="flybrain-panel-title"><h4>Слід на полі</h4><span>{acceptedMoves.length} ходів</span></div>
           <div className="flybrain-board">
-            {origin && state ? <BoardView board={origin.board} state={state} markers={markers} fullBoard /> : <p>{error || "Завантаження поля…"}</p>}
+            {origin && state ? <BoardView board={origin.board} state={state} markers={markers} cellHints={visionHints} fullBoard /> : <p>{error || "Завантаження поля…"}</p>}
           </div>
+          <label className="flybrain-trails"><input type="checkbox" checked={vision} onChange={e => setVision(e.target.checked)} />Фасетковий зір · промені на полі</label>
           <label className="flybrain-trails">
             <input type="checkbox" checked={trails} onChange={e => setTrails(e.target.checked)} />Показати слід
           </label>
@@ -290,7 +310,7 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
       {!frames.length && !running && <p className="flybrain-notice">{history.steps ? "Історія спайків не збережена. Маршрут і підсумки доступні." : "Сесію завершено без кроків."}</p>}
       {large && <p className="flybrain-notice">На такому полі муха тут страждатиме. Спробуйте 01_simple або власний рівень з одним ящиком.</p>}
       {playbackControls}
-      <div className="flybrain-analysis">
+      <div className="flybrain-analysis" aria-label="Активність, пам’ять та навігація мозку">
         <section>
           <h4>Активність на кроці {count}</h4>
           <div className="flybrain-bars">
@@ -300,6 +320,8 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
               </div>
             ))}
           </div>
+          <div className="fb-zone-flow" aria-label="Функціональні зони мозку">{["MB", "CX", "FB", "PB"].map((name, i) => <div key={name} className={`fb-zone fb-zone-${i}`} title={["1 600 KC + 16 MBON · пам’ять", "16 CX · компас", "64 FB · ціль", "84 PB · моторний план"][i]}><span>{name}</span><meter min={0} max={Math.max(1, ...(frame?.zones ?? []))} value={frame?.zones?.[i] ?? 0} aria-label={`${name}: активність`} /><b>{frame?.zones?.[i] ?? 0}</b></div>)}</div>
+          <p className="fb-detail">MB · пам’ять / CX · компас / FB · ціль / PB · моторний план</p>
         </section>
         <section>
           <h4>Що відбулося</h4>
@@ -308,21 +330,18 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
             <div><dt>Ходи / штовхання</dt><dd>{result.moves.length} / {result.pushes}</dd></div>
             <div><dt>Повторні стани / заблоковані спроби</dt><dd>{history.loops} / {result.deadlocks}</dd></div>
             <div><dt>Ентропія напрямків (0–2 біти)</dt><dd>{entropy.toFixed(2)}</dd></div>
-            <div>
-              <dt>Дофамін STDP (крок {count})</dt>
-              <dd className={frame?.dopamine && frame.dopamine > 0 ? "fb-val-reward" : frame?.dopamine && frame.dopamine < 0 ? "fb-val-penalty" : ""}>
-                {frame?.dopamine !== undefined
-                  ? `${frame.dopamine > 0 ? "+" : ""}${frame.dopamine.toFixed(1)} DA · ${frame.dopamine > 0 ? "LTP зміцнення" : frame.dopamine < 0 ? "LTD пригнічення" : "спокій"}`
-                  : "0.0 DA"}
-              </dd>
-            </div>
           </dl>
+          <div className="fb-modulators" aria-label="Нейромодуляція">
+            <label className="fb-da"><span><b>DA</b> результат <output>{(frame?.dopamine ?? 0).toFixed(2)}</output></span><meter min={-3} max={3} value={frame?.dopamine ?? 0} aria-label="DA · дофамін" /></label>
+            <label className="fb-ota"><span><b>OTA</b> зусилля <output>{(frame?.octopamine ?? 0).toFixed(2)}</output></span><meter min={0} max={1} value={frame?.octopamine ?? 0} aria-label="OTA · октопамін" /></label>
+          </div>
+          <div className="fb-memory"><span>Пам’ять MB <b>{history.memorySessions ?? 0} сесій</b></span><p>{history.memorySessions ? "Мозок пам’ятає попередні спроби" : "Новий досвід · пам’ять ще порожня"}</p><small>6 400 зв’язків KC → MBON · навчання за DA</small></div>
           <p className="flybrain-distribution">{DIRECTIONS.map((d, i) => <span key={d}>{arrows[d]} {directionCounts[i]}</span>)}</p>
         </section>
         <section className="flybrain-nav-section">
           <h4>Орієнтація та зір (CX)</h4>
           <div className="flybrain-nav-instrument">
-            <CXCompassRadar heading={frame?.heading} />
+            <CXCompassRadar heading={frame?.heading} ring={frame?.ring} />
             <div className="flybrain-nav-meta">
               <div className="nav-row">
                 <span className="nav-row-label">Азимут CX</span>
@@ -336,6 +355,7 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
             </div>
           </div>
           <RayCastingRadar rays={frame?.rays} />
+          <div className="fb-intent-history" aria-label="Журнал нейронних намірів"><span>Намір FB</span>{frames.slice(Math.max(0, count - 8), count).map(f => <span key={f.t} title={`Крок ${f.t}: ${f.behavior ?? "рух"}`} className={f.behavior === "PAUSE" ? "is-pause" : ""}><small>{f.t}</small>{f.behavior === "PAUSE" ? "Ⅱ" : f.compassDir ? arrows[f.compassDir] : "·"}</span>)}</div>
         </section>
         <section>
           <h4>Ящики на цілях</h4>
@@ -354,7 +374,7 @@ export default function FlyBrainViewer({ result, loadSnapshot, running = false, 
           <p>{result.status === "Solved" ? "FlyBrain завершив рівень; оптимальність не гарантована." : "Маршрут FlyBrain ще не розв’язав рівень."}</p>
           {!baseline && compare && <button type="button" className="button subtle" disabled={running} onClick={compare}>Обчислити A* з тієї ж позиції</button>}
         </div>
-        <p>Спрощена LIF-мережа, не повний коннектом і не жива муха.<br />Seed {history.seed} · до {(history.config?.maxWallMs ?? 20000) / 1000} с + фінальна перевірка.</p>
+        <p>Синтетична LIF-мережа з 16-секторним rate-компасом CX, не копія FlyWire.<br />Seed {history.seed} · до {(history.config?.maxWallMs ?? 20000) / 1000} с + фінальна перевірка.</p>
       </footer>
       <dialog ref={dialog} className="flybrain-dialog" aria-label="3D-мозок FlyBrain" onCancel={() => setOpen3d(false)} onClose={() => setOpen3d(false)}>
         {open3d && (

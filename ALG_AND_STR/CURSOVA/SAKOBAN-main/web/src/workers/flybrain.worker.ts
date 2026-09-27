@@ -1,11 +1,11 @@
 import {
-  applyDopamine, brainConfig, computeRayCasting, createFlyBrain, decodeAction, DIRECTIONS,
+  applyDopamine, applyOctopamine, decodeBehavior, readTargetDirection, saveBrainMemory, brainConfig, computeRayCasting, createFlyBrain, decodeAction, DIRECTIONS,
   encodeState, isDeadlockPush, mulberry32, NEURONS, stepBrain, updateCXHeading, weakenMotor
 } from "../lib/flybrain";
-import type { Dir, FlyBrainConfig, FlyBrainHistory, SearchResult, Snapshot } from "../lib/types";
+import type { Dir, FlyBrainConfig, FlyBrainHistory, FlyBrainMemory, SearchResult, Snapshot } from "../lib/types";
 
-export interface FlyBrainRequest { levelId: string; customXsb?: string; base: string; seed: number; config?: Partial<FlyBrainConfig>; attempt?: number }
-export type FlyBrainEvent = { type: "progress" | "done"; result: SearchResult } | { type: "error"; message: string };
+export interface FlyBrainRequest { levelId: string; customXsb?: string; base: string; seed: number; config?: Partial<FlyBrainConfig>; attempt?: number; memory?: FlyBrainMemory }
+export type FlyBrainEvent = { type: "progress" | "done"; result: SearchResult; memory?: FlyBrainMemory } | { type: "error"; message: string };
 
 const arrows: Record<Dir, string> = { U: "↑", D: "↓", L: "←", R: "→" };
 
@@ -26,23 +26,6 @@ function totalGoalDistance(snapshot: Snapshot): number {
   return total;
 }
 
-function getBestTargetDir(snapshot: Snapshot): Dir {
-  const { board, state } = snapshot;
-  const px = state.player % board.width, py = Math.floor(state.player / board.width);
-  let targetCell = -1, minD = Infinity;
-  for (const box of state.boxes) {
-    const bx = box % board.width, by = Math.floor(box / board.width);
-    const d = Math.abs(px - bx) + Math.abs(py - by);
-    if (d < minD) { minD = d; targetCell = box; }
-  }
-  if (targetCell < 0) return "R";
-  const tx = targetCell % board.width, ty = Math.floor(targetCell / board.width);
-  if (Math.abs(tx - px) > Math.abs(ty - py)) {
-    return tx > px ? "R" : "L";
-  }
-  return ty > py ? "D" : "U";
-}
-
 export async function runSession(input: FlyBrainRequest, signal: AbortSignal, post: (event: FlyBrainEvent) => void) {
   const started = performance.now();
   const config = brainConfig(input.config);
@@ -50,11 +33,15 @@ export async function runSession(input: FlyBrainRequest, signal: AbortSignal, po
   const cancel = () => deadline.abort();
   signal.addEventListener("abort", cancel, { once: true });
   const timer = setTimeout(cancel, config.maxWallMs);
-  const brain = createFlyBrain(input.seed);
+  const brain = createFlyBrain(input.seed, input.memory);
   const preprocessingMs = performance.now() - started;
-  const history: FlyBrainHistory = { kind: "flybrain", neurons: NEURONS, steps: 0, frames: [], spikeRate: 0, loops: 0, seed: input.seed, config, attempt: input.attempt ?? 1 };
+  const history: FlyBrainHistory = { kind: "flybrain", neurons: NEURONS, steps: 0, frames: [], spikeRate: 0, loops: 0, seed: input.seed, config, attempt: input.attempt ?? 1, memorySessions: brain.memorySessions };
   let moves = "", snapshot: Snapshot | undefined, initialPushes = 0, blocked = 0, generated = 0, searchMs = 0, spikeTotal = 0;
-  const seen = new Set<string>();
+  const attempt = input.attempt ?? 1;
+  // Visit counts drive escalating loop penalties (2nd visit worse than 1st, …).
+  const visits = new Map<string, number>();
+  // Reflex memory comes only from C++ feedback, scoped to the full board state.
+  const rejected = new Map<string, Set<Dir>>();
   const key = (s: Snapshot) => `${s.state.player}:${[...s.state.boxes].sort((a, b) => a - b).join(",")}`;
   const getState = async (route: string, direction: string, requestSignal: AbortSignal) => {
     signal.throwIfAborted();
@@ -79,17 +66,28 @@ export async function runSession(input: FlyBrainRequest, signal: AbortSignal, po
     snapshot = await getState("", "", deadline.signal);
     if (!snapshot.accepted) throw new Error("Початкова позиція FlyBrain недійсна.");
     initialPushes = snapshot.pushes;
-    seen.add(key(snapshot));
+    visits.set(key(snapshot), 1);
     let prevGoalDist = totalGoalDistance(snapshot);
     let prevBoxesOnGoals = snapshot.state.boxes.filter(c => snapshot!.board.goals[c]).length;
 
     for (let t = 1; t <= config.maxSteps && !snapshot.won; t++) {
       if (deadline.signal.aborted) break;
+      const stateKeyBefore = key(snapshot);
+      const blockedHere = rejected.get(stateKeyBefore) ?? new Set<Dir>();
+      const inhibited = Array.from(blockedHere);
+      const allowed = DIRECTIONS.filter(d => !blockedHere.has(d));
+      if (!allowed.length) break; // C++ has rejected every exit from this exact state.
       const tick = performance.now();
-      const currents = encodeState(snapshot, input.base + moves);
+      const rays = config.enableRays !== false ? computeRayCasting(snapshot) : Array(8).fill(0);
+      const currents = encodeState(snapshot, input.base + moves, rays);
       const { spikes } = stepBrain(brain, currents, config);
       const random = mulberry32(input.seed + t);
-      const dir = decodeAction(spikes.motor, random);
+      // τ anneals over steps and attempts: explore early, exploit after memory builds.
+      const temperature = Math.max(0.8, 2.5 * Math.exp(-t / 120) + 0.5 / Math.sqrt(attempt));
+      const epsilon = Math.max(0.05, 0.2 / attempt);
+      const dir = random() < epsilon
+        ? allowed[Math.floor(random() * allowed.length)]
+        : decodeAction(spikes.motor, random, allowed, temperature);
       searchMs += performance.now() - tick;
 
       let chosen: Dir = dir;
@@ -98,82 +96,112 @@ export async function runSession(input: FlyBrainRequest, signal: AbortSignal, po
       // Nociception Reflex: if chosen direction would push a box into an irreversible deadlock
       if (config.enableNociception !== false && isDeadlockPush(snapshot, chosen)) {
         deadlockAverted = true;
-        const nonDeadlockAlts = DIRECTIONS.filter(d => d !== chosen && !isDeadlockPush(snapshot!, d));
+        const nonDeadlockAlts = allowed.filter(d => d !== chosen && !isDeadlockPush(snapshot!, d));
+        if (!nonDeadlockAlts.length) break; // No untried exit survives the enabled safety reflex.
         if (nonDeadlockAlts.length) {
           chosen = nonDeadlockAlts[Math.floor(random() * nonDeadlockAlts.length)];
         }
       }
 
+      const targetDir = readTargetDirection(brain);
+      const oldPushes = snapshot.pushes;
+      const adjacent = snapshot.state.player + (chosen === "U" ? -snapshot.board.width : chosen === "D" ? snapshot.board.width : chosen === "L" ? -1 : 1);
+      let behavior = decodeBehavior(brain, spikes.motor, snapshot.state.boxes.includes(adjacent));
+      if (behavior === "PAUSE") {
+        applyOctopamine(brain, 0);
+        history.steps = t;
+        history.frames.push({ t, dir: chosen, accepted: false, won: false, ...spikes, behavior, inhibited,
+          dopamine: 0, octopamine: brain.octopamine, heading: brain.heading, ring: Array.from(brain.ring),
+          compassDir: targetDir, targetDrive: Array.from(brain.targetDrive), rays, macroIntent: "Огляд · інтеграція сенсорів без руху" });
+        spikeTotal += spikes.sensory + spikes.central + spikes.motor.reduce((a, b) => a + b, 0);
+        history.spikeRate = spikeTotal / t / NEURONS * 1000;
+        if (t % 5 === 0) post({ type: "progress", result: result() });
+        continue;
+      }
       generated++;
       let next = await getState(moves, chosen, deadline.signal);
+      const rememberRejection = () => {
+        blockedHere.add(chosen);
+        rejected.set(stateKeyBefore, blockedHere);
+        weakenMotor(brain, chosen);
+      };
 
       // Silent pools explore legal moves, with C++ deciding legality even for fallback probes.
-      const alternatives = DIRECTIONS.filter(d => d !== chosen);
+      const alternatives = allowed.filter(d => d !== chosen && (config.enableNociception === false || !isDeadlockPush(snapshot!, d)));
       while (!next.accepted && spikes.motor.every(n => n === 0) && alternatives.length) {
-        blocked++; weakenMotor(brain, chosen);
+        blocked++; rememberRejection();
         chosen = alternatives.splice(Math.floor(random() * alternatives.length), 1)[0];
         generated++;
         next = await getState(moves, chosen, deadline.signal);
       }
 
       let dopamine = 0;
-      const targetDir = getBestTargetDir(snapshot);
-      const heading = updateCXHeading(brain, chosen, targetDir);
+      let effort = deadlockAverted ? .25 : 0;
 
       if (next.accepted) {
         moves += chosen;
+        updateCXHeading(brain, chosen);
         const newGoalDist = totalGoalDistance(next);
         const newBoxesOnGoals = next.state.boxes.filter(c => next.board.goals[c]).length;
         const stateKey = key(next);
+        const seenCount = visits.get(stateKey) ?? 0;
 
+        // Potential-based shaping: Φ = −(box→goal distance). Positive = closer to a win.
         if (newBoxesOnGoals > prevBoxesOnGoals) {
           dopamine = 2.5; // Big dopamine burst for placing a box on goal!
         } else if (newGoalDist < prevGoalDist) {
-          dopamine = 1.0; // Positive reinforcement for closing in on goals
-        } else if (seen.has(stateKey)) {
-          history.loops++;
-          brain.bias[Math.floor(random() * 4)] += 1.5;
-          dopamine = -1.2; // LTD punishment for spinning in loops
-        } else {
-          dopamine = 0.2; // Small baseline explorer dopamine
+          const gain = prevGoalDist - newGoalDist;
+          dopamine = Math.min(2.4, 0.35 + 0.55 * gain);
+        } else if (newGoalDist > prevGoalDist) {
+          dopamine = Math.max(-2.5, -0.35 * (newGoalDist - prevGoalDist));
         }
+
+        if (seenCount > 0) {
+          history.loops++;
+          effort += .35;
+          brain.bias[Math.floor(random() * 4)] += 1.5;
+          // Escalate: repeat visits hurt more (capped so DA stays within |DA| ≤ 3).
+          dopamine = Math.min(dopamine, Math.max(-3, -1.0 * seenCount));
+        } else if (dopamine === 0) {
+          dopamine = 0.2; // Novel state, no progress yet — keep exploring
+        }
+        visits.set(stateKey, seenCount + 1);
+        // Tiny per-step cost → prefers shorter solutions when several paths look equal.
+        dopamine = Math.max(-3, Math.min(3, dopamine - 0.01));
 
         prevGoalDist = newGoalDist;
         prevBoxesOnGoals = newBoxesOnGoals;
         snapshot = next;
-        seen.add(stateKey);
       } else {
         blocked++;
-        weakenMotor(brain, chosen);
-        dopamine = -0.8; // Negative feedback for bumping into walls
+        rememberRejection();
+        effort += .45;
+        dopamine = Math.max(-3, Math.min(3, -0.8 - 0.01)); // Wall bump + step cost
       }
 
+      applyOctopamine(brain, effort);
       if (config.enablePlasticity !== false) {
         applyDopamine(brain, dopamine);
       }
 
-      const isPush = snapshot.pushes > (t > 1 ? (history.frames[t - 2]?.motor ? snapshot.pushes : initialPushes) : initialPushes);
-      const macroIntent = next.won
-        ? "Рівень розв'язано: усі ящики на цілях"
-        : deadlockAverted
-        ? `Ноцицепція: захист від дедлоку (${arrows[chosen]})`
-        : isPush
-        ? `Штовхання ящика ${arrows[chosen]}`
-        : `Навігація до цілі (компас: ${arrows[targetDir]})`;
-
-      const rays = config.enableRays !== false ? computeRayCasting(snapshot) : undefined;
-      const ghostTrace = chosen + (targetDir !== chosen ? targetDir : "");
+      const isPush = next.accepted && next.pushes > oldPushes;
+      if (isPush) behavior = "PUSH";
+      else if (behavior === "PUSH") behavior = "MOVE";
+      const macroIntent = next.won ? "Рівень розв’язано: усі ящики на цілях"
+        : deadlockAverted ? `Ноцицепція: відвернуто ризик ${arrows[chosen]}`
+        : isPush ? `Штовхання ящика ${arrows[chosen]}`
+        : behavior === "SEARCH" ? `Пошук виходу ${arrows[chosen]}` : `Нейронний намір ${arrows[targetDir]}`;
 
       history.steps = t;
       history.frames.push({
         t, dir: chosen, accepted: next.accepted, won: next.accepted && next.won,
         ...spikes,
         dopamine: Math.round(dopamine * 10) / 10,
-        heading: Math.round(heading * 100) / 100,
+        heading: brain.heading, ring: Array.from(brain.ring), behavior, inhibited,
+        octopamine: brain.octopamine, targetDrive: Array.from(brain.targetDrive),
         compassDir: targetDir,
         deadlockAverted: deadlockAverted || undefined,
         rays,
-        ghostTrace,
         macroIntent,
         ...(t % 10 === 0 || next.won ? {
           goals: snapshot.state.boxes.filter(cell => snapshot!.board.goals[cell]).length / Math.max(1, snapshot.state.boxes.length),
@@ -210,7 +238,7 @@ export async function runSession(input: FlyBrainRequest, signal: AbortSignal, po
     clearTimeout(validationTimer);
     signal.removeEventListener("abort", stopValidation);
   }
-  post({ type: "done", result: final });
+  post({ type: "done", result: final, ...(final.validated ? { memory: saveBrainMemory(brain) } : {}) });
   return final;
 }
 

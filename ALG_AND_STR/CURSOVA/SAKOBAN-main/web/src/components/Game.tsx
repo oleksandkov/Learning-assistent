@@ -7,7 +7,7 @@ import SearchDebugger from "./SearchDebugger";
 import ComparisonReplay from "./ComparisonReplay";
 import EvolutionViewer from "./EvolutionViewer";
 import FlyBrainViewer from "./FlyBrainViewer";
-import { brainConfig, compactFlyBrain, DEFAULT_BRAIN_CONFIG, restoreFlyBrain } from "@/lib/flybrain";
+import { MEMORY_KEY, restoreBrainMemory, brainConfig, compactFlyBrain, DEFAULT_BRAIN_CONFIG, restoreFlyBrain } from "@/lib/flybrain";
 import type { FlyBrainEvent } from "@/workers/flybrain.worker";
 import {
   ALGORITHMS,
@@ -311,8 +311,10 @@ export default function Game({
     }
     throw new Error("AI не зміг побудувати маршрут.");
   }
+  const brainMemory = useRef<ReturnType<typeof restoreBrainMemory>>();
   async function requestFlyBrain(base: string, signal: AbortSignal): Promise<SearchResult> {
     const config = brainConfig(brainSettings);
+    try { brainMemory.current = restoreBrainMemory(JSON.parse(sessionStorage.getItem(MEMORY_KEY) ?? "null")) ?? brainMemory.current; } catch { /* Storage may be unavailable. Keep in-memory learning. */ }
     const previous = decisionsRef.current.find(d => d.result.algorithm === "flybrain")?.result.flybrain;
     nextBrainSeed.current = Math.max(nextBrainSeed.current, (previous?.seed ?? 7) + 1);
     let attempt = 0;
@@ -330,16 +332,22 @@ export default function Game({
         if (signal.aborted) return;
         const message = event.data;
         if (message.type === "error") { cleanup(); reject(new Error(message.message)); }
-        else if (message.type === "done") { cleanup(); resolve(message.result); }
+        else if (message.type === "done") {
+          if (message.memory) {
+            brainMemory.current = restoreBrainMemory(message.memory);
+            try { sessionStorage.setItem(MEMORY_KEY, JSON.stringify(brainMemory.current)); } catch { /* Learning still survives retries in this view. */ }
+          }
+          cleanup(); resolve(message.result);
+        }
         else setLiveBrain({ result: message.result, base });
       };
-      worker.postMessage({ levelId: level.id, customXsb, base, seed, config, attempt });
+      worker.postMessage({ levelId: level.id, customXsb, base, seed, config, attempt, memory: brainMemory.current });
     });
     signal.throwIfAborted();
     saveDecision({ result, base });
     setLiveBrain({ result, base });
     if (!retryBrainRef.current || result.status !== "LimitReached") return result;
-    // Retry from the same base with a new seeded network; never continue a deadlocked route.
+    // Retry from the same base with a new exploration seed and learned MB weights; never continue a deadlocked route.
     }
   }
   function cancelSearch(announce = false) {
@@ -968,6 +976,13 @@ export default function Game({
             <label>Сенсорне підсилення<input aria-label="Сенсорне підсилення" type="number" min={1} max={20} value={brainSettings.sensoryGain} disabled={searching}
               onChange={e => setBrainSettings(s => ({ ...s, sensoryGain: Number(e.target.value) }))} onBlur={() => setBrainSettings(brainConfig(brainSettings))} /></label>
             <label className="flybrain-retry"><input type="checkbox" checked={retryBrain} onChange={e => setRetryBrain(e.target.checked)} />Повторювати до розв’язання</label>
+            <label className="flybrain-retry"><input type="checkbox" checked={brainSettings.enablePlasticity !== false} disabled={searching} onChange={e => setBrainSettings(s => ({ ...s, enablePlasticity: e.target.checked }))} />Навчання пам’яті · STDP</label>
+            <label className="flybrain-retry"><input type="checkbox" checked={brainSettings.enableRays !== false} disabled={searching} onChange={e => setBrainSettings(s => ({ ...s, enableRays: e.target.checked }))} />Промені → сенсори</label>
+            <button type="button" className="button secondary" disabled={searching} onClick={() => {
+              try { sessionStorage.removeItem(MEMORY_KEY); } catch { /* The in-memory reset still works. */ }
+              brainMemory.current = undefined;
+              setMessage("Пам’ять очищено. Наступна спроба почне новий досвід.");
+            }}>Очистити пам’ять мозку</button>
             <div className="flybrain-settings-help" aria-label="Пояснення налаштувань FlyBrain">
               <details>
                 <summary>Ліміт кроків — що змінює?</summary>
@@ -1259,8 +1274,8 @@ export default function Game({
                       <dd>{result.algorithm === "gemini" ? "—" : result.generated.toLocaleString("uk-UA")}</dd>
                     </div>
                     <div>
-                      <dt>Макс. черга</dt>
-                      <dd>{result.algorithm === "gemini" ? "—" : result.frontier.toLocaleString("uk-UA")}</dd>
+                      <dt>{result.algorithm === "flybrain" ? "Спроб" : "Макс. черга"}</dt>
+                      <dd>{result.algorithm === "gemini" ? "—" : result.algorithm === "flybrain" ? String(result.flybrain?.attempt ?? 1) : result.frontier.toLocaleString("uk-UA")}</dd>
                     </div>
                     <div>
                       <dt>{result.algorithm === "flybrain" ? "Заблоковано" : "Тупики"}</dt>

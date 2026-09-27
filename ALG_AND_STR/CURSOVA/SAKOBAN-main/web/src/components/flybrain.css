@@ -218,3 +218,19 @@
 .flybrain-run-controls label { display: flex; gap: 8px; align-items: center; font-size: 13px; font-weight: 600; }
 .flybrain-run-controls p { flex: 1; min-width: 180px; font-size: 11px; }
 .flybrain-solved { padding: 16px 24px; color: var(--accent); background: var(--accent-soft); font-weight: 600; font-size: 14px; }
+
+/* Section 20 telemetry belongs to the existing analysis, sharing its palette and rhythm. */
+.fb-behavior { font: 11px Consolas, monospace; color: #a8efd0; border: 1px solid #75a993; border-radius: 4px; padding: 3px 7px; }
+.fb-behavior[data-behavior="PAUSE"] { color: #f4c26b; border-color: #a99871; }
+.fb-zone-flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line); }
+.fb-zone { min-width: 0; font: 11px Consolas, monospace; color: var(--muted); }.fb-zone b { display: block; margin-top: 7px; color: var(--ink); font-size: 14px; font-weight: 500; }
+.fb-zone meter { width: 100%; height: 7px; margin-top: 8px; display: block; }.fb-zone meter::-webkit-meter-bar { border: 0; background: var(--line); }.fb-zone meter::-webkit-meter-optimum-value { background: var(--fb-violet); }.fb-zone-1 meter::-webkit-meter-optimum-value { background: var(--fb-blue); }.fb-zone-2 meter::-webkit-meter-optimum-value { background: var(--fb-amber); }
+.fb-detail { color: var(--muted); font-size: 10px !important; line-height: 1.6; margin-top: 10px; }
+.fb-modulators { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; padding-top: 14px; border-top: 1px solid var(--line); }
+.fb-modulators label { min-width: 0; font-size: 10px; }.fb-modulators label > span { display: flex; gap: 5px; align-items: baseline; margin-bottom: 8px; }.fb-modulators b { font: 12px Consolas, monospace; }.fb-modulators output { margin-left: auto; font-family: Consolas, monospace; }
+.fb-modulators meter { width: 100%; height: 7px; display: block; }.fb-modulators meter::-webkit-meter-bar { border: 0; background: var(--line); }.fb-da { color: var(--fb-blue); }.fb-da meter::-webkit-meter-optimum-value { background: var(--fb-blue); }.fb-ota { color: var(--fb-amber); }.fb-ota meter::-webkit-meter-optimum-value { background: var(--fb-amber); }
+.fb-memory { border-top: 1px solid var(--line); padding-top: 12px; margin-bottom: 16px; font-size: 11px; }.fb-memory > span { display: flex; justify-content: space-between; gap: 10px; }.fb-memory b { font-weight: 600; font-variant-numeric: tabular-nums; }.fb-memory p { color: var(--muted); font-size: 11px; margin: 7px 0; }.fb-memory small { color: var(--muted); font-size: 10px; }
+.fb-intent-history { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; padding-top: 12px; margin-top: 14px; border-top: 1px solid var(--line); }.fb-intent-history > span:first-child { font-size: 10px; color: var(--muted); }.fb-intent-history > span:not(:first-child) { display: grid; text-align: center; min-width: 17px; font-size: 16px; color: var(--fb-blue); }.fb-intent-history small { font: 9px Consolas, monospace; color: var(--muted); }.fb-intent-history .is-pause { color: var(--fb-amber) !important; }
+.flybrain-trails + .flybrain-trails { margin-top: 10px; }
+
+.flybrain-raster-caption { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; font-size: 11px; color: #b7c9e2; }

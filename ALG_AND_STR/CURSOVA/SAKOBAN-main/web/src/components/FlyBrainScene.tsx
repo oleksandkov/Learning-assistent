@@ -33,7 +33,7 @@ export default function FlyBrainScene({ step }: { step: number }) {
         </g>)}
         <circle className="fb-signal" r="6" style={{ transform: `translate(${[55, 155, 285, 420, 514, 55][step]}px, ${[126, 126, 125, 160, 186, 126][step]}px)` }} />
         <text className="fb-caption" x="55" y="252">64 сенсори</text>
-        <text className="fb-caption" x="285" y="252">1 800 центральних нейронів</text>
+        <text className="fb-caption" x="285" y="252">1 780 · MB / CX / FB / PB</text>
         <text className="fb-caption" x="514" y="252">4 × 40</text>
         <path className={`fb-feedback ${advanced ? "lit" : ""}`} d="M514 213V281H55V212" />
         <text className="fb-feedback-label" x="285" y="296">{advanced ? "новий стан повертається до сенсорів" : "замкнений сенсомоторний контур"}</text>

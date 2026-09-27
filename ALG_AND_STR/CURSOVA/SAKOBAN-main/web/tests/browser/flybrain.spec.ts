@@ -150,3 +150,38 @@ test("flybrain retries from the card stop at a C++-confirmed win and show the wi
   await expect(viewer).toHaveAttribute("data-seed", seed!);
   await viewer.screenshot({ path: "test-results/flybrain-card-solved.png" });
 });
+
+
+test("flybrain section 20 instruments preserve memory across levels and expose anatomy", async ({ page }) => {
+  await page.goto("/play/03-microban-3");
+  await page.getByLabel("Алгоритм", { exact: true }).selectOption("flybrain");
+  await page.getByLabel("Ліміт кроків FlyBrain").fill("30");
+  await page.getByRole("button", { name: "Обчислити вибраний" }).click();
+  const viewer = page.locator(".flybrain-viewer");
+  await expect(viewer).toHaveAttribute("data-frames", "30");
+  await expect(page.locator(".flybrain-live")).toHaveCount(0);
+  await expect(viewer.getByLabel("DA · дофамін", { exact: true })).toBeVisible();
+  await expect(viewer.getByLabel("OTA · октопамін", { exact: true })).toBeVisible();
+  await expect(viewer.locator(".flybrain-analysis .fb-zone")).toHaveCount(4);
+  await expect(viewer.locator(".fb-instruments")).toHaveCount(0);
+  await expect(viewer.locator(".cx-dial-svg circle")).toHaveCount(19);
+  await viewer.getByLabel("Фасетковий зір · промені на полі").check();
+  await expect(viewer.locator(".board-cell-hint").first()).toBeVisible();
+  const memory = await page.evaluate(() => JSON.parse(sessionStorage.getItem("sokoban.flybrain.memory.v1")!));
+  expect(memory.weights).toHaveLength(6400); expect(memory.sessions).toBe(1);
+  await viewer.getByRole("button", { name: "Відкрити 3D-мозок" }).click();
+  const dialog = page.getByRole("dialog", { name: "3D-мозок FlyBrain" });
+  await expect(dialog.locator(".flybrain-3d-legend label")).toHaveCount(6);
+  await dialog.getByLabel("CX · компас", { exact: true }).uncheck();
+  await page.keyboard.press("Escape");
+  await page.goto("/play/02-microban");
+  await page.getByLabel("Алгоритм", { exact: true }).selectOption("flybrain");
+  await page.getByLabel("Ліміт кроків FlyBrain").fill("10");
+  await page.getByRole("button", { name: "Обчислити вибраний" }).click();
+  await expect(viewer.locator(".fb-memory")).toContainText("Мозок пам’ятає попередні спроби");
+  await expect(page.locator(".flybrain-live")).toHaveCount(0);
+  await page.emulateMedia({ reducedMotion: "reduce", colorScheme: "dark" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await viewer.locator(".flybrain-analysis").screenshot({ path: "test-results/flybrain-section20-mobile.png" });
+});

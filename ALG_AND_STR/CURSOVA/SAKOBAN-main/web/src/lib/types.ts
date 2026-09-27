@@ -132,6 +132,12 @@ export interface FlyBrainSpikeFrame {
   active?: number[]; // Actual neuron IDs that fired in this window (for the 3D view).
   won: boolean;
   goals?: number; // Fraction on goals, sampled every ten steps by the C++ snapshot.
+  inhibited?: Dir[]; // C++-rejected directions in this exact board state.
+  behavior?: "MOVE" | "SEARCH" | "PUSH" | "PAUSE";
+  ring?: number[];
+  octopamine?: number;
+  zones?: [number, number, number, number]; // KC+MBON, CX, FB, PB spikes
+  targetDrive?: number[];
   dopamine?: number;
   heading?: number;
   compassDir?: Dir;
@@ -150,6 +156,7 @@ export interface FlyBrainHistory {
   seed: number;
   config?: FlyBrainConfig;
   attempt?: number;
+  memorySessions?: number;
 }
 export interface FlyBrainConfig {
   maxSteps: number;
@@ -199,4 +206,10 @@ export interface Level {
   difficulty: string;
   file: string;
   note: string;
+}
+
+export interface FlyBrainMemory {
+  version: 1;
+  sessions: number;
+  weights: number[]; // Quantized KC→MBON weights only; stable topology, <=50 KiB.
 }

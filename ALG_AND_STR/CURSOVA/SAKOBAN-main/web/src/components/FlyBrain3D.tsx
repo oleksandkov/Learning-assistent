@@ -1,14 +1,16 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { FlyBrainSpikeFrame } from "@/lib/types";
-import { NEURONS } from "@/lib/flybrain";
+import { CENTRAL, MBON, CX, FB, PB, MOTOR, NEURONS } from "@/lib/flybrain";
 
-const colors = ["#56c6e7", "#bc9cfa", "#f4c26b"];
-const names = ["Sensory", "Central", "Motor"];
+const colors = ["#56c6e7", "#83cfb6", "#efc777", "#74c6e2", "#e6a396", "#f4c26b"];
+const names = ["Sensory", "MB · KC/MBON", "CX · компас", "FB · ціль", "PB · план", "Motor"];
 // A schematic bilateral volume, not imported anatomical/connectome coordinates.
 const neurons = Array.from({ length: NEURONS }, (_, id) => {
-  const group = id < 64 ? 0 : id < 1864 ? 1 : 2;
-  const index = group === 0 ? id : group === 1 ? id - 64 : id - 1864;
+  const group = id < CENTRAL ? 0 : id < CX ? 1 : id < FB ? 2 : id < PB ? 3 : id < MOTOR ? 4 : 5;
+  const index = id - [0, CENTRAL, CX, FB, PB, MOTOR][group];
+  if (group === 2) return { id, group, x: .38 * Math.cos(index * Math.PI / 8), y: .5 + .38 * Math.sin(index * Math.PI / 8), z: .65 };
+  if (group === 3 || group === 4) return { id, group, x: (index % (group === 3 ? 16 : 21) / (group === 3 ? 15 : 20) - .5) * 1.1, y: group === 3 ? -.25 : -.65, z: Math.floor(index / (group === 3 ? 16 : 21)) * .16 };
   const side = index % 2 ? 1 : -1;
   const angle = index * 2.399963;
   const y = 1 - 2 * ((index * 37 % 997) / 997);
@@ -16,7 +18,7 @@ const neurons = Array.from({ length: NEURONS }, (_, id) => {
   const depth = .35 + .65 * ((index * 71 % 101) / 101) ** (1 / 3);
   const center = group === 0 ? side * 1.55 : group === 1 ? side * .58 : (Math.floor(index / 40) - 1.5) * .35;
   return { id, group, x: center + Math.cos(angle) * radius * depth * (group === 1 ? .82 : .25),
-    y: (group === 2 ? -1.08 : .05) + y * depth * (group === 1 ? .84 : .38),
+    y: (group === 5 ? -1.08 : .05) + y * depth * (group === 1 ? .84 : .38),
     z: Math.sin(angle) * radius * depth * (group === 1 ? .62 : .3) };
 });
 
@@ -24,11 +26,11 @@ export default function FlyBrain3D({ frame }: { frame?: FlyBrainSpikeFrame }) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const [view, setView] = useState({ yaw: -.3, pitch: .2, zoom: 1 });
   const [selected, setSelected] = useState<number | null>(null);
-  const [groups, setGroups] = useState([true, true, true]);
+  const [groups, setGroups] = useState(names.map(() => true));
   const drag = useRef<{ x: number; y: number; moved: boolean } | null>(null);
   const points = useRef<{ id: number; x: number; y: number }[]>([]);
   const active = useMemo(() => new Set(frame?.active ?? (frame?.samples ?? []).map(sample =>
-    sample < 40 ? Math.floor(sample * 64 / 40) : sample < 80 ? 64 + Math.floor((sample - 40) * 1800 / 40) : 1864 + (sample - 80) * 4)), [frame]);
+    sample < 40 ? Math.floor(sample * 64 / 40) : sample < 80 ? 64 + Math.floor((sample - 40) * (MOTOR - CENTRAL) / 40) : MOTOR + (sample - 80) * 4)), [frame]);
 
   useEffect(() => {
     const element = canvas.current, ctx = element?.getContext("2d");
