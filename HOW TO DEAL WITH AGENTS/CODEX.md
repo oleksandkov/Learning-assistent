@@ -16,7 +16,7 @@ or credentials. It is an inventory, not a portable restore package.
 - Desktop: follow-up queue `steer`, conversation detail `STEPS_PROSE`,
   sans font size 14, code font size 13, ambient suggestions enabled.
 - Notification command invokes the installed computer-use executable with `turn-ended`.
-- Seven MCP servers, 12 explicitly enabled plugins, 14 cached plugin manifests,
+- Ten MCP servers, 12 explicitly enabled plugins, 14 cached plugin manifests,
   57 skill files found, 26 skills exposed in this session.
 - Runtime config reports app build `26.908.40834`; this is the configured runtime
   value, not an independent check of the running desktop application version.
@@ -229,6 +229,28 @@ tool_timeout_sec = 120
 
 [mcp_servers.excel.env]
 EXCEL_MCP_PAGING_CELLS_LIMIT = "[VALUE OMITTED]"
+
+# Document generation/processing MCPs added 2026-09-28.
+[mcp_servers.carbone]
+command = 'npx.cmd'
+args = ['-y', 'carbone-mcp']
+enabled = true
+startup_timeout_sec = 60
+
+[mcp_servers.carbone.env]
+CARBONE_API_KEY = "[VALUE OMITTED]"
+
+[mcp_servers.office]
+command = 'npx.cmd'
+args = ['-y', 'office-mcp']
+enabled = true
+startup_timeout_sec = 120
+
+[mcp_servers.docsmith]
+command = 'npx.cmd'
+args = ['-y', 'docsmith-mcp']
+enabled = true
+startup_timeout_sec = 60
 ```
 
 ## Repository instructions on disk

@@ -1,9 +1,10 @@
 MCP AND SESSION TOOL INVENTORY
-Codex inventory date: 2026-09-21
-OpenCode inventory date: 2026-09-22
+Codex inventory date: 2026-09-28
+OpenCode inventory date: 2026-09-28
+Antigravity CLI inventory date: 2026-09-28
 User profile: C:/Users/muaro
 
-Codex was rescanned 2026-09-21. OpenCode was rescanned 2026-09-22 (see OPENCODE.md).
+Codex, OpenCode, and Antigravity CLI were rescanned 2026-09-28.
 Other-agent records below are retained from 2026-09-18 and have NOT been reverified.
 Configured, cached, and session-exposed are distinct.
 No credentials or private conversation contents are included.
@@ -50,6 +51,23 @@ See MCP-VERIFICATION.md for installation, test coverage, and repeatable checks.
   Tools discovered: 7
   Checks: read existing XLSX; write and read back text and formula; native Excel sheet screenshot; missing sheet: error returned
   Environment variable names: EXCEL_MCP_PAGING_CELLS_LIMIT
+
+DOCUMENT GENERATION MCPs ADDED — 2026-09-28
+- carbone: installed, enabled. Requires CARBONE_API_KEY environment variable.
+  Command: npx.cmd -y carbone-mcp
+  Startup timeout: 60 seconds
+  Status: configured; not yet functional (API key required)
+  Purpose: Generate PDF/DOCX/XLSX/PPTX from templates+JSON; 100+ format conversions
+- office: installed, enabled. Requires .NET 9 runtime.
+  Command: npx.cmd -y office-mcp
+  Startup timeout: 120 seconds
+  Status: connected (verified via opencode mcp list 2026-09-28)
+  Purpose: Read, write, and manipulate Word documents (.docx files)
+- docsmith: installed, enabled. Python-powered document processing.
+  Command: npx.cmd -y docsmith-mcp
+  Startup timeout: 60 seconds
+  Status: stdio verified (initialize handshake passed 2026-09-28)
+  Purpose: Document processing for Excel, Word, PDF
 
 PLUGIN MCP DEFINITIONS
 - codex_app: enabled = False
@@ -208,16 +226,15 @@ Kilo Code (0 configured)
 Source: C:/Users/muaro/.config/kilo/kilo.jsonc
 - No MCP servers configured ("mcp": {}). Runs pure with native agent tools.
 
-OpenCode (6 configured) — MIRRORED FROM CODEX 2026-09-22
-Sources: C:/Users/muaro/.config/opencode/opencode.jsonc ("mcp" map, 6 entries);
+OpenCode (9 configured) — RESCANNED 2026-09-28
+Sources: C:/Users/muaro/.config/opencode/opencode.jsonc ("mcp" map, 9 entries);
          C:/Users/muaro/.config/opencode/opencode.json (providers only, no mcp key)
-- Mirrored from Codex config.toml: playwright, chrome-devtools, context7,
-  markitdown, docling, excel. `opencode mcp list` reports all 6 connected.
-- node_repl skipped: Codex-runtime internal (SKY_CUA pipe, version-tied
-  node_repl.exe), not portable to OpenCode.
-- markitdown re-probed 2026-09-22 via stdio: 1 tool (convert_to_markdown).
-  excel re-probed: 7 tools. docling: `connected` (19 tools verified 2026-09-21,
-  same binary). npx servers: `connected`.
+- playwright, chrome-devtools, context7, markitdown, docling, excel (from Codex mirror)
+- carbone, office, docsmith added 2026-09-28
+- `opencode mcp list` 2026-09-28: playwright ✓, chrome-devtools ✓, context7 ✓,
+  excel ✓, office ✓; markitdown ✗, docling ✗, carbone ✗, docsmith ✗
+  (markitdown/docling: pre-existing local binary issue; carbone: needs API key;
+  docsmith: first npx download timeout)
 - Skills: review-agent copied to ~/.config/opencode/skills/review-agent/.
   Other Codex .system skills (imagegen, openai-docs, plugin-creator,
   skill-creator, skill-installer) are Codex-specific, not copied.
@@ -225,9 +242,12 @@ Sources: C:/Users/muaro/.config/opencode/opencode.jsonc ("mcp" map, 6 entries);
   Codex bundled plugins are runtime-provided, no OpenCode equivalent.
   Details: OPENCODE.md.
 
-Antigravity CLI (0 configured)
+Antigravity CLI (9 configured) — RESCANNED 2026-09-28
 Source: C:/Users/muaro/.gemini/config/mcp_config.json
-- No MCP servers configured ("mcpServers": {}). Runs pure with native agent tools.
+- playwright, chrome-devtools, context7, markitdown, docling, excel (mirrored from Codex)
+- carbone, office, docsmith added 2026-09-28
+- `agy mcp list` 2026-09-28: all 9 enabled
+- Ponytail plugin installed 2026-09-28 (6 skills + 6 commands)
 
 Gemini CLI (0 configured)
 Source: C:/Users/muaro/.gemini/settings.json

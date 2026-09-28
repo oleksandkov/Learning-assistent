@@ -60,13 +60,7 @@ export default function AiSettings() {
         ← Головне меню
       </Link>
       <div className="page-heading">
-        <p className="small-label">Зовнішній гравець</p>
-        <h1>Налаштувати AI</h1>
-        <p>
-          Встав ключ Groq (безкоштовний free tier) або Google AI Studio —
-          провайдер визначиться сам, а список моделей підбереться під нього.
-          Ключ зберігається лише в цій вкладці.
-        </p>
+        <h1>api key</h1>
       </div>
       <form
         className="ai-key-form"
@@ -75,9 +69,9 @@ export default function AiSettings() {
           save();
         }}
       >
-        <label htmlFor="ai-key">AI API key (Groq або Google)</label>
         <input
           id="ai-key"
+          aria-label="AI API key (Groq або Google)"
           type="password"
           value={key}
           onChange={(event) => {
@@ -114,7 +108,7 @@ export default function AiSettings() {
         ) : null}
         <div className="ai-key-actions">
           <button className="button primary" type="submit">
-            Зберегти для цієї вкладки
+            Зберегти
           </button>
           <a
             className="button secondary"
@@ -137,10 +131,6 @@ export default function AiSettings() {
           {saved ? (key ? "Ключ готовий." : "Ключ видалено.") : ""}
         </p>
       </form>
-      <p className="ai-note">
-        AI пропонує маршрут, але не змінює поле напряму: кожен план
-        перевіряється правилами гри перед відтворенням.
-      </p>
     </main>
   );
 }

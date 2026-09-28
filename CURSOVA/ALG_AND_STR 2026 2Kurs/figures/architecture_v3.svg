@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1050" viewBox="0 0 1800 1050">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker></defs>
+<rect width="1800" height="1050" fill="#FFFFFF"/>
+<rect x="450" y="45" width="500" height="90" rx="45" fill="#ECF7EF" stroke="#334155" stroke-width="3"/>
+<text x="700" y="82.75" font-family="Arial" font-size="25" font-weight="600" text-anchor="middle" fill="#0F172A">Рівні Sokoban</text>
+<text x="700" y="114.75" font-family="Arial" font-size="25" font-weight="600" text-anchor="middle" fill="#0F172A">levels/*.xsb</text>
+<rect x="100" y="200" width="1200" height="400" rx="18" fill="#EAF2F8" stroke="#1F4E78" stroke-width="4"/>
+<text x="700" y="258" font-family="Arial" font-size="31" font-weight="700" text-anchor="middle" fill="#0F172A">sokoban_core · C++20</text>
+<rect x="115" y="300" width="270" height="110" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="250" y="366" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">LevelParser</text>
+<rect x="415" y="300" width="270" height="110" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="550" y="366" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">Board</text>
+<rect x="715" y="300" width="270" height="110" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="850" y="366" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">GameState</text>
+<rect x="1015" y="300" width="270" height="110" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="1150" y="366" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">GameRules</text>
+<rect x="115" y="450" width="270" height="110" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="250" y="516" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">GameSession</text>
+<rect x="415" y="450" width="270" height="110" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="550" y="499" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">SolverRegistry</text>
+<text x="550" y="533" font-family="Arial" font-size="17" font-weight="400" text-anchor="middle" fill="#0F172A">10 алгоритмів пошуку</text>
+<rect x="715" y="450" width="270" height="110" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="850" y="516" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">DeadlockDetector</text>
+<rect x="1015" y="450" width="270" height="110" rx="10" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+<text x="1150" y="516" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">Hungarian · Zobrist</text>
+<line x1="700" y1="135" x2="700" y2="200" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<rect x="1380" y="315" width="350" height="90" rx="12" fill="#ECF7EF" stroke="#334155" stroke-width="2"/>
+<text x="1555" y="369" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">BenchmarkRunner</text>
+<line x1="1300" y1="360" x2="1380" y2="360" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<rect x="1380" y="475" width="350" height="90" rx="12" fill="#ECF7EF" stroke="#334155" stroke-width="2"/>
+<text x="1555" y="529" font-family="Arial" font-size="22" font-weight="700" text-anchor="middle" fill="#0F172A">ReplayValidator</text>
+<line x1="1300" y1="520" x2="1380" y2="520" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<rect x="480" y="790" width="390" height="155" rx="16" fill="#FFFFFF" stroke="#1F4E78" stroke-width="3"/>
+<text x="675" y="835" font-family="Arial" font-size="28" font-weight="700" text-anchor="middle" fill="#1F4E78">CLI</text>
+<text x="675" y="884" font-family="Arial" font-size="20" font-weight="400" text-anchor="middle" fill="#0F172A">TerminalUI</text>
+<text x="675" y="910" font-family="Arial" font-size="20" font-weight="400" text-anchor="middle" fill="#0F172A">ANSI-візуалізація</text>
+<line x1="675" y1="600" x2="675" y2="790" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<rect x="930" y="790" width="390" height="155" rx="16" fill="#FFFFFF" stroke="#1F4E78" stroke-width="3"/>
+<text x="1125" y="835" font-family="Arial" font-size="28" font-weight="700" text-anchor="middle" fill="#1F4E78">Web</text>
+<text x="1125" y="884" font-family="Arial" font-size="20" font-weight="400" text-anchor="middle" fill="#0F172A">Next.js / React</text>
+<text x="1125" y="910" font-family="Arial" font-size="20" font-weight="400" text-anchor="middle" fill="#0F172A">нативний міст</text>
+<line x1="1125" y1="600" x2="1125" y2="790" stroke="#334155" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+</svg>

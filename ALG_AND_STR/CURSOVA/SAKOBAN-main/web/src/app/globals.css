@@ -1640,6 +1640,29 @@ select {
 .decision-metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin: 0; align-content: center; }
 .decision-metrics dt { color: var(--muted); font-size: 11px; }
 .decision-metrics dd { margin: 3px 0 0; font-size: 12px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.decision-complexity { grid-column: 1 / -1; padding-top: 8px; border-top: 1px dashed var(--line); }
+.decision-complexity summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 11px;
+  width: fit-content;
+  user-select: none;
+  transition: color 150ms ease;
+}
+.decision-complexity summary:hover {
+  color: var(--accent);
+}
+.decision-complexity details[open] summary {
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.decision-complexity .decision-complexity-body,
+.decision-complexity dd { color: var(--ink); }
+.decision-complexity strong { display: block; font-weight: 500; }
+.decision-complexity .decision-complexity-body span,
+.decision-complexity dd span { display: block; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.decision-complexity .decision-complexity-formula { margin-top: 3px; color: var(--ink); font-size: 12px; }
+.decision-complexity-depends b { color: var(--ink); font-weight: 500; }
 .decision-explanation { grid-column: 1 / -1; color: var(--muted); font-size: 12px; line-height: 1.6; }
 .ai-session { grid-column: 1 / -1; min-width: 0; padding-top: 12px; border-top: 1px dashed var(--line); }
 .ai-session summary { width: fit-content; cursor: pointer; color: var(--accent); font-size: 12px; }

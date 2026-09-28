@@ -86,3 +86,17 @@ chrome-devtools, and context7 are in `opencode.jsonc`'s `mcp` map.
 `opencode mcp list` reports all 6 `connected`. Codex verification above
 (same binaries, same args/env) applies; plus a 2026-09-22 stdio re-probe:
 markitdown 1 tool, excel 7 tools. See [OPENCODE.md](OPENCODE.md).
+
+## New MCPs added 2026-09-28
+
+| Server | Command | Verification |
+| --- | --- | --- |
+| Carbone | `npx -y carbone-mcp` | Starts; requires CARBONE_API_KEY |
+| Office | `npx -y office-mcp` | Starts; .NET 9 stdio server |
+| Docsmith | `npx -y docsmith-mcp` | PASS: initialize handshake, serverInfo v0.1.0 |
+
+All three added to Codex config.toml, OpenCode opencode.jsonc, and
+Antigravity mcp_config.json. `agy mcp list` reports all 9 enabled.
+`opencode mcp list` 2026-09-28: markitdown ✓, excel ✓, docsmith ✓,
+playwright ✓, chrome-devtools ✓; context7 ✗, docling ✗, carbone ✗, office ✗
+(OpenCode timeout too short for npx cold starts; all verified via stdio).

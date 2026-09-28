@@ -55,7 +55,6 @@ export default function LessonView({
           <section className="demo" aria-label="Покрокова демонстрація">
             <div className="demo-top">
               <span>Крок {step + 1} із {lesson.frames.length}</span>
-              <span>Навчальний приклад</span>
             </div>
             <div className="demo-progress" aria-label="Перейти до кроку">
               {lesson.frames.map((_, index) => (
@@ -149,7 +148,7 @@ export default function LessonView({
               </label>
             </div>
             <details className="lesson-source" open>
-              <summary>Як це написано в проєкті <span>{excerpt.file.endsWith(".ts") ? "TypeScript" : "C++"} · справжній фрагмент</span></summary>
+              <summary>Реалізація в коді <span>{excerpt.file.endsWith(".ts") ? "TypeScript" : "C++"}</span></summary>
               <div className="source-file">{excerpt.file}:{excerpt.start}</div>
               <div className="code-panel" tabIndex={0} role="region" aria-label={`Код ${excerpt.file.endsWith(".ts") ? "TypeScript" : "C++"} з активним рядком`}>
                 {excerpt.lines.map((line, i) => (
@@ -173,10 +172,6 @@ export default function LessonView({
           <div className="lesson-callout">
             <p>{lesson.takeaway}</p>
           </div>
-          <p className="source-note">
-            Приклади спрощено для навчання. Код читається безпосередньо з файлів цього проєкту.
-            Схеми показують принцип роботи, а не виміряний запуск пошуку.
-          </p>
           <Link
             className="button secondary"
             style={{ marginTop: 24 }}

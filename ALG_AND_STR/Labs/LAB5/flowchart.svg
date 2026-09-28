@@ -25,40 +25,33 @@
 
   <line x1="390" y1="188" x2="400" y2="210" stroke="#2c3e50" stroke-width="2.2" marker-end="url(#arrow)"/>
 
-  <!-- ==================== 4. БЛОК SHABAL-256 ==================== -->
+  <!-- 4. БЛОК SHABAL-256 -->
   <rect x="20" y="210" width="760" height="370" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.2" stroke-dasharray="6,4"/>
-  <text x="400" y="234" text-anchor="middle" font-size="15.5" font-weight="bold" fill="#15803d">
-    Підпрограма Shabal256::finalize(): Обчислення хешу SHABAL-256
-  </text>
+  <text x="400" y="234" text-anchor="middle" font-size="15.5" font-weight="bold" fill="#15803d">Підпрограма Shabal256::finalize(): Обчислення хешу SHABAL-256</text>
 
-  <!-- Крок 4.1: Доповнення блоку -->
   <rect x="150" y="246" width="500" height="34" rx="4" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
   <text x="400" y="268" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#166534">Доповнення даних (Padding): buffer[len] = 0x80, далі нулі до 64 байтів</text>
 
   <line x1="400" y1="280" x2="400" y2="300" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
-  <!-- Крок 4.2: Декодування слів M -->
   <rect x="160" y="300" width="480" height="34" rx="4" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
   <text x="400" y="322" text-anchor="middle" font-size="13.5" fill="#166534">Розбиття блоку на 16 слів M[0..15]; Додавання: B[i] = B[i] + M[i]</text>
 
   <line x1="400" y1="334" x2="400" y2="354" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
-  <!-- Крок 4.3: Перестановка P -->
   <rect x="120" y="354" width="560" height="48" rx="4" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
   <text x="400" y="374" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#166534">Криптографічна перестановка perm(M): 48 раундів perm_elt()</text>
   <text x="400" y="392" text-anchor="middle" font-size="12.5" fill="#166534">Зсуви регістрів rotl32, нелінійна дифузія A, B та C, інверсія бітів</text>
 
   <line x1="400" y1="402" x2="400" y2="422" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
-  <!-- Крок 4.4: Фінальні 3 раунди -->
   <rect x="160" y="422" width="480" height="34" rx="4" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
   <text x="400" y="444" text-anchor="middle" font-size="13.5" fill="#166534">Цикл фіналізації: 3 раунди { swap(B, C); xor_w(); perm(M); }</text>
 
   <line x1="400" y1="456" x2="400" y2="476" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
-  <!-- Крок 4.5: Формування результату -->
   <rect x="180" y="476" width="440" height="36" rx="4" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
-  <text x="400" y="499" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#15803d">Вибірка слів B[8..15] -> 32 байти (256 бітів) хеш-коду</text>
+  <text x="400" y="499" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#15803d">Вибірка слів B[8..15] -&gt; 32 байти (256 бітів) хеш-коду</text>
 
   <line x1="400" y1="512" x2="400" y2="532" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
@@ -67,25 +60,18 @@
 
   <line x1="400" y1="566" x2="400" y2="600" stroke="#2c3e50" stroke-width="2.2" marker-end="url(#arrow)"/>
 
-  <!-- ==================== 5. БЛОК ХЕШ-ТАБЛИЦІ (CHAINING) ==================== -->
+  <!-- 5. БЛОК ХЕШ-ТАБЛІЦІ (CHAINING) -->
   <rect x="20" y="600" width="760" height="360" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="2.2" stroke-dasharray="6,4"/>
-  <text x="400" y="624" text-anchor="middle" font-size="15.5" font-weight="bold" fill="#c2410c">
-    Підпрограма HashTable::insert(key, value): Вставка з методом ланцюгів
-  </text>
+  <text x="400" y="624" text-anchor="middle" font-size="15.5" font-weight="bold" fill="#c2410c">Підпрограма HashTable::insert(key, value): Вставка з методом ланцюгів</text>
 
-  <!-- Крок 5.1: Обчислення індексу -->
   <rect x="160" y="638" width="480" height="34" rx="4" fill="#ffffff" stroke="#ea580c" stroke-width="1.8"/>
-  <text x="400" y="660" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#9a3412">
-    Обчислення індексу: idx = hash(key) % capacity
-  </text>
+  <text x="400" y="660" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#9a3412">Обчислення індексу: idx = hash(key) % capacity</text>
 
   <line x1="400" y1="672" x2="400" y2="694" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
-  <!-- Крок 5.2: Ромб пошуку ключа в ланцюгу -->
   <polygon points="400,694 530,724 400,754 270,724" fill="#ffffff" stroke="#ea580c" stroke-width="2.2"/>
   <text x="400" y="729" text-anchor="middle" font-size="14" font-weight="bold" fill="#c2410c">Ключ є в buckets[idx]?</text>
 
-  <!-- Гілка ТАК: оновлення значення -->
   <line x1="530" y1="724" x2="630" y2="724" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="630" y1="724" x2="630" y2="762" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
   <text x="560" y="716" font-size="13.5" font-weight="bold" fill="#2e7d32">Так</text>
@@ -94,7 +80,6 @@
   <text x="630" y="782" text-anchor="middle" font-size="13" font-weight="bold" fill="#9a3412">entry.value = value;</text>
   <text x="630" y="797" text-anchor="middle" font-size="12.5" fill="#9a3412">return false; (оновлено)</text>
 
-  <!-- Гілка НІ: додавання нового елемента -->
   <line x1="270" y1="724" x2="170" y2="724" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="170" y1="724" x2="170" y2="762" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
   <text x="205" y="716" font-size="13.5" font-weight="bold" fill="#c62828">Ні</text>
@@ -103,17 +88,13 @@
   <text x="170" y="782" text-anchor="middle" font-size="13" font-weight="bold" fill="#9a3412">buckets[idx].push_back(...);</text>
   <text x="170" y="797" text-anchor="middle" font-size="12.5" fill="#9a3412">++count; return true; (вставка)</text>
 
-  <!-- Зведення гілок -->
   <line x1="170" y1="804" x2="170" y2="824" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="630" y1="804" x2="630" y2="824" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="170" y1="824" x2="630" y2="824" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="400" y1="824" x2="400" y2="846" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
-  <!-- Крок 5.3: Статистика колізій -->
   <rect x="180" y="846" width="440" height="36" rx="4" fill="#ffffff" stroke="#ea580c" stroke-width="1.8"/>
-  <text x="400" y="869" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#9a3412">
-    Оновлення статистики: коефіцієнт α = n/m, підрахунок колізій
-  </text>
+  <text x="400" y="869" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#9a3412">Оновлення статистики: коефіцієнт α = n/m, підрахунок колізій</text>
 
   <line x1="400" y1="882" x2="400" y2="904" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
@@ -122,7 +103,7 @@
 
   <line x1="400" y1="938" x2="400" y2="980" stroke="#2c3e50" stroke-width="2.2" marker-end="url(#arrow)"/>
 
-  <!-- ==================== 6. БЛОК КОНТРОЛЮ ФАЙЛУ (3б) ==================== -->
+  <!-- 6. БЛОК КОНТРОЛЮ ФАЙЛУ (3б) -->
   <rect x="140" y="980" width="520" height="54" rx="6" fill="#ede7f6" stroke="#512da8" stroke-width="2"/>
   <text x="400" y="1003" text-anchor="middle" font-size="14" font-weight="bold" fill="#311b92">Завдання 3б: Контрольна сума файлу (SHABAL-256)</text>
   <text x="400" y="1022" text-anchor="middle" font-size="12.5" fill="#311b92">Дописування маркера в кінець файлу та перевірка відсутності модифікацій</text>

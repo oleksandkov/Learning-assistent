@@ -206,7 +206,7 @@ export default function Game({
   const [showDebugger, setShowDebugger] = useState(false);
   const [selectedComparisons, setSelectedComparisons] = useState<Algorithm[]>([]);
   const [comparison, setComparison] = useState<Decision[] | null>(null);
-  const [sortBy, setSortBy] = useState<"default" | "time" | "moves" | "pushes">("default");
+  const [sortBy, setSortBy] = useState<"default" | "time" | "moves" | "pushes" | "complexity">("default");
   const [aiKey, setAiKey] = useState("");
   const [aiModel, setAiModel] = useState("");
 
@@ -733,6 +733,12 @@ export default function Game({
         : [...decisions, liveBrain]
       : decisions;
     if (sortBy === "default") return merged;
+    if (sortBy === "complexity") {
+      // 1 = найпростіша за теорією, див. Complexity.rank у types.ts
+      const rank = (d: Decision) =>
+        ALGORITHMS.find((item) => item.id === d.result.algorithm)?.complexity.rank ?? 99;
+      return [...merged].sort((a, b) => rank(a) - rank(b));
+    }
     const value = (d: Decision) =>
       sortBy === "time"
         ? d.result.totalMs
@@ -1017,40 +1023,33 @@ export default function Game({
             </div>
             <p>Кожна спроба має новий seed і той самий старт. Працює до перемоги або скасування; рішення не гарантоване. Вікно — час симуляції на хід, темп перегляду налаштовується окремо.</p>
           </fieldset>}
-          {algorithm === "gemini" ? (
-            !aiKey.trim() ? (
+          {algorithm === "gemini" && aiKey.trim() ? (
+            <>
               <p className="gemini-help">
-                Потрібен власний ключ (Groq або Google).{" "}
-                <Link href="/ai">Налаштувати AI →</Link>
+                ✓ Ключ підключено (
+                {aiProvider === "google" ? "Google AI" : "Groq"}).{" "}
+                <Link href="/ai">Змінити →</Link>
               </p>
-            ) : (
-              <>
-                <p className="gemini-help">
-                  ✓ Ключ підключено (
-                  {aiProvider === "google" ? "Google AI" : "Groq"}).{" "}
-                  <Link href="/ai">Змінити →</Link>
-                </p>
-                <label className="field-label" htmlFor="ai-model">
-                  Модель {aiProvider === "google" ? "Google" : "Groq (швидкі, free tier)"}
-                </label>
-                <select
-                  id="ai-model"
-                  value={activeAiModel}
-                  onChange={(e) => {
-                    setAiModel(e.target.value);
-                    try {
-                      sessionStorage.setItem(AI_MODEL_STORAGE, e.target.value);
-                    } catch {}
-                  }}
-                >
-                  {aiModels.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                    </option>
-                  ))}
-                </select>
-              </>
-            )
+              <label className="field-label" htmlFor="ai-model">
+                Модель {aiProvider === "google" ? "Google" : "Groq (швидкі, free tier)"}
+              </label>
+              <select
+                id="ai-model"
+                value={activeAiModel}
+                onChange={(e) => {
+                  setAiModel(e.target.value);
+                  try {
+                    sessionStorage.setItem(AI_MODEL_STORAGE, e.target.value);
+                  } catch {}
+                }}
+              >
+                {aiModels.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </>
           ) : null}
           <button
             className="button primary full"
@@ -1198,6 +1197,7 @@ export default function Game({
                 <option value="time">За часом</option>
                 <option value="moves">За ходами</option>
                 <option value="pushes">За штовханнями</option>
+                <option value="complexity">За складністю (прості → складні)</option>
               </select>
             </label>
           </div>
@@ -1227,7 +1227,6 @@ export default function Game({
                         <input type="checkbox" aria-label={`Порівнювати ${info.label}`} disabled={result.algorithm === "flybrain" || !result.validated || result.status !== "Solved"} checked={selectedComparisons.includes(result.algorithm)} onChange={e => setSelectedComparisons(previous => e.target.checked ? [...previous, result.algorithm] : previous.filter(id => id !== result.algorithm))} />
                         <div>
                           <h3>{info.label}</h3>
-                          <p>{info.metric}</p>
                         </div>
                       </div>
                       <span className={`decision-status ${result.status.toLowerCase()}`}>
@@ -1284,6 +1283,22 @@ export default function Game({
                     <div>
                       <dt>Перевірка</dt>
                       <dd>{result.validated ? "Пройдено" : "Немає"}</dd>
+                    </div>
+                    <div className="decision-complexity">
+                      <details>
+                        <summary title="Показати теоретичну складність">
+                          Складність · теоретична
+                        </summary>
+                        <div className="decision-complexity-body">
+                          <strong>{info.complexity.kind}</strong>
+                          <span className="decision-complexity-formula">
+                            Час {info.complexity.time} · Пам'ять {info.complexity.space}
+                          </span>
+                          <span className="decision-complexity-depends">
+                            <b>Від чого залежить:</b> {info.complexity.depends}
+                          </span>
+                        </div>
+                      </details>
                     </div>
                   </dl>
                   {result.explanation ? (

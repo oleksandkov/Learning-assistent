@@ -73,7 +73,7 @@ export default async function GameInfo() {
             >
               офіційний сайт Sokoban
             </a>
-            . Це незалежний навчальний проєкт.
+            .
           </p>
         </section>
         <MiniBoard xsb={xsb} />

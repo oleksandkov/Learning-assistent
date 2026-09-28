@@ -37,7 +37,7 @@ test("AI (Groq) applies only a verified plan and reports when AI fails", async (
   await page.getByLabel("AI API key (Groq або Google)").fill("test-api-key");
   await expect(page.getByRole("main")).toContainText("Groq");
   await page.getByLabel("Модель Groq (швидкі, free tier)").selectOption("openai/gpt-oss-120b");
-  await page.getByRole("button", { name: "Зберегти для цієї вкладки" }).click();
+  await page.getByRole("button", { name: "Зберегти" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Ключ" })).toContainText("Ключ готовий");
   const verifiedPlan = await (
     await page.request.post("/api/game", {

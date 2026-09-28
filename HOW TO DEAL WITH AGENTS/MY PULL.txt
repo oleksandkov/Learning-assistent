@@ -1,9 +1,10 @@
 MY AGENT POOL
-Codex inventory date: 2026-09-21
-OpenCode inventory date: 2026-09-22
+Codex inventory date: 2026-09-28
+OpenCode inventory date: 2026-09-28
+Antigravity CLI inventory date: 2026-09-28
 User profile: C:/Users/muaro
 
-Codex was rescanned 2026-09-21. OpenCode was rescanned 2026-09-22.
+Codex, OpenCode, and Antigravity CLI were rescanned 2026-09-28.
 Other-agent records below are retained from 2026-09-18 and have NOT been reverified.
 Configured, cached, and session-exposed are distinct.
 No credentials or private conversation contents are included.
@@ -46,23 +47,31 @@ No credentials or private conversation contents are included.
 Names normalized from the dictated list: codecs = Codex; cloth code = Claude Code;
 open coat = OpenCode; anti-gravity CLI = Antigravity CLI.
 
-CODEX RESCAN
+CODEX RESCAN — 2026-09-28
 - npm package @openai/codex: installed version 0.155.1, read from package.json.
 - Configured model: gpt-6-astra; reasoning effort: medium.
-- 7 MCP servers configured; 12 plugins explicitly enabled.
+- 10 MCP servers configured; 12 plugins explicitly enabled.
 - Shared Microsoft Foundry skills, two repository skills, and Ponytail are present.
 - Ponytail persisted mode: full.
+- New MCPs: carbone, office, docsmith (added 2026-09-28).
 - CLI version cache says 0.153.4, last checked 2026-09-07; this is stale
   update-check metadata, not the installed package version.
 
-OPENCODE RESCAN — 2026-09-22
+OPENCODE RESCAN — 2026-09-28
 - Two divergent global configs: opencode.json (freellmapi providers + ponytail)
   and opencode.jsonc (model, SecondBrain instructions, mcp:{}, /secondbrain).
-- 0 MCP servers; 1 configured plugin (@dietrichgebert/ponytail); TUI plugin
-  @slkiser/opencode-quota; on-disk voice-interface.js and opencode-bar not in
-  plugin array.
+- 9 MCP servers configured; 1 plugin (@dietrichgebert/ponytail).
+- New MCPs: carbone, office, docsmith (added 2026-09-28).
+- `opencode mcp list`: markitdown ✓, excel ✓, docsmith ✓, playwright ✓,
+  chrome-devtools ✓; context7 ✗, docling ✗, carbone ✗, office ✗ (timeout).
 - Repository skills: animate, frontend-design (skills-lock.json).
 - Full write-up: OPENCODE.md.
+
+ANTIGRAVITY CLI RESCAN — 2026-09-28
+- 9 MCP servers configured; ponytail plugin installed (6 skills + 6 commands).
+- New MCPs: carbone, office, docsmith (added 2026-09-28).
+- `agy mcp list`: all 9 enabled.
+- Full write-up: ANTIGRAVITY.md.
 
 COMPANION FILES
 OPENCODE.md   - OpenCode overview, dual-config caveat, providers, plugins, skills.

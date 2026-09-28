@@ -21,7 +21,7 @@ export default async function Home() {
             <span>Алгоритми</span>
           </Link>
           <Link href="/ai">
-            <span>Налаштувати ШІ</span>
+            <span>add api key</span>
           </Link>
           <Link href="/game-info">
             <span>Про гру</span>

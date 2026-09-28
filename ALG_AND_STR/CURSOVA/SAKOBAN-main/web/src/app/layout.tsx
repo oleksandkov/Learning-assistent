@@ -25,6 +25,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </header>
           {children}
           <footer className="site-footer">
+            <span>Підготував студент групи 2пі-25Б Коваль Олександр Дмитрович</span>
             <Link href="/game-info">Про гру</Link>
           </footer>
         </div>

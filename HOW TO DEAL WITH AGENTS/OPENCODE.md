@@ -92,14 +92,18 @@ Plugin files on disk are not proof the CLI loads them; only the `plugin` /
 
 ## MCP
 
-- `opencode.jsonc`: `mcp` map with 6 servers (mirrored from Codex 2026-09-22):
+- `opencode.jsonc`: `mcp` map with 9 servers (mirrored from Codex + new 2026-09-28):
   `playwright`, `chrome-devtools`, `context7` (npx), `markitdown`, `docling`,
-  `excel` (local binaries, same commands/env as Codex `config.toml`).
+  `excel` (local binaries), `carbone`, `office`, `docsmith` (npx, added 2026-09-28).
 - `opencode.json`: no `mcp` key (providers only).
 - `node_repl` skipped: Codex-runtime internal, not portable.
 - `experimental.mcp_timeout` raised 30000 → 120000 for docling/excel cold starts.
 - Verification 2026-09-22: `opencode mcp list` → all 6 `connected`;
   stdio re-probe markitdown 1 tool, excel 7 tools (match 2026-09-21 counts).
+- Update 2026-09-28: added `carbone`, `office`, `docsmith` MCPs.
+  `opencode mcp list` → playwright ✓, chrome-devtools ✓, context7 ✓, excel ✓,
+  office ✓; markitdown ✗, docling ✗ (pre-existing local binary issue),
+  carbone ✗ (needs CARBONE_API_KEY), docsmith ✗ (first npx download timeout).
 
 ## Skills
 

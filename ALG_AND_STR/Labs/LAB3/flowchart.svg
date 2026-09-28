@@ -34,27 +34,21 @@
 
   <!-- 5. ПІДПРОГРАМА PUSH_BACK -->
   <rect x="20" y="292" width="760" height="442" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2.2" stroke-dasharray="6,4"/>
-  <text x="400" y="318" text-anchor="middle" font-size="15.5" font-weight="bold" fill="#15803d">
-    Підпрограма push_back(name, nums): Додавання елемента та побудова гілки
-  </text>
+  <text x="400" y="318" text-anchor="middle" font-size="15.5" font-weight="bold" fill="#15803d">Підпрограма push_back(name, nums): Додавання елемента та побудова гілки</text>
 
-  <!-- Крок 5.1: Створення Node -->
   <rect x="100" y="332" width="600" height="36" rx="4" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
   <text x="400" y="355" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#166534">Створення Node*: node-&gt;name = name, total = min(nums.size, N)</text>
 
   <line x1="400" y1="368" x2="400" y2="388" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
-  <!-- Крок 5.2: Копіювання чисел -->
   <rect x="140" y="388" width="520" height="34" rx="4" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
   <text x="400" y="410" text-anchor="middle" font-size="13.5" fill="#166534">Копіювання min(total, K) чисел у node-&gt;main_nums</text>
 
   <line x1="400" y1="422" x2="400" y2="442" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
-  <!-- Крок 5.3: Ромб перевірки гілки: total > K ? -->
   <polygon points="400,442 520,470 400,498 280,470" fill="#ffffff" stroke="#16a34a" stroke-width="2.2"/>
   <text x="400" y="475" text-anchor="middle" font-size="14.5" font-weight="bold" fill="#15803d">total &gt; K ?</text>
 
-  <!-- Гілка ТАК: формування BranchNode (праворуч) -->
   <line x1="520" y1="470" x2="610" y2="470" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="610" y1="470" x2="610" y2="498" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
   <text x="555" y="461" font-size="13.5" font-weight="bold" fill="#2e7d32">Так</text>
@@ -63,7 +57,6 @@
   <text x="610" y="517" text-anchor="middle" font-size="13" font-weight="bold" fill="#166534">Створення списку BranchNode</text>
   <text x="610" y="532" text-anchor="middle" font-size="12.5" fill="#166534">для чисел від K до total-1</text>
 
-  <!-- Гілка НІ: без гілки (ліворуч) -->
   <line x1="280" y1="470" x2="190" y2="470" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="190" y1="470" x2="190" y2="498" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
   <text x="235" y="461" font-size="13.5" font-weight="bold" fill="#c62828">Ні</text>
@@ -71,18 +64,15 @@
   <rect x="50" y="498" width="280" height="44" rx="4" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
   <text x="190" y="525" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#166534">node-&gt;branch = nullptr</text>
 
-  <!-- Зведення після вибору гілки -->
   <line x1="610" y1="542" x2="610" y2="560" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="610" y1="560" x2="400" y2="560" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="190" y1="542" x2="190" y2="560" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="190" y1="560" x2="400" y2="560" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="400" y1="560" x2="400" y2="578" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
-  <!-- Крок 5.4: Ромб вставки: tail == nullptr ? -->
   <polygon points="400,578 520,606 400,634 280,606" fill="#ffffff" stroke="#16a34a" stroke-width="2.2"/>
   <text x="400" y="611" text-anchor="middle" font-size="14.5" font-weight="bold" fill="#15803d">tail == nullptr ?</text>
 
-  <!-- Гілка ТАК (список порожній, ліворуч) -->
   <line x1="280" y1="606" x2="190" y2="606" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="190" y1="606" x2="190" y2="634" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
   <text x="230" y="597" font-size="13.5" font-weight="bold" fill="#2e7d32">Так</text>
@@ -90,7 +80,6 @@
   <rect x="50" y="634" width="280" height="42" rx="4" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
   <text x="190" y="660" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#166534">head = tail = node</text>
 
-  <!-- Гілка НІ (додавання у двозв'язний хвіст, праворуч) -->
   <line x1="520" y1="606" x2="610" y2="606" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="610" y1="606" x2="610" y2="634" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
   <text x="565" y="597" font-size="13.5" font-weight="bold" fill="#c62828">Ні</text>
@@ -99,36 +88,29 @@
   <text x="610" y="651" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#166534">tail-&gt;next = node; node-&gt;prev = tail;</text>
   <text x="610" y="666" text-anchor="middle" font-size="12.5" fill="#166534">tail = node;</text>
 
-  <!-- Зведення після вставки -->
   <line x1="610" y1="676" x2="610" y2="690" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="610" y1="690" x2="400" y2="690" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="190" y1="676" x2="190" y2="690" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="190" y1="690" x2="400" y2="690" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="400" y1="690" x2="400" y2="702" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
-  <!-- Крок 5.5: Інкремент та фінал підпрограми -->
   <rect x="240" y="702" width="320" height="34" rx="4" fill="#ffffff" stroke="#16a34a" stroke-width="1.8"/>
-  <text x="400" y="724" text-anchor="middle" font-size="14" font-weight="bold" fill="#15803d">++count;  return true;</text>
+  <text x="400" y="724" text-anchor="middle" font-size="14" font-weight="bold" fill="#15803d">++count;  return;</text>
 
   <line x1="400" y1="736" x2="400" y2="764" stroke="#2c3e50" stroke-width="2.2" marker-end="url(#arrow)"/>
 
   <!-- 6. ПІДПРОГРАМА REMOVE -->
   <rect x="20" y="764" width="760" height="266" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="2.2" stroke-dasharray="6,4"/>
-  <text x="400" y="788" text-anchor="middle" font-size="15.5" font-weight="bold" fill="#c2410c">
-    Підпрограма remove(name): Пошук, переприв'язка зв'язків та видалення
-  </text>
+  <text x="400" y="788" text-anchor="middle" font-size="15.5" font-weight="bold" fill="#c2410c">Підпрограма remove(name): Пошук, переприв'язка зв'язків та видалення</text>
 
-  <!-- Крок 6.1: Пошук елемента -->
   <rect x="60" y="802" width="680" height="34" rx="4" fill="#ffffff" stroke="#ea580c" stroke-width="1.8"/>
-  <text x="400" y="824" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#9a3412">curr = head;  while (curr &amp;&amp; curr-&gt;name != name) curr = curr-&gt;next;</text>
+  <text x="400" y="824" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#9a3412">target = find(name) (лінійний пошук за іменем)</text>
 
   <line x1="400" y1="836" x2="400" y2="854" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
 
-  <!-- Крок 6.2: Ромб curr != nullptr ? -->
   <polygon points="400,854 520,882 400,910 280,882" fill="#ffffff" stroke="#ea580c" stroke-width="2.2"/>
-  <text x="400" y="887" text-anchor="middle" font-size="14.5" font-weight="bold" fill="#c2410c">curr != nullptr ?</text>
+  <text x="400" y="887" text-anchor="middle" font-size="14.5" font-weight="bold" fill="#c2410c">target != nullptr ?</text>
 
-  <!-- Гілка ТАК: видалення та переприв'язка (ліворуч) -->
   <line x1="280" y1="882" x2="250" y2="882" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="250" y1="882" x2="250" y2="910" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
   <text x="265" y="873" font-size="13.5" font-weight="bold" fill="#2e7d32">Так</text>
@@ -136,18 +118,16 @@
   <rect x="35" y="910" width="430" height="66" rx="4" fill="#ffffff" stroke="#ea580c" stroke-width="1.8"/>
   <text x="250" y="928" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#9a3412">Переприв'язка покажчиків двозв'язного списку:</text>
   <text x="250" y="944" text-anchor="middle" font-size="12" fill="#9a3412">(prev ? prev-&gt;next = next : head = next); (next ? next-&gt;prev = prev : tail = prev);</text>
-  <text x="250" y="961" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#9a3412">free_branch(curr-&gt;branch);  delete curr;  --count;</text>
+  <text x="250" y="961" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#9a3412">free_branch(target-&gt;branch);  delete target;  --count;</text>
 
-  <!-- Гілка НІ: не знайдено (праворуч) -->
   <line x1="520" y1="882" x2="630" y2="882" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="630" y1="882" x2="630" y2="920" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arrow)"/>
   <text x="575" y="873" font-size="13.5" font-weight="bold" fill="#c62828">Ні</text>
 
   <rect x="505" y="920" width="250" height="44" rx="4" fill="#ffffff" stroke="#ea580c" stroke-width="1.8"/>
-  <text x="630" y="940" text-anchor="middle" font-size="13" font-weight="bold" fill="#9a3412">Друк: 'Вузол не знайдено'</text>
+  <text x="630" y="940" text-anchor="middle" font-size="13" font-weight="bold" fill="#9a3412">Друк: 'Елемент не знайдено'</text>
   <text x="630" y="955" text-anchor="middle" font-size="12.5" fill="#9a3412">return false;</text>
 
-  <!-- Зведення після видалення -->
   <line x1="250" y1="976" x2="250" y2="988" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="250" y1="988" x2="400" y2="988" stroke="#2c3e50" stroke-width="1.8"/>
   <line x1="630" y1="964" x2="630" y2="988" stroke="#2c3e50" stroke-width="1.8"/>

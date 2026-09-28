@@ -103,7 +103,6 @@ export default function LevelCreator() {
                 }}
                 required
               />
-              <small>Від 5 до 100 клітинок</small>
             </label>
             <label>
               <span>Висота</span>
@@ -119,7 +118,6 @@ export default function LevelCreator() {
                 }}
                 required
               />
-              <small>Від 5 до 100 клітинок</small>
             </label>
             <label>
               <span>Ящики й цілі</span>
@@ -135,7 +133,6 @@ export default function LevelCreator() {
                 }}
                 required
               />
-              <small>Одна ціль для кожного ящика, максимум {maxBoxes}</small>
             </label>
             <label>
               <span>Внутрішні стіни</span>
@@ -151,7 +148,6 @@ export default function LevelCreator() {
                 }}
                 required
               />
-              <small>Розміщуються випадково, максимум {maxWalls}</small>
             </label>
           </div>
           <label className="seed-field">
@@ -167,7 +163,6 @@ export default function LevelCreator() {
                 resetResult();
               }}
             />
-            <small>Збережи seed, щоб повторити ту саму карту.</small>
           </label>
           <button className="button primary" disabled={busy} type="submit">
             {busy ? "Будуємо й перевіряємо…" : "Згенерувати рівень"}
@@ -211,8 +206,7 @@ export default function LevelCreator() {
                 <span>#</span><span>+</span><span>#</span>
                 <span>#</span><span>#</span><span>#</span>
               </div>
-              <h2>Тут з’явиться твоя карта.</h2>
-              <p>Кожен результат уже має перевірений шлях до перемоги.</p>
+              <h2>Карта</h2>
             </div>
           )}
         </section>
