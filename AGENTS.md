@@ -6,6 +6,15 @@ This repository collects independent university exercises and larger projects. T
 
 Larger projects document their own layout. For example, `ALG_AND_STR/CURSOVA/SAKOBAN-main/` contains C++ sources in `src/`, unit tests in `tests/`, levels in `levels/`, documentation in `docs/`, and a separate web client in `web/`. Reusable repository scripts live in `scripts/`.
 
+## Document and PDF Tooling
+
+Never use the `carbone` MCP server unless the user explicitly asks for it. For document and PDF work use other available MCP servers or local tooling instead:
+
+- `docling` — read, convert and analyse existing documents (DOCX, PDF, HTML, images).
+- `docsmith` — read, inspect and write documents (Excel, Word, PowerPoint, PDF, text).
+- `markitdown` — convert documents to Markdown for inspection.
+- Local tooling — `python-docx` for DOCX editing; Microsoft Word COM automation (`ExportAsFixedFormat`) for DOCX → PDF on Windows; `pypdf` for PDF inspection.
+
 ## Build, Test, and Development Commands
 
 There is no repository-wide build. Read the nearest `README.md` and run commands from that project directory.
@@ -33,3 +42,9 @@ Recent commits use short, lowercase, topic-focused messages such as `docs update
 ## Security & Configuration
 
 Never commit API keys, tokens, `.env` files, or personal credentials. Provide sanitized examples and document required environment variables in the local README.
+
+## Cleanup & Temporary Files
+
+Agents must maintain repository cleanliness and clean up after themselves:
+- **Remove disposable scripts and helper files**: Any temporary scripts, one-off migration utilities, scratch files, or test harnesses created during a task must be removed immediately after their application and verification, unless they are explicitly intended to be preserved as reusable assets or requested by the user (видалення допоміжних файлів і скриптів після їх використання, якщо вони точно не знадобляться в майбутньому).
+- **No dangling artifacts**: Do not leave disposable data files, temporary outputs, or scratch logs in project directories. Keep the working tree clean.

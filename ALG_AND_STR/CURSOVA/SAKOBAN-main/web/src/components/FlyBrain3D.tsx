@@ -111,6 +111,5 @@ export default function FlyBrain3D({ frame }: { frame?: FlyBrainSpikeFrame }) {
       <button type="button" className="button secondary" onClick={() => setView({ yaw: -.3, pitch: .2, zoom: 1 })}>Скинути ракурс</button>
       <span>{selected === null ? "Перетягніть для обертання · натисніть нейрон" : `Нейрон #${selected} · ${names[neurons[selected].group]} · ${active.has(selected) ? "спрацював" : "без спайку"}`}</span>
     </div>
-    <p>Умовна 3D-геометрія мережі, не анатомічний коннектом. Світяться лише нейрони, що справді спрацювали у вибраному вікні.{frame && !frame.active ? " Старий запис: доступні лише 120 семплованих нейронів." : ""}</p>
   </section>;
 }

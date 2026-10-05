@@ -1,38 +1,38 @@
 export type Dir = "U" | "L" | "D" | "R";
 // Теоретична складність алгоритму (найгірший випадок, якщо не вказано інше).
-// kind — клас складності простою мовою, depends — з чого саме рахується,
+// kind — клас складності простою мовою, depends — коротко з чого рахується,
 // rank — «наскільки просто за теорією»: 1 = найпростіша. Спочатку клас
 // (лінійна → поліномна → експоненційна), далі менша пам'ять і простіша ідея.
+// Нотація однакова для всіх: V — клітинки поля, k — ящики, b — кроків на
+// одному рівні (галузження), d — довжина розв'язку, n — популяція,
+// g — покоління, I — ітерації, A — мурахи, L — довжина хромосоми.
 export type Complexity = { kind: string; time: string; space: string; depends: string; rank: number };
 export type LocalAlgorithm = "bfs" | "astar-moves" | "astar-pushes" | "idastar-pushes" | "greedy-pushes" | "prototype1" | "aco" | "genetic" | "gravity" | "cannibal";
 export type Algorithm = LocalAlgorithm | "gemini" | "flybrain";
-// Спільні підказки: від чого насправді залежить складність — розмір поля,
-// кількість ящиків, довжина розв'язку, а не лише абстрактні символи.
-const DEPTH_DEPENDS =
-  "Станів близько C(V, k) · V — V клітинок поля, k ящиків: кожне розташування ящиків на полі це окремий стан. Більше поле або більше ящиків → час і пам'ять ростуть вибухово. d — кількість ходів у розв'язку";
-const GEN_DEPENDS =
-  "Пропорційно поколінням g × популяції n × довжині хромосоми L. L — план на всі ящики одразу, тож більше ящиків → довша хромосома і дорожче кожне покоління";
+// Спільна підказка для пошукових алгоритмів у просторі станів.
+const STATES = "від кількості станів: C(V, k) — розташувань ящиків на полі";
+const GEN = "покоління g × популяція n × довжина хромосоми L";
 export const LOCAL_ALGORITHMS: {
   id: LocalAlgorithm;
   label: string;
   metric: string;
   complexity: Complexity;
 }[] = [
-  { id: "bfs", label: "1 - BFS", metric: "Мінімум ходів", complexity: { kind: "Експоненційна — станів стає вибухово більше з глибиною", time: "O(bᵈ)", space: "O(bᵈ)", depends: DEPTH_DEPENDS, rank: 11 } },
-  { id: "astar-moves", label: "2 - A* ходи", metric: "Мінімум ходів", complexity: { kind: "Експоненційна в найгіршому разі, на практиці евристика ріже b", time: "O(bᵈ)", space: "O(bᵈ)", depends: DEPTH_DEPENDS + ". Евристика (скільки залишилось ходів) відсікає частину станів", rank: 9 } },
-  { id: "astar-pushes", label: "3 - A* штовхання", metric: "Мінімум штовхань", complexity: { kind: "Експоненційна в найгіршому разі, на практиці евристика ріже b", time: "O(bᵈ)", space: "O(bᵈ)", depends: DEPTH_DEPENDS + ". Евристика (скільки залишилось штовхань) відсікає частину станів", rank: 10 } },
-  { id: "idastar-pushes", label: "4 - IDA*", metric: "Мінімум штовхань · мало пам'яті", complexity: { kind: "Експоненційна за часом, пам'ять тримає лише шлях", time: "O(bᵈ)", space: "O(d)", depends: DEPTH_DEPENDS + ". Час той самий, що в BFS, але в пам'яті лише поточний шлях — рахується від глибини d", rank: 7 } },
-  { id: "greedy-pushes", label: "5 - Greedy", metric: "Швидко · неоптимально", complexity: { kind: "Експоненційна, але на практиці найшвидша — іде наосліп", time: "O(bᵐ)", space: "O(bᵐ)", depends: DEPTH_DEPENDS + ". Іде просто до цілі без обліку ящиків, тому часто швидша за BFS, але може зайти в глухий кут", rank: 8 } },
-  { id: "prototype1", label: "6 - X → Y", metric: "Навчальний · стіни ігноруються", complexity: { kind: "Лінійна — одне обчислення на клітинку", time: "O(V + E)", space: "O(V)", depends: "Лінійно від розміру поля: V — клітинки рівня, E — переходи між ними. Кожен ящик обробляється один раз, поле проходимо одним обходом", rank: 1 } },
-  { id: "aco", label: "7 - ACO", metric: "Мурахи · феромонні стежки", complexity: { kind: "Поліномна — росте пропорційно ітераціям і мурахам", time: "O(I · A · d)", space: "O(I · A)", depends: "Ітерації I × мурахи A × довжина шляху d. Шлях росте з кількістю ящиків і розміром поля; пам'ять — феромони на кожній клітинці", rank: 4 } },
-  { id: "genetic", label: "8 - GA", metric: "Хромосоми · еволюція", complexity: { kind: "Поліномна — росте пропорційно поколінням і популяції", time: "O(g · n · L)", space: "O(n · L)", depends: GEN_DEPENDS, rank: 5 } },
-  { id: "gravity", label: "9 - Drain", metric: "Рельєф · потік і струшування", complexity: { kind: "Лінійна за крок — щоходу оновлюємо все поле", time: "O(k · V)", space: "O(V)", depends: "Кроки k × клітинки V: щоходу перераховуємо все поле, тож велике поле уповільнює кожен крок. Кількість ящиків на час майже не впливає", rank: 2 } },
-  { id: "cannibal", label: "10 - Cannibal GA", metric: "Турніри · перенесення ДНК", complexity: { kind: "Поліномна — росте пропорційно поколінням і популяції", time: "O(g · n · L)", space: "O(n · L)", depends: GEN_DEPENDS, rank: 6 } },
+  { id: "bfs", label: "1 - BFS", metric: "Мінімум ходів", complexity: { kind: "Експоненційна", time: "O(bᵈ)", space: "O(bᵈ)", depends: STATES + " та довжини розв'язку d", rank: 11 } },
+  { id: "astar-moves", label: "2 - A* ходи", metric: "Мінімум ходів", complexity: { kind: "Експоненційна", time: "O(bᵈ)", space: "O(bᵈ)", depends: STATES + "; евристика відсікає їх", rank: 9 } },
+  { id: "astar-pushes", label: "3 - A* штовхання", metric: "Мінімум штовхань", complexity: { kind: "Експоненційна", time: "O(bᵈ)", space: "O(bᵈ)", depends: STATES + "; евристика відсікає їх", rank: 10 } },
+  { id: "idastar-pushes", label: "4 - IDA*", metric: "Мінімум штовхань · мало пам'яті", complexity: { kind: "Експоненційна за часом, лінійна за пам'яттю", time: "O(bᵈ)", space: "O(d)", depends: "глибини d — тримає лише поточний шлях", rank: 7 } },
+  { id: "greedy-pushes", label: "5 - Greedy", metric: "Швидко · неоптимально", complexity: { kind: "Експоненційна", time: "O(bᵈ)", space: "O(bᵈ)", depends: STATES + "; іде наосліп за евристикою", rank: 8 } },
+  { id: "prototype1", label: "6 - X → Y", metric: "Навчальний · стіни ігноруються", complexity: { kind: "Лінійна", time: "O(V + E)", space: "O(V)", depends: "розміру поля V та переходів E між клітинками", rank: 1 } },
+  { id: "aco", label: "7 - ACO", metric: "Мурахи · феромонні стежки", complexity: { kind: "Поліномна", time: "O(I · A · d)", space: "O(I · A)", depends: "ітерацій I × мурах A × довжини маршруту d", rank: 4 } },
+  { id: "genetic", label: "8 - GA", metric: "Хромосоми · еволюція", complexity: { kind: "Поліномна", time: "O(g · n · L)", space: "O(n · L)", depends: GEN, rank: 5 } },
+  { id: "gravity", label: "9 - Drain", metric: "Рельєф · потік і струшування", complexity: { kind: "Лінійна за крок", time: "O(k · V)", space: "O(V)", depends: "кроків k × клітинок V — щоходу оновлює все поле", rank: 2 } },
+  { id: "cannibal", label: "10 - Cannibal GA", metric: "Турніри · перенесення ДНК", complexity: { kind: "Поліномна", time: "O(g · n · L)", space: "O(n · L)", depends: GEN, rank: 6 } },
 ];
 export const ALGORITHMS: { id: Algorithm; label: string; metric: string; complexity: Complexity }[] = [
   ...LOCAL_ALGORITHMS,
-  { id: "flybrain", label: "11 - FlyBrain", metric: "Біо-агент · web only", complexity: { kind: "Евристична — пропорційна кількості нейронів на крок", time: "O(n · d*)", space: "O(n)", depends: "Нейрони n × кроки шляху d*. Ящики впливають лише через довжину плану, а розмір поля — через кількість входів агента", rank: 3 } },
-  { id: "gemini", label: "12 - AI", metric: "План перевіряє ядро", complexity: { kind: "Не визначається — план будує зовнішня модель", time: "—", space: "—", depends: "Від розміру поля тут не залежить: час — це відповідь API, пам'ять — промпт із описом рівня", rank: 12 } },
+  { id: "flybrain", label: "11 - FlyBrain", metric: "Біо-агент · web only", complexity: { kind: "Евристична, лінійна на крок", time: "O(n · d*)", space: "O(n)", depends: "нейронів n × довжини плану d*", rank: 3 } },
+  { id: "gemini", label: "12 - AI", metric: "План перевіряє ядро", complexity: { kind: "Не визначається", time: "—", space: "—", depends: "час — це відповідь API, пам'ять — промпт із рівнем", rank: 12 } },
 ];
 export const AI_KEY_STORAGE = "sokoban.ai-key";
 export const AI_MODEL_STORAGE = "sokoban.ai-model";

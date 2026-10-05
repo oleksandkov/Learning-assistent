@@ -1295,7 +1295,7 @@ export default function Game({
                             Час {info.complexity.time} · Пам'ять {info.complexity.space}
                           </span>
                           <span className="decision-complexity-depends">
-                            <b>Від чого залежить:</b> {info.complexity.depends}
+                            {info.complexity.depends}
                           </span>
                         </div>
                       </details>

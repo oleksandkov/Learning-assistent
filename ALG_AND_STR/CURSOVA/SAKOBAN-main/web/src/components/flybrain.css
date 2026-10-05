@@ -2,10 +2,8 @@
 .flybrain-observer > summary { padding: 20px 0; cursor: pointer; font-weight: 600; }
 .flybrain-live { margin-top: 32px; }
 .flybrain-viewer { --fb-blue: #137fa5; --fb-violet: #7856bc; --fb-amber: #ad6714; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
-.flybrain-viewer .flybrain-heading { padding: 26px 28px 20px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
-.flybrain-heading h3 { font-size: clamp(24px, 3vw, 34px); font-weight: 550; letter-spacing: -.04em; }
-.flybrain-viewer .flybrain-heading p { margin-top: 8px; font-size: 13px; }
-.flybrain-session { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; font-size: 12px; color: var(--muted); padding-top: 9px; }
+.flybrain-viewer .flybrain-heading { padding: 18px 28px 12px; display: flex; justify-content: flex-end; align-items: center; gap: 16px; }
+.flybrain-session { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; font-size: 12px; color: var(--muted); margin-left: auto; }
 .flybrain-session i { width: 7px; height: 7px; background: var(--muted); border-radius: 50%; }
 .flybrain-session.recording i { background: var(--fb-blue); box-shadow: 0 0 0 4px color-mix(in srgb, var(--fb-blue) 14%, transparent); }
 .flybrain-circuit { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 0 28px 24px; font-size: 13px; color: var(--muted); }
@@ -52,8 +50,8 @@
 .flybrain-bars meter::-webkit-meter-optimum-value { background: var(--fb-amber); }
 .flybrain-bars > div:first-child meter::-webkit-meter-optimum-value { background: var(--fb-blue); }
 .flybrain-bars > div:nth-child(2) meter::-webkit-meter-optimum-value { background: var(--fb-violet); }
-.flybrain-stats { margin: 16px 0 0; font-size: 12px; }
-.flybrain-stats div { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.flybrain-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; margin: 16px 0 0; font-size: 12px; }
+.flybrain-stats div { display: flex; justify-content: space-between; gap: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
 .flybrain-stats dt { color: var(--muted); }
 .flybrain-stats dd { margin: 0; white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 600; }
 .fb-val-reward { color: #4cd964 !important; }
@@ -62,9 +60,8 @@
 .flybrain-goals { width: 100%; max-height: 100px; color: var(--fb-blue); margin-top: 10px; }
 .flybrain-analysis section > p { font-size: 11px; }
 .flybrain-winner { margin-top: 12px; font-size: 11px; width: 100%; }
-.flybrain-footnote { display: flex; justify-content: space-between; gap: 24px; padding: 20px 28px; border-top: 1px solid var(--line); background: var(--bg); }
+.flybrain-footnote { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 20px 28px; border-top: 1px solid var(--line); background: var(--bg); }
 .flybrain-footnote strong { font-size: 13px; font-weight: 600; }
-.flybrain-footnote p { font-size: 11px; margin-top: 5px; max-width: 55ch; }
 .flybrain-notice { padding: 12px 24px; font-size: 13px; }
 .flybrain-help { margin: 14px 0; font-size: 12px; }
 @media (max-width: 1050px) {
@@ -189,7 +186,6 @@
 .flybrain-settings .flybrain-settings-help p { margin: 0 0 8px; font-size: 12px; line-height: 1.6; color: var(--muted); }
 .flybrain-settings-help strong { color: var(--ink); font-weight: 600; }
 .flybrain-model-launch { display: flex; gap: 16px; align-items: center; padding: 0 28px 22px; }
-.flybrain-model-launch span { color: var(--muted); font-size: 12px; }
 .flybrain-dialog { width: min(1100px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--line); border-radius: 18px; color: var(--ink); background: var(--surface); }
 .flybrain-dialog::backdrop { background: #06101ecc; }
 .flybrain-viewer .flybrain-dialog > header { display: flex; padding: 20px 24px; gap: 16px; justify-content: space-between; }
@@ -204,10 +200,9 @@
 .flybrain-3d-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 16px; padding: 8px 24px; font-size: 12px; }
 .flybrain-3d-tools label { display: flex; align-items: center; gap: 12px; }
 .flybrain-3d-tools .button { background: #223957; border-color: #506282; color: #e8f0fc; }
-.flybrain-3d > p { padding: 12px 24px 20px; color: #b7c9e2; font-size: 11px; }
 .flybrain-dialog-actions { display: flex; align-items: center; gap: 16px; justify-content: space-between; padding: 16px 24px; font-size: 12px; }
 @media (max-width: 600px) {
-  .flybrain-model-launch { align-items: flex-start; flex-direction: column; padding-inline: 20px; }
+  .flybrain-model-launch { padding-inline: 20px; }
   .flybrain-dialog { width: calc(100vw - 12px); max-height: calc(100dvh - 12px); border-radius: 10px; }
   .flybrain-viewer .flybrain-dialog > header { padding: 14px; }
   .flybrain-dialog h3 { font-size: 20px; }
@@ -216,7 +211,6 @@
 }
 .flybrain-run-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 20px; padding: 16px 24px; background: var(--bg); border-top: 1px solid var(--line); }
 .flybrain-run-controls label { display: flex; gap: 8px; align-items: center; font-size: 13px; font-weight: 600; }
-.flybrain-run-controls p { flex: 1; min-width: 180px; font-size: 11px; }
 .flybrain-solved { padding: 16px 24px; color: var(--accent); background: var(--accent-soft); font-weight: 600; font-size: 14px; }
 
 /* Section 20 telemetry belongs to the existing analysis, sharing its palette and rhythm. */
@@ -225,7 +219,6 @@
 .fb-zone-flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--line); }
 .fb-zone { min-width: 0; font: 11px Consolas, monospace; color: var(--muted); }.fb-zone b { display: block; margin-top: 7px; color: var(--ink); font-size: 14px; font-weight: 500; }
 .fb-zone meter { width: 100%; height: 7px; margin-top: 8px; display: block; }.fb-zone meter::-webkit-meter-bar { border: 0; background: var(--line); }.fb-zone meter::-webkit-meter-optimum-value { background: var(--fb-violet); }.fb-zone-1 meter::-webkit-meter-optimum-value { background: var(--fb-blue); }.fb-zone-2 meter::-webkit-meter-optimum-value { background: var(--fb-amber); }
-.fb-detail { color: var(--muted); font-size: 10px !important; line-height: 1.6; margin-top: 10px; }
 .fb-modulators { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px 0; padding-top: 14px; border-top: 1px solid var(--line); }
 .fb-modulators label { min-width: 0; font-size: 10px; }.fb-modulators label > span { display: flex; gap: 5px; align-items: baseline; margin-bottom: 8px; }.fb-modulators b { font: 12px Consolas, monospace; }.fb-modulators output { margin-left: auto; font-family: Consolas, monospace; }
 .fb-modulators meter { width: 100%; height: 7px; display: block; }.fb-modulators meter::-webkit-meter-bar { border: 0; background: var(--line); }.fb-da { color: var(--fb-blue); }.fb-da meter::-webkit-meter-optimum-value { background: var(--fb-blue); }.fb-ota { color: var(--fb-amber); }.fb-ota meter::-webkit-meter-optimum-value { background: var(--fb-amber); }

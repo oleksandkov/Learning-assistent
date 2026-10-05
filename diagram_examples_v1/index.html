@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>V1: Еталонні схеми за ГОСТ 19.701-90 та UML (Академічний ч/б)</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --text: #000000;
+      --muted: #555555;
+      --card-bg: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 32px 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header {
+      border-bottom: 2px solid #000000;
+      padding-bottom: 20px;
+      margin-bottom: 28px;
+    }
+    h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+    .rules-list {
+      background: #ffffff;
+      border: 1px solid #000000;
+      padding: 16px 20px;
+      border-radius: 6px;
+      margin: 16px 0;
+      font-size: 13px;
+    }
+    .rules-list ul { margin-left: 20px; margin-top: 6px; }
+
+    /* Controls bar */
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .bg-switcher {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .bg-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid #000000;
+      background: #ffffff;
+      font-weight: 600;
+    }
+    .bg-btn.active { background: #000000; color: #ffffff; }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      border: 1.5px solid #000000;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
+    }
+    .preview-box {
+      min-height: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      border-bottom: 1px solid #000000;
+      background: #ffffff;
+      transition: background 0.2s;
+    }
+    .preview-box.checkered {
+      background-color: #ffffff;
+      background-image: linear-gradient(45deg, #e5e5e5 25%, transparent 25%), linear-gradient(-45deg, #e5e5e5 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e5e5e5 75%), linear-gradient(-45deg, transparent 75%, #e5e5e5 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+    .preview-box.dark {
+      background: #1e293b;
+    }
+    .preview-box img {
+      max-width: 100%;
+      height: auto;
+      max-height: 480px;
+    }
+    .card-info {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .card-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .btn-link {
+      display: inline-block;
+      text-align: center;
+      padding: 8px 12px;
+      border: 1px solid #000000;
+      background: #000000;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: auto;
+    }
+    .btn-link:hover { background: #333333; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Каталог V1: Академічний ГОСТ 19.701-90 та UML</h1>
+      <p style="font-size: 14px; color: #444;">
+        Версія V1 враховує всі ваші вимоги: прозорий/білий фон, повна відсутність заголовків на зображеннях, суто український текст та строгий чорно-білий академічний стиль.
+      </p>
+
+      <div class="rules-list">
+        <strong>Параметри стандарту V1:</strong>
+        <ul>
+          <li><strong>Фон:</strong> прозорий (transparent) / блоки залиті чистим білим кольором (#ffffff) для уникнення накладання ліній.</li>
+          <li><strong>Без заголовків на самому малюнку:</strong> схема починається одразу з початкового вузла, без декоративних написів чи рамок.</li>
+          <li><strong>Мова:</strong> виключно українська термінологія ("Початок", "Кінець", "Введення", "Виведення", "Так", "Ні").</li>
+          <li><strong>Геометрія ГОСТ 19.701-90:</strong> злами ліній строго 90°, паралелограми для вводу/виводу, ромби умов, подвійні лінії для підпрограм, шестикутники для циклу For.</li>
+        </ul>
+      </div>
+    </header>
+
+    <div class="controls">
+      <div class="bg-switcher">
+        <span>Перевірити фон підкладки:</span>
+        <button class="bg-btn active" onclick="setBg('white')">Чистий білий</button>
+        <button class="bg-btn" onclick="setBg('checkered')">Прозорість (шахівниця)</button>
+        <button class="bg-btn" onclick="setBg('dark')">Темний фон</button>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <!-- 1. ГОСТ РОЗГАЛУЖЕННЯ -->
+      <div class="card">
+        <div class="preview-box" id="prev-1">
+          <img src="01_gost_branching.svg" alt="01_gost_branching">
+        </div>
+        <div class="card-info">
+          <h3 class="card-title">01. Розгалуження (if-else)</h3>
+          <p class="card-meta">ГОСТ 19.701-90: паралелограми вводу/виводу, ромб умови, гілки Так/Ні, зведення під 90°.</p>
+          <a href="01_gost_branching.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
+        </div>
+      </div>
+
+      <!-- 2. ГОСТ ЦИКЛ WHILE -->
+      <div class="card">
+        <div class="preview-box" id="prev-2">
+          <img src="02_gost_loop_while.svg" alt="02_gost_loop_while">
+        </div>
+        <div class="card-info">
+          <h3 class="card-title">02. Цикл з передумовою (While)</h3>
+          <p class="card-meta">ГОСТ 19.701-90: зворотна лінія повернення циклу у верхню точку з'єднання, вихід Ні праворуч.</p>
+          <a href="02_gost_loop_while.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
+        </div>
+      </div>
+
+      <!-- 3. ГОСТ ЦИКЛ FOR -->
+      <div class="card">
+        <div class="preview-box" id="prev-3">
+          <img src="03_gost_loop_for.svg" alt="03_gost_loop_for">
+        </div>
+        <div class="card-info">
+          <h3 class="card-title">03. Цикл з параметром (Шестикутник For)</h3>
+          <p class="card-meta">ГОСТ 19.701-90: блок підготовки (шестикутник) з параметрами i = 0, n-1, 1 та зворотним зв'язком.</p>
+          <a href="03_gost_loop_for.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
+        </div>
+      </div>
+
+      <!-- 4. ГОСТ ПІДПРОГРАМА -->
+      <div class="card">
+        <div class="preview-box" id="prev-4">
+          <img src="04_gost_subroutine.svg" alt="04_gost_subroutine">
+        </div>
+        <div class="card-info">
+          <h3 class="card-title">04. Підпрограма та з'єднувач</h3>
+          <p class="card-meta">ГОСТ 19.701-90: зумовлений процес (подвійні вертикальні лінії) та круговий з'єднувач.</p>
+          <a href="04_gost_subroutine.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
+        </div>
+      </div>
+
+      <!-- 5. UML ACTIVITY -->
+      <div class="card">
+        <div class="preview-box" id="prev-5">
+          <img src="05_uml_activity_academic.svg" alt="05_uml_activity_academic">
+        </div>
+        <div class="card-info">
+          <h3 class="card-title">05. UML Діаграма діяльності</h3>
+          <p class="card-meta">UML 2.5: початковий круг, скруглені дії, паралельні Fork/Join смуги, фінальне бичаче око.</p>
+          <a href="05_uml_activity_academic.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
+        </div>
+      </div>
+
+      <!-- 6. UML SEQUENCE -->
+      <div class="card">
+        <div class="preview-box" id="prev-6">
+          <img src="06_uml_sequence_academic.svg" alt="06_uml_sequence_academic">
+        </div>
+        <div class="card-info">
+          <h3 class="card-title">06. UML Діаграма послідовності</h3>
+          <p class="card-meta">UML 2.5: учасники, синхронні виклики, смуги активації, відповіді, фрагмент alt.</p>
+          <a href="06_uml_sequence_academic.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
+        </div>
+      </div>
+
+      <!-- 7. UML CLASS -->
+      <div class="card">
+        <div class="preview-box" id="prev-7">
+          <img src="07_uml_class_academic.svg" alt="07_uml_class_academic">
+        </div>
+        <div class="card-info">
+          <h3 class="card-title">07. UML Діаграма класів</h3>
+          <p class="card-meta">UML 2.5: класи з секціями назви, полів та методів, стрілки наслідування з білим трикутником.</p>
+          <a href="07_uml_class_academic.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function setBg(type) {
+      const boxes = document.querySelectorAll('.preview-box');
+      const btns = document.querySelectorAll('.bg-btn');
+      btns.forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      boxes.forEach(box => {
+        box.classList.remove('checkered', 'dark');
+        if (type === 'checkered') box.classList.add('checkered');
+        if (type === 'dark') box.classList.add('dark');
+      });
+    }
+  </script>
+</body>
+</html>

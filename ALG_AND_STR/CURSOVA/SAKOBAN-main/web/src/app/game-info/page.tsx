@@ -4,42 +4,12 @@ import path from "node:path";
 import MiniBoard from "@/components/MiniBoard";
 export const metadata = { title: "Про гру" };
 const elements = [
-  {
-    kind: "player",
-    title: "Гравець",
-    symbol: "@",
-    text: "Керування переміщенням у чотирьох напрямках.",
-  },
-  {
-    kind: "box",
-    title: "Ящик",
-    symbol: "$",
-    text: "Потрібно перемістити на ціль.",
-  },
-  {
-    kind: "goal",
-    title: "Ціль",
-    symbol: ".",
-    text: "Клітинка для розміщення ящика.",
-  },
-  {
-    kind: "wall",
-    title: "Стіна",
-    symbol: "#",
-    text: "Непрохідна перешкода.",
-  },
-  {
-    kind: "box on-goal",
-    title: "Ящик на цілі",
-    symbol: "*",
-    text: "Ящик знаходиться на цільовій позиції.",
-  },
-  {
-    kind: "floor",
-    title: "Підлога",
-    symbol: "пробіл",
-    text: "Вільна клітинка для переміщення.",
-  },
+  { kind: "player", title: "Гравець", symbol: "@", text: "Ходить у чотирьох напрямках." },
+  { kind: "box", title: "Ящик", symbol: "$", text: "Перемістити на ціль." },
+  { kind: "goal", title: "Ціль", symbol: ".", text: "Клітинка для ящика." },
+  { kind: "wall", title: "Стіна", symbol: "#", text: "Непрохідна." },
+  { kind: "box on-goal", title: "Ящик на цілі", symbol: "*", text: "Мета виконана частково." },
+  { kind: "floor", title: "Підлога", symbol: "пробіл", text: "Вільна клітинка." },
 ];
 export default async function GameInfo() {
   const xsb = await readFile(
@@ -58,12 +28,10 @@ export default async function GameInfo() {
         <section>
           <h2>Історія</h2>
           <p>
-            Сокобан створив Хіроюкі Імабаясі. У 1982 році Thinking Rabbit
-            випустила гру в Японії. Мета гри — розмістити всі ящики на позначені цілі на складі.
+            Сокобан створив Хіроюкі Імабаясі, у 1982 році гру випустила
+            Thinking Rabbit. Мета — розмістити всі ящики на цілях.
           </p>
-          <p>
-            Ящики можна лише штовхати вперед. Неможливо тягнути ящик або штовхати кілька ящиків одночасно.
-          </p>
+          <p>Ящики можна лише штовхати вперед, не тягнути й не по два.</p>
           <p className="source-note">
             Історія:{" "}
             <a
@@ -89,18 +57,12 @@ export default async function GameInfo() {
               <div>
                 <h3>{e.title}</h3>
                 <p>
-                  {e.text}
-                  <br />
-                  <code>{e.symbol}</code> у текстовому XSB.
+                  {e.text} <code>{e.symbol}</code> у XSB.
                 </p>
               </div>
             </div>
           ))}
         </div>
-        <p className="source-note">
-          Символ + у XSB означає гравця на цілі. Ціль залишається на місці після
-          його руху.
-        </p>
       </section>
       <div className="info-rules">
         <section>
@@ -113,18 +75,6 @@ export default async function GameInfo() {
             <li>Розміщення всіх ящиків на цілях.</li>
           </ol>
           <p>Доступне скасування та повторення ходів.</p>
-        </section>
-        <section>
-          <h2>Алгоритми та ШІ</h2>
-          <p>
-            На кожному рівні можна грати, знайти рішення BFS
-            чи A*, порівняти результати й застосувати обране. Відтворення можна
-            зупиняти та переглядати по одному кроку.
-          </p>
-          <p>
-            Хід рахує кожне переміщення. Штовхання рахує лише пересування ящика.
-            Тому «найкраще рішення» залежить від обраної метрики.
-          </p>
         </section>
       </div>
       <div className="info-links">
