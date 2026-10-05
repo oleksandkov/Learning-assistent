@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 760" width="660" height="760" style="background: transparent; font-family: Segoe UI, Arial, sans-serif;">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#000000"/></marker></defs>
+<rect x="125.0" y="20" width="170" height="40" rx="20.0" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="210" y="40.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Початок</text>
+<rect x="95.0" y="90" width="230" height="52" rx="0" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="210" y="105.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Створення порожнього</text>
+<text x="210" y="127.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">списку: head = tail = nullptr</text>
+<polygon points="110.0,180 340.0,180 310.0,248 80.0,248" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="210" y="203.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Виведення меню</text>
+<text x="210" y="225.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Введення вибору</text>
+<polygon points="210,295 335.0,343.0 210,391 85.0,343.0" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="210" y="332.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Кінець вводу</text>
+<text x="210" y="354.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">або вибір = 0?</text>
+<rect x="345.0" y="400" width="270" height="150" rx="0" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<polyline points="357.0,400 357.0,550" fill="none" stroke="#000000" stroke-width="1.5" stroke-linejoin="miter"/>
+<polyline points="603.0,400 603.0,550" fill="none" stroke="#000000" stroke-width="1.5" stroke-linejoin="miter"/>
+<text x="480" y="431.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Перевірка вибору</text>
+<text x="480" y="453.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Виконання операції</text>
+<text x="480" y="475.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Додавання, пошук,</text>
+<text x="480" y="497.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">видалення, підрахунок,</text>
+<text x="480" y="519.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">друк або приклад</text>
+<polygon points="372.5,590 617.5,590 587.5,670 342.5,670" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="480" y="608.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Виведення результату</text>
+<text x="480" y="630.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">або повідомлення</text>
+<text x="480" y="652.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">про помилку</text>
+<rect x="100.0" y="500" width="220" height="64" rx="0" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<polyline points="112.0,500 112.0,564" fill="none" stroke="#000000" stroke-width="1.5" stroke-linejoin="miter"/>
+<polyline points="308.0,500 308.0,564" fill="none" stroke="#000000" stroke-width="1.5" stroke-linejoin="miter"/>
+<text x="210" y="521.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Звільнення всіх</text>
+<text x="210" y="543.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">вузлів та гілок</text>
+<rect x="125.0" y="650" width="170" height="40" rx="20.0" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="210" y="670.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Кінець</text>
+<polyline points="210,60 210,90" fill="none" stroke="#000000" stroke-width="1.5" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="210,142 210,180" fill="none" stroke="#000000" stroke-width="1.5" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="210,248 210,295" fill="none" stroke="#000000" stroke-width="1.5" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="210,391 210,500" fill="none" stroke="#000000" stroke-width="1.5" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="230" y="445.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="14">Так</text>
+<polyline points="335,343 480,343 480,400" fill="none" stroke="#000000" stroke-width="1.5" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<text x="361" y="328.0" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="14">Ні</text>
+<polyline points="480,550 480,590" fill="none" stroke="#000000" stroke-width="1.5" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="480,670 480,705 625,705 625,160 210,160 210,180" fill="none" stroke="#000000" stroke-width="1.5" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+<polyline points="210,564 210,650" fill="none" stroke="#000000" stroke-width="1.5" stroke-linejoin="miter" marker-end="url(#arrow)"/>
+</svg>

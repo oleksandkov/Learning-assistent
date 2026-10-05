@@ -1,280 +1,247 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
-#include <vector>
-#include <cassert>
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
+// У вузлі зберігаємо до K чисел; у записі загалом — від 1 до N.
+const int K = 3;
+const int N = 10;
 
-constexpr int K = 3;
-constexpr int N = 10;
-
+// Одне число додаткової гілки. nullptr означає відсутність наступного вузла.
 struct BranchNode {
     int value;
     BranchNode* next = nullptr;
 };
 
+// Основний запис та зв'язки з його сусідами.
 struct Node {
     std::string name;
-    int main_count = 0;
-    int main_nums[K]{};
+    int numbers[K]{};
+    int count = 0; // Кількість чисел у цьому масиві, без гілки.
     BranchNode* branch = nullptr;
     Node* prev = nullptr;
     Node* next = nullptr;
 };
 
-struct DoublyBranchedList {
-    Node* head = nullptr;
-    Node* tail = nullptr;
-    int count = 0;
-
-    ~DoublyBranchedList() {
-        clear();
-    }
-
-    void clear() {
-        Node* curr = head;
-        while (curr) {
-            Node* nxt = curr->next;
-            free_branch(curr->branch);
-            delete curr;
-            curr = nxt;
-        }
-        head = tail = nullptr;
-        count = 0;
-    }
-
-    static void free_branch(BranchNode* b) {
-        while (b) {
-            BranchNode* nxt = b->next;
-            delete b;
-            b = nxt;
-        }
-    }
-
-    void push_back(const std::string& name, const std::vector<int>& nums) {
-        Node* node = new Node();
-        node->name = name;
-        node->prev = tail;
-        node->next = nullptr;
-
-        int total = static_cast<int>(nums.size());
-        if (total > N) total = N;
-
-        node->main_count = (total < K) ? total : K;
-        for (int i = 0; i < node->main_count; ++i) {
-            node->main_nums[i] = nums[i];
-        }
-
-        BranchNode** b_tail = &node->branch;
-        for (int i = K; i < total; ++i) {
-            *b_tail = new BranchNode{nums[i], nullptr};
-            b_tail = &((*b_tail)->next);
-        }
-
-        if (!head) {
-            head = tail = node;
-        } else {
-            tail->next = node;
-            tail = node;
-        }
-        ++count;
-    }
-
-    Node* find(const std::string& name) const {
-        for (Node* curr = head; curr; curr = curr->next) {
-            if (curr->name == name) return curr;
-        }
-        return nullptr;
-    }
-
-    bool remove(const std::string& name) {
-        Node* target = find(name);
-        if (!target) return false;
-
-        if (target->prev) target->prev->next = target->next;
-        else head = target->next;
-
-        if (target->next) target->next->prev = target->prev;
-        else tail = target->prev;
-
-        free_branch(target->branch);
-        delete target;
-        --count;
-        return true;
-    }
-
-    int size() const {
-        return count;
-    }
-
-    static void print_node(const Node* node) {
-        if (!node) {
-            std::cout << "Елемент не знайдено.\n";
-            return;
-        }
-        std::cout << "Елемент: " << node->name << "\n";
-        std::cout << "  Основний вузол (<= " << K << " чисел): [";
-        for (int i = 0; i < node->main_count; ++i) {
-            std::cout << node->main_nums[i] << (i + 1 < node->main_count ? ", " : "");
-        }
-        std::cout << "]\n";
-
-        std::cout << "  Гілка розгалуження (> " << K << " чисел): ";
-        if (!node->branch) {
-            std::cout << "відсутня\n";
-        } else {
-            std::cout << "[";
-            for (BranchNode* b = node->branch; b; b = b->next) {
-                std::cout << b->value << (b->next ? " -> " : "");
-            }
-            std::cout << "]\n";
-        }
-    }
-
-    void print_all() const {
-        if (!head) {
-            std::cout << "Список порожній.\n";
-            return;
-        }
-        std::cout << "\n=== Вміст списку (всього елементів: " << count << ") ===\n";
-        int idx = 1;
-        for (Node* curr = head; curr; curr = curr->next, ++idx) {
-            std::cout << idx << ") ";
-            print_node(curr);
-        }
-        std::cout << "==========================================\n\n";
-    }
+struct List {
+    Node* head = nullptr; // Перший запис.
+    Node* tail = nullptr; // Останній запис.
 };
 
-void run_tests() {
-    DoublyBranchedList list;
-    assert(list.size() == 0);
+// & передає список за посиланням: зміни стосуються початкового списку.
+// const означає, що функція не змінює передане ім'я та числа.
+bool add(List& list, const std::string& name, const int numbers[], int count) {
+    bool has_name = false;
+    for (int i = 0; i < int(name.length()); i++) {
+        if (name[i] != ' ' && name[i] != '\t' && name[i] != '\r')
+            has_name = true;
+    }
+    if (!has_name || count < 1 || count > N || numbers == nullptr)
+        return false;
 
-    list.push_back("Alpha", {10, 20});
-    assert(list.size() == 1);
-    Node* a = list.find("Alpha");
-    assert(a != nullptr && a->main_count == 2 && a->branch == nullptr);
+    // new виділяє пам'ять, а -> звертається до поля за адресою вузла.
+    Node* node = new Node;
+    node->name = name;
+    node->count = count;
+    if (count > K) node->count = K;
+    for (int i = 0; i < node->count; i++)
+        node->numbers[i] = numbers[i];
 
-    list.push_back("Beta", {1, 2, 3, 4, 5});
-    assert(list.size() == 2);
-    Node* b = list.find("Beta");
-    assert(b != nullptr && b->main_count == K && b->branch != nullptr);
-    assert(b->branch->value == 4 && b->branch->next->value == 5);
-
-    assert(list.size() == 2);
-
-    assert(list.remove("Alpha"));
-    assert(list.size() == 1);
-    assert(list.find("Alpha") == nullptr);
-    assert(list.remove("Beta"));
-    assert(list.size() == 0);
-    assert(list.head == nullptr && list.tail == nullptr);
-
-    std::cout << "Автотести успішно пройдено.\n";
-}
-
-void load_samples(DoublyBranchedList& list) {
-    list.push_back("Запис_1", {5, 12});
-    list.push_back("Запис_2", {10, 20, 30, 40, 50, 60});
-    list.push_back("Запис_3", {7, 8, 9});
-    list.push_back("Запис_4", {100, 200, 300, 400});
-    std::cout << "Завантажено 4 зразкові записи (із гілками та без).\n";
-}
-
-int main(int argc, char* argv[]) {
-#ifdef _WIN32
-    SetConsoleOutputCP(CP_UTF8);
-    SetConsoleCP(CP_UTF8);
-#endif
-
-    if (argc > 1 && std::string(argv[1]) == "--test") {
-        run_tests();
-        return 0;
+    // Числа понад K послідовно додаємо в кінець гілки.
+    BranchNode* branch_tail = nullptr;
+    for (int i = K; i < count; i++) {
+        BranchNode* number = new BranchNode;
+        number->value = numbers[i];
+        if (node->branch == nullptr) node->branch = number;
+        else branch_tail->next = number;
+        branch_tail = number;
     }
 
-    DoublyBranchedList list;
-    std::cout << "=== Лабораторна робота №3. Варіант 12 ===\n";
-    std::cout << "Двозв'язний список із розгалуженнями (K = " << K << ", N = " << N << ")\n";
+    // З'єднуємо новий запис зі старим хвостом в обидва боки.
+    node->prev = list.tail;
+    if (list.tail == nullptr) list.head = node;
+    else list.tail->next = node;
+    list.tail = node;
+    return true;
+}
 
-    while (true) {
-        std::cout << "\nМеню операцій:\n"
-                  << "1. Додати елемент\n"
-                  << "2. Знайти та вивести елемент за ім'ям\n"
-                  << "3. Видалити елемент за ім'ям\n"
-                  << "4. Підрахувати кількість елементів\n"
-                  << "5. Роздрукувати весь список\n"
-                  << "6. Завантажити демонстраційні дані\n"
-                  << "0. Вийти\n"
-                  << "Ваш вибір: ";
+// Шукаємо перший збіг імені, рухаючись від голови до хвоста.
+Node* find(const List& list, const std::string& name) {
+    Node* node = list.head;
+    while (node != nullptr) {
+        if (node->name == name) return node;
+        node = node->next;
+    }
+    return nullptr;
+}
 
-        int choice = -1;
-        if (!(std::cin >> choice)) {
-            break;
+// Перед викликом основний вузол потрібно від'єднати від списку.
+void destroy_node(Node* node) {
+    while (node->branch != nullptr) {
+        BranchNode* old = node->branch;
+        node->branch = old->next; // Зберігаємо наступний вузол до видалення.
+        delete old;
+    }
+    delete node; // Після гілки звільняємо сам запис.
+}
+
+bool remove(List& list, const std::string& name) {
+    Node* node = find(list, name);
+    if (node == nullptr) return false;
+
+    // Сусіди мають посилатися один на одного, пропускаючи видалений запис.
+    if (node->prev == nullptr) list.head = node->next;
+    else node->prev->next = node->next;
+    if (node->next == nullptr) list.tail = node->prev;
+    else node->next->prev = node->prev;
+    destroy_node(node);
+    return true;
+}
+
+// Рахуємо основні записи, а не числа чи вузли гілок.
+// ponytail: обхід O(m); окремий лічильник потрібний для частого підрахунку.
+int size(const List& list) {
+    int count = 0;
+    Node* node = list.head;
+    while (node != nullptr) {
+        count++;
+        node = node->next;
+    }
+    return count;
+}
+
+void print_node(const Node* node) {
+    if (node == nullptr) {
+        std::cout << "Елемент не знайдено.\n";
+        return;
+    }
+    std::cout << node->name << " | Основні числа:";
+    for (int i = 0; i < node->count; i++)
+        std::cout << ' ' << node->numbers[i];
+    std::cout << " | Гілка:";
+    if (node->branch == nullptr) std::cout << " відсутня";
+    BranchNode* number = node->branch;
+    while (number != nullptr) {
+        std::cout << ' ' << number->value;
+        number = number->next;
+    }
+    std::cout << '\n';
+}
+
+void print_list(const List& list) {
+    if (list.head == nullptr) std::cout << "Список порожній.\n";
+    Node* node = list.head;
+    while (node != nullptr) {
+        print_node(node);
+        node = node->next;
+    }
+}
+
+// Видаляємо всі записи разом із гілками перед завершенням роботи.
+void clear(List& list) {
+    while (list.head != nullptr) {
+        Node* old = list.head;
+        list.head = old->next;
+        destroy_node(old);
+    }
+    list.tail = nullptr;
+}
+
+// Читаємо рівно count цілих чисел з одного рядка.
+// peek переглядає наступний символ, get забирає його з потоку.
+bool read_numbers(int numbers[], int count) {
+    for (int i = 0; i < count; i++) {
+        while (std::cin.peek() == ' ' || std::cin.peek() == '\t' ||
+               std::cin.peek() == '\r')
+            std::cin.get();
+        if (std::cin.peek() == '\n' || std::cin.eof()) {
+            std::cin.get();
+            return false; // Чисел у рядку менше, ніж потрібно.
         }
-
-        if (choice == 0) {
-            std::cout << "Завершення роботи.\n";
-            break;
+        if (!(std::cin >> numbers[i])) {
+            std::cin.clear(); // Скидаємо помилку, щоб наступний ввід працював.
+            std::string rest;
+            std::getline(std::cin, rest); // Відкидаємо некоректний залишок рядка.
+            return false;
         }
+    }
+    while (std::cin.peek() == ' ' || std::cin.peek() == '\t' ||
+           std::cin.peek() == '\r')
+        std::cin.get();
+    if (std::cin.eof()) return true;
+    if (std::cin.peek() == '\n') {
+        std::cin.get();
+        return true;
+    }
+    std::string rest;
+    std::getline(std::cin, rest);
+    return false; // Після чисел є зайві дані.
+}
 
+int main() {
+    List list;
+    int choice = -1;
+    std::cout << "Лабораторна робота №3. Варіант 12\n"
+              << "Двозв'язний список із розгалуженнями. K = 3, N = 10\n";
+    while (choice != 0) {
+        std::cout << "\n1. Додати\n2. Знайти\n3. Видалити\n"
+                  << "4. Кількість\n5. Друк списку\n6. Приклад\n0. Вийти\nВибір: ";
+        if (!read_numbers(&choice, 1)) {
+            if (std::cin.eof()) break;
+            choice = -1;
+            std::cout << "Введіть ціле число від 0 до 6.\n";
+            continue; // Показуємо меню знову.
+        }
         switch (choice) {
+            case 0:
+                break; // На наступній перевірці умови цикл завершиться.
             case 1: {
                 std::string name;
-                int count = 0;
-                std::cout << "Введіть ім'я елемента: ";
-                std::cin >> name;
-                std::cout << "Введіть кількість чисел (1 до " << N << "): ";
-                std::cin >> count;
-                if (count < 1) count = 1;
-                if (count > N) count = N;
-
-                std::vector<int> nums(count);
-                std::cout << "Введіть " << count << " цілих чисел: ";
-                for (int i = 0; i < count; ++i) {
-                    std::cin >> nums[i];
+                int count, numbers[N];
+                std::cout << "Ім'я: ";
+                if (!std::getline(std::cin, name)) break;
+                std::cout << "Кількість чисел (1..10): ";
+                if (!read_numbers(&count, 1) || count < 1 || count > N) {
+                    std::cout << "Некоректна кількість чисел.\n";
+                    break;
                 }
-                list.push_back(name, nums);
-                std::cout << "Елемент успішно додано.\n";
+                std::cout << "Числа одним рядком: ";
+                if (!read_numbers(numbers, count)) {
+                    std::cout << "Некоректна послідовність чисел.\n";
+                    break;
+                }
+                if (add(list, name, numbers, count))
+                    std::cout << "Елемент додано.\n";
+                else std::cout << "Ім'я не може бути порожнім.\n";
                 break;
             }
-            case 2: {
-                std::string name;
-                std::cout << "Введіть ім'я для пошуку: ";
-                std::cin >> name;
-                Node* found = list.find(name);
-                DoublyBranchedList::print_node(found);
-                break;
-            }
+            case 2:
             case 3: {
                 std::string name;
-                std::cout << "Введіть ім'я для видалення: ";
-                std::cin >> name;
-                if (list.remove(name)) {
-                    std::cout << "Елемент \"" << name << "\" видалено.\n";
-                } else {
-                    std::cout << "Елемент не знайдено.\n";
-                }
+                std::cout << "Ім'я: ";
+                if (!std::getline(std::cin, name)) break;
+                if (choice == 2) print_node(find(list, name));
+                else if (remove(list, name)) std::cout << "Елемент видалено.\n";
+                else std::cout << "Елемент не знайдено.\n";
                 break;
             }
-            case 4: {
-                std::cout << "Кількість елементів у списку: " << list.size() << "\n";
+            case 4:
+                std::cout << "Кількість елементів: " << size(list) << '\n';
                 break;
-            }
-            case 5: {
-                list.print_all();
+            case 5:
+                print_list(list);
                 break;
-            }
             case 6: {
-                load_samples(list);
+                int a[] = {5, 12};
+                int b[] = {10, 20, 30, 40, 50, 60};
+                add(list, "Запис_1", a, 2);
+                add(list, "Запис_2", b, 6);
+                std::cout << "Додано 2 приклади.\n";
                 break;
             }
             default:
-                std::cout << "Невірний вибір. Спробуйте ще раз.\n";
-                break;
+                std::cout << "Введіть ціле число від 0 до 6.\n";
         }
     }
-
+    clear(list);
+    std::cout << "Пам'ять звільнено. Завершення роботи.\n";
     return 0;
 }
