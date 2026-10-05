@@ -100,3 +100,49 @@ Antigravity mcp_config.json. `agy mcp list` reports all 9 enabled.
 `opencode mcp list` 2026-09-28: markitdown ✓, excel ✓, docsmith ✓,
 playwright ✓, chrome-devtools ✓; context7 ✗, docling ✗, carbone ✗, office ✗
 (OpenCode timeout too short for npx cold starts; all verified via stdio).
+
+## Restoration and re-verification — 2026-09-29
+
+Drift found against this inventory and fixed:
+
+| Item | Was | Now |
+| --- | --- | --- |
+| Codex `~/.codex/config.toml` | 7 servers (carbone/office/docsmith absent) | 10 servers; `codex mcp list` lists all 10 |
+| Codex runtime `.../orca/codex-runtime-home/home/config.toml` | 7 servers | 10 servers; 12 plugins, 3 marketplaces unchanged |
+| OpenCode `opencode.jsonc` `mcp` map | 6 servers | 9 servers |
+| Antigravity `~/.gemini/config/mcp_config.json` | `{"mcpServers": {}}` (file untouched since 2026-09-18) | 9 servers, `agy mcp list` all enabled |
+
+Stdio probes on 2026-09-29 (MCP initialize + tools/list) against the exact
+command/args/env in each agent's config: **27/27 passed** — 9 servers x 3
+agents (Codex, OpenCode, Antigravity). Tool counts: playwright 25,
+chrome-devtools 30, context7 2, markitdown 1, docling 19, excel 7,
+carbone 11, office 17, docsmith 4.
+
+Carbone API key applied 2026-09-29 to all three configs
+(`carbone.env.CARBONE_API_KEY`; value deliberately not recorded here).
+Functional check: `get_api_status` → `Carbone API: online (v5.15.2)`,
+`list_templates` → empty list (authenticated, not a 401). Carbone is now
+functional, not just configured.
+
+
+`office-mcp` targets `net9.0` but only .NET 8.0.30 and 10.0.8 runtimes are
+installed, so it failed to launch. Fixed with `DOTNET_ROLL_FORWARD=LatestMajor`
+in the `office.env` block of all three agent configs — no runtime install.
+Verified: office connects in `opencode mcp list`.
+
+`opencode mcp list` 2026-09-29: all 9 connected — playwright, chrome-devtools,
+context7, markitdown, docling, excel, carbone, office, docsmith.
+`agy mcp list` 2026-09-29: all 9 enabled. `codex mcp list` 2026-09-29:
+all 10 enabled (including Codex-internal `node_repl`).
+
+Skills and plugins were already at the documented state: Codex 12 plugins /
+14 cached manifests / 3 marketplaces / `.system` skills (6), `.agents` Foundry
+skills, repository skills (2), OpenCode `review-agent` + ponytail,
+Antigravity ponytail (6 skills + 6 commands) and 5 built-ins.
+
+Backups written: `~/.codex/config.toml.bak-mcp-restore-20260929`,
+runtime `config.toml.bak-mcp-restore-20260929`,
+`~/.gemini/config/mcp_config.json.bak-mcp-restore-20260929`.
+The older `mcp_config.json.bak` (2026-09-06, blender/godot/firebase set) was
+left untouched and is not the documented 9-server configuration.
+
