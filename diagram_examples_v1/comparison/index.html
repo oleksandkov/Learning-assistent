@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Порівняння: генератор SVG проти draw.io</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font: 15px/1.6 "Segoe UI", Arial, sans-serif; background: #eef1f5; color: #14181d; padding: 28px 20px 70px; }
+  .wrap { max-width: 1500px; margin: 0 auto; }
+  h1 { font-size: 24px; margin-bottom: 6px; }
+  .lead { color: #555d68; margin-bottom: 22px; }
+  .verdict { background: #fff; border: 1px solid #c9d0d9; border-left: 4px solid #1a3a5c; border-radius: 8px; padding: 16px 20px; margin-bottom: 26px; }
+  .verdict h2 { font-size: 15px; margin-bottom: 10px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  th, td { border: 1px solid #c9d0d9; padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #f2f5f8; font-weight: 600; }
+  td.yes { color: #14663a; } td.no { color: #a32020; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 26px; }
+  .card { background: #fff; border: 1px solid #c9d0d9; border-radius: 10px; overflow: hidden; }
+  .card h3 { font-size: 14px; padding: 12px 16px; border-bottom: 1px solid #c9d0d9; background: #f2f5f8; }
+  .card img { display: block; width: 100%; max-height: 900px; object-fit: contain; object-position: top center; background: #fff; }
+  .cap { padding: 12px 16px; font-size: 13px; color: #4a525c; border-top: 1px solid #c9d0d9; }
+  .cap b { color: #14181d; }
+  .bugs { margin: 8px 0 0; padding-left: 20px; }
+  .bugs li { margin-bottom: 4px; }
+  @media (max-width: 900px) { .pair { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>Порівняння: генератор SVG проти draw.io</h1>
+<p class="lead">
+  Одна й та сама схема — алгоритм Беллмана-Форда з вкладеними циклами —
+  побудована двома незалежними способами. Обидві версії експортовані в PNG і JPEG.
+</p>
+
+<div class="verdict">
+  <h2>Підсумок</h2>
+  <table>
+    <tr><th>Критерій</th><th>Генератор SVG (Python)</th><th>draw.io</th></tr>
+    <tr>
+      <td>Жодних діагоналей поза 90°</td>
+      <td class="yes">Так — перевіряється скриптом</td>
+      <td class="yes">Так, але лише з явними точками маршруту</td>
+    </tr>
+    <tr>
+      <td>Жодного перетину ліній з блоками</td>
+      <td class="yes">Так — перевіряється скриптом</td>
+      <td class="yes">Так, але лише з явними точками маршруту</td>
+    </tr>
+    <tr>
+      <td>Підписи Так/Ні не накладаються</td>
+      <td class="yes">Так — мітка має власний зсув</td>
+      <td class="no">Ні — на спільній шині накопичуються 5 «Ні»</td>
+    </tr>
+    <tr>
+      <td>Правильна фігура паралелограма</td>
+      <td class="yes">Так</td>
+      <td class="yes">Лише без perimeter=parallelogramPerimeter</td>
+    </tr>
+    <tr>
+      <td>Редагування мишею</td>
+      <td class="no">Ні</td>
+      <td class="yes">Так</td>
+    </tr>
+    <tr>
+      <td>Відтворюваність результату</td>
+      <td class="yes">Один запуск — той самий результат</td>
+      <td class="no">Потрібно вручну правити координати</td>
+    </tr>
+  </table>
+</div>
+
+<div class="pair">
+  <div class="card">
+    <h3>Версія A — генератор SVG (<code>06_gost_bellman_ford_script.png</code>)</h3>
+    <img src="06_gost_bellman_ford_script.png" alt="Версія A">
+    <div class="cap">
+      <b>Дефектів не виявлено.</b>
+      <ul class="bugs">
+        <li>Кожна гілка «Ні» має власний напис на своєму відрізку шини.</li>
+        <li>Три зворотні лінії циклів розведені по окремих лівших доріжках.</li>
+        <li>Геометрія перевірена автоматично (<code>check_orthogonal.py</code>).</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Версія B — draw.io (<code>06_gost_bellman_ford_drawio.png</code>)</h3>
+    <img src="06_gost_bellman_ford_drawio.png" alt="Версія B">
+    <div class="cap">
+      <b>Знайдені дефекти маршрутизації:</b>
+      <ul class="bugs">
+        <li>П'ять написів «Ні» накопичилися на правій шині й накладаються один на один.</li>
+        <li>Зворотна лінія зовнішнього циклу перетинає магістраль на невдалій висоті — замість входу в умову вона йде поперек.</li>
+        <li>Ромби витягнуті горизонтально (900×88) — гостacute читається гірше, ніж у еталоні.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="verdict">
+  <h2>Висновок</h2>
+  <p>
+    Для <b>академічних схем</b> точніший генератор SVG: він тримає 90° геометрію,
+    не допускає перетинів із блоками й віддає однаковий результат при повторному запуску.
+  </p>
+  <p style="margin-top:8px">
+    Для <b>ручного редагування</b> зручніший draw.io: фігури можна перетягувати, а схема
+    лишається в одному редагованому файлі. Але кожну зміну треба перевіряти очима —
+    автоматичної перевірки там немає.
+  </p>
+  <p style="margin-top:8px">
+    Практичний висновок: малювати генератором, а надсилати в draw.io лише тоді,
+    коли схему потрібно далі редагувати вручну.
+  </p>
+</div>
+
+</div>
+</body>
+</html>

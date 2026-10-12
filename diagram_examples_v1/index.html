@@ -1,267 +1,208 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>V1: Еталонні схеми за ГОСТ 19.701-90 та UML (Академічний ч/б)</title>
-  <style>
-    :root {
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --border: #e2e8f0;
-      --text: #000000;
-      --muted: #555555;
-      --card-bg: #ffffff;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
-      padding: 32px 20px;
-    }
-    .container { max-width: 1200px; margin: 0 auto; }
-    header {
-      border-bottom: 2px solid #000000;
-      padding-bottom: 20px;
-      margin-bottom: 28px;
-    }
-    h1 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
-    .rules-list {
-      background: #ffffff;
-      border: 1px solid #000000;
-      padding: 16px 20px;
-      border-radius: 6px;
-      margin: 16px 0;
-      font-size: 13px;
-    }
-    .rules-list ul { margin-left: 20px; margin-top: 6px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Академічні схеми: ГОСТ 19.701-90 та UML 2.5</title>
+<style>
+  :root {
+    --bg: #eceff3;
+    --card: #ffffff;
+    --line: #c8cdd4;
+    --ink: #111418;
+    --muted: #5b626d;
+    --accent: #1a3a5c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font: 15px/1.55 "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg); color: var(--ink);
+    padding: 28px 20px 60px;
+  }
+  .wrap { max-width: 1320px; margin: 0 auto; }
 
-    /* Controls bar */
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .bg-switcher {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      font-weight: 600;
-    }
-    .bg-btn {
-      padding: 6px 12px;
-      font-size: 12px;
-      cursor: pointer;
-      border: 1px solid #000000;
-      background: #ffffff;
-      font-weight: 600;
-    }
-    .bg-btn.active { background: #000000; color: #ffffff; }
+  header { border-bottom: 2px solid var(--accent); padding-bottom: 16px; margin-bottom: 20px; }
+  h1 { font-size: 25px; letter-spacing: -0.2px; }
+  .sub { color: var(--muted); margin-top: 6px; font-size: 14px; }
 
-    /* Grid */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-      gap: 24px;
-    }
-    .card {
-      border: 1.5px solid #000000;
-      background: #ffffff;
-      display: flex;
-      flex-direction: column;
-    }
-    .preview-box {
-      min-height: 380px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      border-bottom: 1px solid #000000;
-      background: #ffffff;
-      transition: background 0.2s;
-    }
-    .preview-box.checkered {
-      background-color: #ffffff;
-      background-image: linear-gradient(45deg, #e5e5e5 25%, transparent 25%), linear-gradient(-45deg, #e5e5e5 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #e5e5e5 75%), linear-gradient(-45deg, transparent 75%, #e5e5e5 75%);
-      background-size: 20px 20px;
-      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-    }
-    .preview-box.dark {
-      background: #1e293b;
-    }
-    .preview-box img {
-      max-width: 100%;
-      height: auto;
-      max-height: 480px;
-    }
-    .card-info {
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-    .card-title {
-      font-size: 15px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-    .card-meta {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-    .btn-link {
-      display: inline-block;
-      text-align: center;
-      padding: 8px 12px;
-      border: 1px solid #000000;
-      background: #000000;
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 12px;
-      font-weight: 600;
-      margin-top: auto;
-    }
-    .btn-link:hover { background: #333333; }
-  </style>
+  .bar {
+    display: flex; flex-wrap: wrap; gap: 10px 18px;
+    align-items: center; justify-content: space-between;
+    background: var(--card); border: 1px solid var(--line);
+    padding: 12px 16px; margin: 20px 0; border-radius: 8px;
+    position: sticky; top: 0; z-index: 5;
+  }
+  .grp { display: flex; align-items: center; gap: 8px; }
+  .grp > span { font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); }
+  button, select {
+    font: inherit; font-size: 13px; padding: 6px 12px; cursor: pointer;
+    background: #fff; border: 1px solid var(--line); border-radius: 6px; color: var(--ink);
+  }
+  button:hover { border-color: var(--accent); }
+  button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  .grid { display: grid; gap: 22px; grid-template-columns: repeat(auto-fill, minmax(430px, 1fr)); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+  .card.hide { display: none; }
+
+  .view { height: 560px; display: flex; align-items: center; justify-content: center; padding: 18px; overflow: auto; background: #fff; border-bottom: 1px solid var(--line); }
+  .view.checker {
+    background-color: #fff;
+    background-image:
+      linear-gradient(45deg, #e3e6ea 25%, transparent 25%),
+      linear-gradient(-45deg, #e3e6ea 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #e3e6ea 75%),
+      linear-gradient(-45deg, transparent 75%, #e3e6ea 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+  }
+  .view.dark { background: #1c2430; }
+  .view img { max-width: 100%; max-height: 524px; }
+  .view.zoom img { max-height: none; max-width: none; width: 170%; }
+
+  .meta { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .meta h2 { font-size: 15px; }
+  .meta code { font: 12px/1.4 Consolas, monospace; color: var(--muted); }
+  .meta p { font-size: 13px; color: var(--muted); }
+  .links { display: flex; gap: 8px; margin-top: auto; }
+  .links a {
+    flex: 1; text-align: center; padding: 7px 10px; font-size: 12px; font-weight: 600;
+    border: 1px solid var(--accent); color: var(--accent); text-decoration: none; border-radius: 6px;
+  }
+  .links a.fill { background: var(--accent); color: #fff; }
+
+  .note { margin-top: 26px; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 8px; padding: 16px 18px; }
+  .note h3 { font-size: 14px; margin-bottom: 8px; }
+  .note pre { background: #f6f8fa; border: 1px solid var(--line); border-radius: 6px; padding: 12px; overflow-x: auto; font: 12px/1.5 Consolas, monospace; }
+</style>
 </head>
 <body>
+<div class="wrap">
 
-  <div class="container">
-    <header>
-      <h1>Каталог V1: Академічний ГОСТ 19.701-90 та UML</h1>
-      <p style="font-size: 14px; color: #444;">
-        Версія V1 враховує всі ваші вимоги: прозорий/білий фон, повна відсутність заголовків на зображеннях, суто український текст та строгий чорно-білий академічний стиль.
-      </p>
+<header>
+  <h1>Академічні схеми — ГОСТ 19.701-90 та UML 2.5</h1>
+  <p class="sub">
+    Монохромний стиль еталонних зображень: Times New Roman, контури 1.5&nbsp;px, біла заливка блоків,
+    прозорий фон, злами тільки під 90°. Усі схеми генеруються скриптами, тож будь-яку програму
+    можна перенести в цей стиль копіюванням прикладу.
+  </p>
+</header>
 
-      <div class="rules-list">
-        <strong>Параметри стандарту V1:</strong>
-        <ul>
-          <li><strong>Фон:</strong> прозорий (transparent) / блоки залиті чистим білим кольором (#ffffff) для уникнення накладання ліній.</li>
-          <li><strong>Без заголовків на самому малюнку:</strong> схема починається одразу з початкового вузла, без декоративних написів чи рамок.</li>
-          <li><strong>Мова:</strong> виключно українська термінологія ("Початок", "Кінець", "Введення", "Виведення", "Так", "Ні").</li>
-          <li><strong>Геометрія ГОСТ 19.701-90:</strong> злами ліній строго 90°, паралелограми для вводу/виводу, ромби умов, подвійні лінії для підпрограм, шестикутники для циклу For.</li>
-        </ul>
-      </div>
-    </header>
-
-    <div class="controls">
-      <div class="bg-switcher">
-        <span>Перевірити фон підкладки:</span>
-        <button class="bg-btn active" onclick="setBg('white')">Чистий білий</button>
-        <button class="bg-btn" onclick="setBg('checkered')">Прозорість (шахівниця)</button>
-        <button class="bg-btn" onclick="setBg('dark')">Темний фон</button>
-      </div>
-    </div>
-
-    <div class="grid">
-
-      <!-- 1. ГОСТ РОЗГАЛУЖЕННЯ -->
-      <div class="card">
-        <div class="preview-box" id="prev-1">
-          <img src="01_gost_branching.svg" alt="01_gost_branching">
-        </div>
-        <div class="card-info">
-          <h3 class="card-title">01. Розгалуження (if-else)</h3>
-          <p class="card-meta">ГОСТ 19.701-90: паралелограми вводу/виводу, ромб умови, гілки Так/Ні, зведення під 90°.</p>
-          <a href="01_gost_branching.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
-        </div>
-      </div>
-
-      <!-- 2. ГОСТ ЦИКЛ WHILE -->
-      <div class="card">
-        <div class="preview-box" id="prev-2">
-          <img src="02_gost_loop_while.svg" alt="02_gost_loop_while">
-        </div>
-        <div class="card-info">
-          <h3 class="card-title">02. Цикл з передумовою (While)</h3>
-          <p class="card-meta">ГОСТ 19.701-90: зворотна лінія повернення циклу у верхню точку з'єднання, вихід Ні праворуч.</p>
-          <a href="02_gost_loop_while.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
-        </div>
-      </div>
-
-      <!-- 3. ГОСТ ЦИКЛ FOR -->
-      <div class="card">
-        <div class="preview-box" id="prev-3">
-          <img src="03_gost_loop_for.svg" alt="03_gost_loop_for">
-        </div>
-        <div class="card-info">
-          <h3 class="card-title">03. Цикл з параметром (Шестикутник For)</h3>
-          <p class="card-meta">ГОСТ 19.701-90: блок підготовки (шестикутник) з параметрами i = 0, n-1, 1 та зворотним зв'язком.</p>
-          <a href="03_gost_loop_for.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
-        </div>
-      </div>
-
-      <!-- 4. ГОСТ ПІДПРОГРАМА -->
-      <div class="card">
-        <div class="preview-box" id="prev-4">
-          <img src="04_gost_subroutine.svg" alt="04_gost_subroutine">
-        </div>
-        <div class="card-info">
-          <h3 class="card-title">04. Підпрограма та з'єднувач</h3>
-          <p class="card-meta">ГОСТ 19.701-90: зумовлений процес (подвійні вертикальні лінії) та круговий з'єднувач.</p>
-          <a href="04_gost_subroutine.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
-        </div>
-      </div>
-
-      <!-- 5. UML ACTIVITY -->
-      <div class="card">
-        <div class="preview-box" id="prev-5">
-          <img src="05_uml_activity_academic.svg" alt="05_uml_activity_academic">
-        </div>
-        <div class="card-info">
-          <h3 class="card-title">05. UML Діаграма діяльності</h3>
-          <p class="card-meta">UML 2.5: початковий круг, скруглені дії, паралельні Fork/Join смуги, фінальне бичаче око.</p>
-          <a href="05_uml_activity_academic.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
-        </div>
-      </div>
-
-      <!-- 6. UML SEQUENCE -->
-      <div class="card">
-        <div class="preview-box" id="prev-6">
-          <img src="06_uml_sequence_academic.svg" alt="06_uml_sequence_academic">
-        </div>
-        <div class="card-info">
-          <h3 class="card-title">06. UML Діаграма послідовності</h3>
-          <p class="card-meta">UML 2.5: учасники, синхронні виклики, смуги активації, відповіді, фрагмент alt.</p>
-          <a href="06_uml_sequence_academic.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
-        </div>
-      </div>
-
-      <!-- 7. UML CLASS -->
-      <div class="card">
-        <div class="preview-box" id="prev-7">
-          <img src="07_uml_class_academic.svg" alt="07_uml_class_academic">
-        </div>
-        <div class="card-info">
-          <h3 class="card-title">07. UML Діаграма класів</h3>
-          <p class="card-meta">UML 2.5: класи з секціями назви, полів та методів, стрілки наслідування з білим трикутником.</p>
-          <a href="07_uml_class_academic.svg" target="_blank" class="btn-link">Відкрити SVG файл</a>
-        </div>
-      </div>
-
-    </div>
+<div class="bar">
+  <div class="grp">
+    <span>Тип</span>
+    <button class="filt on" data-f="all">Усі</button>
+    <button class="filt" data-f="gost">ГОСТ</button>
+    <button class="filt" data-f="uml">UML</button>
   </div>
+  <div class="grp">
+    <span>Підкладка</span>
+    <button class="bg on" data-bg="white">Білий</button>
+    <button class="bg" data-bg="checker">Прозорість</button>
+    <button class="bg" data-bg="dark">Темний</button>
+  </div>
+  <div class="grp">
+    <span>Масштаб</span>
+    <button class="zoom" data-z="fit">Заголовок</button>
+    <button class="zoom" data-z="big">160&nbsp;%</button>
+  </div>
+</div>
 
-  <script>
-    function setBg(type) {
-      const boxes = document.querySelectorAll('.preview-box');
-      const btns = document.querySelectorAll('.bg-btn');
-      btns.forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
+<div class="grid" id="grid"></div>
 
-      boxes.forEach(box => {
-        box.classList.remove('checkered', 'dark');
-        if (type === 'checkered') box.classList.add('checkered');
-        if (type === 'dark') box.classList.add('dark');
-      });
-    }
-  </script>
+<div class="note">
+  <h3>Як зробити схему для своєї програми</h3>
+  <pre>from scripts.gost import Chart
+
+c = Chart()                      # wrap_w=470 — стандартна ширина блоків
+s = c.start()
+i = c.io("Введення: n, arr", below=s)
+a = c.process("сума = 0", below=i)
+d = c.decision("i &lt; n", below=a)
+b = c.process("сума += arr[i]", below=d)
+k = c.process("i += 1", below=b)
+o = c.io("Виведення: сума", below=d, dy=150)
+e = c.end(below=o)
+
+c.drop(a, d)
+c.drop(d, b)                    # вертикаль магістралі, без наконечника
+c.tag(b, "Так", "top", dx=9, dy=-16)
+c.loop(k, d, side="left")       # зворотний зв'язок циклу
+c.branch(d, o, "right", "Ні")   # вихід з циклу
+c.drop(o, e)
+
+open("out.svg", "w", encoding="utf-8").write(c.render())</pre>
+</div>
+
+</div>
+
+<script>
+const DIAGRAMS = [
+  { file: "01_gost_branching.svg", kind: "gost", title: "01. Розгалуження (if / else)",
+    desc: "Паралелограми вводу-виводу, ромб умови, гілки Так/Ні, збіг під 90°." },
+  { file: "02_gost_loop_while.svg", kind: "gost", title: "02. Цикл з передумовою (while)",
+    desc: "Зворотна лінія повернення в умову, вихід «Ні» назовні по правій гілці." },
+  { file: "03_gost_loop_for.svg", kind: "gost", title: "03. Цикл з параметром (for)",
+    desc: "Блок підготовки — шестикутник із параметрами циклу." },
+  { file: "04_gost_subroutine.svg", kind: "gost", title: "04. Підпрограма та з'єднувачі",
+    desc: "Зумовлений процес із подвійними вертикальними рисками, кола-з'єднувачі А/Б." },
+  { file: "05_gost_routing_branch.svg", kind: "gost", title: "05. Еталон: пошук маршруту",
+    desc: "Відтворення еталонного зображення 1: збіг Так/Ні, шина праворуч для виходу з помилкою." },
+  { file: "06_gost_bellman_ford.svg", kind: "gost", title: "06. Еталон: Беллман-Форд",
+    desc: "Відтворення еталонного зображення 3: вкладені цикли, три шини ліворуч, спільна шина праворуч." },
+  { file: "07_uml_class.svg", kind: "uml", title: "07. Еталон: діаграма класів",
+    desc: "Відтворення еталонного зображення 2: секції, стереотипи «utility»/«interface», генералізація, реалізація, композиція." }
+];
+
+const grid = document.getElementById("grid");
+DIAGRAMS.forEach((d) => {
+  const el = document.createElement("article");
+  el.className = "card";
+  el.dataset.kind = d.kind;
+  el.innerHTML = `
+    <div class="view"><img src="${d.file}" alt="${d.title}" loading="lazy"></div>
+    <div class="meta">
+      <h2>${d.title}</h2>
+      <p>${d.desc}</p>
+      <code>${d.file}</code>
+      <div class="links">
+        <a href="${d.file}" target="_blank">Відкрити SVG</a>
+        <a class="fill" href="${d.file}" download>Завантажити</a>
+      </div>
+    </div>`;
+  grid.appendChild(el);
+});
+
+const cards = [...document.querySelectorAll(".card")];
+const views = [...document.querySelectorAll(".view")];
+
+document.querySelectorAll(".filt").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filt").forEach((b) => b.classList.remove("on"));
+    btn.classList.add("on");
+    const f = btn.dataset.f;
+    cards.forEach((c) => c.classList.toggle("hide", f !== "all" && c.dataset.kind !== f));
+  });
+});
+
+document.querySelectorAll(".bg").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".bg").forEach((b) => b.classList.remove("on"));
+    btn.classList.add("on");
+    views.forEach((v) => {
+      v.classList.remove("checker", "dark");
+      if (btn.dataset.bg !== "white") v.classList.add(btn.dataset.bg);
+    });
+  });
+});
+
+document.querySelectorAll(".zoom").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".zoom").forEach((b) => b.classList.remove("on"));
+    btn.classList.add("on");
+    views.forEach((v) => v.classList.toggle("zoom", btn.dataset.z === "big"));
+  });
+});
+</script>
 </body>
 </html>
