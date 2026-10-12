@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 740" width="720" height="740" style="background: transparent; font-family: Segoe UI, Arial, sans-serif;">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#000000"/></marker></defs>
+<rect x="215" y="20" width="170" height="40" rx="20" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="300" y="40" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Початок</text>
+<polygon points="230,90 400,90 370,142 200,142" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="300" y="116" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Введення: A, B, C, M, W</text>
+<polygon points="205,172 395,172 425,197 395,222 205,222 175,197" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="300" y="190" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">B[i] = B[i] + M[i]</text>
+<text x="300" y="209" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">i = 0, ..., 15</text>
+<rect x="190" y="252" width="220" height="40" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="300" y="272" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">A[0] ^= W[0],  A[1] ^= W[1]</text>
+<rect x="175" y="330" width="250" height="45" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<polyline points="187,330 187,375" fill="none" stroke="#000000" stroke-width="1.5"/>
+<polyline points="413,330 413,375" fill="none" stroke="#000000" stroke-width="1.5"/>
+<text x="300" y="352" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">P(A, B, C, M)</text>
+<polygon points="205,420 395,420 425,445 395,470 205,470 175,445" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="300" y="438" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">C[i] = C[i] - M[i]</text>
+<text x="300" y="457" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">i = 0, ..., 15</text>
+<rect x="205" y="500" width="190" height="40" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="300" y="520" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">Обмін B[i] та C[i]</text>
+<rect x="235" y="575" width="130" height="40" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="300" y="595" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">W = W + 1</text>
+<rect x="215" y="665" width="170" height="40" rx="20" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="300" y="685" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Кінець</text>
+<polyline points="300,60 300,90" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="300,142 300,172" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="300,222 300,252" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="300,292 300,330" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="300,375 300,420" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="300,470 300,500" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="300,540 300,575" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="300,615 300,665" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+</svg>

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 990" width="760" height="990" style="background: transparent; font-family: Segoe UI, Arial, sans-serif;">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#000000"/></marker></defs>
+<rect x="175" y="20" width="170" height="40" rx="20" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="260" y="40" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Початок</text>
+<polygon points="190,90 360,90 330,142 160,142" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="260" y="108" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Введення: ім'я файлу</text>
+<text x="260" y="128" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">(Enter — getfile.pdf)</text>
+<polygon points="260,192 385,240 260,288 135,240" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="260" y="240" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Файл відкрито?</text>
+<rect x="470" y="220" width="230" height="40" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="585" y="240" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">Не вдалося відкрити файл</text>
+<rect x="150" y="320" width="220" height="40" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="260" y="340" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">n = розмір файлу - 64</text>
+<polygon points="260,405 370,450 260,495 150,450" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="260" y="450" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">n &gt;= 0 ?</text>
+<rect x="470" y="430" width="230" height="40" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="585" y="450" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">Файл закороткий</text>
+<rect x="120" y="520" width="280" height="52" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="260" y="538" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">Обчислити SHABAL-512 для</text>
+<text x="260" y="557" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">перших n байт файлу</text>
+<rect x="145" y="605" width="230" height="40" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="260" y="625" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">Зчитати останні 64 байти</text>
+<polygon points="260,675 400,725 260,775 120,725" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="260" y="714" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Хеші збігаються?</text>
+<text x="260" y="736" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">(16 слів порівнюються)</text>
+<rect x="145" y="810" width="230" height="40" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="260" y="830" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Перевірка успішна</text>
+<rect x="470" y="705" width="230" height="40" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="585" y="725" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Перевірка невдала</text>
+<rect x="175" y="920" width="170" height="40" rx="20" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="260" y="940" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Кінець</text>
+<polyline points="260,60 260,90" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="260,142 260,192" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="385,240 470,240" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="428" y="228" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="14">Ні</text>
+<polyline points="260,288 260,320" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="278" y="304" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="14">Так</text>
+<polyline points="260,360 260,405" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="370,450 470,450" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="420" y="438" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="14">Ні</text>
+<polyline points="260,495 260,525" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="278" y="510" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="14">Так</text>
+<polyline points="260,572 260,605" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="260,645 260,675" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="260,775 260,810" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="278" y="792" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="14">Так</text>
+<polyline points="260,850 260,940" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="400,725 470,725" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="435" y="713" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="14">Ні</text>
+<polyline points="700,240 720,240 720,940 345,940" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="700,450 720,450" fill="none" stroke="#000000" stroke-width="1.5"/>
+<polyline points="700,725 720,725" fill="none" stroke="#000000" stroke-width="1.5"/>
+</svg>

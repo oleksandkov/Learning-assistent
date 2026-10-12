@@ -1,33 +1,29 @@
-﻿#include <iostream>
+#include <iostream>
 #include <string>
 
-// У вузлі зберігаємо до K чисел; у записі загалом — від 1 до N.
 const int K = 3;
 const int N = 10;
 
-// Одне число додаткової гілки. nullptr означає відсутність наступного вузла.
 struct BranchNode {
     int value;
     BranchNode* next = nullptr;
 };
 
-// Основний запис та зв'язки з його сусідами.
 struct Node {
     std::string name;
     int numbers[K]{};
-    int count = 0; // Кількість чисел у цьому масиві, без гілки.
+    int count = 0; 
     BranchNode* branch = nullptr;
     Node* prev = nullptr;
     Node* next = nullptr;
 };
 
 struct List {
-    Node* head = nullptr; // Перший запис.
-    Node* tail = nullptr; // Останній запис.
+    Node* head = nullptr; 
+    Node* tail = nullptr; 
 };
 
-// & передає список за посиланням: зміни стосуються початкового списку.
-// const означає, що функція не змінює передане ім'я та числа.
+
 bool add(List& list, const std::string& name, const int numbers[], int count) {
     bool has_name = false;
     for (int i = 0; i < int(name.length()); i++) {
@@ -37,7 +33,6 @@ bool add(List& list, const std::string& name, const int numbers[], int count) {
     if (!has_name || count < 1 || count > N || numbers == nullptr)
         return false;
 
-    // new виділяє пам'ять, а -> звертається до поля за адресою вузла.
     Node* node = new Node;
     node->name = name;
     node->count = count;
@@ -45,7 +40,6 @@ bool add(List& list, const std::string& name, const int numbers[], int count) {
     for (int i = 0; i < node->count; i++)
         node->numbers[i] = numbers[i];
 
-    // Числа понад K послідовно додаємо в кінець гілки.
     BranchNode* branch_tail = nullptr;
     for (int i = K; i < count; i++) {
         BranchNode* number = new BranchNode;
@@ -55,7 +49,6 @@ bool add(List& list, const std::string& name, const int numbers[], int count) {
         branch_tail = number;
     }
 
-    // З'єднуємо новий запис зі старим хвостом в обидва боки.
     node->prev = list.tail;
     if (list.tail == nullptr) list.head = node;
     else list.tail->next = node;
@@ -63,7 +56,6 @@ bool add(List& list, const std::string& name, const int numbers[], int count) {
     return true;
 }
 
-// Шукаємо перший збіг імені, рухаючись від голови до хвоста.
 Node* find(const List& list, const std::string& name) {
     Node* node = list.head;
     while (node != nullptr) {
@@ -73,21 +65,19 @@ Node* find(const List& list, const std::string& name) {
     return nullptr;
 }
 
-// Перед викликом основний вузол потрібно від'єднати від списку.
 void destroy_node(Node* node) {
     while (node->branch != nullptr) {
         BranchNode* old = node->branch;
-        node->branch = old->next; // Зберігаємо наступний вузол до видалення.
+        node->branch = old->next; 
         delete old;
     }
-    delete node; // Після гілки звільняємо сам запис.
+    delete node; 
 }
 
 bool remove(List& list, const std::string& name) {
     Node* node = find(list, name);
     if (node == nullptr) return false;
 
-    // Сусіди мають посилатися один на одного, пропускаючи видалений запис.
     if (node->prev == nullptr) list.head = node->next;
     else node->prev->next = node->next;
     if (node->next == nullptr) list.tail = node->prev;
@@ -96,8 +86,7 @@ bool remove(List& list, const std::string& name) {
     return true;
 }
 
-// Рахуємо основні записи, а не числа чи вузли гілок.
-// ponytail: обхід O(m); окремий лічильник потрібний для частого підрахунку.
+
 int size(const List& list) {
     int count = 0;
     Node* node = list.head;
@@ -135,7 +124,7 @@ void print_list(const List& list) {
     }
 }
 
-// Видаляємо всі записи разом із гілками перед завершенням роботи.
+
 void clear(List& list) {
     while (list.head != nullptr) {
         Node* old = list.head;
@@ -145,8 +134,7 @@ void clear(List& list) {
     list.tail = nullptr;
 }
 
-// Читаємо рівно count цілих чисел з одного рядка.
-// peek переглядає наступний символ, get забирає його з потоку.
+
 bool read_numbers(int numbers[], int count) {
     for (int i = 0; i < count; i++) {
         while (std::cin.peek() == ' ' || std::cin.peek() == '\t' ||
@@ -154,12 +142,12 @@ bool read_numbers(int numbers[], int count) {
             std::cin.get();
         if (std::cin.peek() == '\n' || std::cin.eof()) {
             std::cin.get();
-            return false; // Чисел у рядку менше, ніж потрібно.
+            return false; 
         }
         if (!(std::cin >> numbers[i])) {
-            std::cin.clear(); // Скидаємо помилку, щоб наступний ввід працював.
+            std::cin.clear(); 
             std::string rest;
-            std::getline(std::cin, rest); // Відкидаємо некоректний залишок рядка.
+            std::getline(std::cin, rest);
             return false;
         }
     }
@@ -173,14 +161,13 @@ bool read_numbers(int numbers[], int count) {
     }
     std::string rest;
     std::getline(std::cin, rest);
-    return false; // Після чисел є зайві дані.
+    return false; 
 }
 
 int main() {
     List list;
     int choice = -1;
-    std::cout << "Лабораторна робота №3. Варіант 12\n"
-              << "Двозв'язний список із розгалуженнями. K = 3, N = 10\n";
+    std::cout  << "Двозв'язний список із розгалуженнями. K = 3, N = 10\n";
     while (choice != 0) {
         std::cout << "\n1. Додати\n2. Знайти\n3. Видалити\n"
                   << "4. Кількість\n5. Друк списку\n6. Приклад\n0. Вийти\nВибір: ";
@@ -188,17 +175,17 @@ int main() {
             if (std::cin.eof()) break;
             choice = -1;
             std::cout << "Введіть ціле число від 0 до 6.\n";
-            continue; // Показуємо меню знову.
+            continue; 
         }
         switch (choice) {
             case 0:
-                break; // На наступній перевірці умови цикл завершиться.
+                break; 
             case 1: {
                 std::string name;
                 int count, numbers[N];
                 std::cout << "Ім'я: ";
                 if (!std::getline(std::cin, name)) break;
-                std::cout << "Кількість чисел (1..10): ";
+                std::cout << "Кількість чисел: ";
                 if (!read_numbers(&count, 1) || count < 1 || count > N) {
                     std::cout << "Некоректна кількість чисел.\n";
                     break;
@@ -242,6 +229,6 @@ int main() {
         }
     }
     clear(list);
-    std::cout << "Пам'ять звільнено. Завершення роботи.\n";
+    std::cout << "Кінець\n";
     return 0;
 }
