@@ -13,22 +13,35 @@
 
 using namespace std;
 
-// ---------- ДОПОМІЖНЕ ----------
+// ================================================================
+// ЧАСТИНА 1. ЧИСТА РЕАЛІЗАЦІЯ SHABAL-512 (пункт 1 завдання)
+// Тільки сам алгоритм: rotl, U, V, decodeBlock, shabalP,
+// shabalBlock, shabal512. Ні від чого нижче не залежить.
+// ================================================================
 
-// циклічний зсув 32-бітного слова вліво на n бітів
 uint32_t rotl(uint32_t x, int n) {
     return (x << n) | (x >> (32 - n));
 }
 
-// нелінійні перестановки U і V з алгоритму SHABAL (множення за модулем 2^32)
+
 uint32_t U(uint32_t x) { return x * 3; }
 uint32_t V(uint32_t x) { return x * 5; }
 
-// перетворення 64 байт у 16 слів у порядку "little endian"
 void decodeBlock(const unsigned char* buf, uint32_t M[16]) {
     for (int i = 0; i < 16; i++)
         M[i] = buf[4*i] | (buf[4*i+1] << 8) |
                (buf[4*i+2] << 16) | (uint32_t(buf[4*i+3]) << 24);
+}
+
+void encodeBlock(const uint32_t M[16], unsigned char* buf) {
+    for (int i = 0; i < 16; i++)
+        for (int j = 0; j < 4; j++)
+            buf[4*i + j] = (unsigned char)(M[i] >> (8*j));
+}
+
+void keyBytes(uint32_t key, unsigned char b[4]) {
+    for (int j = 0; j < 4; j++)
+        b[j] = (unsigned char)(key >> (8*j));
 }
 
 // ---------- 1. ХЕШ-ФУНКЦІЯ SHABAL-512 ----------
@@ -105,17 +118,13 @@ void shabal512(const vector<unsigned char>& msg, uint32_t out[16]) {
 
 // ---------- 2. ВЛАСНА ХЕШ-ФУНКЦІЯ (МЕТОД МНОЖЕННЯ) ----------
 
-// метод множення за Кнутом: h = (h * A + символ) mod 2^32,
-// де A = 2^32 / phi — наближення до числа Фібоначчі
 uint32_t myHash(const unsigned char* data, size_t len) {
-    const uint32_t A = 0x9E3779B9u;
     uint32_t h = 0x811C9DC5u;
     for (size_t i = 0; i < len; i++)
-        h = h * A + data[i] + 1;
+        h = h * 0x9E3779B9u + data[i] + 1;
     return h;
 }
 
-// метод дішення — для порівняння з методом множення
 uint32_t divHash(uint32_t h, uint32_t m) {
     return h % m;
 }
@@ -165,9 +174,7 @@ void appendChecksum(const string& name) {
     shabal512(data, h);
 
     unsigned char sum[64];
-    for (int i = 0; i < 16; i++)
-        for (int j = 0; j < 4; j++)
-            sum[4*i + j] = (unsigned char)(h[i] >> (8*j));    // у порядку little endian
+    encodeBlock(h, sum);                            // слова хешу в байти little endian
 
     ofstream f(name, ios::binary | ios::app);               // дописуємо в кінець
     f.write((char*)sum, 64);
@@ -188,13 +195,11 @@ void verifyChecksum(const string& name) {
     uint32_t h[16];
     shabal512(body, h);
 
+    uint32_t saved[16];
+    decodeBlock(&data[n], saved);                   // зчитана сума з кінця файлу
     bool same = true;
-    for (int i = 0; i < 16; i++) {
-        uint32_t saved = data[n + 4*i] | (uint32_t(data[n + 4*i+1]) << 8) |
-                         (uint32_t(data[n + 4*i+2]) << 16) |
-                         (uint32_t(data[n + 4*i+3]) << 24);
-        if (saved != h[i]) same = false;
-    }
+    for (int i = 0; i < 16; i++)
+        if (saved[i] != h[i]) same = false;
     cout << (same ? "Перевірка УСПІШНА — контрольна сума збігається."
                   : "Перевірка НЕВДАЛА — файл було змінено!") << endl;
 }
@@ -215,8 +220,7 @@ vector<uint32_t> makeKeys(uint32_t range, int count, mt19937& gen) {
 
 // SHABAL-512 від 4-байтового ключа, беремо молодші 32 біти
 uint32_t shabal512of(uint32_t key) {
-    unsigned char b[4] = {(unsigned char)key, (unsigned char)(key >> 8),
-                         (unsigned char)(key >> 16), (unsigned char)(key >> 24)};
+    unsigned char b[4]; keyBytes(key, b);
     uint32_t h[16];
     shabal512(vector<unsigned char>(b, b + 4), h);
     return h[0];
@@ -224,8 +228,7 @@ uint32_t shabal512of(uint32_t key) {
 
 // власна хеш-функція від 4-байтового ключа
 uint32_t myHashOf(uint32_t key) {
-    unsigned char b[4] = {(unsigned char)key, (unsigned char)(key >> 8),
-                         (unsigned char)(key >> 16), (unsigned char)(key >> 24)};
+    unsigned char b[4]; keyBytes(key, b);
     return myHash(b, 4);
 }
 
@@ -240,6 +243,11 @@ void collisions() {
     uint32_t ranges[3] = {10000u, 1000000u, 1000000000u};
     const char* rname[3] = {"0..10^4", "0..10^6", "0..10^9"};
 
+    // хеш 32-бітного ключа f-ю функцією (0 — SHABAL, інакше — власна)
+    auto H = [](uint32_t k, int f) { return (f == 0) ? shabal512of(k) : myHashOf(k); };
+    // індекс комірки: старші біти (множення) або остача (ділення)
+    auto idx = [&](uint32_t h, int f) { return (f == 2) ? (int)divHash(h, m) : (int)(h >> (32 - bits)); };
+
     cout << "Розмір таблиці " << m << " комірок, заповнення " << fill
          << " (" << fill*100/m << "%), додається " << keys << " нових ключів." << endl;
     cout << "Очікувано колізій: " << keys * fill / m << " з " << keys
@@ -253,17 +261,13 @@ void collisions() {
         cout << "Діапазон ключів " << rname[r] << ":" << endl;
         for (int f = 0; f < 3; f++) {
             vector<char> table(m, 0);
-            for (int i = 0; i < fill; i++) {
-                uint32_t h = (f == 0) ? shabal512of(base[i]) : myHashOf(base[i]);
-                int idx = (f == 2) ? (int)divHash(h, m) : (int)(h >> (32 - bits));
-                table[idx] = 1;
-            }
+            for (int i = 0; i < fill; i++)
+                table[idx(H(base[i], f), f)] = 1;
             int hit = 0;
             for (int i = 0; i < keys; i++) {
-                uint32_t h = (f == 0) ? shabal512of(test[i]) : myHashOf(test[i]);
-                int idx = (f == 2) ? (int)divHash(h, m) : (int)(h >> (32 - bits));
-                if (table[idx]) hit++;                      // комірка вже зайнята
-                else table[idx] = 1;
+                int at = idx(H(test[i], f), f);
+                if (table[at]) hit++;                      // комірка вже зайнята
+                else table[at] = 1;
             }
             cout << "    " << names[f] << ": " << hit << " колізій ("
                  << hit*1000/keys << "‰)" << endl;
