@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 490" width="720" height="490" style="background: transparent; font-family: Segoe UI, Arial, sans-serif;">
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#000000"/></marker></defs>
+<rect x="275" y="20" width="170" height="40" rx="20" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="360" y="40" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Початок</text>
+<polygon points="245,90 475,90 445,142 215,142" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="360" y="116" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Введення: ключ k</text>
+<rect x="210" y="172" width="300" height="52" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="360" y="190" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">h = (k × S) mod 2³²</text>
+<text x="360" y="209" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">S = 2654435769</text>
+<rect x="210" y="254" width="300" height="52" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="360" y="272" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">index = h &gt;&gt; (32 − p)</text>
+<text x="360" y="291" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="15">p = 13</text>
+<polygon points="265,336 485,336 455,388 235,388" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="360" y="362" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Виведення: index</text>
+<rect x="275" y="428" width="170" height="40" rx="20" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+<text x="360" y="448" text-anchor="middle" dominant-baseline="central" fill="#000000" font-size="16">Кінець</text>
+<polyline points="360,60 360,90" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="360,142 360,172" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="360,224 360,254" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="360,306 360,336" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+<polyline points="360,388 360,428" fill="none" stroke="#000000" stroke-width="1.5" marker-end="url(#arrow)"/>
+</svg>

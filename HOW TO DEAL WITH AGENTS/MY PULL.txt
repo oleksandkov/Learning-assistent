@@ -2,9 +2,11 @@ MY AGENT POOL
 Codex inventory date: 2026-09-28
 OpenCode inventory date: 2026-09-28
 Antigravity CLI inventory date: 2026-09-28
+Kilo Code inventory date: 2026-10-14
 User profile: C:/Users/muaro
 
-Codex, OpenCode, and Antigravity CLI were rescanned 2026-09-28.
+Codex, OpenCode, and Antigravity CLI were rescanned 2026-09-28;
+Kilo Code was rescanned 2026-10-14.
 Other-agent records below are retained from 2026-09-18 and have NOT been reverified.
 Configured, cached, and session-exposed are distinct.
 No credentials or private conversation contents are included.
@@ -22,7 +24,7 @@ No credentials or private conversation contents are included.
 3. Kilo Code
    Command: kilo
    Found on PATH: C:/Users/muaro/AppData/Roaming/npm/kilo.ps1
-   Configuration under the user profile: .config/kilo/kilo.jsonc
+   Configuration under the user profile: .config/kilo/kilo.jsonc; .config/kilo/tui.jsonc; .config/kilo/themes/
 
 4. OpenCode
    Command: opencode
@@ -73,8 +75,24 @@ ANTIGRAVITY CLI RESCAN — 2026-09-28
 - `agy mcp list`: all 9 enabled.
 - Full write-up: ANTIGRAVITY.md.
 
+KILOCODE RESCAN — 2026-10-14
+- npm package @kilocode/cli: version 7.3.46.
+- Was 0 configured; now 10 MCP servers, mirrored 2026-10-14 from the OpenCode
+  opencode.jsonc (browser-use, playwright, chrome-devtools, context7,
+  markitdown, docling, excel, carbone, office, docsmith).
+- `kilo mcp list`: all 10 connected.
+- Plugin @dietrichgebert/ponytail added (6 skills + 6 slash commands); bundled
+  plugins @kilocode/kilo-indexing and @kilocode/plugin-atomic-chat unchanged.
+- Custom TUI theme "secondbrain" created (themes/secondbrain.json, Tokyo Night
+  base, violet primary) and activated via tui.jsonc.
+- 18 skills exposed: 2 built-in, 7 shared user skills (.agents), 3 repository
+  skills (.agents/skills in repo), 6 ponytail skills.
+- Backup: ~/.config/kilo/kilo.jsonc.bak-agent-inventory-20261014.
+- Full write-up: KILOCODE.md.
+
 COMPANION FILES
 OPENCODE.md   - OpenCode overview, dual-config caveat, providers, plugins, skills.
+KILOCODE.md   - Kilo Code overview, 10 mirrored MCPs, ponytail, custom theme, skills.
 MCP-VERIFICATION.md - Installed document MCP versions and passing functional tests.
 CODEX.md   - Codex overview, settings snapshot, hooks, instructions, and coverage.
 MCP.txt    - Configured MCP servers, plugin MCP declarations, session tool names.
@@ -82,8 +100,9 @@ skills.txt - All discovered Codex skill paths, descriptions, and session status.
 plugins.txt - Enabled plugins, marketplaces, cache versions, and manifest paths.
 
 SCOPE
-Codex rescanned 2026-09-21; OpenCode rescanned 2026-09-22. Other agents retain
-their older 2026-09-18 records.
+Kilo Code rescanned 2026-10-14; Codex and OpenCode rescanned 2026-09-28;
+Antigravity CLI rescanned 2026-09-28. Other agents retain their older
+2026-09-18 records.
 This is a local configuration inventory, not an exhaustive machine or account audit.
 Codex was updated with MarkItDown, Docling, and Excel MCPs after functional tests.
 Credentials, personal logs, chats, and database contents were not exported. Local configuration is not proof of service health or access.

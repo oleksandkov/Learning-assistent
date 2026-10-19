@@ -2,9 +2,11 @@ MCP AND SESSION TOOL INVENTORY
 Codex inventory date: 2026-09-28
 OpenCode inventory date: 2026-09-28
 Antigravity CLI inventory date: 2026-09-28
+Kilo Code inventory date: 2026-10-14
 User profile: C:/Users/muaro
 
-Codex, OpenCode, and Antigravity CLI were rescanned 2026-09-28.
+Codex, OpenCode, and Antigravity CLI were rescanned 2026-09-28;
+Kilo Code was rescanned 2026-10-14.
 Other-agent records below are retained from 2026-09-18 and have NOT been reverified.
 Configured, cached, and session-exposed are distinct.
 No credentials or private conversation contents are included.
@@ -222,32 +224,33 @@ Claude Code (0 configured)
 Source: C:/Users/muaro/.claude.json
 - No MCP servers configured ("mcpServers": {}). Runs pure with native agent tools.
 
-Kilo Code (0 configured)
-Source: C:/Users/muaro/.config/kilo/kilo.jsonc
-- No MCP servers configured ("mcp": {}). Runs pure with native agent tools.
-
-OpenCode (9 configured) — RESCANNED 2026-09-28
-Sources: C:/Users/muaro/.config/opencode/opencode.jsonc ("mcp" map, 9 entries);
-         C:/Users/muaro/.config/opencode/opencode.json (providers only, no mcp key)
-- playwright, chrome-devtools, context7, markitdown, docling, excel (from Codex mirror)
-- carbone, office, docsmith added 2026-09-28
-- `opencode mcp list` 2026-09-28: playwright ✓, chrome-devtools ✓, context7 ✓,
-  excel ✓, office ✓; markitdown ✗, docling ✗, carbone ✗, docsmith ✗
-  (markitdown/docling: pre-existing local binary issue; carbone: needs API key;
-  docsmith: first npx download timeout)
-- Skills: review-agent copied to ~/.config/opencode/skills/review-agent/.
-  Other Codex .system skills (imagegen, openai-docs, plugin-creator,
-  skill-creator, skill-installer) are Codex-specific, not copied.
-- Plugins: ponytail already in both (Codex marketplace + opencode.jsonc).
-  Codex bundled plugins are runtime-provided, no OpenCode equivalent.
-  Details: OPENCODE.md.
-
-Antigravity CLI (9 configured) — RESCANNED 2026-09-28
-Source: C:/Users/muaro/.gemini/config/mcp_config.json
-- playwright, chrome-devtools, context7, markitdown, docling, excel (mirrored from Codex)
-- carbone, office, docsmith added 2026-09-28
-- `agy mcp list` 2026-09-28: all 9 enabled
-- Ponytail plugin installed 2026-09-28 (6 skills + 6 commands)
+Kilo Code (10 configured) — RESCANNED 2026-10-14
+Sources: C:/Users/muaro/.config/kilo/kilo.jsonc ("mcp" map, 10 entries)
+- Mirror of the OpenCode set, added 2026-10-14; node_repl skipped
+  (Codex-runtime internal, not portable):
+  - browser-use: uvx.exe --from browser-use[cli] browser-use --mcp
+  - playwright: npx -y @playwright/mcp@latest
+  - chrome-devtools: npx -y chrome-devtools-mcp@latest
+  - context7: npx -y @upstash/context7-mcp@latest
+  - markitdown: C:/Users/muaro/.local/bin/markitdown-mcp.exe
+  - docling: C:/Users/muaro/.local/bin/docling-mcp-server.exe --transport stdio conversion generation manipulation
+    Env: DOCLING_MCP_CONVERSION_MODE, PYTHONIOENCODING, HF_HUB_DISABLE_SYMLINKS, CACHE_DIR
+  - excel: C:/Users/muaro/.codex/mcps/excel/node_modules/@negokaz/excel-mcp-server/dist/excel-mcp-server_windows_amd64_v1/excel-mcp-server.exe
+    Env: EXCEL_MCP_PAGING_CELLS_LIMIT
+  - carbone: npx -y carbone-mcp
+    Env: CARBONE_API_KEY (value present in config, omitted here)
+  - office: npx -y office-mcp
+    Env: DOTNET_ROLL_FORWARD=LatestMajor
+  - docsmith: npx -y docsmith-mcp
+- Each local server has timeout 120000 (mirrors OpenCode experimental.mcp_timeout).
+- `kilo mcp list` 2026-10-14: all 10 connected (browser-use, playwright,
+  chrome-devtools, context7, markitdown, docling, excel, carbone, office,
+  docsmith). `kilo config check`: no warnings.
+- Skills: ponytail set auto-injected by the plugin (6); built-in, shared user,
+  and repository skills as for OpenCode. Details: KILOCODE.md.
+- Plugins: @dietrichgebert/ponytail added 2026-10-14; bundled
+  @kilocode/kilo-indexing and @kilocode/plugin-atomic-chat stay active.
+  Details: KILOCODE.md / plugins.txt.
 
 Gemini CLI (0 configured)
 Source: C:/Users/muaro/.gemini/settings.json

@@ -146,3 +146,34 @@ runtime `config.toml.bak-mcp-restore-20260929`,
 The older `mcp_config.json.bak` (2026-09-06, blender/godot/firebase set) was
 left untouched and is not the documented 9-server configuration.
 
+## Kilo Code
+
+On 2026-10-14 Kilo Code (`~/.config/kilo/kilo.jsonc`) went from 0 to 10 MCP
+servers: the OpenCode nine (playwright, chrome-devtools, context7, markitdown,
+docling, excel, carbone, office, docsmith) plus `browser-use`
+(`uvx --from browser-use[cli] browser-use --mcp`). Commands, args, and env
+blocks match the other agents' configs exactly; each local server additionally
+carries `timeout: 120000` (Kilo's per-server equivalent of OpenCode's
+`experimental.mcp_timeout`; opencode started failing on npx cold starts before
+that was raised). `node_repl` was not ported (Codex-runtime internal).
+
+Backup: `~/.config/kilo/kilo.jsonc.bak-agent-inventory-20261014`.
+
+Verification 2026-10-14:
+
+| Check | Result |
+| --- | --- |
+| `kilo config check` | No config warnings |
+| `kilo mcp list` | All 10 servers `connected` |
+
+Connected servers: browser-use, playwright, chrome-devtools, context7,
+markitdown, docling, excel, carbone, office, docsmith. No per-tool functional
+re-run on Kilo was needed for the shared binaries — the stdio probes above
+(2026-09-29, 27/27) and the functional tests in the main tables cover the same
+executables with the same args. The same update added the
+`@dietrichgebert/ponytail` plugin, the custom `secondbrain` theme
+(`~/.config/kilo/themes/secondbrain.json`, activated in `tui.jsonc`), and is
+documented in [KILOCODE.md](KILOCODE.md). Kilo keeps its bundled plugins
+(`@kilocode/kilo-indexing`, `@kilocode/plugin-atomic-chat`); adding the user
+plugin entry did not displace them.
+

@@ -1,9 +1,11 @@
 PLUGINS INVENTORY
 Codex inventory date: 2026-09-21
 OpenCode inventory date: 2026-09-22
+Kilo Code inventory date: 2026-10-14
 User profile: C:/Users/muaro
 
 Codex was rescanned 2026-09-21. OpenCode was rescanned 2026-09-22 (see OPENCODE.md).
+Kilo Code was rescanned 2026-10-14 (see KILOCODE.md).
 Other-agent records below are retained from 2026-09-18 and have NOT been reverified.
 Configured, cached, and session-exposed are distinct.
 No credentials or private conversation contents are included.
@@ -115,24 +117,26 @@ Claude Code
 Source: C:/Users/muaro/.claude/settings.json; C:/Users/muaro/.claude/plugins/installed_plugins.json
 - No plugins installed.
 
-Kilo Code
-Source: C:/Users/muaro/.config/kilo/kilo.jsonc; C:/Users/muaro/.config/kilo/package.json
-- @kilocode/plugin: installed as an SDK dependency (package.json: 7.3.21)
-- No user-facing plugins configured.
-
-OpenCode — RESCANNED 2026-09-22
-Sources: C:/Users/muaro/.config/opencode/opencode.json; opencode.jsonc; tui.json
-- Configured plugin array (both top-level configs):
-  - @dietrichgebert/ponytail — enabled; ponytail skills exposed in session.
-- Global tui.json: "@slkiser/opencode-quota" (quota toast UI).
-- Project .opencode/tui.json: "plugin": [] (no project TUI plugins).
-- On disk, NOT in config plugin array (not proven loaded):
-  - voice-interface.js: ~/.config/opencode/plugin/voice-interface.js
-  - opencode-bar: ~/.config/opencode/plugins/opencode-bar (v0.1.0 source checkout)
-  - opencode-bar.json, opencode-quota/quota-toast.json (supporting configs)
-- Historical (2026-09-18): worktree under ~/.local/share/opencode/plugins/.
-- Caveat: opencode.json and opencode.jsonc both exist and diverge; plugin key
-  matches today, but other keys do not — see OPENCODE.md.
+Kilo Code — RESCANNED 2026-10-14
+Sources: C:/Users/muaro/.config/kilo/kilo.jsonc; C:/Users/muaro/.config/kilo/package.json;
+         C:/Users/muaro/.config/kilo/tui.jsonc
+- npm package @kilocode/cli 7.3.46; @kilocode/plugin SDK dependency in the
+  global package.json (7.3.21) was historical.
+- Configured plugin array (user entry in kilo.jsonc, added 2026-10-14 to match
+  OpenCode):
+  - @dietrichgebert/ponytail — enabled; resolved by the CLI from npm into
+    C:/Users/muaro/.cache/kilo/packages/@dietrichgebert/ponytail@latest/;
+    injects 6 skills and 6 slash commands (ponytail, -audit, -debt, -gain,
+    -help, -review).
+- Bundled (always active, not user entries; visible via kilo debug config):
+  - @kilocode/kilo-indexing
+  - @kilocode/plugin-atomic-chat
+- tui.jsonc exists (theme: "secondbrain") but configures no TUI plugin;
+  the TUI plugin slot (tui.jsonc "plugin") is unused.
+- Codex/OpenCode-only items with no Kilo equivalent: @slkiser/opencode-quota
+  (OpenCode tui.json), voice-interface.js and the opencode-bar source tree
+  (OpenCode disk-only, never loaded even there).
+- Details: KILOCODE.md.
 
 Antigravity CLI
 Source: C:/Users/muaro/.gemini/config/config.json

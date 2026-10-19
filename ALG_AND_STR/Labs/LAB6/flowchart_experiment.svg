@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0.0 0.0 450.7 673.2" style="background:transparent;font-family:'Times New Roman', Times, serif;">
+<defs>
+<marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1.2 L10 5 L0 8.8 z" fill="#000"/></marker>
+<style>
+.b{stroke:#000;stroke-width:1.5;fill:#fff}
+.l{stroke:#000;stroke-width:1.5;fill:none;stroke-linejoin:miter;stroke-linecap:butt}
+.t{font-size:16px;fill:#000;text-anchor:middle;dominant-baseline:central}
+</style>
+</defs>
+<g><path d="M 225.4 53.6 L 225.4 91.6" class="l"/><path d="M 225.4 141.6 L 225.4 179.6" class="l"/><path d="M 225.4 229.6 L 225.4 267.6" class="l"/><path d="M 225.4 317.6 L 225.4 355.6" class="l"/><path d="M 225.4 405.6 L 225.4 443.6" class="l"/><path d="M 225.4 493.6 L 225.4 531.6" class="l"/><path d="M 225.4 581.6 L 225.4 619.6" class="l"/></g>
+<g><rect x="175.8" y="26.0" width="99.2" height="27.6" rx="13.8" ry="13.8" class="b"/><text x="225.4" y="39.8" class="t">Початок</text><rect x="98.2" y="91.6" width="254.2" height="50.0" class="b"/><text x="225.4" y="116.6" class="t">n = 100000; генерація ключів</text><rect x="63.8" y="179.6" width="323.0" height="50.0" class="b"/><text x="225.4" y="204.6" class="t">видалення дублікатів; перемішування</text><rect x="97.6" y="267.6" width="255.5" height="50.0" class="b"/><text x="225.4" y="292.6" class="t">вставка в БДП і хеш-таблицю</text><rect x="53.7" y="355.6" width="343.4" height="50.0" class="b"/><text x="225.4" y="380.6" class="t">вимір часу пошуку всіх ключів у БДП (t1)</text><rect x="26.0" y="443.6" width="398.7" height="50.0" class="b"/><text x="225.4" y="468.6" class="t">вимір часу пошуку всіх ключів у хеш-таблиці (t2)</text><polygon points="76.8,531.6 404.0,531.6 374.0,581.6 46.8,581.6" class="b"/><text x="225.4" y="556.6" class="t">Виведення: t1, t2, кількість знайдених</text><rect x="179.9" y="619.6" width="90.9" height="27.6" rx="13.8" ry="13.8" class="b"/><text x="225.4" y="633.4" class="t">Кінець</text></g>
+<g></g>
+</svg>
