@@ -1,5 +1,4 @@
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
 #include <chrono>
@@ -9,28 +8,18 @@
 
 using namespace std;
 
-// ============================================================
-// Структура запису (варіант 12): ключове поле — E-mail,
-// додаткові поля — тема листа та текст листа.
-// ============================================================
 struct Record {
-    string email;    // ключове поле (унікальний ідентифікатор)
-    string subject;  // тема листа
-    string text;     // текст листа
+    string email;
+    string password;
+    double drive_data;
 };
 
-// ============================================================
-// Вузол бінарного дерева пошуку (БДП).
-// Кожен вузол містить запис і покажчики на ліве/праве піддерево.
-// ============================================================
 struct Node {
     Record data;
     Node *l, *r;
     Node(const Record& d) : data(d), l(nullptr), r(nullptr) {}
 };
 
-// Вставка нового запису в БДП за ключем (email).
-// Якщо ключ менший за поточний — йдемо вліво, інакше вправо.
 Node* insert(Node* t, const Record& d) {
     if (!t) return new Node(d);
     if (d.email < t->data.email) t->l = insert(t->l, d);
@@ -38,7 +27,6 @@ Node* insert(Node* t, const Record& d) {
     return t;
 }
 
-// Пошук запису в БДП за ключем (email). Повертає покажчик на вузол або nullptr.
 Node* find(Node* t, const string& key) {
     if (!t) return nullptr;
     if (key == t->data.email) return t;
@@ -46,11 +34,8 @@ Node* find(Node* t, const string& key) {
     return find(t->r, key);
 }
 
-// Допоміжна: пошук вузла з мінімальним ключем (найлівіший).
 Node* minNode(Node* t) { while (t->l) t = t->l; return t; }
 
-// Видалення запису з БДП за ключем.
-// Обробляє випадки: листок, один нащадок, два нащадки (заміна наступником).
 Node* remove(Node* t, const string& key) {
     if (!t) return nullptr;
     if (key < t->data.email) t->l = remove(t->l, key);
@@ -65,15 +50,13 @@ Node* remove(Node* t, const string& key) {
     return t;
 }
 
-// Симетричний обхід (inorder) — виводить ключі у відсортованому порядку.
 void inorder(Node* t) {
     if (!t) return;
     inorder(t->l);
-    cout << t->data.email << " | " << t->data.subject << "\n";
+    cout << t->data.email << " | " << t->data.password << " | " << t->data.drive_data << " GB\n";
     inorder(t->r);
 }
 
-// Рекурсивне звільнення пам'яті дерева.
 void freeTree(Node* t) {
     if (!t) return;
     freeTree(t->l);
@@ -81,58 +64,42 @@ void freeTree(Node* t) {
     delete t;
 }
 
-// ============================================================
-// Хеш-функція з лабораторної роботи №5 — метод множення.
-// A_MUL — множник (константа); mulHash = k * A_MUL,
-// індекс у таблиці = старші біти результату.
-// ============================================================
 const uint32_t A_MUL = 2654435769u;
 
-// Перетворення рядкового ключа (email) на числовий код (поліноміальний хеш).
 uint32_t strKey(const string& s) {
     uint32_t h = 0;
     for (char c : s) h = h * 131 + (unsigned char)c;
     return h;
 }
 
-// Параметри хеш-таблиці: 2^13 = 8192 комірок.
 int tableBits = 13;
 int tableSize = 1 << 13;
 
-// ============================================================
-// Хеш-таблиця з ланцюжковим розв'язанням колізій (chaining).
-// Кожна комірка містить вектор записів з однаковим індексом.
-// ============================================================
 struct HashTable {
     vector<vector<Record>> chains;
     HashTable() : chains(tableSize) {}
-    // Обчислення індексу комірки для ключа (метод множення з lab5).
     int idx(const string& key) {
         uint32_t k = strKey(key);
         uint32_t m = (uint32_t)((uint64_t)k * A_MUL);
         return (int)(m >> (32 - tableBits));
     }
-    // Вставка запису; повертає false, якщо ключ вже існує.
     bool insert(const Record& d) {
         int i = idx(d.email);
         for (auto& r : chains[i]) if (r.email == d.email) return false;
         chains[i].push_back(d);
         return true;
     }
-    // Пошук запису за ключем; повертає покажчик або nullptr.
     Record* search(const string& key) {
         int i = idx(key);
-        for (auto& r : chains[i]) if (r.email == key) return (Record*)&r;
+        for (auto& r : chains[i]) if (r.email == key) return &r;
         return nullptr;
     }
-    // Видалення запису за ключем.
     bool remove(const string& key) {
         int i = idx(key);
         for (size_t j = 0; j < chains[i].size(); j++)
             if (chains[i][j].email == key) { chains[i].erase(chains[i].begin() + j); return true; }
         return false;
     }
-    // Виведення непорожніх комірок таблиці.
     void print() {
         for (int i = 0; i < tableSize; i++)
             if (!chains[i].empty()) {
@@ -143,11 +110,6 @@ struct HashTable {
     }
 };
 
-// ============================================================
-// Експеримент: порівняння часу пошуку в БДП та хеш-таблиці.
-// Генерує 100000 випадкових унікальних ключів, вставляє в обидві
-// структури, потім вимірює час пошуку всіх ключів (std::chrono).
-// ============================================================
 void experiment() {
     int n = 100000;
     mt19937 gen(42);
@@ -156,15 +118,13 @@ void experiment() {
     for (int i = 0; i < n; i++) {
         Record r;
         r.email = "user" + to_string(gen()) + "@mail.com";
-        r.subject = "subj";
-        r.text = "text";
+        r.password = "pass" + to_string(gen() % 10000);
+        r.drive_data = (gen() % 1000) / 10.0;
         recs.push_back(r);
     }
-    // Видалення дублікатів ключів.
     sort(recs.begin(), recs.end(), [](const Record& a, const Record& b){ return a.email < b.email; });
     recs.erase(unique(recs.begin(), recs.end(), [](const Record& a, const Record& b){ return a.email == b.email; }), recs.end());
     n = recs.size();
-    // Перемішування для отримання збалансованого дерева (уникнення виродження).
     shuffle(recs.begin(), recs.end(), gen);
 
     Node* root = nullptr;
@@ -183,9 +143,6 @@ void experiment() {
     freeTree(root);
 }
 
-// ============================================================
-// Головна функція: текстове меню для роботи з БДП і хеш-таблицею.
-// ============================================================
 int main() {
     Node* root = nullptr;
     HashTable ht;
@@ -199,8 +156,9 @@ int main() {
         if (choice == 1) {
             Record r;
             cout << "Email: "; getline(cin, r.email);
-            cout << "Тема: "; getline(cin, r.subject);
-            cout << "Текст: "; getline(cin, r.text);
+            cout << "Пароль: "; getline(cin, r.password);
+            cout << "Обсяг даних (ГБ): "; cin >> r.drive_data;
+            cin.ignore(1000, '\n');
             root = insert(root, r);
             ht.insert(r);
         } else if (choice == 2) {
@@ -210,12 +168,12 @@ int main() {
         } else if (choice == 3) {
             string k; cout << "Email: "; getline(cin, k);
             Node* n = find(root, k);
-            if (n) cout << n->data.email << " | " << n->data.subject << " | " << n->data.text << "\n";
+            if (n) cout << n->data.email << " | " << n->data.password << " | " << n->data.drive_data << " GB\n";
             else cout << "Не знайдено\n";
         } else if (choice == 4) {
             string k; cout << "Email: "; getline(cin, k);
             Record* r = ht.search(k);
-            if (r) cout << r->email << " | " << r->subject << " | " << r->text << "\n";
+            if (r) cout << r->email << " | " << r->password << " | " << r->drive_data << " GB\n";
             else cout << "Не знайдено\n";
         } else if (choice == 5) {
             inorder(root);
